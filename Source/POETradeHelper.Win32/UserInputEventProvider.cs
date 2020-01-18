@@ -1,9 +1,8 @@
-﻿using Gma.System.MouseKeyHook;
-using POETradeHelper.Common.Contract;
+﻿using POETradeHelper.Common.Contract;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
+using WindowsHook;
 
 namespace POETradeHelper
 {

@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
-
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -16,10 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Source\POETradeHelper.Common.Contract\POETradeHelper.Common.Contract.csproj" />
     <ProjectReference Include="..\..\Source\POETradeHelper.Win32\POETradeHelper.Win32.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
 </Project>

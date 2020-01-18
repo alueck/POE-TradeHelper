@@ -1,9 +1,8 @@
-﻿using Gma.System.MouseKeyHook;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using POETradeHelper.Common.Contract;
-using System.Windows.Forms;
+using WindowsHook;
 
 namespace POETradeHelper.Win32.Tests
 {

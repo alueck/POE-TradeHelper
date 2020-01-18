@@ -1,11 +1,11 @@
 ﻿using Autofac;
-using Gma.System.MouseKeyHook;
 using POETradeHelper.Common.Contract;
 using POETradeHelper.ItemSearch.Controllers;
 using POETradeHelper.PathOfExileTradeApi;
 using POETradeHelper.Win32;
 using Splat;
 using Splat.Autofac;
+using WindowsHook;
 
 namespace POETradeHelper
 {
