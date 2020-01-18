@@ -27,8 +27,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsing
 
             SetNameAndType(mapItem, itemStringLines);
 
-            mapItem.IsBlighted = mapItem.Type.Contains(Resources.BlightedPrefix);
-            mapItem.Type = GetTypeWithoutPrefixes(mapItem.Type);
+            mapItem.IsBlighted = mapItem.Name.Contains(Resources.BlightedPrefix);
 
             return mapItem;
         }
@@ -38,11 +37,12 @@ namespace POETradeHelper.ItemSearch.Services.Parsing
             if (mapItem.IsIdentified && mapItem.Rarity != ItemRarity.Normal)
             {
                 mapItem.Name = itemStringLines[1];
-                mapItem.Type = itemStringLines[2];
+                mapItem.Type = GetTypeWithoutPrefixes(itemStringLines[2]);
             }
             else
             {
-                mapItem.Type = mapItem.Name = itemStringLines[1];
+                mapItem.Name = itemStringLines[1];
+                mapItem.Type = GetTypeWithoutPrefixes(itemStringLines[1]);
             }
         }
 

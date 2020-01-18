@@ -111,6 +111,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsing
         }
 
         [Test]
+        public void ParseShouldParseIdentified()
+        {
+            string[] itemStringLines = this.mapItemStringBuilder
+                .BuildLines();
+
+            MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;
+
+            Assert.IsTrue(result.IsIdentified);
+        }
+
+        [Test]
         public void ParseShouldParseUnidentifiedMap()
         {
             const string expectedType = "Dig Map";
@@ -122,7 +133,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsing
 
             MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.IsNull(result.Name);
             Assert.That(result.Type, Is.EqualTo(expectedType));
             Assert.IsFalse(result.IsIdentified);
         }
@@ -131,16 +141,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsing
         public void ParseShouldParseUnidentifiedSuperiorMap()
         {
             const string expectedType = "Dig Map";
+            string expectedName = $"{Resources.SuperiorPrefix} {expectedType}";
 
             string[] itemStringLines = this.mapItemStringBuilder
-                .WithType($"{Resources.SuperiorPrefix} {expectedType}")
+                .WithName(expectedName)
                 .WithUnidentified()
                 .WithQuality(20)
                 .BuildLines();
 
             MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.IsNull(result.Name);
+            Assert.That(result.Name, Is.EqualTo(expectedName));
             Assert.That(result.Type, Is.EqualTo(expectedType));
             Assert.IsFalse(result.IsIdentified);
         }
