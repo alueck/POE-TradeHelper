@@ -2,7 +2,7 @@
 using POETradeHelper.ItemSearch.Contract.Properties;
 using System.Linq;
 
-namespace POETradeHelper.ItemSearch.Services
+namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class GemItemParser : ItemParserBase
     {
@@ -27,7 +27,7 @@ namespace POETradeHelper.ItemSearch.Services
 
             if (gemItem.IsVaalVersion)
             {
-                gemItem.Name = gemItem.Type = $"{Resources.VaalDescriptor} {gemItem.Name}";
+                gemItem.Name = gemItem.Type = $"{Resources.VaalKeyword} {gemItem.Name}";
             }
 
             return gemItem;
@@ -35,7 +35,7 @@ namespace POETradeHelper.ItemSearch.Services
 
         private bool IsVaalVersion(string[] lines)
         {
-            return IsCorrupted(lines) && lines.Any(l => l.Contains(Resources.VaalDescriptor));
+            return IsCorrupted(lines) && lines.Any(l => l.Contains(Resources.VaalKeyword));
         }
     }
 }

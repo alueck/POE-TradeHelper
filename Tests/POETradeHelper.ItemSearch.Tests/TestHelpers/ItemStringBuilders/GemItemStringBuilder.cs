@@ -1,7 +1,7 @@
 ﻿using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
-using POETradeHelper.ItemSearch.Services;
+using POETradeHelper.ItemSearch.Services.Parsers;
 using System.Text;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers
@@ -39,12 +39,12 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 
             stringBuilder
                 .Append(NameAndRarityGroup)
-                .AppendLine(ItemParserAggregator.PropertyGroupSeparator)
+                .AppendLine(ParserConstants.PropertyGroupSeparator)
                 .Append(ItemStatsGroup)
-                .AppendLine(ItemParserAggregator.PropertyGroupSeparator, () => !this.IsIdentified)
-                .AppendLine(Resources.UnidentifiedDescriptor, () => !this.IsIdentified)
-                .AppendLine(ItemParserAggregator.PropertyGroupSeparator, () => this.IsCorrupted)
-                .AppendLine(Resources.CorruptedDescriptor, () => this.IsCorrupted);
+                .AppendLine(ParserConstants.PropertyGroupSeparator, () => !this.IsIdentified)
+                .AppendLine(Resources.UnidentifiedKeyword, () => !this.IsIdentified)
+                .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.IsCorrupted)
+                .AppendLine(Resources.CorruptedKeyword, () => this.IsCorrupted);
 
             return stringBuilder.ToString();
         }

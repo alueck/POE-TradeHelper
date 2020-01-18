@@ -123,11 +123,14 @@
   <data name="BlightedPrefix" xml:space="preserve">
     <value>Blighted</value>
   </data>
-  <data name="CorruptedDescriptor" xml:space="preserve">
+  <data name="CorruptedKeyword" xml:space="preserve">
     <value>Corrupted</value>
   </data>
-  <data name="FlaskDescriptor" xml:space="preserve">
+  <data name="FlaskKeyword" xml:space="preserve">
     <value>Flask</value>
+  </data>
+  <data name="ItemLevelDescriptor" xml:space="preserve">
+    <value>Item Level:</value>
   </data>
   <data name="ItemQuantityDescriptor" xml:space="preserve">
     <value>Item Quantity:</value>
@@ -159,10 +162,10 @@
   <data name="LevelDescriptor" xml:space="preserve">
     <value>Level:</value>
   </data>
-  <data name="LifeFlaskDescriptor" xml:space="preserve">
+  <data name="LifeFlaskKeyword" xml:space="preserve">
     <value>Life Flask</value>
   </data>
-  <data name="ManaFlaskDescriptor" xml:space="preserve">
+  <data name="ManaFlaskKeyword" xml:space="preserve">
     <value>Mana Flask</value>
   </data>
   <data name="MapTierDescriptor" xml:space="preserve">
@@ -170,6 +173,9 @@
   </data>
   <data name="MonsterPackSizeDescriptor" xml:space="preserve">
     <value>Monster Pack Size:</value>
+  </data>
+  <data name="ProphecyKeyword" xml:space="preserve">
+    <value>prophecy</value>
   </data>
   <data name="QualityDescriptor" xml:space="preserve">
     <value>Quality:</value>
@@ -183,10 +189,10 @@
   <data name="SuperiorPrefix" xml:space="preserve">
     <value>Superior</value>
   </data>
-  <data name="UnidentifiedDescriptor" xml:space="preserve">
+  <data name="UnidentifiedKeyword" xml:space="preserve">
     <value>Unidentified</value>
   </data>
-  <data name="VaalDescriptor" xml:space="preserve">
+  <data name="VaalKeyword" xml:space="preserve">
     <value>Vaal</value>
   </data>
 </root>

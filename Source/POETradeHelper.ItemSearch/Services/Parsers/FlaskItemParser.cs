@@ -2,7 +2,7 @@
 using POETradeHelper.ItemSearch.Contract.Properties;
 using System.Text.RegularExpressions;
 
-namespace POETradeHelper.ItemSearch.Services.Parsing
+namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class FlaskItemParser : ItemParserBase
     {
@@ -10,13 +10,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsing
 
         public override bool CanParse(string[] itemStringLines)
         {
-            return itemStringLines[1].Contains(Resources.LifeFlaskDescriptor);
+            return itemStringLines[1].Contains(Resources.LifeFlaskKeyword);
         }
 
         public override Item Parse(string[] itemStringLines)
         {
-            ItemRarity rarity = this.GetRarity(itemStringLines);
-            return new FlaskItem(rarity)
+            ItemRarity? rarity = this.GetRarity(itemStringLines);
+            return new FlaskItem(rarity.Value)
             {
                 Name = itemStringLines[NameLineIndex],
                 Type = this.GetFlaskTypeFromName(itemStringLines[NameLineIndex]),
@@ -28,13 +28,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsing
         private string GetFlaskTypeFromName(string name)
         {
             Match match;
-            if (name.Contains(Resources.LifeFlaskDescriptor) || name.Contains(Resources.ManaFlaskDescriptor))
+            if (name.Contains(Resources.LifeFlaskKeyword) || name.Contains(Resources.ManaFlaskKeyword))
             {
-                match = Regex.Match(name, $@"\w+\s{{1}}\w+\s{{1}}{Resources.FlaskDescriptor}");
+                match = Regex.Match(name, $@"\w+\s{{1}}\w+\s{{1}}{Resources.FlaskKeyword}");
             }
             else
             {
-                match = Regex.Match(name, $@"\w+\s{{1}}{Resources.FlaskDescriptor}");
+                match = Regex.Match(name, $@"\w+\s{{1}}{Resources.FlaskKeyword}");
             }
 
             return match.Value;

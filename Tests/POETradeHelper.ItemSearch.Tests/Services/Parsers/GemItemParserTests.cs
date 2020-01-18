@@ -1,10 +1,10 @@
 ﻿using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
-using POETradeHelper.ItemSearch.Services;
+using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
-namespace POETradeHelper.ItemSearch.Tests.Services
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class GemItemParserTests
     {
@@ -137,11 +137,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         public void ParseShouldParseVaalGems()
         {
             const string name = "Flameblast";
-            string expected = $"{Resources.VaalDescriptor} {name}";
+            string expected = $"{Resources.VaalKeyword} {name}";
 
             string[] itemStringLines = this.itemStringBuilder
                 .WithName(name)
-                .WithTags($"{Resources.VaalDescriptor}, Spell, AoE, Fire, Channelling")
+                .WithTags($"{Resources.VaalKeyword}, Spell, AoE, Fire, Channelling")
                 .WithCorrupted()
                 .BuildLines();
 

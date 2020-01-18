@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Services.Parsing;
+using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsing
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class FlaskItemParserTests
     {

@@ -1,12 +1,10 @@
 ﻿using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
-using POETradeHelper.ItemSearch.Exceptions;
-using POETradeHelper.ItemSearch.Properties;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace POETradeHelper.ItemSearch.Services
+namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public abstract class ItemParserBase : IItemParser
     {
@@ -15,17 +13,12 @@ namespace POETradeHelper.ItemSearch.Services
             return this.GetRarity(itemStringLines) == itemRarity;
         }
 
-        protected ItemRarity GetRarity(string[] itemStringLines)
+        protected ItemRarity? GetRarity(string[] itemStringLines)
         {
             string rarityDescriptor = POETradeHelper.ItemSearch.Contract.Properties.Resources.RarityDescriptor;
             string rarityLine = itemStringLines.FirstOrDefault(line => line.Contains(rarityDescriptor));
 
             ItemRarity? rarity = rarityLine.Replace(rarityDescriptor, "").Trim().ParseToEnumByDisplayName<ItemRarity>();
-
-            if (!rarity.HasValue)
-            {
-                throw new ParserException(itemStringLines, Resources.CouldNotParseRarityExceptionMessage);
-            }
 
             return rarity.Value;
         }
@@ -50,12 +43,12 @@ namespace POETradeHelper.ItemSearch.Services
 
         protected bool IsCorrupted(string[] lines)
         {
-            return lines.Any(l => l == POETradeHelper.ItemSearch.Contract.Properties.Resources.CorruptedDescriptor);
+            return lines.Any(l => l == POETradeHelper.ItemSearch.Contract.Properties.Resources.CorruptedKeyword);
         }
 
         protected bool IsIdentified(string[] itemStringLines)
         {
-            return !itemStringLines.Any(l => l.Contains(POETradeHelper.ItemSearch.Contract.Properties.Resources.UnidentifiedDescriptor));
+            return !itemStringLines.Any(l => l.Contains(POETradeHelper.ItemSearch.Contract.Properties.Resources.UnidentifiedKeyword));
         }
 
         public abstract Item Parse(string[] itemStringLines);

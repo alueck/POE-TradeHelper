@@ -5,12 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace POETradeHelper.ItemSearch.Services
+namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class ItemParserAggregator : IItemParserAggregator
     {
-        public const string PropertyGroupSeparator = "--------";
-
         private readonly IEnumerable<IItemParser> parsers;
 
         public ItemParserAggregator(IEnumerable<IItemParser> parsers)

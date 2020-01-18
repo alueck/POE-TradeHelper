@@ -1,19 +1,17 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 
-namespace POETradeHelper.ItemSearch.Services
+namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class CurrencyItemParser : ItemParserBase
+    public abstract class SimpleItemParserBase<TItemType> : ItemParserBase
+        where TItemType : Item, new()
     {
         private const int NameLineIndex = 1;
 
-        public override bool CanParse(string[] itemStringLines)
-        {
-            return this.HasRarity(itemStringLines, ItemRarity.Currency);
-        }
+        public override abstract bool CanParse(string[] itemStringLines);
 
         public override Item Parse(string[] itemStringLines)
         {
-            return new CurrencyItem
+            return new TItemType
             {
                 Name = itemStringLines[NameLineIndex],
                 Type = itemStringLines[NameLineIndex]

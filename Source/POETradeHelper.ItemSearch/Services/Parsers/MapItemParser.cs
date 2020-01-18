@@ -2,7 +2,7 @@
 using POETradeHelper.ItemSearch.Contract.Properties;
 using System.Linq;
 
-namespace POETradeHelper.ItemSearch.Services.Parsing
+namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class MapItemParser : ItemParserBase
     {
@@ -13,8 +13,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsing
 
         public override Item Parse(string[] itemStringLines)
         {
-            ItemRarity rarity = this.GetRarity(itemStringLines);
-            var mapItem = new MapItem(rarity)
+            ItemRarity? rarity = this.GetRarity(itemStringLines);
+            var mapItem = new MapItem(rarity.Value)
             {
                 IsIdentified = this.IsIdentified(itemStringLines),
                 Tier = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.MapTierDescriptor),

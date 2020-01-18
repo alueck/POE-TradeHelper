@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Services;
+using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
-namespace POETradeHelper.ItemSearch.Tests.Services
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     internal class CurrencyItemParserTests
     {

@@ -81,18 +81,27 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Corrupted.
         /// </summary>
-        public static string CorruptedDescriptor {
+        public static string CorruptedKeyword {
             get {
-                return ResourceManager.GetString("CorruptedDescriptor", resourceCulture);
+                return ResourceManager.GetString("CorruptedKeyword", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Flask.
         /// </summary>
-        public static string FlaskDescriptor {
+        public static string FlaskKeyword {
             get {
-                return ResourceManager.GetString("FlaskDescriptor", resourceCulture);
+                return ResourceManager.GetString("FlaskKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item Level:.
+        /// </summary>
+        public static string ItemLevelDescriptor {
+            get {
+                return ResourceManager.GetString("ItemLevelDescriptor", resourceCulture);
             }
         }
         
@@ -189,18 +198,18 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Life Flask.
         /// </summary>
-        public static string LifeFlaskDescriptor {
+        public static string LifeFlaskKeyword {
             get {
-                return ResourceManager.GetString("LifeFlaskDescriptor", resourceCulture);
+                return ResourceManager.GetString("LifeFlaskKeyword", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Mana Flask.
         /// </summary>
-        public static string ManaFlaskDescriptor {
+        public static string ManaFlaskKeyword {
             get {
-                return ResourceManager.GetString("ManaFlaskDescriptor", resourceCulture);
+                return ResourceManager.GetString("ManaFlaskKeyword", resourceCulture);
             }
         }
         
@@ -219,6 +228,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string MonsterPackSizeDescriptor {
             get {
                 return ResourceManager.GetString("MonsterPackSizeDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to prophecy.
+        /// </summary>
+        public static string ProphecyKeyword {
+            get {
+                return ResourceManager.GetString("ProphecyKeyword", resourceCulture);
             }
         }
         
@@ -261,18 +279,18 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unidentified.
         /// </summary>
-        public static string UnidentifiedDescriptor {
+        public static string UnidentifiedKeyword {
             get {
-                return ResourceManager.GetString("UnidentifiedDescriptor", resourceCulture);
+                return ResourceManager.GetString("UnidentifiedKeyword", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Vaal.
         /// </summary>
-        public static string VaalDescriptor {
+        public static string VaalKeyword {
             get {
-                return ResourceManager.GetString("VaalDescriptor", resourceCulture);
+                return ResourceManager.GetString("VaalKeyword", resourceCulture);
             }
         }
     }
