@@ -1,22 +1,12 @@
 ﻿using NUnit.Framework;
 using System;
-using System.ComponentModel.DataAnnotations;
 using static POETradeHelper.Common.Extensions.EnumExtensions;
+using static POETradeHelper.Common.Tests.Extensions.TestEnumWrapper;
 
 namespace POETradeHelper.Common.Tests.Extensions
 {
     public class EnumExtensionsTests
     {
-        private const string DisplayName = "Test Value";
-
-        private enum TestEnum
-        {
-            [Display(Name = DisplayName)]
-            TestValue,
-
-            TestValue1
-        }
-
         [Test]
         public void GetDisplayNameShouldReturnDisplayNameIfAttributeIsSet()
         {

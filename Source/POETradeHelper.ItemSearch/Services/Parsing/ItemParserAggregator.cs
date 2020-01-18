@@ -1,6 +1,7 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.ItemSearch.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,18 +20,26 @@ namespace POETradeHelper.ItemSearch.Services
 
         public bool CanParse(string itemString)
         {
-            return parsers.Count(x => x.CanParse(itemString)) == 1;
+            var itemStringLines = this.GetLines(itemString);
+            return parsers.Count(x => x.CanParse(itemStringLines)) == 1;
         }
 
         public Item Parse(string itemString)
         {
-            IList<IItemParser> parsers = this.parsers.Where(x => x.CanParse(itemString)).ToList();
+            var itemStringLines = this.GetLines(itemString);
+
+            IList<IItemParser> parsers = this.parsers.Where(x => x.CanParse(itemStringLines)).ToList();
 
             VerifyMatchingParsers(itemString, parsers);
 
-            Item item = parsers.First().Parse(itemString);
+            Item item = parsers.First().Parse(itemStringLines);
 
             return item;
+        }
+
+        private string[] GetLines(string itemString)
+        {
+            return itemString.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         private static void VerifyMatchingParsers(string itemString, IList<IItemParser> parsers)

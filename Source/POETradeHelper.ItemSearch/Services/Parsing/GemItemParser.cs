@@ -9,28 +9,30 @@ namespace POETradeHelper.ItemSearch.Services
     {
         private const int NameLineIndex = 1;
 
-        public override bool CanParse(string itemString)
+        public override bool CanParse(string[] itemStringLines)
         {
-            return this.HasRarity(itemString, ItemRarity.Gem);
+            return this.HasRarity(itemStringLines, ItemRarity.Gem);
         }
 
-        public override Item Parse(string itemString)
+        public override Item Parse(string[] itemStringLines)
         {
-            string[] lines = GetLines(itemString);
-
-            return new GemItem
+            var gemItem = new GemItem
             {
-                Name = lines[NameLineIndex],
-                Type = lines[NameLineIndex],
-                IsCorrupted = IsCorrupted(lines),
-                Quality = GetQuality(lines),
-                Level = GetLevel(lines)
+                Name = itemStringLines[NameLineIndex],
+                Type = itemStringLines[NameLineIndex],
+                IsCorrupted = IsCorrupted(itemStringLines),
+                Quality = GetQuality(itemStringLines),
+                Level = GetLevel(itemStringLines),
+                IsVaalVersion = IsVaalVersion(itemStringLines)
             };
-        }
 
-        private bool IsCorrupted(string[] lines)
-        {
-            return lines.Any(l => l == Resources.CorruptedDescriptor);
+            if (gemItem.IsVaalVersion)
+            {
+                gemItem.Name = $"{Resources.VaalDescriptor} {gemItem.Name}";
+                gemItem.Type = $"{Resources.VaalDescriptor} {gemItem.Type}";
+            }
+
+            return gemItem;
         }
 
         private int GetQuality(string[] lines)
@@ -58,6 +60,11 @@ namespace POETradeHelper.ItemSearch.Services
             }
 
             return level;
+        }
+
+        private bool IsVaalVersion(string[] lines)
+        {
+            return IsCorrupted(lines) && lines.Any(l => l.Contains(Resources.VaalDescriptor));
         }
     }
 }

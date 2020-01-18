@@ -2,15 +2,8 @@
 {
     public class CurrencyItem : Item
     {
-        public CurrencyItem()
+        public CurrencyItem() : base(ItemRarity.Currency)
         {
-            base.Rarity = ItemRarity.Currency;
-        }
-
-        public override ItemRarity Rarity
-        {
-            get => base.Rarity;
-            set { }
         }
     }
 }

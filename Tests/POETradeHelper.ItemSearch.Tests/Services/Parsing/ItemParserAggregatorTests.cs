@@ -5,6 +5,7 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.ItemSearch.Exceptions;
 using POETradeHelper.ItemSearch.Services;
+using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
 namespace POETradeHelper.ItemSearch.Tests.Services
 {
@@ -36,7 +37,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         [Test]
         public void CanParseShouldReturnTrueIfMatchingParserIsFound()
         {
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
                 .Returns(true);
 
             bool result = this.itemParserAggregator.CanParse("");
@@ -47,9 +48,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         [Test]
         public void CanParseShouldReturnFalseIfMoreThanOneMatchingParserIsFound()
         {
-            this.gemItemParserMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.gemItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
                 .Returns(true);
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
                 .Returns(true);
 
             bool result = this.itemParserAggregator.CanParse("");
@@ -61,22 +62,23 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         public void ParseShouldCallCanParseOnAllItemParser()
         {
             var itemString = this.itemStringBuilder.Build();
+            var expectedItemStringLines = this.itemStringBuilder.BuildLines();
 
-            this.gemItemParserMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.gemItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
                 .Returns(true);
 
             this.itemParserAggregator.Parse(itemString);
 
-            this.gemItemParserMock.Verify(x => x.CanParse(itemString));
-            this.currencyItemParserMock.Verify(x => x.CanParse(itemString));
+            this.gemItemParserMock.Verify(x => x.CanParse(expectedItemStringLines));
+            this.currencyItemParserMock.Verify(x => x.CanParse(expectedItemStringLines));
         }
 
         [Test]
         public void ParseShouldThrowExceptionIfMoreThanOneMatchingParserIsFound()
         {
-            this.gemItemParserMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.gemItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
                 .Returns(true);
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
                 .Returns(true);
 
             TestDelegate testDelegate = () => this.itemParserAggregator.Parse("");
@@ -96,13 +98,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         public void ParseShouldCallParseOnMatchingParser()
         {
             var itemString = this.itemStringBuilder.WithRarity("Currency").Build();
+            var expectedItemStringLines = this.itemStringBuilder.BuildLines();
 
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
                 .Returns(true);
 
             this.itemParserAggregator.Parse(itemString);
 
-            this.currencyItemParserMock.Verify(x => x.Parse(itemString));
+            this.currencyItemParserMock.Verify(x => x.Parse(expectedItemStringLines));
         }
 
         [Test]
@@ -110,9 +113,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         {
             var item = new CurrencyItem { Name = "Scroll of Wisdom" };
 
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
                 .Returns(true);
-            this.currencyItemParserMock.Setup(x => x.Parse(It.IsAny<string>()))
+            this.currencyItemParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
                 .Returns(item);
 
             Item result = this.itemParserAggregator.Parse("");

@@ -70,6 +70,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Blighted.
+        /// </summary>
+        public static string BlightedPrefix {
+            get {
+                return ResourceManager.GetString("BlightedPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Corrupted.
         /// </summary>
         public static string CorruptedDescriptor {
@@ -79,11 +88,38 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Flask.
+        /// </summary>
+        public static string FlaskDescriptor {
+            get {
+                return ResourceManager.GetString("FlaskDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item Quantity:.
+        /// </summary>
+        public static string ItemQuantityDescriptor {
+            get {
+                return ResourceManager.GetString("ItemQuantityDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Currency.
         /// </summary>
         public static string ItemRarityCurrency {
             get {
                 return ResourceManager.GetString("ItemRarityCurrency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item Rarity:.
+        /// </summary>
+        public static string ItemRarityDescriptor {
+            get {
+                return ResourceManager.GetString("ItemRarityDescriptor", resourceCulture);
             }
         }
         
@@ -151,6 +187,42 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Life Flask.
+        /// </summary>
+        public static string LifeFlaskDescriptor {
+            get {
+                return ResourceManager.GetString("LifeFlaskDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mana Flask.
+        /// </summary>
+        public static string ManaFlaskDescriptor {
+            get {
+                return ResourceManager.GetString("ManaFlaskDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Map Tier:.
+        /// </summary>
+        public static string MapTierDescriptor {
+            get {
+                return ResourceManager.GetString("MapTierDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Monster Pack Size:.
+        /// </summary>
+        public static string MonsterPackSizeDescriptor {
+            get {
+                return ResourceManager.GetString("MonsterPackSizeDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quality:.
         /// </summary>
         public static string QualityDescriptor {
@@ -174,6 +246,33 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string RequirementsDescriptor {
             get {
                 return ResourceManager.GetString("RequirementsDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Superior.
+        /// </summary>
+        public static string SuperiorPrefix {
+            get {
+                return ResourceManager.GetString("SuperiorPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unidentified.
+        /// </summary>
+        public static string UnidentifiedDescriptor {
+            get {
+                return ResourceManager.GetString("UnidentifiedDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vaal.
+        /// </summary>
+        public static string VaalDescriptor {
+            get {
+                return ResourceManager.GetString("VaalDescriptor", resourceCulture);
             }
         }
     }

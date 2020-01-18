@@ -2,6 +2,6 @@
 {
     public interface IIdentifiableItem
     {
-        bool IsIdentified { get; set; }
+        bool IsIdentified { get; }
     }
 }

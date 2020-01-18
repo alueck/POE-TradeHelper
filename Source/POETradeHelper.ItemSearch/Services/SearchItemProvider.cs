@@ -8,7 +8,7 @@ namespace POETradeHelper.ItemSearch.Services
     public class SearchItemProvider : ISearchItemProvider
     {
         private ICopyCommand copyCommand;
-        private readonly IItemParser itemParserAggregator;
+        private readonly IItemParserAggregator itemParserAggregator;
 
         public SearchItemProvider(ICopyCommand copyCommand, IItemParserAggregator itemParserAggregator)
         {

@@ -2,6 +2,7 @@
 using POETradeHelper.Common.Contract;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 namespace POETradeHelper
@@ -37,6 +38,7 @@ namespace POETradeHelper
             e.Handled = handledEventArgs.Handled;
         }
 
+        [ExcludeFromCodeCoverage]
         public void Dispose()
         {
             this.globalInputEventsHook.KeyDown -= GlobalEventsHook_KeyDown;

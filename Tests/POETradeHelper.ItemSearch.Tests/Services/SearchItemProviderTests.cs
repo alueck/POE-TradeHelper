@@ -69,7 +69,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         [Test]
         public async Task GetItemFromUnderCursorAsyncShouldReturnParseResult()
         {
-            var expected = new EquippableItem { Name = "TestItem" };
+            var expected = new EquippableItem(ItemRarity.Normal) { Name = "TestItem" };
+            this.itemParserAggregatorMock.Setup(x => x.CanParse(It.IsAny<string>()))
+                .Returns(true);
             this.itemParserAggregatorMock.Setup(x => x.Parse(It.IsAny<string>()))
                 .Returns(expected);
 

@@ -2,10 +2,15 @@
 {
     public abstract class Item
     {
+        protected Item(ItemRarity rarity)
+        {
+            this.Rarity = rarity;
+        }
+
         public string Name { get; set; }
 
         public string Type { get; set; }
 
-        public virtual ItemRarity Rarity { get; set; }
+        public ItemRarity Rarity { get; }
     }
 }

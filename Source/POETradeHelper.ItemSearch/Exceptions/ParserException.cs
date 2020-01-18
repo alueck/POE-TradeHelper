@@ -18,5 +18,18 @@ namespace POETradeHelper.ItemSearch.Exceptions
         {
             this.ItemString = itemString;
         }
+
+        public ParserException(string[] itemStringLines) : this(itemStringLines, null, null)
+        {
+        }
+
+        public ParserException(string[] itemStringLines, string message) : this(itemStringLines, message, null)
+        {
+        }
+
+        public ParserException(string[] itemStringLines, string message, Exception innerException) : base(message, innerException)
+        {
+            this.ItemString = string.Join(Environment.NewLine, itemStringLines);
+        }
     }
 }

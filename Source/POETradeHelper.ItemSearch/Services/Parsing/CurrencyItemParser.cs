@@ -4,14 +4,20 @@ namespace POETradeHelper.ItemSearch.Services
 {
     public class CurrencyItemParser : ItemParserBase
     {
-        public override bool CanParse(string itemString)
+        private const int NameLineIndex = 1;
+
+        public override bool CanParse(string[] itemStringLines)
         {
-            return this.HasRarity(itemString, ItemRarity.Currency);
+            return this.HasRarity(itemStringLines, ItemRarity.Currency);
         }
 
-        public override Item Parse(string itemString)
+        public override Item Parse(string[] itemStringLines)
         {
-            throw new System.NotImplementedException();
+            return new CurrencyItem
+            {
+                Name = itemStringLines[NameLineIndex],
+                Type = itemStringLines[NameLineIndex]
+            };
         }
     }
 }

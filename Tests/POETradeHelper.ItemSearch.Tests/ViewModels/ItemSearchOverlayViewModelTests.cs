@@ -34,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         [Test]
         public async Task SetListingForItemUnderCursorAsyncShouldCallGetListingsAsyncOnTraceClient()
         {
-            var item = new EquippableItem { Name = "TestItem" };
+            var item = new EquippableItem(ItemRarity.Normal) { Name = "TestItem" };
             this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync())
                 .ReturnsAsync(item);
 

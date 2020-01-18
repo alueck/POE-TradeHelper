@@ -2,6 +2,6 @@
 {
     public interface ICorruptableItem
     {
-        bool IsCorrupted { get; set; }
+        bool IsCorrupted { get; }
     }
 }

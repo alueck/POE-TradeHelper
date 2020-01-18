@@ -4,8 +4,8 @@ namespace POETradeHelper.ItemSearch.Contract.Services
 {
     public interface IItemParser
     {
-        Item Parse(string itemString);
+        Item Parse(string[] itemStringLines);
 
-        bool CanParse(string itemString);
+        bool CanParse(string[] itemStringLines);
     }
 }

@@ -1,8 +1,12 @@
 ﻿namespace POETradeHelper.ItemSearch.Contract.Models
 {
-    public class EquippableItem : Item, ICorruptableItem, IIdentifiableItem
+    public class EquippableItem : Item, ICorruptableItem, IIdentifiableItem, IQualityItem
     {
-        public string Quality { get; set; }
+        public EquippableItem(ItemRarity rarity) : base(rarity)
+        {
+        }
+
+        public int Quality { get; set; }
         public string ItemLevel { get; set; }
         public InfluenceType Influence { get; set; }
         public ItemSockets Sockets { get; set; }

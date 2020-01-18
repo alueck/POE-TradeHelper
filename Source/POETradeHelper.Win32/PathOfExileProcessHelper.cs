@@ -1,10 +1,12 @@
 ﻿using POETradeHelper.Common.Contract;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace POETradeHelper
 {
+    [ExcludeFromCodeCoverage]
     public class PathOfExileProcessHelper : IPathOfExileProcessHelper
     {
         private const string PATH_OF_EXILE_PROCESS_TITLE = "Path of Exile";
