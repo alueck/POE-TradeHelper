@@ -310,7 +310,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             ItemSockets expected = new ItemSockets
             {
-                SocketGroups = new[]
+                SocketGroups =
                 {
                     new SocketGroup { Sockets =
                         {
