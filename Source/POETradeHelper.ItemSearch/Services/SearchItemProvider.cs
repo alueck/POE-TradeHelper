@@ -1,6 +1,7 @@
 ﻿using POETradeHelper.Common.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Services

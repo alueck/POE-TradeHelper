@@ -126,8 +126,17 @@
   <data name="CorruptedKeyword" xml:space="preserve">
     <value>Corrupted</value>
   </data>
+  <data name="CrusaderItem" xml:space="preserve">
+    <value>Crusader Item</value>
+  </data>
+  <data name="ElderItem" xml:space="preserve">
+    <value>Elder Item</value>
+  </data>
   <data name="FlaskKeyword" xml:space="preserve">
     <value>Flask</value>
+  </data>
+  <data name="HunterItem" xml:space="preserve">
+    <value>Hunter Item</value>
   </data>
   <data name="ItemLevelDescriptor" xml:space="preserve">
     <value>Item Level:</value>
@@ -171,6 +180,9 @@
   <data name="MapTierDescriptor" xml:space="preserve">
     <value>Map Tier:</value>
   </data>
+  <data name="MetatmorphOrganDescriptor" xml:space="preserve">
+    <value>Combine this with four other different samples in Tane's Laboratory.</value>
+  </data>
   <data name="MonsterPackSizeDescriptor" xml:space="preserve">
     <value>Monster Pack Size:</value>
   </data>
@@ -183,8 +195,17 @@
   <data name="RarityDescriptor" xml:space="preserve">
     <value>Rarity:</value>
   </data>
+  <data name="RedeemerItem" xml:space="preserve">
+    <value>Redeemer Item</value>
+  </data>
   <data name="RequirementsDescriptor" xml:space="preserve">
     <value>Requirements:</value>
+  </data>
+  <data name="ShaperItem" xml:space="preserve">
+    <value>Shaper Item</value>
+  </data>
+  <data name="SocketsDescriptor" xml:space="preserve">
+    <value>Sockets:</value>
   </data>
   <data name="SuperiorPrefix" xml:space="preserve">
     <value>Superior</value>
@@ -194,5 +215,8 @@
   </data>
   <data name="VaalKeyword" xml:space="preserve">
     <value>Vaal</value>
+  </data>
+  <data name="WarlordItem" xml:space="preserve">
+    <value>Warlord Item</value>
   </data>
 </root>

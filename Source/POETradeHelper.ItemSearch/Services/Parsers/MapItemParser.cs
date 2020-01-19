@@ -6,6 +6,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class MapItemParser : ItemParserBase
     {
+        private const int NameLineIndex = 1;
+
         public override bool CanParse(string[] itemStringLines)
         {
             return itemStringLines.Any(l => l.Contains(Resources.MapTierDescriptor));
@@ -34,16 +36,15 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private static void SetNameAndType(MapItem mapItem, string[] itemStringLines)
         {
-            if (mapItem.IsIdentified && mapItem.Rarity != ItemRarity.Normal)
-            {
-                mapItem.Name = itemStringLines[1];
-                mapItem.Type = GetTypeWithoutPrefixes(itemStringLines[2]);
-            }
-            else
-            {
-                mapItem.Name = itemStringLines[1];
-                mapItem.Type = GetTypeWithoutPrefixes(itemStringLines[1]);
-            }
+            int typeLineIndex = HasName(mapItem) ? NameLineIndex + 1 : NameLineIndex;
+
+            mapItem.Name = itemStringLines[NameLineIndex];
+            mapItem.Type = GetTypeWithoutPrefixes(itemStringLines[typeLineIndex]);
+        }
+
+        private static bool HasName(MapItem mapItem)
+        {
+            return mapItem.IsIdentified && mapItem.Rarity != ItemRarity.Normal;
         }
 
         private static string GetTypeWithoutPrefixes(string type)

@@ -1,4 +1,4 @@
-﻿using POETradeHelper.ItemSearch.Contract.Services;
+﻿using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

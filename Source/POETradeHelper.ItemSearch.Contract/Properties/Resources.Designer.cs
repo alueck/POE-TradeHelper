@@ -88,11 +88,38 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crusader Item.
+        /// </summary>
+        public static string CrusaderItem {
+            get {
+                return ResourceManager.GetString("CrusaderItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elder Item.
+        /// </summary>
+        public static string ElderItem {
+            get {
+                return ResourceManager.GetString("ElderItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flask.
         /// </summary>
         public static string FlaskKeyword {
             get {
                 return ResourceManager.GetString("FlaskKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hunter Item.
+        /// </summary>
+        public static string HunterItem {
+            get {
+                return ResourceManager.GetString("HunterItem", resourceCulture);
             }
         }
         
@@ -223,6 +250,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Combine this with four other different samples in Tane&apos;s Laboratory..
+        /// </summary>
+        public static string MetatmorphOrganDescriptor {
+            get {
+                return ResourceManager.GetString("MetatmorphOrganDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Monster Pack Size:.
         /// </summary>
         public static string MonsterPackSizeDescriptor {
@@ -259,11 +295,38 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redeemer Item.
+        /// </summary>
+        public static string RedeemerItem {
+            get {
+                return ResourceManager.GetString("RedeemerItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Requirements:.
         /// </summary>
         public static string RequirementsDescriptor {
             get {
                 return ResourceManager.GetString("RequirementsDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shaper Item.
+        /// </summary>
+        public static string ShaperItem {
+            get {
+                return ResourceManager.GetString("ShaperItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sockets:.
+        /// </summary>
+        public static string SocketsDescriptor {
+            get {
+                return ResourceManager.GetString("SocketsDescriptor", resourceCulture);
             }
         }
         
@@ -291,6 +354,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string VaalKeyword {
             get {
                 return ResourceManager.GetString("VaalKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warlord Item.
+        /// </summary>
+        public static string WarlordItem {
+            get {
+                return ResourceManager.GetString("WarlordItem", resourceCulture);
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿using POETradeHelper.ItemSearch.Contract.Properties;
+﻿using POETradeHelper.Common.Extensions;
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using System.Collections.Generic;
 using System.Text;
@@ -12,6 +14,8 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
         public ICollection<string> Descriptions { get; private set; } = new List<string>();
 
         public int ItemLevel { get; private set; }
+        public InfluenceType InfluenceType { get; private set; }
+        public string SocketsString { get; private set; }
 
         public ItemStringBuilder WithQuality(int quality)
         {
@@ -35,6 +39,18 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             return this;
         }
 
+        public ItemStringBuilder WithInflucence(InfluenceType influence)
+        {
+            this.InfluenceType = influence;
+            return this;
+        }
+
+        public ItemStringBuilder WithSockets(string socketsString)
+        {
+            this.SocketsString = socketsString;
+            return this;
+        }
+
         public override string Build()
         {
             var stringBuilder = new StringBuilder();
@@ -45,6 +61,8 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
                 .Append(ItemStatsGroup)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.ItemLevel > 0)
                 .AppendLine($"{Resources.ItemLevelDescriptor} {this.ItemLevel}", () => this.ItemLevel > 0)
+                .AppendLine(ParserConstants.PropertyGroupSeparator, () => !string.IsNullOrEmpty(this.SocketsString))
+                .AppendLine($"{Resources.SocketsDescriptor} {this.SocketsString}", () => !string.IsNullOrEmpty(this.SocketsString))
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => !this.IsIdentified)
                 .AppendLine(Resources.UnidentifiedKeyword, () => !this.IsIdentified);
 
@@ -57,7 +75,9 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 
             stringBuilder
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.IsCorrupted)
-                .AppendLine(Resources.CorruptedKeyword, () => this.IsCorrupted);
+                .AppendLine(Resources.CorruptedKeyword, () => this.IsCorrupted)
+                .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.InfluenceType != InfluenceType.None)
+                .AppendLine(this.InfluenceType.GetDisplayName(), () => this.InfluenceType != InfluenceType.None);
 
             return stringBuilder.ToString();
         }
