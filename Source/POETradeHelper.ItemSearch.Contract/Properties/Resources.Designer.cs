@@ -250,20 +250,20 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Combine this with four other different samples in Tane&apos;s Laboratory..
-        /// </summary>
-        public static string MetatmorphOrganDescriptor {
-            get {
-                return ResourceManager.GetString("MetatmorphOrganDescriptor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Monster Pack Size:.
         /// </summary>
         public static string MonsterPackSizeDescriptor {
             get {
                 return ResourceManager.GetString("MonsterPackSizeDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Combine this with four other different samples in Tane&apos;s Laboratory..
+        /// </summary>
+        public static string OrganItemDescriptor {
+            get {
+                return ResourceManager.GetString("OrganItemDescriptor", resourceCulture);
             }
         }
         

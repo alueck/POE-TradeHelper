@@ -31,7 +31,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         private static bool IsMapOrOrganItem(string[] itemStringLines)
         {
             return itemStringLines.Any(l => l.Contains(Contract.Properties.Resources.MapTierDescriptor)
-                                         || l.Contains(Contract.Properties.Resources.MetatmorphOrganDescriptor));
+                                         || l.Contains(Contract.Properties.Resources.OrganItemDescriptor));
         }
 
         public override Item Parse(string[] itemStringLines)

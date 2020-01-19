@@ -71,7 +71,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             string[] itemStringLines = this.itemStringBuilder
                                 .WithItemLevel(1)
-                                .WithDescription(Resources.MetatmorphOrganDescriptor)
+                                .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
             bool result = this.equippableItemParser.CanParse(itemStringLines);

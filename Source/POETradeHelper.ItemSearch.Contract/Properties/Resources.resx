@@ -180,11 +180,11 @@
   <data name="MapTierDescriptor" xml:space="preserve">
     <value>Map Tier:</value>
   </data>
-  <data name="MetatmorphOrganDescriptor" xml:space="preserve">
-    <value>Combine this with four other different samples in Tane's Laboratory.</value>
-  </data>
   <data name="MonsterPackSizeDescriptor" xml:space="preserve">
     <value>Monster Pack Size:</value>
+  </data>
+  <data name="OrganItemDescriptor" xml:space="preserve">
+    <value>Combine this with four other different samples in Tane's Laboratory.</value>
   </data>
   <data name="ProphecyKeyword" xml:space="preserve">
     <value>prophecy</value>
