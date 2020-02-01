@@ -8,5 +8,34 @@
         Topmost="True"
         HasSystemDecorations="False"
         Title="Overlay">
-  Test
+
+  <StackPanel>
+    <TextBlock Text="{Binding ItemListings.Item.Name}" />
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition />
+        <ColumnDefinition />
+      </Grid.ColumnDefinitions>
+      <TextBlock Text="Account name" Grid.Column="0" />
+      <TextBlock Text="Item level" Grid.Column="1" />
+      <TextBlock Text="Price" Grid.Column="2" />
+    </Grid>
+    <ItemsControl Items="{Binding ItemListings.Result}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition />
+              <ColumnDefinition />
+              <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Listing.Account.Name}" Grid.Column="0" />
+            <TextBlock Text="{Binding Item.ItemLevel}" Grid.Column="1" />
+            <TextBlock Text="{Binding Listing.Price.PriceText}" Grid.Column="2" />
+          </Grid>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
 </Window>

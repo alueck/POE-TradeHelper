@@ -1,0 +1,78 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
+        xmlns:resx="clr-namespace:POETradeHelper.Properties;assembly=POETradeHelper"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="POETradeHelper.Views.MainWindow"
+        Title="POE Trade Helper"
+        Width="640"
+        Height="480">
+
+  <Window.Resources>
+    <commonUiConverters:MessageTypeToBrushConverter x:Key="messageTypeToBrushConverter" />
+  </Window.Resources>
+
+  <Window.Styles>
+    <Style Selector="HeaderedContentControl">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Border>
+              <StackPanel Spacing="5">
+                <ContentPresenter TextBlock.FontWeight="Bold" Content="{TemplateBinding Header}" />
+                <Border
+                    BorderBrush="Gray"
+                    BorderThickness="0.5"
+                    CornerRadius="5">
+                  <ContentPresenter Content="{TemplateBinding Content}" Margin="20" />
+                </Border>
+              </StackPanel>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Styles>
+
+  <Grid>
+
+    <Grid ZIndex="9999" IsVisible="{Binding IsBusy}">
+      <Grid.Background>
+        <SolidColorBrush Color="Gray" Opacity="0.8" />
+      </Grid.Background>
+
+      <Grid.RowDefinitions>
+        <RowDefinition Height="2*" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="2*" />
+      </Grid.RowDefinitions>
+
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="2*" MinWidth="100" />
+        <ColumnDefinition Width="*" MinWidth="100" />
+        <ColumnDefinition Width="2*" MinWidth="100" />
+      </Grid.ColumnDefinitions>
+
+      <Panel Grid.Row="1" Grid.Column="1">
+        <TextBlock Text="{x:Static resx:Resources.Initializing}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" />
+      </Panel>
+    </Grid>
+
+    <StackPanel ZIndex="999" Margin="20" Spacing="10">
+      <ItemsControl Items="{Binding SettingsViewModels}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <HeaderedContentControl Content="{Binding .}" Header="{Binding Title}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <Button Command="{Binding SaveSettingsCommand}">Save</Button>
+      <TextBlock Text="{Binding SaveSettingsMessage.Text}"
+                 Foreground="{Binding SaveSettingsMessage.Type, Converter={StaticResource messageTypeToBrushConverter}}"
+                 IsVisible="{Binding SaveSettingsMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    </StackPanel>
+  </Grid>
+</Window>

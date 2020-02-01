@@ -3,8 +3,8 @@ using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.ItemSearch.ViewModels;
-using POETradeHelper.PathOfExileTradeApi;
 using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Services;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Tests.ViewModels
@@ -12,15 +12,15 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
     public class ItemSearchOverlayViewModelTests
     {
         private Mock<ISearchItemProvider> searchItemProviderMock;
-        private Mock<ITradeClient> tradeClientMock;
+        private Mock<IPoeTradeApiClient> poeTradeApiClientMock;
         private ItemSearchResultOverlayViewModel itemSearchOverlayViewModel;
 
         [SetUp]
         public void Setup()
         {
             this.searchItemProviderMock = new Mock<ISearchItemProvider>();
-            this.tradeClientMock = new Mock<ITradeClient>();
-            this.itemSearchOverlayViewModel = new ItemSearchResultOverlayViewModel(this.searchItemProviderMock.Object, this.tradeClientMock.Object);
+            this.poeTradeApiClientMock = new Mock<IPoeTradeApiClient>();
+            this.itemSearchOverlayViewModel = new ItemSearchResultOverlayViewModel(this.searchItemProviderMock.Object, this.poeTradeApiClientMock.Object);
         }
 
         [Test]
@@ -40,19 +40,19 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            this.tradeClientMock.Verify(x => x.GetListingAsync(item));
+            this.poeTradeApiClientMock.Verify(x => x.GetListingsAsync(item));
         }
 
         [Test]
         public async Task SetListingForItemUnderCursorAsyncShouldSetListingIfTradeClientDoesNotReturnNull()
         {
-            var itemListing = new ListingResult();
-            this.tradeClientMock.Setup(x => x.GetListingAsync(It.IsAny<Item>()))
+            var itemListing = new ItemListingsQueryResult();
+            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<Item>()))
                 .ReturnsAsync(itemListing);
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            Assert.AreSame(itemListing, this.itemSearchOverlayViewModel.ItemListing);
+            Assert.AreSame(itemListing, this.itemSearchOverlayViewModel.ItemListings);
         }
     }
 }

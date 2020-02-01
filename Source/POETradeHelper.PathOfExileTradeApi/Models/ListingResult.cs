@@ -1,6 +1,4 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
-
-namespace POETradeHelper.PathOfExileTradeApi.Models
+﻿namespace POETradeHelper.PathOfExileTradeApi.Models
 {
     public class ListingResult
     {
@@ -9,7 +7,5 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         public Listing Listing { get; set; }
 
         public ItemListing Item { get; set; }
-
-        public bool Gone { get; set; }
     }
 }

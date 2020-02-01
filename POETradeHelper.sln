@@ -35,6 +35,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common", "So
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common.Tests", "Tests\POETradeHelper.Common.Tests\POETradeHelper.Common.Tests.csproj", "{04693CD5-1730-4CA8-A6E3-D91B879F2D2C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.PathOfExileTradeApiTests", "Tests\POETradeHelper.PathOfExileTradeApiTests\POETradeHelper.PathOfExileTradeApiTests.csproj", "{77CD7DB4-FD9E-4C65-8B0B-64CA7266354C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.Common.UI", "Source\POETradeHelper.Common.UI\POETradeHelper.Common.UI.csproj", "{05DBBAB5-E8B0-4B5C-85F7-53629FF2745A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,14 @@ Global
 		{04693CD5-1730-4CA8-A6E3-D91B879F2D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04693CD5-1730-4CA8-A6E3-D91B879F2D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04693CD5-1730-4CA8-A6E3-D91B879F2D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77CD7DB4-FD9E-4C65-8B0B-64CA7266354C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77CD7DB4-FD9E-4C65-8B0B-64CA7266354C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77CD7DB4-FD9E-4C65-8B0B-64CA7266354C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77CD7DB4-FD9E-4C65-8B0B-64CA7266354C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05DBBAB5-E8B0-4B5C-85F7-53629FF2745A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05DBBAB5-E8B0-4B5C-85F7-53629FF2745A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05DBBAB5-E8B0-4B5C-85F7-53629FF2745A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05DBBAB5-E8B0-4B5C-85F7-53629FF2745A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +110,8 @@ Global
 		{7A4BCFD4-623D-4C2C-8E66-E5FCA17DBDB8} = {C49FFB24-3897-4032-A2A9-A28377B75228}
 		{1B5DC7E8-B2FE-49CA-B174-89F7099A46D3} = {1DCB4EB6-9563-4F4C-B582-3B52D9E81CAD}
 		{04693CD5-1730-4CA8-A6E3-D91B879F2D2C} = {3629C438-DAEB-4944-9DF4-C31F68A8A579}
+		{77CD7DB4-FD9E-4C65-8B0B-64CA7266354C} = {3629C438-DAEB-4944-9DF4-C31F68A8A579}
+		{05DBBAB5-E8B0-4B5C-85F7-53629FF2745A} = {1DCB4EB6-9563-4F4C-B582-3B52D9E81CAD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BE843AD8-753C-4B98-A7B5-B8B2F7389681}

@@ -5,7 +5,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
 {
     public interface IItemSearchResultOverlayViewModel
     {
-        ListingResult ItemListing { get; set; }
+        ItemListingsQueryResult ItemListings { get; set; }
 
         Task SetListingForItemUnderCursorAsync();
     }

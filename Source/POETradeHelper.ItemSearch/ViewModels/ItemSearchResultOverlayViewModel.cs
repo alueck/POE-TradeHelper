@@ -1,7 +1,7 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
-using POETradeHelper.PathOfExileTradeApi;
 using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Services;
 using ReactiveUI;
 using System.Threading.Tasks;
 
@@ -10,17 +10,17 @@ namespace POETradeHelper.ItemSearch.ViewModels
     public class ItemSearchResultOverlayViewModel : ReactiveObject, IItemSearchResultOverlayViewModel
     {
         private readonly ISearchItemProvider searchItemProvider;
-        private readonly ITradeClient tradeClient;
+        private readonly IPoeTradeApiClient poeTradeApiClient;
 
-        public ItemSearchResultOverlayViewModel(ISearchItemProvider searchItemProvider, ITradeClient tradeClient)
+        public ItemSearchResultOverlayViewModel(ISearchItemProvider searchItemProvider, IPoeTradeApiClient tradeClient)
         {
             this.searchItemProvider = searchItemProvider;
-            this.tradeClient = tradeClient;
+            this.poeTradeApiClient = tradeClient;
         }
 
-        private ListingResult itemListing;
+        private ItemListingsQueryResult itemListing;
 
-        public ListingResult ItemListing
+        public ItemListingsQueryResult ItemListings
         {
             get => itemListing;
             set => this.RaiseAndSetIfChanged(ref itemListing, value);
@@ -30,11 +30,11 @@ namespace POETradeHelper.ItemSearch.ViewModels
         {
             Item item = await searchItemProvider.GetItemFromUnderCursorAsync();
 
-            ListingResult itemListing = await this.tradeClient.GetListingAsync(item);
+            ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(item);
 
             if (itemListing != null)
             {
-                this.ItemListing = itemListing;
+                this.ItemListings = itemListing;
             }
         }
     }

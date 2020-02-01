@@ -1,5 +1,6 @@
-﻿using Avalonia.Input.Platform;
+﻿using Avalonia.Controls;
 using POETradeHelper.Common.Contract;
+using POETradeHelper.ItemSearch.Contract.Controllers;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.ItemSearch.Views;
 using System;
@@ -38,6 +39,11 @@ namespace POETradeHelper.ItemSearch.Controllers
             var view = viewLocator.GetView(itemSearchResultOverlayViewModel);
             if (view is IItemSearchResultOverlayView itemSearchResultOverlay)
             {
+                if (view is IControl control)
+                {
+                    control.DataContext = itemSearchResultOverlayViewModel;
+                }
+
                 return itemSearchResultOverlay;
             }
 
@@ -54,7 +60,6 @@ namespace POETradeHelper.ItemSearch.Controllers
             e.Handled = true;
 
             await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync();
-
             this.View.Show();
         }
 

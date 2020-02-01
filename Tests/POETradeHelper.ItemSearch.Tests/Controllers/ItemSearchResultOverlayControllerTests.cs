@@ -5,6 +5,7 @@ using POETradeHelper.ItemSearch.Controllers;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.ItemSearch.Views;
 using POETradeHelper.PathOfExileTradeApi.Models;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace POETradeHelper.ItemSearch.Tests.Controllers
@@ -78,7 +79,7 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
         {
             TriggerSearchItemEvent();
 
-            this.viewModelMock.VerifySet(x => x.ItemListing = It.IsAny<ListingResult>(), Times.Never);
+            this.viewModelMock.VerifySet(x => x.ItemListings = It.IsAny<ItemListingsQueryResult>(), Times.Never);
         }
 
         [Test]
