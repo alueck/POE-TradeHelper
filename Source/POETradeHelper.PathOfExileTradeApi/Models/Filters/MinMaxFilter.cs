@@ -2,7 +2,7 @@
 {
     public class MinMaxFilter : IFilter
     {
-        public decimal Min { get; set; }
-        public decimal Max { get; set; }
+        public int Min { get; set; }
+        public int Max { get; set; }
     }
 }

@@ -132,6 +132,9 @@
   <data name="ElderItem" xml:space="preserve">
     <value>Elder Item</value>
   </data>
+  <data name="ExperienceDescriptor" xml:space="preserve">
+    <value>Experience:</value>
+  </data>
   <data name="FlaskKeyword" xml:space="preserve">
     <value>Flask</value>
   </data>

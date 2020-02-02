@@ -151,5 +151,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.Name, Is.EqualTo(expected));
             Assert.That(result.Type, Is.EqualTo(expected));
         }
+
+        [TestCase("150/1.000", 15)]
+        [TestCase("123/1.000", 12)]
+        [TestCase("129/1.000", 12)]
+        public void ParseShouldParseGemExperiencePercent(string experience, int expected)
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                .WithName("Flameblast")
+                .WithExperience(experience)
+                .BuildLines();
+
+            GemItem result = this.gemItemParser.Parse(itemStringLines) as GemItem;
+
+            Assert.That(result.ExperiencePercent, Is.EqualTo(expected));
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
     {
         public int GemLevel { get; set; }
         public string Tags { get; set; } = "Tag, Tag1, Tag2";
+        public string Experience { get; set; } = "1/100.000";
 
         public override string ToString()
         {
@@ -15,7 +16,8 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             stringBuilder
                 .AppendLine(Tags)
                 .AppendLine($"{Resources.LevelDescriptor} {GemLevel}", () => GemLevel > 0)
-                .AppendLine($"{Resources.QualityDescriptor} +{Quality}% {Resources.AugmentedDescriptor}", () => Quality > 0);
+                .AppendLine($"{Resources.QualityDescriptor} +{Quality}% {Resources.AugmentedDescriptor}", () => Quality > 0)
+                .AppendLine($"{Resources.ExperienceDescriptor} {this.Experience}", () => !string.IsNullOrWhiteSpace(this.Experience));
 
             return stringBuilder.ToString();
         }

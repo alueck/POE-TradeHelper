@@ -106,6 +106,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Experience:.
+        /// </summary>
+        public static string ExperienceDescriptor {
+            get {
+                return ResourceManager.GetString("ExperienceDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flask.
         /// </summary>
         public static string FlaskKeyword {

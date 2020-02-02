@@ -10,6 +10,8 @@
 
         public int Level { get; set; }
 
+        public int ExperiencePercent { get; set; }
+
         public bool IsCorrupted { get; set; }
 
         public bool IsVaalVersion { get; set; }

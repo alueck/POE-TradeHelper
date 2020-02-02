@@ -2,6 +2,7 @@
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
+using System.Data;
 using System.Text;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers
@@ -30,6 +31,12 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
         public GemItemStringBuilder WithQuality(int quality)
         {
             this.ItemStatsGroup.Quality = quality;
+            return this;
+        }
+
+        public GemItemStringBuilder WithExperience(string experience)
+        {
+            this.ItemStatsGroup.Experience = experience;
             return this;
         }
 
