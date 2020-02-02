@@ -4,7 +4,9 @@ using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace POETradeHelper.PathOfExileTradeApiTests
 {
@@ -38,6 +40,26 @@ namespace POETradeHelper.PathOfExileTradeApiTests
             this.poeTradeApiJsonSerializer.Serialize(obj);
 
             this.jsonSerializerWrapperMock.Verify(x => x.Serialize(obj, It.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy is JsonSnakeCaseNamingPolicy)));
+        }
+
+        [Test]
+        public void SerializeShouldCallSerializeOnJsonSerializerWithJsonStringEnumConverter()
+        {
+            IEnumerable<string> obj = new List<string>();
+
+            this.poeTradeApiJsonSerializer.Serialize(obj);
+
+            this.jsonSerializerWrapperMock.Verify(x => x.Serialize(obj, It.Is<JsonSerializerOptions>(o => o.Converters.OfType<JsonStringEnumConverter>().Any())));
+        }
+
+        [Test]
+        public void SerializeShouldCallSerializeOnJsonSerializerWithIgnoreNullValues()
+        {
+            IEnumerable<string> obj = new List<string>();
+
+            this.poeTradeApiJsonSerializer.Serialize(obj);
+
+            this.jsonSerializerWrapperMock.Verify(x => x.Serialize(obj, It.Is<JsonSerializerOptions>(o => o.IgnoreNullValues)));
         }
     }
 }

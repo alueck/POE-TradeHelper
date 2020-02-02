@@ -1,13 +1,20 @@
 ﻿using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public class PoeTradeApiJsonSerializer : IPoeTradeApiJsonSerializer
     {
         private static readonly JsonSerializerOptions camelCaseJsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-        private static readonly JsonSerializerOptions snakeCaseJsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = new JsonSnakeCaseNamingPolicy() };
+
+        private static readonly JsonSerializerOptions snakeCaseJsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = new JsonSnakeCaseNamingPolicy(),
+            Converters = { new JsonStringEnumConverter(new JsonSnakeCaseNamingPolicy()) },
+            IgnoreNullValues = true
+        };
 
         private IJsonSerializerWrapper jsonSerializer;
 
