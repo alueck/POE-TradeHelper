@@ -84,7 +84,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private static string GetTypeWithoutPrefixes(string type)
         {
-            return type.Replace(Contract.Properties.Resources.SuperiorPrefix, "").Trim();
+            return type
+                .Replace(Contract.Properties.Resources.SuperiorPrefix, "")
+                .Replace(Contract.Properties.Resources.SynthesisedKeyword, "")
+                .Trim();
         }
     }
 }

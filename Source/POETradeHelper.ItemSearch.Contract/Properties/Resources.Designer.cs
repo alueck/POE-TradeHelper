@@ -349,6 +349,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Synthesised.
+        /// </summary>
+        public static string SynthesisedKeyword {
+            get {
+                return ResourceManager.GetString("SynthesisedKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unidentified.
         /// </summary>
         public static string UnidentifiedKeyword {

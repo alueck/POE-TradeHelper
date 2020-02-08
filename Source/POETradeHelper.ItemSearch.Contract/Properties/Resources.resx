@@ -213,6 +213,9 @@
   <data name="SuperiorPrefix" xml:space="preserve">
     <value>Superior</value>
   </data>
+  <data name="SynthesisedKeyword" xml:space="preserve">
+    <value>Synthesised</value>
+  </data>
   <data name="UnidentifiedKeyword" xml:space="preserve">
     <value>Unidentified</value>
   </data>

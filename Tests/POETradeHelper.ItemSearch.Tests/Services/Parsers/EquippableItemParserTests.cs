@@ -227,6 +227,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         }
 
         [Test]
+        public void ParseShouldParseTypeOfSynthesisedItem()
+        {
+            const string expected = "Cutthroat's Garb";
+
+            string[] itemStringLines = this.itemStringBuilder
+                                            .WithType($"{Resources.SynthesisedKeyword} {expected}")
+                                            .BuildLines();
+
+            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
+
+            Assert.That(result.Type, Is.EqualTo(expected));
+        }
+
+        [Test]
         public void ParseShouldParseCorrupted()
         {
             string[] itemStringLines = this.itemStringBuilder
