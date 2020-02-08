@@ -9,11 +9,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 
         public string Type { get; set; }
 
-        public QueryFilters Filters { get; set; }
-
-        public IDictionary<string, SortType> Sort { get; } = new Dictionary<string, SortType>
-        {
-            ["price"] = SortType.Asc
-        };
+        public QueryFilters Filters { get; } = new QueryFilters();
     }
 }

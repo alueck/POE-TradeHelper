@@ -31,12 +31,16 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
                 throw new ArgumentNullException(nameof(filterName));
             }
 
-            return this.Filters.TryGetValue(filterName.ToLower(), out object filter) ? (TFilter)filter : default;
+            return this.filters.TryGetValue(filterName.ToLower(), out object filter) ? (TFilter)filter : default;
         }
 
         private readonly Dictionary<string, object> filters = new Dictionary<string, object>();
 
-        // has to be type object for System.Text.JSON serialization
-        public IReadOnlyDictionary<string, object> Filters => this.filters;
+        /// <summary>
+        /// This should only be used for JSON serialization and not accessed otherwise.
+        /// System.Text.Json can only access public properties at the moment. The type needs to be object,
+        /// so the JSON serializer from System.Text.Json handles each object as the derived and not the base type.
+        /// </summary>
+        public IReadOnlyDictionary<string, object> Filters => this.filters.Count > 0 ? this.filters : null;
     }
 }

@@ -4,19 +4,19 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
     public class QueryFilters
     {
-        public TypeFilters TypeFilters { get; set; }
+        public TypeFilters TypeFilters { get; } = new TypeFilters();
 
-        public WeaponFilters WeaponFilters { get; set; }
+        public WeaponFilters WeaponFilters { get; } = new WeaponFilters();
 
-        public ArmourFilters ArmourFilters { get; set; }
+        public ArmourFilters ArmourFilters { get; } = new ArmourFilters();
 
-        public SocketFilters SocketFilters { get; set; }
+        public SocketFilters SocketFilters { get; } = new SocketFilters();
 
         [JsonPropertyName("req_filters")]
-        public RequirementsFilters RequirementsFilters { get; set; }
+        public RequirementsFilters RequirementsFilters { get; } = new RequirementsFilters();
 
-        public MapFilters MapFilters { get; set; }
+        public MapFilters MapFilters { get; } = new MapFilters();
 
-        public MiscFilters MiscFilters { get; set; }
+        public MiscFilters MiscFilters { get; } = new MiscFilters();
     }
 }
