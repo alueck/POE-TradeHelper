@@ -409,7 +409,7 @@ namespace POETradeHelper.PathOfExileTradeApiTests
 
             AsyncTestDelegate asyncTestDelegate = async () => await this.poeTradeApiClient.GetListingsAsync(item);
 
-            this.AssertThrowsPoeTradeApiCommunicationExceptionIfHttpResponseDoesNotReturnSuccessStatusCode(asyncTestDelegate, Resources.PoeTradeApiSearchEndpoint);
+            this.AssertThrowsPoeTradeApiCommunicationExceptionIfHttpResponseDoesNotReturnSuccessStatusCode(asyncTestDelegate, Resources.PoeTradeApiSearchEndpoint, "posted json content");
         }
 
         [Test]
@@ -426,7 +426,7 @@ namespace POETradeHelper.PathOfExileTradeApiTests
             Assert.That(exception.InnerException, Is.EqualTo(expectedInnerException));
         }
 
-        private void AssertThrowsPoeTradeApiCommunicationExceptionIfHttpResponseDoesNotReturnSuccessStatusCode(AsyncTestDelegate asyncTestDelegate, string endpoint)
+        private void AssertThrowsPoeTradeApiCommunicationExceptionIfHttpResponseDoesNotReturnSuccessStatusCode(AsyncTestDelegate asyncTestDelegate, string endpoint, string jsonContent = "")
         {
             HttpStatusCode httpStatusCode = HttpStatusCode.BadRequest;
 
@@ -436,6 +436,8 @@ namespace POETradeHelper.PathOfExileTradeApiTests
                 StatusCode = httpStatusCode
             };
 
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Serialize(It.IsAny<SearchQueryRequest>()))
+                .Returns(jsonContent);
             this.httpClientWrapperMock.Setup(x => x.GetAsync(It.Is<string>(s => s.Contains(endpoint))))
                 .ReturnsAsync(httpResponse);
             this.httpClientWrapperMock.Setup(x => x.PostAsync(It.Is<string>(s => s.Contains(endpoint)), It.IsAny<HttpContent>()))
@@ -444,6 +446,11 @@ namespace POETradeHelper.PathOfExileTradeApiTests
             PoeTradeApiCommunicationException exception = Assert.CatchAsync<PoeTradeApiCommunicationException>(asyncTestDelegate);
             Assert.That(exception.Message, Contains.Substring(httpStatusCode.ToString()));
             Assert.That(exception.Message, Contains.Substring(endpoint));
+
+            if (!string.IsNullOrEmpty(jsonContent))
+            {
+                Assert.That(exception.Message, Contains.Substring(jsonContent));
+            }
         }
 
         private void MockItemSearchOptions(string league)

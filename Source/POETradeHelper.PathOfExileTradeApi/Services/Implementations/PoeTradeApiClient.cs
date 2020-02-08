@@ -56,7 +56,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new PoeTradeApiCommunicationException(Resources.PoeTradeApiSearchEndpoint, response.StatusCode);
+                throw new PoeTradeApiCommunicationException(Resources.PoeTradeApiSearchEndpoint, await content.ReadAsStringAsync(), response.StatusCode);
             }
 
             return await this.ReadAsJsonAsync<SearchQueryResult>(response.Content);

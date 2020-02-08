@@ -20,5 +20,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Exceptions
         public PoeTradeApiCommunicationException(string endpoint, HttpStatusCode httpStatusCode) : base($"Query to endpoint {endpoint} of Path of Exile trade API returned status code {httpStatusCode}")
         {
         }
+
+        public PoeTradeApiCommunicationException(string endpoint, string content, HttpStatusCode httpStatusCode) : base($"Query to endpoint {endpoint} of Path of Exile trade API returned status code {httpStatusCode}. Content: {content}")
+        {
+        }
     }
 }
