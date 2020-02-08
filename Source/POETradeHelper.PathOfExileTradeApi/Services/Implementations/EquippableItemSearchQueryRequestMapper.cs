@@ -4,13 +4,15 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
+using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
-    public class EquippableItemSearchQueryRequestMapper : IItemSearchQueryRequestMapper
+    public class EquippableItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
         private static readonly IDictionary<InfluenceType, Action<MiscFilters>> InfluenceMappings = new Dictionary<InfluenceType, Action<MiscFilters>>
         {
@@ -30,19 +32,19 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             this.itemSearchOptions = itemSearchOptions;
         }
 
-        public bool CanMap(Item item)
+        public override bool CanMap(Item item)
         {
             return item is EquippableItem;
         }
 
-        public SearchQueryRequest MapToQueryRequest(Item item)
+        public override SearchQueryRequest MapToQueryRequest(Item item)
         {
             var equippableItem = (EquippableItem)item;
 
             var result = new SearchQueryRequest();
 
             MapItemType(result, equippableItem);
-            MapItemName(result, equippableItem);
+            this.MapItemName(result, equippableItem);
             MapItemRarity(result, equippableItem);
             MapItemLinks(result, equippableItem);
             MapInfluence(result, equippableItem);
@@ -67,11 +69,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             result.Query.Type = equippableItem.Type;
         }
 
-        private static void MapItemName(SearchQueryRequest result, EquippableItem equippableItem)
+        private void MapItemName(SearchQueryRequest result, EquippableItem equippableItem)
         {
             if (equippableItem.Rarity == ItemRarity.Unique)
             {
-                result.Query.Name = equippableItem.Name;
+                base.MapItemName(result, equippableItem);
             }
         }
 
