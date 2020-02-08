@@ -3,7 +3,7 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
-    public interface IItemSearchQueryRequestMapper
+    public interface IItemSearchQueryRequestMapperAggregator
     {
         SearchQueryRequest MapToQueryRequest(Item item);
     }

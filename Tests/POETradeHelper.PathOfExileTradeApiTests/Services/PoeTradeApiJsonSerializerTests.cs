@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace POETradeHelper.PathOfExileTradeApiTests
+namespace POETradeHelper.PathOfExileTradeApiTests.Services
 {
     public class PoeTradeApiJsonSerializerTests
     {
