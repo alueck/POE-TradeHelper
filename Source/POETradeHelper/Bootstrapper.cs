@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using WindowsHook;
 
 namespace POETradeHelper
@@ -57,14 +58,32 @@ namespace POETradeHelper
 
         private static void ConfigureOptions(ServiceCollection serviceCollection)
         {
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string poeTradeHelperAppDataFolder = Path.Combine(appDataFolder, "POETradeHelper");
+            string poeTradeHelperAppSettingsPath = Path.Combine(poeTradeHelperAppDataFolder, "appsettings.json");
+
+            CreateAppSettingsFileIfMissing(poeTradeHelperAppDataFolder, poeTradeHelperAppSettingsPath);
+
             IConfiguration config = new ConfigurationBuilder()
-                          .AddJsonFile("appsettings.json", false, true)
+                          .AddJsonFile(poeTradeHelperAppSettingsPath, false, true)
                           .Build();
 
             serviceCollection
                 .AddOptions()
                 .Configure<AppSettings>(config)
                 .Configure<ItemSearchOptions>(config.GetSection("ItemSearchOptions"));
+        }
+
+        private static void CreateAppSettingsFileIfMissing(string poeTradeHelperAppDataFolder, string poeTradeHelperAppSettingsPath)
+        {
+            Directory.CreateDirectory(poeTradeHelperAppDataFolder);
+
+            if (!File.Exists(poeTradeHelperAppSettingsPath))
+            {
+                string defaultAppSettingsJson = JsonSerializer.Serialize(new AppSettings(), new JsonSerializerOptions { WriteIndented = true });
+
+                File.WriteAllText(poeTradeHelperAppSettingsPath, defaultAppSettingsJson);
+            }
         }
 
         private static void ConfigureLogging()

@@ -4,6 +4,6 @@ namespace POETradeHelper
 {
     public class AppSettings
     {
-        public ItemSearchOptions ItemSearchOptions { get; set; }
+        public ItemSearchOptions ItemSearchOptions { get; set; } = new ItemSearchOptions();
     }
 }
