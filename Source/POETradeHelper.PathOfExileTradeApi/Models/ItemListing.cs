@@ -15,6 +15,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 
         public bool Identified { get; set; }
 
+        public bool Corrupted { get; set; }
+
         [JsonPropertyName("ilvl")]
         public byte ItemLevel { get; set; }
     }

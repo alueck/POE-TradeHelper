@@ -17,15 +17,24 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             var prophecyItem = (ProphecyItem)item;
             var result = new SearchQueryRequest();
 
-            MapItemName(result, prophecyItem);
-            MapItemType(result, prophecyItem);
+            this.MapItemName(result, prophecyItem);
+            this.MapItemType(result, prophecyItem);
 
             return result;
         }
 
-        private void MapItemType(SearchQueryRequest result, ProphecyItem prophecyItem)
+        protected override void MapItemName(SearchQueryRequest result, Item item)
+        {
+            result.Query.Name = item.Name;
+        }
+
+        protected override void MapItemType(SearchQueryRequest result, Item item)
         {
             result.Query.Type = ItemTypeFilterOptions.Prophecy;
+        }
+
+        protected override void MapItemRarity(SearchQueryRequest result, Item item)
+        {
         }
     }
 }

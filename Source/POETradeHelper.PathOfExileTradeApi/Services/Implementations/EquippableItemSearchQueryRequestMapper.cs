@@ -1,12 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
 using POETradeHelper.ItemSearch;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -39,13 +37,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
         public override SearchQueryRequest MapToQueryRequest(Item item)
         {
+            var result = base.MapToQueryRequest(item);
+
             var equippableItem = (EquippableItem)item;
-
-            var result = new SearchQueryRequest();
-
-            MapItemType(result, equippableItem);
-            this.MapItemName(result, equippableItem);
-            MapItemRarity(result, equippableItem);
             MapItemLinks(result, equippableItem);
             MapInfluence(result, equippableItem);
             this.MapItemLevel(result, equippableItem);
@@ -61,19 +55,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
                 {
                     Min = equippableItem.ItemLevel
                 };
-            }
-        }
-
-        private static void MapItemType(SearchQueryRequest result, EquippableItem equippableItem)
-        {
-            result.Query.Type = equippableItem.Type;
-        }
-
-        private void MapItemName(SearchQueryRequest result, EquippableItem equippableItem)
-        {
-            if (equippableItem.Rarity == ItemRarity.Unique)
-            {
-                base.MapItemName(result, equippableItem);
             }
         }
 
@@ -94,16 +75,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
                     Max = equippableItem.Sockets.Count
                 };
             }
-        }
-
-        private void MapItemRarity(SearchQueryRequest result, EquippableItem equippableItem)
-        {
-            result.Query.Filters.TypeFilters.Rarity = new OptionFilter
-            {
-                Option = equippableItem.Rarity == ItemRarity.Unique
-                                ? ItemRarityFilterOptions.Unique
-                                : ItemRarityFilterOptions.NonUnique
-            };
         }
 
         private void MapInfluence(SearchQueryRequest result, EquippableItem equippableItem)

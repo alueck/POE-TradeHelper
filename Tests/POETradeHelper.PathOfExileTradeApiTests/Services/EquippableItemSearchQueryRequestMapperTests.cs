@@ -61,17 +61,31 @@ namespace POETradeHelper.PathOfExileTradeApiTests.Services
         }
 
         [Test]
-        public void MapToQueryItemShouldMapItemNameForUniqueItem()
+        public void MapToQueryItemShouldMapItemNameForIdentfiedUniqueItem()
         {
             const string expected = "Dire Nock";
             var item = new EquippableItem(ItemRarity.Unique)
             {
-                Name = expected
+                Name = expected,
+                IsIdentified = true
             };
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.Query.Name, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void MapToQueryItemShouldNotMapItemNameForUnidentifiedUniqueItem()
+        {
+            var item = new EquippableItem(ItemRarity.Unique)
+            {
+                Type = "Thicket Bow"
+            };
+
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
+
+            Assert.IsNull(result.Query.Name);
         }
 
         [TestCaseSource(nameof(NonUniqueItemRarities))]
