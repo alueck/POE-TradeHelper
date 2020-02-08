@@ -1,4 +1,5 @@
-﻿using System;
+﻿using POETradeHelper.Common;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -6,6 +7,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
     public abstract class FiltersBase
     {
+        private static readonly JsonSnakeCaseNamingPolicy snakeCaseNamingPolicy = new JsonSnakeCaseNamingPolicy();
+
         protected void SetFilter(IFilter filter, [CallerMemberName] string filterName = null)
         {
             if (string.IsNullOrWhiteSpace(filterName))
@@ -19,7 +22,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
             }
             else
             {
-                this.filters[filterName.ToLower()] = filter;
+                this.filters[snakeCaseNamingPolicy.ConvertName(filterName)] = filter;
             }
         }
 
@@ -31,7 +34,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
                 throw new ArgumentNullException(nameof(filterName));
             }
 
-            return this.filters.TryGetValue(filterName.ToLower(), out object filter) ? (TFilter)filter : default;
+            return this.filters.TryGetValue(snakeCaseNamingPolicy.ConvertName(filterName), out object filter) ? (TFilter)filter : default;
         }
 
         private readonly Dictionary<string, object> filters = new Dictionary<string, object>();
