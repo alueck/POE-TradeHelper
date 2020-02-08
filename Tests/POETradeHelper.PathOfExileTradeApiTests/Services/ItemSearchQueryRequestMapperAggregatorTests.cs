@@ -3,7 +3,6 @@ using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 using System.Collections.Generic;
 
 namespace POETradeHelper.PathOfExileTradeApiTests.Services

@@ -1,7 +1,6 @@
-﻿using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace POETradeHelper.PathOfExileTradeApi
+namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
     public class TypeFilters : FiltersBase
     {

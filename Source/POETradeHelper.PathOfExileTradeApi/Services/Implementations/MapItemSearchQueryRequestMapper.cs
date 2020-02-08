@@ -1,7 +1,6 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {

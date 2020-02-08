@@ -3,7 +3,6 @@ using POETradeHelper.ItemSearch;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;

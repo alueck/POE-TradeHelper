@@ -3,7 +3,7 @@ using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
-namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
+namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMapper
     {
