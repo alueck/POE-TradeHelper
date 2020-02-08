@@ -19,17 +19,17 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
     {
         private readonly IHttpClientWrapper httpClient;
         private readonly IPoeTradeApiJsonSerializer jsonSerializer;
-        private readonly IItemSearchQueryRequestMapper itemToQueryRequestMapper;
+        private readonly IItemSearchQueryRequestMapperAggregator itemToQueryRequestMapperAggregator;
         private readonly IOptions<ItemSearchOptions> itemSearchOptions;
 
         public PoeTradeApiClient(IHttpClientFactoryWrapper httpClientFactory,
             IPoeTradeApiJsonSerializer jsonSerializer,
-            IItemSearchQueryRequestMapper itemSearchQueryRequestMapper,
+            IItemSearchQueryRequestMapperAggregator itemSearchQueryRequestMapperAggregator,
             IOptions<ItemSearchOptions> itemSearchOptions)
         {
             this.httpClient = httpClientFactory.CreateClient(nameof(PoeTradeApiClient));
             this.jsonSerializer = jsonSerializer;
-            this.itemToQueryRequestMapper = itemSearchQueryRequestMapper;
+            this.itemToQueryRequestMapperAggregator = itemSearchQueryRequestMapperAggregator;
             this.itemSearchOptions = itemSearchOptions;
         }
 
@@ -37,7 +37,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
             try
             {
-                SearchQueryRequest queryRequest = this.itemToQueryRequestMapper.MapToQueryRequest(item);
+                SearchQueryRequest queryRequest = this.itemToQueryRequestMapperAggregator.MapToQueryRequest(item);
 
                 SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(queryRequest);
 
@@ -71,13 +71,18 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
         private async Task<ItemListingsQueryResult> GetListingsQueryResult(Item item, SearchQueryResult searchQueryResult)
         {
-            ItemListingsQueryResult listingResultQueryResult = await this.GetAsync<ItemListingsQueryResult>($"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(",", searchQueryResult.Result.Take(10))}");
+            ItemListingsQueryResult itemListingsQueryResult = new ItemListingsQueryResult();
 
-            listingResultQueryResult.Uri = new Uri($"{Resources.PoeTradeApiBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}/{searchQueryResult.Id}");
-            listingResultQueryResult.TotalCount = searchQueryResult.Total;
-            listingResultQueryResult.Item = item;
+            if (searchQueryResult.Total > 0)
+            {
+                itemListingsQueryResult = await this.GetAsync<ItemListingsQueryResult>($"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(",", searchQueryResult.Result.Take(10))}");
+            }
 
-            return listingResultQueryResult;
+            itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeApiBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}/{searchQueryResult.Id}");
+            itemListingsQueryResult.TotalCount = searchQueryResult.Total;
+            itemListingsQueryResult.Item = item;
+
+            return itemListingsQueryResult;
         }
 
         public async Task<IList<League>> GetLeaguesAsync()
