@@ -13,10 +13,10 @@ using System.Collections.Generic;
 
 namespace POETradeHelper.PathOfExileTradeApiTests.Services
 {
-    public class EquippableItemToQueryRequestMapperTests
+    public class EquippableItemSearchQueryRequestMapperTests
     {
         private Mock<IOptions<ItemSearchOptions>> itemSearchOptionsMock;
-        private EquippableItemToQueryRequestMapper equippableItemToQueryRequestMapper;
+        private EquippableItemSearchQueryRequestMapper equippableItemToQueryRequestMapper;
 
         [SetUp]
         public void Setup()
@@ -25,7 +25,7 @@ namespace POETradeHelper.PathOfExileTradeApiTests.Services
             this.itemSearchOptionsMock.Setup(x => x.Value)
                 .Returns(new ItemSearchOptions());
 
-            this.equippableItemToQueryRequestMapper = new EquippableItemToQueryRequestMapper(this.itemSearchOptionsMock.Object);
+            this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.itemSearchOptionsMock.Object);
         }
 
         [Test]

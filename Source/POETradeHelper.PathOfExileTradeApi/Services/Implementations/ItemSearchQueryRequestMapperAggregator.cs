@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
-    public class ItemToQueryRequestMapperAggregator : IItemSearchQueryRequestMapperAggregator
+    public class ItemSearchQueryRequestMapperAggregator : IItemSearchQueryRequestMapperAggregator
     {
         private readonly IEnumerable<IItemSearchQueryRequestMapper> itemToQueryRequestMappers;
 
-        public ItemToQueryRequestMapperAggregator(IEnumerable<IItemSearchQueryRequestMapper> itemToQueryRequestMappers)
+        public ItemSearchQueryRequestMapperAggregator(IEnumerable<IItemSearchQueryRequestMapper> itemToQueryRequestMappers)
         {
             this.itemToQueryRequestMappers = itemToQueryRequestMappers;
         }

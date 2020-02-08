@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
-    public class EquippableItemToQueryRequestMapper : IItemSearchQueryRequestMapper
+    public class EquippableItemSearchQueryRequestMapper : IItemSearchQueryRequestMapper
     {
         private static readonly IDictionary<InfluenceType, Action<MiscFilters>> InfluenceMappings = new Dictionary<InfluenceType, Action<MiscFilters>>
         {
@@ -25,7 +25,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
         private IOptions<ItemSearchOptions> itemSearchOptions;
 
-        public EquippableItemToQueryRequestMapper(IOptions<ItemSearchOptions> itemSearchOptions)
+        public EquippableItemSearchQueryRequestMapper(IOptions<ItemSearchOptions> itemSearchOptions)
         {
             this.itemSearchOptions = itemSearchOptions;
         }

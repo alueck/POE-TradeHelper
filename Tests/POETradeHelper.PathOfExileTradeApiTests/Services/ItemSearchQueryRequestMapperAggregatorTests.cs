@@ -12,7 +12,7 @@ namespace POETradeHelper.PathOfExileTradeApiTests.Services
     {
         private Mock<IItemSearchQueryRequestMapper> itemSearchQueryRequestMapperMock1;
         private Mock<IItemSearchQueryRequestMapper> itemSearchQueryRequestMapperMock2;
-        private ItemToQueryRequestMapperAggregator itemToQueryRequestMapperAggregator;
+        private ItemSearchQueryRequestMapperAggregator itemToQueryRequestMapperAggregator;
 
         [SetUp]
         public void Setup()
@@ -20,7 +20,7 @@ namespace POETradeHelper.PathOfExileTradeApiTests.Services
             this.itemSearchQueryRequestMapperMock1 = new Mock<IItemSearchQueryRequestMapper>();
             this.itemSearchQueryRequestMapperMock2 = new Mock<IItemSearchQueryRequestMapper>();
 
-            this.itemToQueryRequestMapperAggregator = new ItemToQueryRequestMapperAggregator(new List<IItemSearchQueryRequestMapper>
+            this.itemToQueryRequestMapperAggregator = new ItemSearchQueryRequestMapperAggregator(new List<IItemSearchQueryRequestMapper>
             {
                 this.itemSearchQueryRequestMapperMock1.Object,
                 this.itemSearchQueryRequestMapperMock2.Object
