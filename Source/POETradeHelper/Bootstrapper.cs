@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using WindowsHook;
 
 namespace POETradeHelper
 {
@@ -36,6 +37,8 @@ namespace POETradeHelper
             container.RegisterAssemblyTypes(assemblies.ToArray())
                 .PublicOnly()
                 .AsImplementedInterfaces();
+
+            container.RegisterInstance(Hook.GlobalEvents());
 
             container.UseAutofacDependencyResolver();
 
