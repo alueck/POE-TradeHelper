@@ -23,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.9.2" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.9.2" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.2" />
+    <PackageReference Include="Avalonia" Version="0.9.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.3" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.3" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.1" />
   </ItemGroup>
 
