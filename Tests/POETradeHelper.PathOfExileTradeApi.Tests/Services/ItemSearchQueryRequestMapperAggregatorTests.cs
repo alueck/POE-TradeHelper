@@ -11,7 +11,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
     {
         private Mock<IItemSearchQueryRequestMapper> itemSearchQueryRequestMapperMock1;
         private Mock<IItemSearchQueryRequestMapper> itemSearchQueryRequestMapperMock2;
-        private ItemSearchQueryRequestMapperAggregator itemToQueryRequestMapperAggregator;
+        private ItemSearchQueryRequestMapperAggregator itemSearchQueryRequestMapperAggregator;
 
         [SetUp]
         public void Setup()
@@ -19,7 +19,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.itemSearchQueryRequestMapperMock1 = new Mock<IItemSearchQueryRequestMapper>();
             this.itemSearchQueryRequestMapperMock2 = new Mock<IItemSearchQueryRequestMapper>();
 
-            this.itemToQueryRequestMapperAggregator = new ItemSearchQueryRequestMapperAggregator(new List<IItemSearchQueryRequestMapper>
+            this.itemSearchQueryRequestMapperAggregator = new ItemSearchQueryRequestMapperAggregator(new List<IItemSearchQueryRequestMapper>
             {
                 this.itemSearchQueryRequestMapperMock1.Object,
                 this.itemSearchQueryRequestMapperMock2.Object
@@ -33,7 +33,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.itemSearchQueryRequestMapperMock2.Setup(x => x.CanMap(It.IsAny<Item>()))
                 .Returns(true);
 
-            this.itemToQueryRequestMapperAggregator.MapToQueryRequest(item);
+            this.itemSearchQueryRequestMapperAggregator.MapToQueryRequest(item);
 
             this.itemSearchQueryRequestMapperMock1.Verify(x => x.CanMap(item));
             this.itemSearchQueryRequestMapperMock2.Verify(x => x.CanMap(item));
@@ -50,7 +50,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.itemSearchQueryRequestMapperMock2.Setup(x => x.MapToQueryRequest(It.IsAny<Item>()))
                 .Returns(expected);
 
-            SearchQueryRequest result = this.itemToQueryRequestMapperAggregator.MapToQueryRequest(item);
+            SearchQueryRequest result = this.itemSearchQueryRequestMapperAggregator.MapToQueryRequest(item);
 
             Assert.That(result, Is.SameAs(expected));
         }
