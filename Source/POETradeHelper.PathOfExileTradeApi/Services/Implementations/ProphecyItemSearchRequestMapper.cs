@@ -11,13 +11,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             return item is ProphecyItem;
         }
 
-        public override SearchQueryRequest MapToQueryRequest(Item item)
-        {
-            var result = base.MapToQueryRequest(item);
-
-            return result;
-        }
-
         protected override void MapItemName(SearchQueryRequest result, Item item)
         {
             result.Query.Name = item.Name;
