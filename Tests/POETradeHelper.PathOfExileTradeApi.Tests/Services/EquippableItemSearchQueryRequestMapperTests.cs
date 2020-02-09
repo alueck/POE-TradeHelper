@@ -11,7 +11,7 @@ using POETradeHelper.PathOfExileTradeApi.Services;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace POETradeHelper.PathOfExileTradeApiTests.Services
+namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class EquippableItemSearchQueryRequestMapperTests
     {

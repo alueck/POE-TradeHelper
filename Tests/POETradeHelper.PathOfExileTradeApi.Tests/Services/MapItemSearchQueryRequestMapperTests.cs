@@ -6,7 +6,7 @@ using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using System.Collections.Generic;
 
-namespace POETradeHelper.PathOfExileTradeApiTests.Services
+namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class MapItemSearchQueryRequestMapperTests
     {

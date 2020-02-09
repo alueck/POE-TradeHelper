@@ -17,7 +17,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace POETradeHelper.PathOfExileTradeApiTests.Services
+namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class PoeTradeApiClientTests
     {

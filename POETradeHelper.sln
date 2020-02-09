@@ -35,9 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common", "So
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common.Tests", "Tests\POETradeHelper.Common.Tests\POETradeHelper.Common.Tests.csproj", "{04693CD5-1730-4CA8-A6E3-D91B879F2D2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.PathOfExileTradeApiTests", "Tests\POETradeHelper.PathOfExileTradeApiTests\POETradeHelper.PathOfExileTradeApiTests.csproj", "{77CD7DB4-FD9E-4C65-8B0B-64CA7266354C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.PathOfExileTradeApi.Tests", "Tests\POETradeHelper.PathOfExileTradeApi.Tests\POETradeHelper.PathOfExileTradeApi.Tests.csproj", "{77CD7DB4-FD9E-4C65-8B0B-64CA7266354C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.Common.UI", "Source\POETradeHelper.Common.UI\POETradeHelper.Common.UI.csproj", "{05DBBAB5-E8B0-4B5C-85F7-53629FF2745A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common.UI", "Source\POETradeHelper.Common.UI\POETradeHelper.Common.UI.csproj", "{05DBBAB5-E8B0-4B5C-85F7-53629FF2745A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
