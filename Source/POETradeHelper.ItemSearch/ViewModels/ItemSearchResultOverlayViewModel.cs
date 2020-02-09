@@ -3,6 +3,7 @@ using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using ReactiveUI;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.ViewModels
@@ -26,13 +27,13 @@ namespace POETradeHelper.ItemSearch.ViewModels
             set => this.RaiseAndSetIfChanged(ref itemListing, value);
         }
 
-        public async Task SetListingForItemUnderCursorAsync()
+        public async Task SetListingForItemUnderCursorAsync(CancellationToken cancellationToken = default)
         {
-            Item item = await searchItemProvider.GetItemFromUnderCursorAsync();
+            Item item = await searchItemProvider.GetItemFromUnderCursorAsync(cancellationToken);
 
-            ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(item);
+            ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(item, cancellationToken);
 
-            if (itemListing != null)
+            if (itemListing != null && !cancellationToken.IsCancellationRequested)
             {
                 this.ItemListings = itemListing;
             }

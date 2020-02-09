@@ -17,12 +17,12 @@ namespace POETradeHelper.ItemSearch.Services
             this.itemParserAggregator = itemParserAggregator;
         }
 
-        public async Task<Item> GetItemFromUnderCursorAsync()
+        public async Task<Item> GetItemFromUnderCursorAsync(System.Threading.CancellationToken cancellationToken = default)
         {
             Item item = null;
-            string itemString = await this.copyCommand.ExecuteAsync();
+            string itemString = await this.copyCommand.ExecuteAsync(cancellationToken);
 
-            if (this.itemParserAggregator.CanParse(itemString))
+            if (!cancellationToken.IsCancellationRequested && this.itemParserAggregator.CanParse(itemString))
             {
                 item = this.itemParserAggregator.Parse(itemString);
             }

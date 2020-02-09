@@ -7,6 +7,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
     {
         ItemListingsQueryResult ItemListings { get; set; }
 
-        Task SetListingForItemUnderCursorAsync();
+        Task SetListingForItemUnderCursorAsync(System.Threading.CancellationToken token = default);
     }
 }

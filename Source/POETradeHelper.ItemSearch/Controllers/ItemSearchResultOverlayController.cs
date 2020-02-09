@@ -16,6 +16,8 @@ namespace POETradeHelper.ItemSearch.Controllers
         private readonly IViewLocator viewLocator;
         private readonly IPathOfExileProcessHelper pathOfExileProcessHelper;
 
+        private CancellationTokenSource searchItemCancellationTokenSource = new CancellationTokenSource();
+
         public ItemSearchResultOverlayController(
             IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel,
             IViewLocator viewLocator,
@@ -59,16 +61,32 @@ namespace POETradeHelper.ItemSearch.Controllers
 
             e.Handled = true;
 
-            await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync();
-            this.View.Show();
+            this.CancelSearchItemToken();
+            await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token);
+
+            if (!this.searchItemCancellationTokenSource.IsCancellationRequested)
+            {
+                this.View.Show();
+            }
         }
 
         private void UserInputEventProvider_HideOverlay(object sender, HandledEventArgs e)
         {
             if (View.IsVisible)
             {
+                this.CancelSearchItemToken();
                 View.Hide();
                 e.Handled = true;
+            }
+        }
+
+        private void CancelSearchItemToken()
+        {
+            lock (this)
+            {
+                this.searchItemCancellationTokenSource.Cancel();
+                this.searchItemCancellationTokenSource.Dispose();
+                this.searchItemCancellationTokenSource = new CancellationTokenSource();
             }
         }
 

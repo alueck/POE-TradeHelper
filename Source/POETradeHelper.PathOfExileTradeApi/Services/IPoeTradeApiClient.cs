@@ -8,7 +8,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public interface IPoeTradeApiClient
     {
-        Task<ItemListingsQueryResult> GetListingsAsync(Item item);
+        Task<ItemListingsQueryResult> GetListingsAsync(Item item, System.Threading.CancellationToken cancellationToken = default);
 
         Task<IList<League>> GetLeaguesAsync();
     }

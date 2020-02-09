@@ -5,6 +5,6 @@ namespace POETradeHelper.ItemSearch.Contract.Services
 {
     public interface ISearchItemProvider
     {
-        Task<Item> GetItemFromUnderCursorAsync();
+        Task<Item> GetItemFromUnderCursorAsync(System.Threading.CancellationToken cancellationToken = default);
     }
 }

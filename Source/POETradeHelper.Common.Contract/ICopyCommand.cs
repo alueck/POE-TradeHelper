@@ -4,6 +4,6 @@ namespace POETradeHelper.Common.Contract
 {
     public interface ICopyCommand
     {
-        Task<string> ExecuteAsync();
+        Task<string> ExecuteAsync(System.Threading.CancellationToken cancellationToken = default);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.Common.Wrappers
@@ -14,14 +15,14 @@ namespace POETradeHelper.Common.Wrappers
             this.httpClient = httpClient;
         }
 
-        public Task<HttpResponseMessage> GetAsync(string requestUri)
+        public Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken = default)
         {
-            return this.httpClient.GetAsync(requestUri);
+            return this.httpClient.GetAsync(requestUri, cancellationToken);
         }
 
-        public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent content)
+        public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent content, CancellationToken cancellationToken = default)
         {
-            return this.httpClient.PostAsync(requestUri, content);
+            return this.httpClient.PostAsync(requestUri, content, cancellationToken);
         }
     }
 }

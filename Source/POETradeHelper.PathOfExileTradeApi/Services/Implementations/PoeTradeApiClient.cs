@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
@@ -33,15 +34,19 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             this.itemSearchOptions = itemSearchOptions;
         }
 
-        public async Task<ItemListingsQueryResult> GetListingsAsync(Item item)
+        public async Task<ItemListingsQueryResult> GetListingsAsync(Item item, CancellationToken cancellationToken = default)
         {
             try
             {
                 SearchQueryRequest queryRequest = this.itemToQueryRequestMapperAggregator.MapToQueryRequest(item);
 
-                SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(queryRequest);
+                SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(queryRequest, cancellationToken);
 
-                return await this.GetListingsQueryResult(item, searchQueryResult);
+                return await this.GetListingsQueryResult(item, searchQueryResult, cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return null;
             }
             catch (Exception exception) when (!(exception is PoeTradeApiCommunicationException))
             {
@@ -49,10 +54,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             }
         }
 
-        private async Task<SearchQueryResult> GetSearchQueryResult(SearchQueryRequest queryRequest)
+        private async Task<SearchQueryResult> GetSearchQueryResult(SearchQueryRequest queryRequest, CancellationToken cancellationToken)
         {
             StringContent content = this.GetJsonStringContent(queryRequest);
-            HttpResponseMessage response = await this.httpClient.PostAsync($"{Resources.PoeTradeApiBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}", content);
+
+            HttpResponseMessage response = await this.httpClient.PostAsync($"{Resources.PoeTradeApiBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}", content, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -69,15 +75,16 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             return new StringContent(serializedQueryRequest, Encoding.UTF8, "application/json");
         }
 
-        private async Task<ItemListingsQueryResult> GetListingsQueryResult(Item item, SearchQueryResult searchQueryResult)
+        private async Task<ItemListingsQueryResult> GetListingsQueryResult(Item item, SearchQueryResult searchQueryResult, CancellationToken cancellationToken)
         {
-            ItemListingsQueryResult itemListingsQueryResult = new ItemListingsQueryResult();
+            ItemListingsQueryResult itemListingsQueryResult = null;
 
             if (searchQueryResult.Total > 0)
             {
-                itemListingsQueryResult = await this.GetAsync<ItemListingsQueryResult>($"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(",", searchQueryResult.Result.Take(10))}");
+                itemListingsQueryResult = await this.GetAsync<ItemListingsQueryResult>($"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(",", searchQueryResult.Result.Take(10))}", cancellationToken);
             }
 
+            itemListingsQueryResult = itemListingsQueryResult ?? new ItemListingsQueryResult();
             itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeApiBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}/{searchQueryResult.Id}");
             itemListingsQueryResult.TotalCount = searchQueryResult.Total;
             itemListingsQueryResult.Item = item;
@@ -92,11 +99,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             return queryResult?.Result;
         }
 
-        private async Task<TResult> GetAsync<TResult>(string endpoint)
+        private async Task<TResult> GetAsync<TResult>(string endpoint, CancellationToken cancellationToken = default)
         {
             try
             {
-                var response = await this.httpClient.GetAsync(Resources.PoeTradeApiBaseUrl + endpoint);
+                var response = await this.httpClient.GetAsync(Resources.PoeTradeApiBaseUrl + endpoint, cancellationToken);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -104,6 +111,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
                 }
 
                 return await this.ReadAsJsonAsync<TResult>(response.Content);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception exception) when (!(exception is PoeTradeApiCommunicationException))
             {

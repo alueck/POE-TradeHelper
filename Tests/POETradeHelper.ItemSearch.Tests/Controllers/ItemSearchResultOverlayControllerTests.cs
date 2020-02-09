@@ -7,6 +7,7 @@ using POETradeHelper.ItemSearch.Views;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 
 namespace POETradeHelper.ItemSearch.Tests.Controllers
 {
@@ -71,7 +72,7 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
 
             TriggerSearchItemEvent();
 
-            this.viewModelMock.Verify(x => x.SetListingForItemUnderCursorAsync());
+            this.viewModelMock.Verify(x => x.SetListingForItemUnderCursorAsync(It.Is<CancellationToken>(c => c != CancellationToken.None)));
         }
 
         [Test]
@@ -106,7 +107,7 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
         {
             TriggerSearchItemEvent();
 
-            this.viewModelMock.Verify(x => x.SetListingForItemUnderCursorAsync(), Times.Never);
+            this.viewModelMock.Verify(x => x.SetListingForItemUnderCursorAsync(It.IsAny<CancellationToken>()), Times.Never);
             this.viewMock.Verify(x => x.Show(), Times.Never);
         }
 
@@ -123,7 +124,7 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
             this.pathOfExileProcessHelper.Setup(x => x.IsPathOfExileActiveWindow())
                 .Returns(true);
 
-            this.viewModelMock.Setup(x => x.SetListingForItemUnderCursorAsync())
+            this.viewModelMock.Setup(x => x.SetListingForItemUnderCursorAsync(It.IsAny<CancellationToken>()))
                 .Callback(() => Assert.IsTrue(handledEventArgs.Handled));
 
             TriggerSearchItemEvent(handledEventArgs);

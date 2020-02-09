@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
@@ -32,12 +33,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         public void Setup()
         {
             this.httpClientWrapperMock = new Mock<IHttpClientWrapper>();
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>()))
+            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage
                 {
                     Content = new StringContent("")
                 });
-            this.httpClientWrapperMock.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>()))
+            this.httpClientWrapperMock.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage
                 {
                     Content = new StringContent("")
@@ -65,7 +66,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             await this.poeTradeApiClient.GetLeaguesAsync();
 
-            this.httpClientWrapperMock.Verify(x => x.GetAsync(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiLeaguesEndpoint));
+            this.httpClientWrapperMock.Verify(x => x.GetAsync(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiLeaguesEndpoint, It.IsAny<CancellationToken>()));
         }
 
         [Test]
@@ -73,7 +74,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             string json = "{ \"result\": [ ] }";
 
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>()))
+            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage
                 {
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
@@ -181,7 +182,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.poeTradeApiClient.GetListingsAsync(item);
 
-            this.httpClientWrapperMock.Verify(x => x.PostAsync(expectedUri, It.IsAny<HttpContent>()));
+            this.httpClientWrapperMock.Verify(x => x.PostAsync(expectedUri, It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()));
         }
 
         [Test]
@@ -202,7 +203,24 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.poeTradeApiClient.GetListingsAsync(item);
 
-            this.httpClientWrapperMock.Verify(x => x.PostAsync(It.IsAny<string>(), It.Is<StringContent>(s => s.ReadAsStringAsync().GetAwaiter().GetResult() == expected)));
+            this.httpClientWrapperMock.Verify(x => x.PostAsync(It.IsAny<string>(), It.Is<StringContent>(s => s.ReadAsStringAsync().GetAwaiter().GetResult() == expected), It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public async Task GetListingssAsyncShouldPassCancellationTokenToPostSearch()
+        {
+            var item = new CurrencyItem();
+            var cancellationToken = new CancellationToken();
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+                .Returns(new SearchQueryResult());
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+                .Returns(new ItemListingsQueryResult());
+
+            await this.poeTradeApiClient.GetListingsAsync(item, cancellationToken);
+
+            this.httpClientWrapperMock.Verify(x => x.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>(), cancellationToken));
         }
 
         [Test]
@@ -220,7 +238,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
                 .Returns(new ItemListingsQueryResult());
 
-            this.httpClientWrapperMock.Setup(x => x.PostAsync(It.Is<string>(s => s.StartsWith(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiSearchEndpoint)), It.IsAny<HttpContent>()))
+            this.httpClientWrapperMock.Setup(x => x.PostAsync(It.Is<string>(s => s.StartsWith(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiSearchEndpoint)), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(httpResponse);
 
             await this.poeTradeApiClient.GetListingsAsync(item);
@@ -248,7 +266,29 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.poeTradeApiClient.GetListingsAsync(item);
 
-            this.httpClientWrapperMock.Verify(x => x.GetAsync(expectedUri));
+            this.httpClientWrapperMock.Verify(x => x.GetAsync(expectedUri, It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public async Task GetListingsAsyncShouldPassCancellationTokenToGetFetch()
+        {
+            var item = new CurrencyItem();
+            var cancellationToken = new CancellationToken();
+            var searchQueryResult = new SearchQueryResult
+            {
+                Result = Enumerable.Range(0, 20).Select(i => i.ToString()).ToList(),
+                Total = 20
+            };
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+                .Returns(searchQueryResult);
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+                .Returns(new ItemListingsQueryResult());
+
+            await this.poeTradeApiClient.GetListingsAsync(item);
+
+            this.httpClientWrapperMock.Verify(x => x.GetAsync(It.IsAny<string>(), cancellationToken));
         }
 
         [Test]
@@ -262,7 +302,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.poeTradeApiClient.GetListingsAsync(item);
 
-            this.httpClientWrapperMock.Verify(x => x.GetAsync(It.Is<string>(s => s.Contains(Resources.PoeTradeApiFetchEndpoint))), Times.Never);
+            this.httpClientWrapperMock.Verify(x => x.GetAsync(It.Is<string>(s => s.Contains(Resources.PoeTradeApiFetchEndpoint)), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Test]
@@ -281,7 +321,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
                 .Returns(new ItemListingsQueryResult());
 
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.Is<string>(s => s.StartsWith(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiFetchEndpoint))))
+            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.Is<string>(s => s.StartsWith(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiFetchEndpoint)), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage
                 {
                     Content = new StringContent(expected)
@@ -438,9 +478,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Serialize(It.IsAny<SearchQueryRequest>()))
                 .Returns(jsonContent);
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.Is<string>(s => s.Contains(endpoint))))
+            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.Is<string>(s => s.Contains(endpoint)), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(httpResponse);
-            this.httpClientWrapperMock.Setup(x => x.PostAsync(It.Is<string>(s => s.Contains(endpoint)), It.IsAny<HttpContent>()))
+            this.httpClientWrapperMock.Setup(x => x.PostAsync(It.Is<string>(s => s.Contains(endpoint)), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(httpResponse);
 
             PoeTradeApiCommunicationException exception = Assert.CatchAsync<PoeTradeApiCommunicationException>(asyncTestDelegate);

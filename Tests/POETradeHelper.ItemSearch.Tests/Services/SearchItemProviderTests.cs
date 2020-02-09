@@ -4,6 +4,7 @@ using POETradeHelper.Common.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Tests.Services
@@ -25,16 +26,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         [Test]
         public async Task GetItemFromUnderCursorAsyncShouldCallExecuteAsyncOnCopyCommand()
         {
-            await searchItemProvider.GetItemFromUnderCursorAsync();
+            var cancellationToken = new CancellationToken();
 
-            copyCommandMock.Verify(x => x.ExecuteAsync());
+            await searchItemProvider.GetItemFromUnderCursorAsync(cancellationToken);
+
+            copyCommandMock.Verify(x => x.ExecuteAsync(cancellationToken));
         }
 
         [Test]
         public async Task GetItemFromUnderCursorAsyncShouldCallCanParseOnItemParser()
         {
             string stringToParse = "item string to parse";
-            this.copyCommandMock.Setup(x => x.ExecuteAsync())
+            this.copyCommandMock.Setup(x => x.ExecuteAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(stringToParse);
 
             await this.searchItemProvider.GetItemFromUnderCursorAsync();
@@ -47,7 +50,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services
 
         {
             string stringToParse = "item string to parse";
-            this.copyCommandMock.Setup(x => x.ExecuteAsync())
+            this.copyCommandMock.Setup(x => x.ExecuteAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(stringToParse);
             this.itemParserAggregatorMock.Setup(x => x.CanParse(It.IsAny<string>()))
                 .Returns(true);
