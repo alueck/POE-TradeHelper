@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
         x:Class="POETradeHelper.ItemSearch.Views.ItemSearchResultOverlayView"
         Width="300" Height="200"
@@ -9,33 +10,45 @@
         HasSystemDecorations="False"
         Title="Overlay">
 
+  <Window.Resources>
+    <commonUiConverters:MessageTypeToBrushConverter x:Key="messageTypeToBrushConverter" />
+  </Window.Resources>
+
   <StackPanel>
-    <TextBlock Text="{Binding ItemListings.Item.Name}" />
-    <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition />
-        <ColumnDefinition />
-        <ColumnDefinition />
-      </Grid.ColumnDefinitions>
-      <TextBlock Text="Account name" Grid.Column="0" />
-      <TextBlock Text="Item level" Grid.Column="1" />
-      <TextBlock Text="Price" Grid.Column="2" />
-    </Grid>
-    <ItemsControl Items="{Binding ItemListings.Result}">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition />
-              <ColumnDefinition />
-              <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Listing.Account.Name}" Grid.Column="0" />
-            <TextBlock Text="{Binding Item.ItemLevel}" Grid.Column="1" />
-            <TextBlock Text="{Binding Listing.Price.PriceText}" Grid.Column="2" />
-          </Grid>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+
+    <TextBlock VerticalAlignment="Center"
+               HorizontalAlignment="Center"
+               Text="{Binding Message.Text}"
+               Foreground="{Binding Message.Type, Converter={StaticResource messageTypeToBrushConverter}}"
+               IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    <StackPanel IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
+      <TextBlock Text="{Binding ItemListings.Item.Name}" />
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Account name" Grid.Column="0" />
+        <TextBlock Text="Item level" Grid.Column="1" />
+        <TextBlock Text="Price" Grid.Column="2" />
+      </Grid>
+      <ItemsControl Items="{Binding ItemListings.Result}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="{Binding Listing.Account.Name}" Grid.Column="0" />
+              <TextBlock Text="{Binding Item.ItemLevel}" Grid.Column="1" />
+              <TextBlock Text="{Binding Listing.Price.PriceText}" Grid.Column="2" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
   </StackPanel>
 </Window>
