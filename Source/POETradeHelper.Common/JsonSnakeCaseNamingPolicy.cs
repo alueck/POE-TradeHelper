@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
 namespace POETradeHelper.Common
 {
+    /// <summary>
+    ///     Source: https://github.com/YohDeadfall/corefx/blob/3b82d9d904143dab57103fcc1a7ef9d610aae865/src/System.Text.Json/src/System/Text/Json/Serialization/JsonSnakeCaseNamingPolicy.cs
+    /// </summary>
+    [ExcludeFromCodeCoverage]
     public class JsonSnakeCaseNamingPolicy : JsonNamingPolicy
     {
         public override string ConvertName(string name)
