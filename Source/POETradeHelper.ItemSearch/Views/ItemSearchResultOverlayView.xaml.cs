@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 
 namespace POETradeHelper.ItemSearch.Views
@@ -17,6 +18,12 @@ namespace POETradeHelper.ItemSearch.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        {
+            BeginMoveDrag(e);
+            base.OnPointerPressed(e);
         }
     }
 }
