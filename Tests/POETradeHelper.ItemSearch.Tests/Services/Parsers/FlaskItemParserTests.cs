@@ -17,11 +17,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
-        [Test]
-        public void CanParseShouldReturnTrueIfNameContainsFlask()
+        [TestCase("Bubbling Divine Life Flask of Staunching")]
+        [TestCase("Flask")]
+        public void CanParseShouldReturnTrueIfNameContainsFlask(string name)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                        .WithName("Bubbling Divine Life Flask of Staunching")
+                                        .WithName(name)
                                         .BuildLines();
 
             bool result = this.flaskItemParser.CanParse(itemStringLines);

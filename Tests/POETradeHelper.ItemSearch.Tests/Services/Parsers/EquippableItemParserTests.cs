@@ -79,6 +79,21 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.IsFalse(result);
         }
 
+        [TestCase("Coralito's Signature")]
+        [TestCase(null)]
+        public void CanParseShouldReturnFalseForFlaskItem(string name)
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                                .WithItemLevel(1)
+                                .WithName(name)
+                                .WithType(Resources.FlaskKeyword)
+                                .BuildLines();
+
+            bool result = this.equippableItemParser.CanParse(itemStringLines);
+
+            Assert.IsFalse(result);
+        }
+
         [TestCase(ItemRarity.Normal)]
         [TestCase(ItemRarity.Magic)]
         [TestCase(ItemRarity.Rare)]

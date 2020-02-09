@@ -1,5 +1,6 @@
 ﻿using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using System.Linq;
 
@@ -20,7 +21,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             ItemRarity? itemRarity = this.GetRarity(itemStringLines);
             return itemRarity >= ItemRarity.Normal && itemRarity <= ItemRarity.Unique
                 && HasItemLevel(itemStringLines)
-                && !IsMapOrOrganItem(itemStringLines);
+                && !IsMapOrOrganItem(itemStringLines)
+                && !IsFlaskItem(itemStringLines);
         }
 
         private static bool HasItemLevel(string[] itemStringLines)
@@ -32,6 +34,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         {
             return itemStringLines.Any(l => l.Contains(Contract.Properties.Resources.MapTierDescriptor)
                                          || l.Contains(Contract.Properties.Resources.OrganItemDescriptor));
+        }
+
+        private bool IsFlaskItem(string[] itemStringLines)
+        {
+            return itemStringLines.Skip(1).Take(3).Any(line => line.Contains(Resources.FlaskKeyword));
         }
 
         public override Item Parse(string[] itemStringLines)
