@@ -7,6 +7,7 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -95,6 +96,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                         new StaticData
                         {
+                            Id = "Currency",
                             Entries = new List<StaticDataEntry>
                             {
                                 new StaticDataEntry { Id = "alt", Text = "Orb of Alteration" },
@@ -109,6 +111,29 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             string result = this.staticItemDataService.GetId(item);
 
             Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [TestCaseSource(nameof(UnsupportedItems))]
+        public void GetIdShouldThrowNotSupportedExceptionIfItemIsNotSupported(Item unsupportedItem)
+        {
+            TestDelegate testDelegate = () => this.staticItemDataService.GetId(unsupportedItem);
+
+            var exception = Assert.Catch<NotSupportedException>(testDelegate);
+
+            Assert.That(exception.Message, Contains.Substring(unsupportedItem.GetType().Name));
+        }
+
+        private static IEnumerable<Item> UnsupportedItems
+        {
+            get
+            {
+                yield return new FlaskItem(ItemRarity.Normal);
+                yield return new MapItem(ItemRarity.Normal);
+                yield return new OrganItem();
+                yield return new ProphecyItem();
+                yield return new EquippableItem(ItemRarity.Normal);
+                yield return new GemItem();
+            }
         }
     }
 }

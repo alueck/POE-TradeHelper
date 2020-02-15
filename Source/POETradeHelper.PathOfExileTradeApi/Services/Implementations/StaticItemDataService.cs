@@ -4,6 +4,7 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -25,7 +26,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         public string GetId(Item item)
         {
-            return this.nameToStaticDataMappings[item.Name].Id;
+            if (item is CurrencyItem || item is DivinationCardItem || item is FragmentItem)
+            {
+                return this.nameToStaticDataMappings[item.Name].Id;
+            }
+
+            throw new NotSupportedException($"Item of type '{item?.GetType()}' is not supported.");
         }
 
         public async Task OnInitAsync()
@@ -40,7 +46,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
             string content = await httpResponse.Content.ReadAsStringAsync();
             var queryResult = this.poeTradeApiJsonSerializer.Deserialize<QueryResult<StaticData>>(content);
-            this.nameToStaticDataMappings = queryResult?.Result?.SelectMany(x => x.Entries).ToDictionary(x => x.Text);
+
+            this.nameToStaticDataMappings = queryResult?.Result?
+                                                .Where(x => !x.Id.StartsWith("Map"))
+                                                .SelectMany(x => x.Entries)
+                                                .ToDictionary(x => x.Text);
         }
     }
 }
