@@ -1,10 +1,12 @@
 ﻿using Moq;
 using NUnit.Framework;
+using POETradeHelper.Common.UI.Models;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -57,6 +59,31 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             Assert.AreSame(itemListing, this.itemSearchOverlayViewModel.ItemListings);
+        }
+
+        [Test]
+        public async Task SetListingForItemUnderCursorAsyncShouldSetMessageIfExceptionOccurs()
+        {
+            Exception exception = new Exception("Exception text");
+
+            this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
+                .Throws(exception);
+
+            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+
+            Assert.IsNotNull(this.itemSearchOverlayViewModel.Message);
+            Assert.That(this.itemSearchOverlayViewModel.Message.Type, Is.EqualTo(MessageType.Error));
+            Assert.That(this.itemSearchOverlayViewModel.Message.Text, Is.EqualTo(exception.ToString()));
+        }
+
+        [Test]
+        public async Task SetListingForItemUnderCursorAsyncShouldSetMessageToNull()
+        {
+            this.itemSearchOverlayViewModel.Message = new Message();
+
+            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+
+            Assert.IsNull(this.itemSearchOverlayViewModel.Message);
         }
     }
 }
