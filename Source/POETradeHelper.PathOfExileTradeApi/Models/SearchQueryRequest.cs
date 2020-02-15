@@ -14,6 +14,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         };
 
         [JsonIgnore]
-        public string Endpoint { get; } = Resources.PoeTradeApiSearchEndpoint;
+        public string Endpoint => Resources.PoeTradeApiSearchEndpoint;
     }
 }

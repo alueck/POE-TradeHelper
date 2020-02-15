@@ -6,6 +6,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
     {
         public Exchange Exchange { get; } = new Exchange();
 
-        public string Endpoint { get; } = Resources.PoeTradeApiExchangeEndpoint;
+        public string Endpoint => Resources.PoeTradeApiExchangeEndpoint;
     }
 }
