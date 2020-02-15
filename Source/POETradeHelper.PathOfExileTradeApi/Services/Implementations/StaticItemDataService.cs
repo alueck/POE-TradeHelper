@@ -10,7 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
+namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public class StaticItemDataService : IStaticItemDataService, IInitializable
     {

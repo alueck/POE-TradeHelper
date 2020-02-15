@@ -1,7 +1,7 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 
-namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
+namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public class OrganItemSearchQueryRequestMapper : IItemSearchQueryRequestMapper
     {

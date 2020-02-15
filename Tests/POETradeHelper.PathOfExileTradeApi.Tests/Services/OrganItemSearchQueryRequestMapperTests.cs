@@ -1,8 +1,7 @@
 ﻿using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
+using POETradeHelper.PathOfExileTradeApi.Services;
 using System.Collections.Generic;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services

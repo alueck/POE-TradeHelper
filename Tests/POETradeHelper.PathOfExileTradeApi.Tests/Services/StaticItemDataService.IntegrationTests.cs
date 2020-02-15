@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 using POETradeHelper.PathOfExileTradeApi.Tests.Properties;
 using System.Net.Http;
 using System.Threading;

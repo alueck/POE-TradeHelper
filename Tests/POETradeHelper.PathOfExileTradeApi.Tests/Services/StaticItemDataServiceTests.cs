@@ -6,7 +6,6 @@ using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Net;

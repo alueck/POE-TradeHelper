@@ -1,6 +1,6 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 
-namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
+namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public class FlaskItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
