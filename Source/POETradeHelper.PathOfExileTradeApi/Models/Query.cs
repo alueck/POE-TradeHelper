@@ -1,5 +1,4 @@
 ﻿using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System.Collections.Generic;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
@@ -8,6 +7,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         public string Name { get; set; }
 
         public string Type { get; set; }
+
+        public string Term { get; set; }
 
         public QueryFilters Filters { get; } = new QueryFilters();
     }
