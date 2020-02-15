@@ -10,7 +10,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         public override bool CanParse(string[] itemStringLines)
         {
-            return itemStringLines[1].Contains(Resources.LifeFlaskKeyword);
+            return itemStringLines[1].Contains(Resources.FlaskKeyword);
         }
 
         public override Item Parse(string[] itemStringLines)
