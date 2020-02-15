@@ -4,6 +4,7 @@ using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using ReactiveUI;
+using Splat;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,13 +52,15 @@ namespace POETradeHelper.ItemSearch.ViewModels
                     this.ItemListings = itemListing;
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 this.Message = new Message
                 {
-                    Text = ex.ToString(),
+                    Text = exception.ToString(),
                     Type = MessageType.Error
                 };
+
+                this.Log().Error(exception);
             }
         }
     }
