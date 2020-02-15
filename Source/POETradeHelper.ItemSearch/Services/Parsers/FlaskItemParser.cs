@@ -10,7 +10,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         public override bool CanParse(string[] itemStringLines)
         {
-            return itemStringLines[1].Contains(Resources.FlaskKeyword);
+            int typeLineIndex = this.GetTypeLineIndex(itemStringLines);
+            return itemStringLines[typeLineIndex].Contains(Resources.FlaskKeyword);
         }
 
         public override Item Parse(string[] itemStringLines)
@@ -19,25 +20,36 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return new FlaskItem(rarity.Value)
             {
                 Name = itemStringLines[NameLineIndex],
-                Type = this.GetFlaskTypeFromName(itemStringLines[NameLineIndex]),
+                Type = this.GetFlaskType(itemStringLines),
                 Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 IsIdentified = this.IsIdentified(itemStringLines)
             };
         }
 
-        private string GetFlaskTypeFromName(string name)
+        private string GetFlaskType(string[] itemStringLines)
         {
+            int typeLineIndex = this.GetTypeLineIndex(itemStringLines);
+
+            string type = itemStringLines[typeLineIndex];
+
             Match match;
-            if (name.Contains(Resources.LifeFlaskKeyword) || name.Contains(Resources.ManaFlaskKeyword))
+            if (type.Contains(Resources.LifeFlaskKeyword) || type.Contains(Resources.ManaFlaskKeyword))
             {
-                match = Regex.Match(name, $@"\w+\s{{1}}\w+\s{{1}}{Resources.FlaskKeyword}");
+                match = Regex.Match(type, $@"\w+\s{{1}}\w+\s{{1}}{Resources.FlaskKeyword}");
             }
             else
             {
-                match = Regex.Match(name, $@"\w+\s{{1}}{Resources.FlaskKeyword}");
+                match = Regex.Match(type, $@"\w+\s{{1}}{Resources.FlaskKeyword}");
             }
 
             return match.Value;
+        }
+
+        private int GetTypeLineIndex(string[] itemStringLines)
+        {
+            return this.HasRarity(itemStringLines, ItemRarity.Unique)
+                ? NameLineIndex + 1
+                : NameLineIndex;
         }
     }
 }

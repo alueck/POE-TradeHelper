@@ -31,6 +31,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         }
 
         [Test]
+        public void CanParseShouldReturnTrueIfTypeOfUniqueFlaskContainsFlask()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                                        .WithRarity(ItemRarity.Unique)
+                                        .WithName("Cinderswallow Urn")
+                                        .WithType("Silver Flask")
+                                        .BuildLines();
+
+            bool result = this.flaskItemParser.CanParse(itemStringLines);
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
         public void CanParseShouldReturnFalseIfNameDoesNotContainFlask()
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -76,6 +90,21 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string name = $"Bubbling {expected} of Staunching";
             string[] itemStringLines = this.itemStringBuilder
                             .WithName(name)
+                            .BuildLines();
+
+            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
+
+            Assert.That(result.Type, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void ParseShouldParseFlaskTypeOfUniqueFlask()
+        {
+            const string expected = "Silver Flask";
+            string[] itemStringLines = this.itemStringBuilder
+                            .WithRarity(ItemRarity.Unique)
+                            .WithName("Cinderswallow Urn")
+                            .WithType(expected)
                             .BuildLines();
 
             FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
