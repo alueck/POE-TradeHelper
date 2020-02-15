@@ -12,5 +12,20 @@
         public string Type { get; set; }
 
         public ItemRarity Rarity { get; }
+
+        public string DisplayName
+        {
+            get
+            {
+                string displayName = this.Name;
+
+                if (!string.IsNullOrEmpty(this.Type) && !displayName.Contains(this.Type))
+                {
+                    displayName += $" {this.Type}";
+                }
+
+                return displayName;
+            }
+        }
     }
 }

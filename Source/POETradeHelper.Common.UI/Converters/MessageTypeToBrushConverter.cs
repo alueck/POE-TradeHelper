@@ -10,22 +10,21 @@ namespace POETradeHelper.Common.UI.Converters
 {
     public class MessageTypeToBrushConverter : IValueConverter
     {
-        private static readonly IDictionary<MessageType, Color> messageTypeColorMappings = new Dictionary<MessageType, Color>
+        private static readonly IDictionary<MessageType, IBrush> messageTypeColorMappings = new Dictionary<MessageType, IBrush>
         {
-            [MessageType.Info] = Colors.Blue,
-            [MessageType.Success] = Colors.Green,
-            [MessageType.Warning] = Colors.Orange,
-            [MessageType.Error] = Colors.Red
+            [MessageType.Info] = Brushes.Blue,
+            [MessageType.Success] = Brushes.Green,
+            [MessageType.Warning] = Brushes.Orange,
+            [MessageType.Error] = Brushes.Red
         };
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            SolidColorBrush result = null;
+            IBrush result = null;
 
-            if (targetType.IsAssignableFrom(typeof(Brush)) && value is MessageType messageType)
+            if (typeof(IBrush).IsAssignableFrom(targetType) && value is MessageType messageType)
             {
-                Color color = messageTypeColorMappings[messageType];
-                result = new SolidColorBrush(color);
+                result = messageTypeColorMappings[messageType];
             }
 
             return result;

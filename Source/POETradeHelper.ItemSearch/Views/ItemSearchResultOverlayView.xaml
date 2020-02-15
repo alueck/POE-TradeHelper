@@ -3,52 +3,77 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
+        xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.Converters;assembly=POETradeHelper.ItemSearch"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="220"
         x:Class="POETradeHelper.ItemSearch.Views.ItemSearchResultOverlayView"
-        Width="300" Height="200"
+        Width="400" Height="220"
         Topmost="True"
         HasSystemDecorations="False"
-        Title="Overlay">
+        Title="Overlay"
+        SizeToContent="Width">
 
   <Window.Resources>
     <commonUiConverters:MessageTypeToBrushConverter x:Key="messageTypeToBrushConverter" />
+    <localConverters:ItemRarityToBrushConverter x:Key="itemRarityToBrushConverter" />
   </Window.Resources>
 
-  <StackPanel>
+  <Window.Styles>
+    <Style Selector="DataGridCell.alignRight">
+      <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style>
+
+    <!-- override DataGridRow selection and mouse over style -->
+
+    <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+
+    <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+
+    <Style Selector="DataGridRow:selected">
+    </Style>
+
+    <!-- end - override DataGridRow selection and mouse over style -->
+
+    <Style Selector="DataGridColumnHeader">
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Padding" Value="8,4" />
+    </Style>
+  </Window.Styles>
+
+  <Grid Margin="10">
 
     <TextBlock VerticalAlignment="Center"
                HorizontalAlignment="Center"
                Text="{Binding Message.Text}"
                Foreground="{Binding Message.Type, Converter={StaticResource messageTypeToBrushConverter}}"
                IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
-    <StackPanel IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
-      <TextBlock Text="{Binding ItemListings.Item.Name}" />
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition />
-          <ColumnDefinition />
-          <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <TextBlock Text="Account name" Grid.Column="0" />
-        <TextBlock Text="Item level" Grid.Column="1" />
-        <TextBlock Text="Price" Grid.Column="2" />
+
+    <Grid IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition />
+      </Grid.RowDefinitions>
+
+      <TextBlock Text="{Binding ItemListings.Item.DisplayName}"
+                 FontWeight="Bold"
+                 Foreground="{Binding ItemListings.Item.Rarity, Converter={StaticResource itemRarityToBrushConverter}}"
+                 Margin ="0,0,0,5" />
+
+      <Grid Grid.Row="1">
+        <DataGrid Items="{Binding ItemListings.Result}"
+                  IsReadOnly="True"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Account name" Binding="{Binding Listing.Account.Name}" />
+            <DataGridTextColumn Header="Item level" Binding="{Binding Item.ItemLevel}" CellStyleClasses="alignRight" />
+            <DataGridTextColumn Header="Price" Binding="{Binding Listing.Price.PriceText}" CellStyleClasses="padLeftRight" />
+            <DataGridTextColumn Header="Age" Binding="{Binding Listing.AgeText}" CellStyleClasses="alignRight" />
+          </DataGrid.Columns>
+        </DataGrid>
       </Grid>
-      <ItemsControl Items="{Binding ItemListings.Result}">
-        <ItemsControl.ItemTemplate>
-          <DataTemplate>
-            <Grid>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-              </Grid.ColumnDefinitions>
-              <TextBlock Text="{Binding Listing.Account.Name}" Grid.Column="0" />
-              <TextBlock Text="{Binding Item.ItemLevel}" Grid.Column="1" />
-              <TextBlock Text="{Binding Listing.Price.PriceText}" Grid.Column="2" />
-            </Grid>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
-    </StackPanel>
-  </StackPanel>
+    </Grid>
+  </Grid>
 </Window>

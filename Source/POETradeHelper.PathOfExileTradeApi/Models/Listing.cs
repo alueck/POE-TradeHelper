@@ -1,4 +1,5 @@
-﻿using System;
+﻿using POETradeHelper.Common.Extensions;
+using System;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
@@ -9,5 +10,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         public Account Account { get; set; }
 
         public Price Price { get; set; }
+
+        public string AgeText => (DateTime.UtcNow - this.Indexed).ToHumanReadableString();
     }
 }
