@@ -53,6 +53,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 .Returns("");
 
             this.itemToQueryRequestMapperAggregatorMock = new Mock<IItemSearchQueryRequestMapperAggregator>();
+            this.itemToQueryRequestMapperAggregatorMock.Setup(x => x.MapToQueryRequest(It.IsAny<Item>()))
+                .Returns(new SearchQueryRequest());
 
             this.itemSearchOptionsMock = new Mock<IOptions<ItemSearchOptions>>();
             this.itemSearchOptionsMock.Setup(x => x.Value)
@@ -164,15 +166,18 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Verify(x => x.Serialize(queryRequest));
         }
 
-        [Test]
-        public async Task GetListingssAsyncShouldPostToCorrectSearchEndpoint()
+        [TestCaseSource(nameof(QueryRequests))]
+        public async Task GetListingssAsyncShouldPostToCorrectSearchEndpoint(IQueryRequest queryRequest)
         {
             var item = new CurrencyItem();
 
             string leagueId = "Metamorph";
             this.MockItemSearchOptions(leagueId);
 
-            string expectedUri = Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiSearchEndpoint + "/" + leagueId;
+            this.itemToQueryRequestMapperAggregatorMock.Setup(x => x.MapToQueryRequest(It.IsAny<Item>()))
+                .Returns(queryRequest);
+
+            string expectedUri = Resources.PoeTradeApiBaseUrl + queryRequest.Endpoint + "/" + leagueId;
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
                 .Returns(new SearchQueryResult());
@@ -185,6 +190,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.httpClientWrapperMock.Verify(x => x.PostAsync(expectedUri, It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()));
         }
 
+        private static IEnumerable<IQueryRequest> QueryRequests
+        {
+            get
+            {
+                yield return new SearchQueryRequest();
+                yield return new ExchangeQueryRequest();
+            }
+        }
+
         [Test]
         public async Task GetListingssAsyncShouldPostMappedQueryRequest()
         {
@@ -192,7 +206,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             string expected = "serialized query request";
             StringContent expectedStringContent = new StringContent(expected, Encoding.UTF8, "application/json");
 
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Serialize(It.IsAny<Item>()))
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Serialize(It.IsAny<IQueryRequest>()))
                 .Returns(expected);
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))

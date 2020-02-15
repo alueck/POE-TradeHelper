@@ -34,9 +34,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             return item is EquippableItem;
         }
 
-        public override SearchQueryRequest MapToQueryRequest(Item item)
+        public override IQueryRequest MapToQueryRequest(Item item)
         {
-            var result = base.MapToQueryRequest(item);
+            var result = (SearchQueryRequest)base.MapToQueryRequest(item);
 
             var equippableItem = (EquippableItem)item;
             MapItemLinks(result, equippableItem);

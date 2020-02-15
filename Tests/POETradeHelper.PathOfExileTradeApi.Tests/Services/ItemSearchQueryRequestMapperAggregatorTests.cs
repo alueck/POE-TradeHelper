@@ -50,7 +50,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.itemSearchQueryRequestMapperMock2.Setup(x => x.MapToQueryRequest(It.IsAny<Item>()))
                 .Returns(expected);
 
-            SearchQueryRequest result = this.itemSearchQueryRequestMapperAggregator.MapToQueryRequest(item);
+            IQueryRequest result = this.itemSearchQueryRequestMapperAggregator.MapToQueryRequest(item);
 
             Assert.That(result, Is.SameAs(expected));
         }

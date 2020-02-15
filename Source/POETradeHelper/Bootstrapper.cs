@@ -2,6 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using POETradeHelper.Common;
 using POETradeHelper.ItemSearch;
 using Serilog;
 using Serilog.Exceptions;
@@ -14,15 +15,24 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading.Tasks;
 using WindowsHook;
 
 namespace POETradeHelper
 {
     public class Bootstrapper : IEnableLogger
     {
-        public void Build()
+        public async Task BuildAsync()
         {
             RegisterDependencies();
+            await InitializeAsync();
+        }
+
+        private Task InitializeAsync()
+        {
+            var initializables = Locator.Current.GetServices<IInitializable>();
+
+            return Task.WhenAll(initializables.Select(i => i.OnInitAsync()));
         }
 
         private void RegisterDependencies()
@@ -37,7 +47,14 @@ namespace POETradeHelper
 
             container.RegisterAssemblyTypes(assemblies.ToArray())
                 .PublicOnly()
+                .Where(t => !typeof(IInitializable).IsAssignableFrom(t))
                 .AsImplementedInterfaces();
+
+            container.RegisterAssemblyTypes(assemblies.ToArray())
+                    .PublicOnly()
+                    .Where(t => typeof(IInitializable).IsAssignableFrom(t))
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
 
             container.RegisterInstance(Hook.GlobalEvents());
 

@@ -7,6 +7,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
     {
         bool CanMap(Item item);
 
-        SearchQueryRequest MapToQueryRequest(Item item);
+        IQueryRequest MapToQueryRequest(Item item);
     }
 }

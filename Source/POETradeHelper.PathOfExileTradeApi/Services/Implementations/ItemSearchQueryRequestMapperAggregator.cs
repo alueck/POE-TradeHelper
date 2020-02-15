@@ -14,11 +14,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             this.itemToQueryRequestMappers = itemToQueryRequestMappers;
         }
 
-        public SearchQueryRequest MapToQueryRequest(Item item)
+        public IQueryRequest MapToQueryRequest(Item item)
         {
             var mapper = this.itemToQueryRequestMappers.FirstOrDefault(m => m.CanMap(item));
 
-            return mapper.MapToQueryRequest(item);
+            return mapper?.MapToQueryRequest(item);
         }
     }
 }

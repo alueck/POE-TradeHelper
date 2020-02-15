@@ -46,7 +46,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Type = expected
             };
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.That(result.Query.Type, Is.EqualTo(expected));
         }
@@ -60,7 +60,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Name = expected
             };
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.IsNull(result.Query.Name);
         }
@@ -70,7 +70,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             var item = new GemItem();
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.IsNull(result.Query.Filters.TypeFilters.Rarity);
         }
@@ -84,7 +84,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Level = expected
             };
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             MinMaxFilter gemLevelFilter = result.Query.Filters.MiscFilters.GemLevel;
             Assert.IsNotNull(gemLevelFilter);
@@ -101,7 +101,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Quality = expected
             };
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             MinMaxFilter qualityFilter = result.Query.Filters.MiscFilters.Quality;
             Assert.IsNotNull(qualityFilter);

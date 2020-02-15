@@ -11,9 +11,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             return item is GemItem;
         }
 
-        public override SearchQueryRequest MapToQueryRequest(Item item)
+        public override IQueryRequest MapToQueryRequest(Item item)
         {
-            SearchQueryRequest result = base.MapToQueryRequest(item);
+            SearchQueryRequest result = (SearchQueryRequest)base.MapToQueryRequest(item);
 
             var gemItem = (GemItem)item;
 

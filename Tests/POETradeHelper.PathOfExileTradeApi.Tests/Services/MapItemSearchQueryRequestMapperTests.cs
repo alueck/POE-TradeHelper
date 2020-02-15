@@ -45,7 +45,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Type = expected
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.That(result.Query.Type, Is.EqualTo(expected));
         }
@@ -60,7 +60,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 IsIdentified = true
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.That(result.Query.Name, Is.EqualTo(expected));
         }
@@ -74,7 +74,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Name = expected,
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.IsNull(result.Query.Name);
         }
@@ -87,7 +87,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Name = "Pillars of Arun"
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.IsNull(result.Query.Name);
         }
@@ -101,7 +101,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 IsIdentified = identified
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.That(result.Query.Filters.MiscFilters.Identified.Option, Is.EqualTo(identified));
         }
@@ -111,7 +111,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             var item = new MapItem(ItemRarity.Unique);
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.NotNull(result.Query.Filters.TypeFilters);
             Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
@@ -122,7 +122,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             var item = new MapItem(itemRarity);
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.NotNull(result.Query.Filters.TypeFilters);
             Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
@@ -137,7 +137,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Tier = mapTier
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             MinMaxFilter mapTierFilter = result.Query.Filters.MapFilters.MapTier;
             Assert.NotNull(mapTierFilter);

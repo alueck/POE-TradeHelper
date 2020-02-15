@@ -44,7 +44,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Name = expected
             };
 
-            SearchQueryRequest result = this.prophecyItemSearchRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.prophecyItemSearchRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.That(result.Query.Name, Is.EqualTo(expected));
         }
@@ -54,7 +54,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             var item = new ProphecyItem();
 
-            SearchQueryRequest result = this.prophecyItemSearchRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.prophecyItemSearchRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.That(result.Query.Type, Is.EqualTo(ItemTypeFilterOptions.Prophecy));
         }

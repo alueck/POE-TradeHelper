@@ -70,6 +70,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /exchange.
+        /// </summary>
+        public static string PoeTradeApiExchangeEndpoint {
+            get {
+                return ResourceManager.GetString("PoeTradeApiExchangeEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /fetch.
         /// </summary>
         public static string PoeTradeApiFetchEndpoint {
@@ -93,6 +102,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         public static string PoeTradeApiSearchEndpoint {
             get {
                 return ResourceManager.GetString("PoeTradeApiSearchEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /data/static.
+        /// </summary>
+        public static string PoeTradeApiStaticDataEndpoint {
+            get {
+                return ResourceManager.GetString("PoeTradeApiStaticDataEndpoint", resourceCulture);
             }
         }
     }

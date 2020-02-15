@@ -38,7 +38,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
             try
             {
-                SearchQueryRequest queryRequest = this.itemToQueryRequestMapperAggregator.MapToQueryRequest(item);
+                IQueryRequest queryRequest = this.itemToQueryRequestMapperAggregator.MapToQueryRequest(item);
 
                 SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(queryRequest, cancellationToken);
 
@@ -54,21 +54,22 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             }
         }
 
-        private async Task<SearchQueryResult> GetSearchQueryResult(SearchQueryRequest queryRequest, CancellationToken cancellationToken)
+        private async Task<SearchQueryResult> GetSearchQueryResult(IQueryRequest queryRequest, CancellationToken cancellationToken)
         {
             StringContent content = this.GetJsonStringContent(queryRequest);
 
-            HttpResponseMessage response = await this.httpClient.PostAsync($"{Resources.PoeTradeApiBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}", content, cancellationToken);
+            string requestUri = $"{Resources.PoeTradeApiBaseUrl}{queryRequest.Endpoint}/{this.itemSearchOptions.Value.League.Id}";
+            HttpResponseMessage response = await this.httpClient.PostAsync(requestUri, content, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new PoeTradeApiCommunicationException(Resources.PoeTradeApiSearchEndpoint, await content.ReadAsStringAsync(), response.StatusCode);
+                throw new PoeTradeApiCommunicationException(requestUri, await content.ReadAsStringAsync(), response.StatusCode);
             }
 
             return await this.ReadAsJsonAsync<SearchQueryResult>(response.Content);
         }
 
-        private StringContent GetJsonStringContent(SearchQueryRequest queryRequest)
+        private StringContent GetJsonStringContent(IQueryRequest queryRequest)
         {
             string serializedQueryRequest = this.jsonSerializer.Serialize(queryRequest);
 
@@ -101,13 +102,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
         private async Task<TResult> GetAsync<TResult>(string endpoint, CancellationToken cancellationToken = default)
         {
+            string requestUri = Resources.PoeTradeApiBaseUrl + endpoint;
+
             try
             {
-                var response = await this.httpClient.GetAsync(Resources.PoeTradeApiBaseUrl + endpoint, cancellationToken);
+                var response = await this.httpClient.GetAsync(requestUri, cancellationToken);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new PoeTradeApiCommunicationException(endpoint, response.StatusCode);
+                    throw new PoeTradeApiCommunicationException(requestUri, response.StatusCode);
                 }
 
                 return await this.ReadAsJsonAsync<TResult>(response.Content);
@@ -118,7 +121,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             }
             catch (Exception exception) when (!(exception is PoeTradeApiCommunicationException))
             {
-                throw new PoeTradeApiCommunicationException($"Retrieving data from endpoint '{endpoint}' of Path of Exile Trade API led to an exception.", exception);
+                throw new PoeTradeApiCommunicationException($"Retrieving data from '{requestUri}' led to an exception.", exception);
             }
         }
 
