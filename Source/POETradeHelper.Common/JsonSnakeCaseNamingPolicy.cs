@@ -8,6 +8,8 @@ namespace POETradeHelper.Common
 {
     /// <summary>
     ///     Source: https://github.com/YohDeadfall/corefx/blob/3b82d9d904143dab57103fcc1a7ef9d610aae865/src/System.Text.Json/src/System/Text/Json/Serialization/JsonSnakeCaseNamingPolicy.cs
+    ///     Licensed to the .NET Foundation under one or more agreements.
+    ///     The .NET Foundation licenses this file to you under the MIT license.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class JsonSnakeCaseNamingPolicy : JsonNamingPolicy
