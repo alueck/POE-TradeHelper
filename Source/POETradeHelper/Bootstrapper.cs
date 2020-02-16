@@ -22,6 +22,15 @@ namespace POETradeHelper
 {
     public class Bootstrapper : IEnableLogger
     {
+        private static string PoeTradeHelperAppDataFolder
+        {
+            get
+            {
+                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                return Path.Combine(appDataFolder, "POETradeHelper");
+            }
+        }
+
         public async Task BuildAsync()
         {
             RegisterDependencies();
@@ -75,11 +84,9 @@ namespace POETradeHelper
 
         private static void ConfigureOptions(ServiceCollection serviceCollection)
         {
-            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string poeTradeHelperAppDataFolder = Path.Combine(appDataFolder, "POETradeHelper");
-            string poeTradeHelperAppSettingsPath = Path.Combine(poeTradeHelperAppDataFolder, "appsettings.json");
+            string poeTradeHelperAppSettingsPath = Path.Combine(PoeTradeHelperAppDataFolder, "appsettings.json");
 
-            CreateAppSettingsFileIfMissing(poeTradeHelperAppDataFolder, poeTradeHelperAppSettingsPath);
+            CreateAppSettingsFileIfMissing(PoeTradeHelperAppDataFolder, poeTradeHelperAppSettingsPath);
 
             IConfiguration config = new ConfigurationBuilder()
                           .AddJsonFile(poeTradeHelperAppSettingsPath, false, true)
@@ -109,7 +116,7 @@ namespace POETradeHelper
                             .MinimumLevel.Is(Serilog.Events.LogEventLevel.Verbose)
                             .Enrich.WithExceptionDetails()
                             .WriteTo.Debug()
-                            .WriteTo.File(Path.Combine(Environment.CurrentDirectory, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
+                            .WriteTo.File(Path.Combine(PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
 
             Locator.CurrentMutable.UseSerilogFullLogger();
         }
