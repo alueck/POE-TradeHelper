@@ -113,5 +113,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
                 return ResourceManager.GetString("PoeTradeApiStaticDataEndpoint", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://www.pathofexile.com/trade.
+        /// </summary>
+        public static string PoeTradeBaseUrl {
+            get {
+                return ResourceManager.GetString("PoeTradeBaseUrl", resourceCulture);
+            }
+        }
     }
 }

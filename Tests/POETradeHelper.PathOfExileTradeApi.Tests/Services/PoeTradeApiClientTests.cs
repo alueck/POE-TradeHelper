@@ -392,7 +392,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
              .Returns(new ItemListingsQueryResult());
 
-            Uri expectedUri = new Uri($"{Resources.PoeTradeApiBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{leagueId}/{expectedId}");
+            Uri expectedUri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{leagueId}/{expectedId}");
 
             ItemListingsQueryResult result = await this.poeTradeApiClient.GetListingsAsync(item);
 

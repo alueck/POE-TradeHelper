@@ -86,7 +86,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             }
 
             itemListingsQueryResult = itemListingsQueryResult ?? new ItemListingsQueryResult();
-            itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeApiBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}/{searchQueryResult.Id}");
+            itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}/{searchQueryResult.Id}");
             itemListingsQueryResult.TotalCount = searchQueryResult.Total;
             itemListingsQueryResult.Item = item;
 
