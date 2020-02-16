@@ -11,5 +11,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         public string Term { get; set; }
 
         public QueryFilters Filters { get; } = new QueryFilters();
+
+        public OptionFilter Status { get; } = new OptionFilter { Option = "online" };
     }
 }
