@@ -2,17 +2,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
+        xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
         xmlns:resx="clr-namespace:POETradeHelper.Properties;assembly=POETradeHelper"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="POETradeHelper.Views.MainWindow"
         Title="POE Trade Helper"
         Width="640"
         Height="480">
-
-  <Window.Resources>
-    <commonUiConverters:MessageTypeToBrushConverter x:Key="messageTypeToBrushConverter" />
-  </Window.Resources>
 
   <Window.Styles>
     <Style Selector="HeaderedContentControl">
@@ -70,9 +66,7 @@
       </ItemsControl>
 
       <Button Command="{Binding SaveSettingsCommand}">Save</Button>
-      <TextBlock Text="{Binding SaveSettingsMessage.Text}"
-                 Foreground="{Binding SaveSettingsMessage.Type, Converter={StaticResource messageTypeToBrushConverter}}"
-                 IsVisible="{Binding SaveSettingsMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+      <commonUiControls:MessageTextBlock Message="{Binding SaveSettingsMessage}" />
     </StackPanel>
   </Grid>
 </Window>

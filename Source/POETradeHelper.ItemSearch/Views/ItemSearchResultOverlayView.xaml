@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
+        xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
         xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.Converters;assembly=POETradeHelper.ItemSearch"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="220"
         x:Class="POETradeHelper.ItemSearch.Views.ItemSearchResultOverlayView"
@@ -43,13 +44,10 @@
     </Style>
   </Window.Styles>
 
-  <Grid Margin="10">
+  <Grid Margin="10" MaxWidth="{Binding $parent[Window].Width}">
 
-    <TextBlock VerticalAlignment="Center"
-               HorizontalAlignment="Center"
-               Text="{Binding Message.Text}"
-               Foreground="{Binding Message.Type, Converter={StaticResource messageTypeToBrushConverter}}"
-               IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    <commonUiControls:MessageTextBlock Message="{Binding Message}"
+                                       VerticalAlignment="Center" />
 
     <Grid IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
 
@@ -80,6 +78,7 @@
       <Grid Grid.Row="1" Grid.ColumnSpan="2">
         <DataGrid Items="{Binding ItemListings.Result}"
                   IsReadOnly="True"
+                  ColumnWidth="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Auto">
           <DataGrid.Columns>
             <DataGridTextColumn Header="Account name" Binding="{Binding Listing.Account.Name}" />

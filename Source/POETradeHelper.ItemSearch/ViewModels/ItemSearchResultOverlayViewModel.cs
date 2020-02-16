@@ -62,7 +62,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             {
                 this.Message = new Message
                 {
-                    Text = exception.ToString(),
+                    Text = $"An error occurred. Please try again.{Environment.NewLine}If the error persists, check the logs and create an issue on GitHub.",
                     Type = MessageType.Error
                 };
 
