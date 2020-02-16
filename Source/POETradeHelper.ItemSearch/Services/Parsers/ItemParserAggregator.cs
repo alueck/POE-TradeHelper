@@ -1,4 +1,5 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Exceptions;
 using System;
@@ -19,7 +20,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         public bool CanParse(string itemString)
         {
             var itemStringLines = this.GetLines(itemString);
-            return parsers.Count(x => x.CanParse(itemStringLines)) == 1;
+
+            return itemStringLines.Any(l => l.StartsWith(Resources.RarityDescriptor))
+                && parsers.Count(x => x.CanParse(itemStringLines)) == 1;
         }
 
         public Item Parse(string itemString)

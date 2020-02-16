@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Exceptions;
 using POETradeHelper.ItemSearch.Services.Parsers;
@@ -40,7 +41,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
                 .Returns(true);
 
-            bool result = this.itemParserAggregator.CanParse("");
+            bool result = this.itemParserAggregator.CanParse(Resources.RarityDescriptor);
 
             Assert.IsTrue(result);
         }
@@ -56,6 +57,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             bool result = this.itemParserAggregator.CanParse("");
 
             Assert.IsFalse(result);
+        }
+
+        [TestCase("incorrect item string", false)]
+        [TestCase("Rarity: Magic", true)]
+        public void CanParseShouldReturnResultBasedOnRarityLineExistence(string itemString, bool expected)
+        {
+            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
+                .Returns(true);
+
+            bool result = this.itemParserAggregator.CanParse(itemString);
+
+            Assert.That(result, Is.EqualTo(expected));
         }
 
         [Test]
