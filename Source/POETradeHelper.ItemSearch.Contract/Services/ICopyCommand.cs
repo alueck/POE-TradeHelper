@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace POETradeHelper.Common.Contract
+namespace POETradeHelper.ItemSearch.Contract.Services
 {
     public interface ICopyCommand
     {

@@ -1,7 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
-using POETradeHelper.Common.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services;
 using System.Threading;

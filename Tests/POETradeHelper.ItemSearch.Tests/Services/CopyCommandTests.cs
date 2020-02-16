@@ -3,18 +3,20 @@ using NUnit.Framework;
 using POETradeHelper.Common.Contract;
 using System.Threading.Tasks;
 
-namespace POETradeHelper.Win32.Tests
+namespace POETradeHelper.ItemSearch.Services.Tests
 {
     public class CopyCommandTests
     {
         private Mock<IClipboardHelper> clipboardHelperMock;
+        private Mock<INativeKeyboard> nativeKeyBoardMock;
         private CopyCommand copyCommand;
 
         [SetUp]
         public void Setup()
         {
             this.clipboardHelperMock = new Mock<IClipboardHelper>();
-            this.copyCommand = new CopyCommand(this.clipboardHelperMock.Object);
+            this.nativeKeyBoardMock = new Mock<INativeKeyboard>();
+            this.copyCommand = new CopyCommand(this.clipboardHelperMock.Object, this.nativeKeyBoardMock.Object);
         }
 
         [Test]
@@ -26,12 +28,22 @@ namespace POETradeHelper.Win32.Tests
         }
 
         [Test]
+        public async Task ExecuteShouldCallSendCopyCommandOnNativeKeyboard()
+        {
+            await this.copyCommand.ExecuteAsync();
+
+            this.nativeKeyBoardMock.Verify(x => x.SendCopyCommand());
+        }
+
+        [Test]
         public async Task ExecuteShouldReturnItemString()
         {
             const string expected = "itemString";
-            this.clipboardHelperMock.SetupSequence(x => x.GetTextAsync())
-                .ReturnsAsync("previously copied text")
-                .ReturnsAsync(expected);
+            this.clipboardHelperMock.Setup(x => x.GetTextAsync())
+                .ReturnsAsync("previously copied text");
+
+            this.nativeKeyBoardMock.Setup(x => x.SendCopyCommand())
+                .Callback(() => this.clipboardHelperMock.Setup(x => x.GetTextAsync()).ReturnsAsync(expected));
 
             string result = await this.copyCommand.ExecuteAsync();
 
@@ -42,9 +54,11 @@ namespace POETradeHelper.Win32.Tests
         public async Task ExecuteShouldRestoreClipboardTextToPreviousState()
         {
             const string expected = "previously copied text";
-            this.clipboardHelperMock.SetupSequence(x => x.GetTextAsync())
-                .ReturnsAsync(expected)
-                .ReturnsAsync("itemString");
+            this.clipboardHelperMock.Setup(x => x.GetTextAsync())
+                .ReturnsAsync(expected);
+
+            this.nativeKeyBoardMock.Setup(x => x.SendCopyCommand())
+                .Callback(() => this.clipboardHelperMock.Setup(x => x.GetTextAsync()).ReturnsAsync(expected));
 
             await this.copyCommand.ExecuteAsync();
 
