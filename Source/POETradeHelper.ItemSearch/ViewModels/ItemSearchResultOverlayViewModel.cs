@@ -6,6 +6,7 @@ using POETradeHelper.PathOfExileTradeApi.Services;
 using ReactiveUI;
 using Splat;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,6 +21,9 @@ namespace POETradeHelper.ItemSearch.ViewModels
         {
             this.searchItemProvider = searchItemProvider;
             this.poeTradeApiClient = tradeClient;
+
+            var canExecuteOpenQueryInBrowser = this.WhenAnyValue(x => x.ItemListings, (ItemListingsQueryResult itemListing) => itemListing != null);
+            this.OpenQueryInBrowserCommand = ReactiveCommand.Create(() => this.OpenUrl(this.ItemListings.Uri.ToString()), canExecuteOpenQueryInBrowser);
         }
 
         private ItemListingsQueryResult itemListing;
@@ -36,6 +40,8 @@ namespace POETradeHelper.ItemSearch.ViewModels
             get => this.message;
             set => this.RaiseAndSetIfChanged(ref message, value);
         }
+
+        public IReactiveCommand OpenQueryInBrowserCommand { get; }
 
         public async Task SetListingForItemUnderCursorAsync(CancellationToken cancellationToken = default)
         {
@@ -62,6 +68,15 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
                 this.Log().Error(exception);
             }
+        }
+
+        private void OpenUrl(string url)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
         }
     }
 }

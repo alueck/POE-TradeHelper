@@ -52,6 +52,11 @@
                IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
     <Grid IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
+
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition />
+      </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition />
@@ -62,14 +67,24 @@
                  Foreground="{Binding ItemListings.Item.Rarity, Converter={StaticResource itemRarityToBrushConverter}}"
                  Margin ="0,0,0,5" />
 
-      <Grid Grid.Row="1">
+      <Button Grid.Column="1"
+              Content="Open in browser"
+              Command="{Binding OpenQueryInBrowserCommand}"
+              Background="Transparent" BorderThickness="0"
+              Padding="0"
+              Margin="0,0,0,5"
+              HorizontalAlignment="Right"
+              Foreground="{DynamicResource ThemeAccentBrush}"
+              Cursor="Hand" />
+
+      <Grid Grid.Row="1" Grid.ColumnSpan="2">
         <DataGrid Items="{Binding ItemListings.Result}"
                   IsReadOnly="True"
                   ScrollViewer.VerticalScrollBarVisibility="Auto">
           <DataGrid.Columns>
             <DataGridTextColumn Header="Account name" Binding="{Binding Listing.Account.Name}" />
             <DataGridTextColumn Header="Item level" Binding="{Binding Item.ItemLevel}" CellStyleClasses="alignRight" />
-            <DataGridTextColumn Header="Price" Binding="{Binding Listing.Price.PriceText}" CellStyleClasses="padLeftRight" />
+            <DataGridTextColumn Header="Price" Binding="{Binding Listing.Price.PriceText}" />
             <DataGridTextColumn Header="Age" Binding="{Binding Listing.AgeText}" CellStyleClasses="alignRight" />
           </DataGrid.Columns>
         </DataGrid>
