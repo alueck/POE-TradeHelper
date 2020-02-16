@@ -8,6 +8,6 @@
 
         public string Currency { get; set; }
 
-        public string PriceText => $"{Type} {Amount:G3} {Currency}";
+        public string PriceText => $"{Amount:0.##} {Currency}";
     }
 }
