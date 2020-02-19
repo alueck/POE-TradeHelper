@@ -1,11 +1,9 @@
-﻿namespace POETradeHelper.ItemSearch.Views
+﻿using POETradeHelper.Common.UI;
+
+namespace POETradeHelper.ItemSearch.Views
 {
-    public interface IItemSearchResultOverlayView
+    public interface IItemSearchResultOverlayView : IHideable
     {
         bool IsVisible { get; set; }
-
-        void Hide();
-
-        void Show();
     }
 }

@@ -1,4 +1,5 @@
-﻿using POETradeHelper.Common.UI.Models;
+﻿using POETradeHelper.Common.UI;
+using POETradeHelper.Common.UI.Models;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -23,7 +24,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             this.poeTradeApiClient = tradeClient;
 
             var canExecuteOpenQueryInBrowser = this.WhenAnyValue(x => x.ItemListings, (ItemListingsQueryResult itemListing) => itemListing != null);
-            this.OpenQueryInBrowserCommand = ReactiveCommand.Create(() => this.OpenUrl(this.ItemListings.Uri.ToString()), canExecuteOpenQueryInBrowser);
+            this.OpenQueryInBrowserCommand = ReactiveCommand.Create((IHideable hideableWindow) => this.OpenUrl(this.ItemListings.Uri.ToString(), hideableWindow), canExecuteOpenQueryInBrowser);
         }
 
         private ItemListingsQueryResult itemListing;
@@ -70,13 +71,15 @@ namespace POETradeHelper.ItemSearch.ViewModels
             }
         }
 
-        private void OpenUrl(string url)
+        private void OpenUrl(string url, IHideable hideableWindow)
         {
             Process.Start(new ProcessStartInfo
             {
                 FileName = url,
                 UseShellExecute = true
             });
+
+            hideableWindow.Hide();
         }
     }
 }
