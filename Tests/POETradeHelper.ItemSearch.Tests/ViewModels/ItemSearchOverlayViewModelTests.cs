@@ -73,7 +73,8 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
 
             Assert.IsNotNull(this.itemSearchOverlayViewModel.Message);
             Assert.That(this.itemSearchOverlayViewModel.Message.Type, Is.EqualTo(MessageType.Error));
-            Assert.That(this.itemSearchOverlayViewModel.Message.Text, Is.EqualTo(exception.ToString()));
+            Assert.IsNotNull(this.itemSearchOverlayViewModel.Message.Text);
+            Assert.IsNotEmpty(this.itemSearchOverlayViewModel.Message.Text);
         }
 
         [Test]

@@ -32,7 +32,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 });
 
             var httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
-            httpClientFactoryWrapperMock.Setup(x => x.CreateClient(It.IsAny<string>()))
+            httpClientFactoryWrapperMock.Setup(x => x.CreateClient())
                 .Returns(this.httpClientWrapperMock.Object);
 
             this.poeTradeApiJsonSerializerMock = new Mock<IPoeTradeApiJsonSerializer>();
@@ -61,7 +61,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.staticItemDataService.OnInitAsync();
 
-            this.poeTradeApiJsonSerializerMock.Verify(x => x.Deserialize<QueryResult<StaticData>>(content));
+            this.poeTradeApiJsonSerializerMock.Verify(x => x.Deserialize<QueryResult<Data<StaticData>>>(content));
         }
 
         [Test]
@@ -88,18 +88,18 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Name = "Scroll of Wisdom"
             };
 
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<StaticData>>(It.IsAny<string>()))
-                .Returns(new QueryResult<StaticData>
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StaticData>>
                 {
-                    Result = new List<StaticData>
+                    Result = new List<Data<StaticData>>
                     {
-                        new StaticData
+                        new Data<StaticData>
                         {
                             Id = "Currency",
-                            Entries = new List<StaticDataEntry>
+                            Entries = new List<StaticData>
                             {
-                                new StaticDataEntry { Id = "alt", Text = "Orb of Alteration" },
-                                new StaticDataEntry { Id = expected, Text = item.Name }
+                                new StaticData { Id = "alt", Text = "Orb of Alteration" },
+                                new StaticData { Id = expected, Text = item.Name }
                             }
                         }
                     }

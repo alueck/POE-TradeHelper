@@ -8,5 +8,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         public Uri Uri { get; set; }
         public int TotalCount { get; set; }
         public Item Item { get; set; }
+        public IQueryRequest SearchQueryRequest { get; set; }
     }
 }

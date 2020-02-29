@@ -16,11 +16,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
     {
         private readonly IHttpClientWrapper httpClient;
         private readonly IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer;
-        private IDictionary<string, StaticDataEntry> nameToStaticDataMappings;
+        private IDictionary<string, StaticData> nameToStaticDataMappings;
 
         public StaticItemDataService(IHttpClientFactoryWrapper httpClientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer)
         {
-            this.httpClient = httpClientFactory.CreateClient(nameof(StaticItemDataService));
+            this.httpClient = httpClientFactory.CreateClient();
             this.poeTradeApiJsonSerializer = poeTradeApiJsonSerializer;
         }
 
@@ -45,7 +45,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             }
 
             string content = await httpResponse.Content.ReadAsStringAsync();
-            var queryResult = this.poeTradeApiJsonSerializer.Deserialize<QueryResult<StaticData>>(content);
+            var queryResult = this.poeTradeApiJsonSerializer.Deserialize<QueryResult<Data<StaticData>>>(content);
 
             this.nameToStaticDataMappings = queryResult?.Result?
                                                 .Where(x => !x.Id.StartsWith("Map"))

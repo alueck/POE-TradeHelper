@@ -2,6 +2,6 @@
 {
     public interface IHttpClientFactoryWrapper
     {
-        IHttpClientWrapper CreateClient(string name);
+        IHttpClientWrapper CreateClient();
     }
 }

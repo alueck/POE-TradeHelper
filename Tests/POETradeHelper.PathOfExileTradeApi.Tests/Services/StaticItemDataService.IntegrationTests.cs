@@ -23,7 +23,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             this.httpClientWrapperMock = new Mock<IHttpClientWrapper>();
             var httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
-            httpClientFactoryWrapperMock.Setup(x => x.CreateClient(It.IsAny<string>()))
+            httpClientFactoryWrapperMock.Setup(x => x.CreateClient())
                 .Returns(this.httpClientWrapperMock.Object);
 
             this.staticItemDataService = new StaticItemDataService(httpClientFactoryWrapperMock.Object, new PoeTradeApiJsonSerializer(new JsonSerializerWrapper()));

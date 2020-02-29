@@ -5,5 +5,7 @@
         public OrganItem() : base(ItemRarity.Unique)
         {
         }
+
+        public OrganItemStats Stats { get; set; }
     }
 }

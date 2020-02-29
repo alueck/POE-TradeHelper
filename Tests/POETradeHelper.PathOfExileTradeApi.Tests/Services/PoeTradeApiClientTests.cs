@@ -45,7 +45,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 });
 
             this.httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
-            this.httpClientFactoryWrapperMock.Setup(x => x.CreateClient(It.IsAny<string>()))
+            this.httpClientFactoryWrapperMock.Setup(x => x.CreateClient())
                 .Returns(this.httpClientWrapperMock.Object);
 
             this.poeTradeApiJsonSerializerMock = new Mock<IPoeTradeApiJsonSerializer>();
@@ -258,6 +258,24 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             await this.poeTradeApiClient.GetListingsAsync(item);
 
             this.poeTradeApiJsonSerializerMock.Verify(x => x.Deserialize<SearchQueryResult>(expected));
+        }
+
+        [Test]
+        public async Task GetListingsAsynchShouldSetRequestOnSearchQueryResult()
+        {
+            var item = new CurrencyItem();
+            var searchQueryRequest = new SearchQueryRequest();
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+                .Returns(new SearchQueryResult());
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+                .Returns(new ItemListingsQueryResult());
+            this.itemToQueryRequestMapperAggregatorMock.Setup(x => x.MapToQueryRequest(It.IsAny<Item>()))
+                .Returns(searchQueryRequest);
+
+            ItemListingsQueryResult result = await this.poeTradeApiClient.GetListingsAsync(item);
+
+            Assert.That(result.SearchQueryRequest, Is.EqualTo(searchQueryRequest));
         }
 
         [Test]

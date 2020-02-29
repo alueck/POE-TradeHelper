@@ -2,10 +2,10 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public class StaticData
+    public class Data<TType>
     {
         public string Id { get; set; }
 
-        public IList<StaticDataEntry> Entries { get; set; }
+        public IList<TType> Entries { get; set; }
     }
 }

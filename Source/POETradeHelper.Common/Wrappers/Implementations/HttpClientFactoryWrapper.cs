@@ -13,9 +13,9 @@ namespace POETradeHelper.Common.Wrappers
             this.httpClientFactory = httpClientFactory;
         }
 
-        public IHttpClientWrapper CreateClient(string name)
+        public IHttpClientWrapper CreateClient()
         {
-            return new HttpClientWrapper(this.httpClientFactory.CreateClient(name));
+            return new HttpClientWrapper(this.httpClientFactory.CreateClient());
         }
     }
 }

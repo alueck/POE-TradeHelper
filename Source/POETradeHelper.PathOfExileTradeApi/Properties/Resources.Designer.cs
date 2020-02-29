@@ -61,6 +61,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Drops.
+        /// </summary>
+        public static string MetamorphStatDescriptor {
+            get {
+                return ResourceManager.GetString("MetamorphStatDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://www.pathofexile.com/api/trade.
         /// </summary>
         public static string PoeTradeApiBaseUrl {
@@ -111,6 +120,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         public static string PoeTradeApiStaticDataEndpoint {
             get {
                 return ResourceManager.GetString("PoeTradeApiStaticDataEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /data/stats.
+        /// </summary>
+        public static string PoeTradeApiStatsDataEndpoint {
+            get {
+                return ResourceManager.GetString("PoeTradeApiStatsDataEndpoint", resourceCulture);
             }
         }
         

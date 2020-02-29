@@ -340,6 +340,87 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crafted.
+        /// </summary>
+        public static string StatCategoryCrafted {
+            get {
+                return ResourceManager.GetString("StatCategoryCrafted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delve.
+        /// </summary>
+        public static string StatCategoryDelve {
+            get {
+                return ResourceManager.GetString("StatCategoryDelve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enchant.
+        /// </summary>
+        public static string StatCategoryEnchant {
+            get {
+                return ResourceManager.GetString("StatCategoryEnchant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Explicit.
+        /// </summary>
+        public static string StatCategoryExplicit {
+            get {
+                return ResourceManager.GetString("StatCategoryExplicit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fractured.
+        /// </summary>
+        public static string StatCategoryFractured {
+            get {
+                return ResourceManager.GetString("StatCategoryFractured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Implicit.
+        /// </summary>
+        public static string StatCategoryImplicit {
+            get {
+                return ResourceManager.GetString("StatCategoryImplicit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Monster.
+        /// </summary>
+        public static string StatCategoryMonster {
+            get {
+                return ResourceManager.GetString("StatCategoryMonster", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pseudo.
+        /// </summary>
+        public static string StatCategoryPseudo {
+            get {
+                return ResourceManager.GetString("StatCategoryPseudo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Veiled.
+        /// </summary>
+        public static string StatCategoryVeiled {
+            get {
+                return ResourceManager.GetString("StatCategoryVeiled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Superior.
         /// </summary>
         public static string SuperiorPrefix {

@@ -28,7 +28,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             IItemSearchQueryRequestMapperAggregator itemSearchQueryRequestMapperAggregator,
             IOptions<ItemSearchOptions> itemSearchOptions)
         {
-            this.httpClient = httpClientFactory.CreateClient(nameof(PoeTradeApiClient));
+            this.httpClient = httpClientFactory.CreateClient();
             this.jsonSerializer = jsonSerializer;
             this.itemToQueryRequestMapperAggregator = itemSearchQueryRequestMapperAggregator;
             this.itemSearchOptions = itemSearchOptions;
@@ -66,7 +66,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
                 throw new PoeTradeApiCommunicationException(requestUri, await content.ReadAsStringAsync(), response.StatusCode);
             }
 
-            return await this.ReadAsJsonAsync<SearchQueryResult>(response.Content);
+            var searchQueryResult = await this.ReadAsJsonAsync<SearchQueryResult>(response.Content);
+            searchQueryResult.Request = queryRequest;
+
+            return searchQueryResult;
         }
 
         private StringContent GetJsonStringContent(IQueryRequest queryRequest)
@@ -89,6 +92,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}/{searchQueryResult.Id}");
             itemListingsQueryResult.TotalCount = searchQueryResult.Total;
             itemListingsQueryResult.Item = item;
+            itemListingsQueryResult.SearchQueryRequest = searchQueryResult.Request;
 
             return itemListingsQueryResult;
         }
