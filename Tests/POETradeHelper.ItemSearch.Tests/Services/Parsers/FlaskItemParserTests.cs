@@ -1,5 +1,7 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
@@ -7,13 +9,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class FlaskItemParserTests
     {
+        private Mock<IFlaskItemStatsParser> flaskItemStatsParserMock;
         private FlaskItemParser flaskItemParser;
         private ItemStringBuilder itemStringBuilder;
 
         [SetUp]
         public void Setup()
         {
-            this.flaskItemParser = new FlaskItemParser();
+            this.flaskItemStatsParserMock = new Mock<IFlaskItemStatsParser>();
+            this.flaskItemParser = new FlaskItemParser(this.flaskItemStatsParserMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -149,6 +153,47 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
 
             Assert.IsFalse(result.IsIdentified);
+        }
+
+        [Test]
+        public void ParseShouldCallParseOnFlaskItemStatsParserIfFlaskIsIdentified()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                                        .WithName("Divine Life Flask")
+                                        .BuildLines();
+
+            this.flaskItemParser.Parse(itemStringLines);
+
+            this.flaskItemStatsParserMock.Verify(x => x.Parse(itemStringLines));
+        }
+
+        [Test]
+        public void ParseShouldNotCallParseOnFlaskItemStatsParserIfFlaskIsUnidentified()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                                        .WithName("Divine Life Flask")
+                                        .WithUnidentified()
+                                        .BuildLines();
+
+            this.flaskItemParser.Parse(itemStringLines);
+
+            this.flaskItemStatsParserMock.Verify(x => x.Parse(itemStringLines), Times.Never);
+        }
+
+        [Test]
+        public void ParseShouldSetStatsToStatsFromStatsDataService()
+        {
+            FlaskItemStats expected = new FlaskItemStats();
+            string[] itemStringLines = this.itemStringBuilder
+                                        .WithName("Divine Life Flask")
+                                        .BuildLines();
+
+            this.flaskItemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
+                .Returns(expected);
+
+            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
+
+            Assert.That(result.Stats, Is.SameAs(expected));
         }
     }
 }

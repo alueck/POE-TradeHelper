@@ -9,5 +9,7 @@
         public bool IsIdentified { get; set; }
 
         public int Quality { get; set; }
+
+        public FlaskItemStats Stats { get; set; }
     }
 }

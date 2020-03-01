@@ -1,5 +1,6 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using System.Text.RegularExpressions;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
@@ -7,6 +8,12 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
     public class FlaskItemParser : ItemParserBase
     {
         private const int NameLineIndex = 1;
+        private IFlaskItemStatsParser flaskItemStatsParser;
+
+        public FlaskItemParser(IFlaskItemStatsParser flaskItemStatsParser)
+        {
+            this.flaskItemStatsParser = flaskItemStatsParser;
+        }
 
         public override bool CanParse(string[] itemStringLines)
         {
@@ -17,13 +24,20 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         public override Item Parse(string[] itemStringLines)
         {
             ItemRarity? rarity = this.GetRarity(itemStringLines);
-            return new FlaskItem(rarity.Value)
+            var flaskItem = new FlaskItem(rarity.Value)
             {
                 Name = itemStringLines[NameLineIndex],
                 Type = this.GetFlaskType(itemStringLines),
                 Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
-                IsIdentified = this.IsIdentified(itemStringLines)
+                IsIdentified = this.IsIdentified(itemStringLines),
             };
+
+            if (flaskItem.IsIdentified)
+            {
+                flaskItem.Stats = this.flaskItemStatsParser.Parse(itemStringLines);
+            }
+
+            return flaskItem;
         }
 
         private string GetFlaskType(string[] itemStringLines)

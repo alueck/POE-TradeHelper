@@ -1,21 +1,16 @@
 ﻿using DynamicData;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class OrganItemStatsParser : IOrganItemStatsParser
+    public class OrganItemStatsParser : ItemStatsParserBase, IOrganItemStatsParser
     {
-        private IStatsDataService statsDataService;
-
-        public OrganItemStatsParser(IStatsDataService statsDataService)
+        public OrganItemStatsParser(IStatsDataService statsDataService) : base(statsDataService)
         {
-            this.statsDataService = statsDataService;
         }
 
         public OrganItemStats Parse(string[] itemStringLines)
@@ -29,8 +24,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private IEnumerable<MonsterItemStat> ParseMonsterStats(string[] itemStringLines)
         {
-            int itemLevelLineIndex = Array.FindIndex(itemStringLines, l => l.StartsWith(Resources.ItemLevelDescriptor));
-            int statsStartIndex = itemLevelLineIndex + 2; //skip item level line itself and following property group separator
+            int statsStartIndex = GetStatsStartIndex(itemStringLines);
 
             var groupedItemStatLines = itemStringLines
                 .Skip(statsStartIndex)
@@ -41,24 +35,16 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             {
                 Text = group.Key,
                 Count = group.Count(),
-                TextWithPlaceholders = GetTextWithPlaceholders(group.Key)
+                TextWithPlaceholders = this.GetTextWithPlaceholders(group.Key)
             }).ToList();
-            this.SetIds(monsterItemStats);
+            this.SetStatIds(monsterItemStats);
 
             return monsterItemStats;
         }
 
-        private string GetTextWithPlaceholders(string text)
+        protected override string GetTextWithPlaceholders(string text)
         {
             return $"{text} (×#)";
-        }
-
-        private void SetIds(IEnumerable<MonsterItemStat> monsterItemStats)
-        {
-            foreach (var monsterItemStat in monsterItemStats)
-            {
-                monsterItemStat.Id = this.statsDataService.GetId(monsterItemStat);
-            }
         }
     }
 }

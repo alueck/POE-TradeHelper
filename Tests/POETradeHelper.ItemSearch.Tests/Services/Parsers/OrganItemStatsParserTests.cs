@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithType("Oriath's Virtue's Eye")
                                 .WithItemLevel(73)
                                 .WithExplicitItemStat(expected)
+                                .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
             OrganItemStats result = this.organItemStatsParser.Parse(itemStringLines);
@@ -48,6 +50,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithType("Oriath's Virtue's Eye")
                                 .WithItemLevel(73)
                                 .WithExplicitItemStat("Drops additional Currency Items")
+                                .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
             OrganItemStats result = this.organItemStatsParser.Parse(itemStringLines);
@@ -66,6 +69,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithExplicitItemStat(statText)
                                 .WithExplicitItemStat(statText)
                                 .WithExplicitItemStat(statText)
+                                .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
             OrganItemStats result = this.organItemStatsParser.Parse(itemStringLines);
@@ -83,6 +87,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithType("Oriath's Virtue's Eye")
                                 .WithItemLevel(73)
                                 .WithExplicitItemStat("Drops additional Currency Items")
+                                .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
             OrganItemStats result = this.organItemStatsParser.Parse(itemStringLines);
@@ -101,6 +106,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .WithType("Oriath's Virtue's Eye")
                     .WithItemLevel(73)
                     .WithExplicitItemStat("Drops additional Currency Items")
+                    .WithDescription(Resources.OrganItemDescriptor)
                     .BuildLines();
 
             this.statsDataServiceMock.Setup(x => x.GetId(It.IsAny<ItemStat>()))
