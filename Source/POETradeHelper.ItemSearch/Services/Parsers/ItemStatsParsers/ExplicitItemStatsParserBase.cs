@@ -1,20 +1,21 @@
 ﻿using DynamicData;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Services.Parsers;
+using POETradeHelper.ItemSearch.Contract.Models.ItemStats;
 using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class FlaskItemStatsParser : ItemStatsParserBase, IFlaskItemStatsParser
+    public abstract class ExplicitItemStatsParserBase<TItemStats> : ItemStatsParserBase
+        where TItemStats : IHasExplicitStats, new()
     {
-        public FlaskItemStatsParser(IStatsDataService statsDataService) : base(statsDataService)
+        protected ExplicitItemStatsParserBase(IStatsDataService statsDataService) : base(statsDataService)
         {
         }
 
-        public FlaskItemStats Parse(string[] itemStringLines)
+        public TItemStats Parse(string[] itemStringLines)
         {
-            var result = new FlaskItemStats();
+            var result = new TItemStats();
 
             int statsStartIndex = GetStatsStartIndex(itemStringLines);
 

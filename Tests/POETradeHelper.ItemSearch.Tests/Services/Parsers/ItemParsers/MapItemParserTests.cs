@@ -1,6 +1,9 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Models.ItemStats;
 using POETradeHelper.ItemSearch.Contract.Properties;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
@@ -8,13 +11,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class MapItemParserTests
     {
+        private Mock<IMapItemStatsParser> mapItemStatsParserMock;
         private MapItemParser mapItemParser;
         private MapItemStringBuilder mapItemStringBuilder;
 
         [SetUp]
         public void Setup()
         {
-            this.mapItemParser = new MapItemParser();
+            this.mapItemStatsParserMock = new Mock<IMapItemStatsParser>();
+            this.mapItemParser = new MapItemParser(this.mapItemStatsParserMock.Object);
             this.mapItemStringBuilder = new MapItemStringBuilder();
         }
 
@@ -212,6 +217,50 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             Assert.That(result.Type, Is.EqualTo(expectedType));
             Assert.That(result.Name, Is.EqualTo(expectedName));
+        }
+
+        [Test]
+        public void ParseShouldCallParseOnMapItemStatsParserIfMapIsIdentified()
+        {
+            string[] itemStringLines = this.mapItemStringBuilder
+                                        .WithRarity(ItemRarity.Normal)
+                                        .WithType("Thicket Map")
+                                        .BuildLines();
+
+            this.mapItemParser.Parse(itemStringLines);
+
+            this.mapItemStatsParserMock.Verify(x => x.Parse(itemStringLines));
+        }
+
+        [Test]
+        public void ParseShouldNotCallParseOnMapItemStatsParserIfMapIsUnidentified()
+        {
+            string[] itemStringLines = this.mapItemStringBuilder
+                                        .WithRarity(ItemRarity.Normal)
+                                        .WithType("Thicket Map")
+                                        .WithUnidentified()
+                                        .BuildLines();
+
+            this.mapItemParser.Parse(itemStringLines);
+
+            this.mapItemStatsParserMock.Verify(x => x.Parse(itemStringLines), Times.Never);
+        }
+
+        [Test]
+        public void ParseShouldSetStatsOnMapItemFromStatsDataService()
+        {
+            MapItemStats expected = new MapItemStats();
+            string[] itemStringLines = this.mapItemStringBuilder
+                            .WithRarity(ItemRarity.Normal)
+                            .WithType("Thicket Map")
+                            .BuildLines();
+
+            this.mapItemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
+                .Returns(expected);
+
+            MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;
+
+            Assert.That(result.Stats, Is.SameAs(expected));
         }
     }
 }

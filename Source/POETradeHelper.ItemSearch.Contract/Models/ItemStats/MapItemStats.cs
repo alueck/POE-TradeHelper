@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace POETradeHelper.ItemSearch.Contract.Models
 {
-    public class FlaskItemStats : IHasExplicitStats
+    public class MapItemStats : IHasExplicitStats
     {
         public IList<ExplicitItemStat> ExplicitStats { get; } = new List<ExplicitItemStat>();
     }

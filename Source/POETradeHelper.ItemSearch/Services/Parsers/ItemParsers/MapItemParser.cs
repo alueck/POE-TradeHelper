@@ -1,5 +1,6 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
@@ -7,6 +8,12 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
     public class MapItemParser : ItemParserBase
     {
         private const int NameLineIndex = 1;
+        private IMapItemStatsParser mapItemStatsParser;
+
+        public MapItemParser(IMapItemStatsParser mapItemStatsParser)
+        {
+            this.mapItemStatsParser = mapItemStatsParser;
+        }
 
         public override bool CanParse(string[] itemStringLines)
         {
@@ -30,6 +37,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             SetNameAndType(mapItem, itemStringLines);
 
             mapItem.IsBlighted = mapItem.Name.Contains(Resources.BlightedPrefix);
+
+            if (mapItem.IsIdentified)
+            {
+                mapItem.Stats = this.mapItemStatsParser.Parse(itemStringLines);
+            }
 
             return mapItem;
         }

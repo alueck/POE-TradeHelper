@@ -1,4 +1,6 @@
-﻿namespace POETradeHelper.ItemSearch.Contract.Models
+﻿using POETradeHelper.ItemSearch.Contract.Models.ItemStats;
+
+namespace POETradeHelper.ItemSearch.Contract.Models
 {
     public class MapItem : Item, IIdentifiableItem, ICorruptableItem, IQualityItem
     {
@@ -14,5 +16,6 @@
         public int MonsterPackSize { get; set; }
         public int Quality { get; set; }
         public bool IsBlighted { get; set; }
+        public MapItemStats Stats { get; set; }
     }
 }
