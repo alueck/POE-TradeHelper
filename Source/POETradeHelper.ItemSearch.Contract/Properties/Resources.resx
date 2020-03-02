@@ -228,17 +228,11 @@
   <data name="StatCategoryCrafted" xml:space="preserve">
     <value>Crafted</value>
   </data>
-  <data name="StatCategoryDelve" xml:space="preserve">
-    <value>Delve</value>
-  </data>
   <data name="StatCategoryEnchant" xml:space="preserve">
     <value>Enchant</value>
   </data>
   <data name="StatCategoryExplicit" xml:space="preserve">
     <value>Explicit</value>
-  </data>
-  <data name="StatCategoryFractured" xml:space="preserve">
-    <value>Fractured</value>
   </data>
   <data name="StatCategoryImplicit" xml:space="preserve">
     <value>Implicit</value>
@@ -248,8 +242,5 @@
   </data>
   <data name="StatCategoryPseudo" xml:space="preserve">
     <value>Pseudo</value>
-  </data>
-  <data name="StatCategoryVeiled" xml:space="preserve">
-    <value>Veiled</value>
   </data>
 </root>

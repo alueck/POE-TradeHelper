@@ -349,15 +349,6 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delve.
-        /// </summary>
-        public static string StatCategoryDelve {
-            get {
-                return ResourceManager.GetString("StatCategoryDelve", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enchant.
         /// </summary>
         public static string StatCategoryEnchant {
@@ -372,15 +363,6 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string StatCategoryExplicit {
             get {
                 return ResourceManager.GetString("StatCategoryExplicit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fractured.
-        /// </summary>
-        public static string StatCategoryFractured {
-            get {
-                return ResourceManager.GetString("StatCategoryFractured", resourceCulture);
             }
         }
         
@@ -408,15 +390,6 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string StatCategoryPseudo {
             get {
                 return ResourceManager.GetString("StatCategoryPseudo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Veiled.
-        /// </summary>
-        public static string StatCategoryVeiled {
-            get {
-                return ResourceManager.GetString("StatCategoryVeiled", resourceCulture);
             }
         }
         
