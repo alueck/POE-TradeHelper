@@ -142,6 +142,16 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             await this.GetIdShouldReturnCorrectId(monsterItemStat, expected);
         }
 
+        [Test]
+        public async Task GetIdShouldReturnCorrectIdEvenIfTextWithPlaceholdersDoesNotFullyMatch()
+        {
+            var explicitItemStat = new ImplicitItemStat { Text = "+10 to Maximum Mana per Green Socket", TextWithPlaceholders = "# to Maximum Mana per Green Socket" };
+
+            var expected = new StatData { Id = "stat_2250533757", Text = "+# to Maximum Mana per Green Socket", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryImplicit.ToLower() };
+
+            await this.GetIdShouldReturnCorrectId(explicitItemStat, expected);
+        }
+
         private async Task GetIdShouldReturnCorrectId(ItemStat itemStat, StatData expectedStatData)
         {
             string statCategory = itemStat.StatCategory.GetDisplayName();

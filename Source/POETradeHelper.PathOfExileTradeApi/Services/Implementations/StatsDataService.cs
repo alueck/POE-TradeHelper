@@ -54,7 +54,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             IEnumerable<StatData> statData = this.GetStatDataListToSearch(itemStat.StatCategory.GetDisplayName());
             Predicate<string> predicate = GetSearchPredicate(itemStat.TextWithPlaceholders);
 
-            return statData.FirstOrDefault(s => predicate(s.Text));
+            return statData.FirstOrDefault(s => predicate(s.Text) || predicate(s.Text.Replace("+#", "#")));
         }
 
         private IEnumerable<StatData> GetStatDataListToSearch(string statCategory)
