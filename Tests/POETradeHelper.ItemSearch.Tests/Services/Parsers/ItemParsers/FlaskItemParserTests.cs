@@ -9,15 +9,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class FlaskItemParserTests
     {
-        private Mock<IFlaskItemStatsParser> flaskItemStatsParserMock;
+        private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
         private FlaskItemParser flaskItemParser;
         private ItemStringBuilder itemStringBuilder;
 
         [SetUp]
         public void Setup()
         {
-            this.flaskItemStatsParserMock = new Mock<IFlaskItemStatsParser>();
-            this.flaskItemParser = new FlaskItemParser(this.flaskItemStatsParserMock.Object);
+            this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
+            this.flaskItemParser = new FlaskItemParser(this.itemStatsParserMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -164,7 +164,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.flaskItemParser.Parse(itemStringLines);
 
-            this.flaskItemStatsParserMock.Verify(x => x.Parse(itemStringLines));
+            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines));
         }
 
         [Test]
@@ -177,18 +177,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.flaskItemParser.Parse(itemStringLines);
 
-            this.flaskItemStatsParserMock.Verify(x => x.Parse(itemStringLines), Times.Never);
+            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines), Times.Never);
         }
 
         [Test]
         public void ParseShouldSetStatsToStatsFromStatsDataService()
         {
-            FlaskItemStats expected = new FlaskItemStats();
+            ItemStats expected = new ItemStats();
             string[] itemStringLines = this.itemStringBuilder
                                         .WithName("Divine Life Flask")
                                         .BuildLines();
 
-            this.flaskItemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
+            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
                 .Returns(expected);
 
             FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;

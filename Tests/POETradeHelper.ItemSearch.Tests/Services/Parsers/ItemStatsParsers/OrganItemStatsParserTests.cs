@@ -34,11 +34,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
-            OrganItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
 
-            Assert.That(result.Stats, Has.Count.EqualTo(1));
+            Assert.That(result.AllStats, Has.Count.EqualTo(1));
+            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
 
-            MonsterItemStat stat = result.Stats.First();
+            MonsterItemStat stat = result.MonsterStats.First();
             Assert.That(stat.Text, Is.EqualTo(expected));
         }
 
@@ -53,9 +54,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
-            OrganItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
 
-            MonsterItemStat stat = result.Stats.First();
+            Assert.That(result.AllStats, Has.Count.EqualTo(1));
+            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
+
+            MonsterItemStat stat = result.MonsterStats.First();
             Assert.That(stat.TextWithPlaceholders, Is.EqualTo(expected));
         }
 
@@ -72,11 +76,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
-            OrganItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
 
-            Assert.That(result.Stats, Has.Count.EqualTo(1));
+            Assert.That(result.AllStats, Has.Count.EqualTo(1));
+            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
 
-            MonsterItemStat stat = result.Stats.First();
+            MonsterItemStat stat = result.MonsterStats.First();
             Assert.That(stat.Count, Is.EqualTo(3));
         }
 
@@ -90,11 +95,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
-            OrganItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
 
-            foreach (ItemStat stat in result.Stats)
+            Assert.That(result.AllStats, Has.Count.EqualTo(1));
+            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
+
+            foreach (ItemStat stat in result.MonsterStats)
             {
-                this.statsDataServiceMock.Verify(x => x.GetId(stat));
+                this.statsDataServiceMock.Verify(x => x.GetStatData(stat));
             }
         }
 
@@ -109,12 +117,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .WithDescription(Resources.OrganItemDescriptor)
                     .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetId(It.IsAny<ItemStat>()))
-                .Returns(expected);
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>()))
+                .Returns(new StatData { Id = expected });
 
-            OrganItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
 
-            MonsterItemStat stat = result.Stats.First();
+            Assert.That(result.AllStats, Has.Count.EqualTo(1));
+            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
+
+            MonsterItemStat stat = result.MonsterStats.First();
             Assert.That(stat.Id, Is.EqualTo(expected));
         }
     }

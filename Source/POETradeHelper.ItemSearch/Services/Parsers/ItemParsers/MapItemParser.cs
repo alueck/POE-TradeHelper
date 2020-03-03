@@ -5,14 +5,12 @@ using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class MapItemParser : ItemParserBase
+    public class MapItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 1;
-        private IMapItemStatsParser mapItemStatsParser;
 
-        public MapItemParser(IMapItemStatsParser mapItemStatsParser)
+        public MapItemParser(IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
         {
-            this.mapItemStatsParser = mapItemStatsParser;
         }
 
         public override bool CanParse(string[] itemStringLines)
@@ -20,7 +18,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return itemStringLines.Any(l => l.Contains(Resources.MapTierDescriptor));
         }
 
-        public override Item Parse(string[] itemStringLines)
+        protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
             ItemRarity? rarity = this.GetRarity(itemStringLines);
             var mapItem = new MapItem(rarity.Value)
@@ -37,11 +35,6 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             SetNameAndType(mapItem, itemStringLines);
 
             mapItem.IsBlighted = mapItem.Name.Contains(Resources.BlightedPrefix);
-
-            if (mapItem.IsIdentified)
-            {
-                mapItem.Stats = this.mapItemStatsParser.Parse(itemStringLines);
-            }
 
             return mapItem;
         }

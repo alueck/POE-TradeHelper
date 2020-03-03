@@ -2,8 +2,8 @@
 
 namespace POETradeHelper.ItemSearch.Contract.Services.Parsers
 {
-    public interface IFlaskItemStatsParser
+    public interface IItemStatsParser<T> where T : ItemWithStats
     {
-        FlaskItemStats Parse(string[] itemStringLines);
+        ItemStats Parse(string[] itemStringLines);
     }
 }

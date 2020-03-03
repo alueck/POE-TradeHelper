@@ -20,7 +20,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         {
             foreach (var itemStat in itemStats)
             {
-                itemStat.Id = this.statsDataService.GetId(itemStat);
+                var statData = this.statsDataService.GetStatData(itemStat);
+                itemStat.Id = statData?.Id;
             }
         }
 

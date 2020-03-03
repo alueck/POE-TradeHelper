@@ -2,8 +2,10 @@
 {
     public class MonsterItemStat : ItemStat
     {
-        public int Count { get; set; }
+        public MonsterItemStat() : base(StatCategory.Monster)
+        {
+        }
 
-        public override StatCategory StatCategory => StatCategory.Monster;
+        public int Count { get; set; }
     }
 }

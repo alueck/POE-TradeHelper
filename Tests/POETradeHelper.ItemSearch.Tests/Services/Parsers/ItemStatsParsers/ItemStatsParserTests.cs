@@ -8,73 +8,76 @@ using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
-    public class MapItemStatsParserTests
+    public class ItemStatsParserTests
     {
         private Mock<IStatsDataService> statsDataServiceMock;
-        private MapItemStatsParser mapItemStatsParser;
+        private ItemStatsParser itemStatsParser;
         private ItemStringBuilder itemStringBuilder;
 
         [SetUp]
         public void Setup()
         {
             this.statsDataServiceMock = new Mock<IStatsDataService>();
-            this.mapItemStatsParser = new MapItemStatsParser(this.statsDataServiceMock.Object);
+            this.itemStatsParser = new ItemStatsParser(this.statsDataServiceMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
         [Test]
         public void ParseShouldParseStatText()
         {
-            const string expected = "Monsters deal 100% extra Damage as Fire";
+            const string expected = "100% increased Recovery when on Low Life";
             string[] itemStringLines = this.itemStringBuilder
-                                           .WithType("Thicket Map")
+                                           .WithName("Divine Life Flask")
                                            .WithItemLevel(60)
                                            .WithExplicitItemStat(expected)
                                            .BuildLines();
 
-            MapItemStats result = this.mapItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
 
+            Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.ExplicitStats, Has.Count.EqualTo(1));
 
-            ExplicitItemStat stat = result.ExplicitStats.First();
-            Assert.That(stat.Text, Is.EqualTo(expected));
+            ItemStat itemStat = result.ExplicitStats.First();
+            Assert.That(itemStat.Text, Is.EqualTo(expected));
         }
 
-        [TestCase("Monsters deal 100% extra Damage as Fire", "Monsters deal #% extra Damage as Fire")]
-        [TestCase("Monsters deal 59% extra Damage as Cold", "Monsters deal #% extra Damage as Cold")]
+        [TestCase("Grants 58% of Life Recovery to Minions", "Grants #% of Life Recovery to Minions")]
+        [TestCase("100% increased Recovery when on Low Life", "#% increased Recovery when on Low Life")]
         public void ParseShouldParseStatTextWithPlaceHolders(string statText, string expected)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                           .WithType("Thicket Map")
+                                           .WithName("Divine Life Flask")
                                            .WithItemLevel(60)
                                            .WithExplicitItemStat(statText)
                                            .BuildLines();
 
-            MapItemStats result = this.mapItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
 
+            Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.ExplicitStats, Has.Count.EqualTo(1));
 
-            ExplicitItemStat stat = result.ExplicitStats.First();
-            Assert.That(stat.TextWithPlaceholders, Is.EqualTo(expected));
+            ItemStat itemStat = result.ExplicitStats.First();
+            Assert.That(itemStat.TextWithPlaceholders, Is.EqualTo(expected));
         }
 
         [Test]
         public void ParseShouldCallGetIdOnStatsDataService()
         {
             string[] itemStringLines = this.itemStringBuilder
-                               .WithType("Thicket Map")
+                               .WithName("Divine Life Flask")
                                .WithItemLevel(60)
-                               .WithExplicitItemStat("Monsters deal 100% extra Damage as Fire")
-                               .WithExplicitItemStat("Monsters deal 59% extra Damage as Cold")
+                               .WithExplicitItemStat("Grants 58% of Life Recovery to Minions")
+                               .WithExplicitItemStat("100% increased Recovery when on Low Life")
                                .BuildLines();
 
-            MapItemStats result = this.mapItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
 
+            Assert.That(result.AllStats, Has.Count.EqualTo(2));
             Assert.That(result.ExplicitStats, Has.Count.EqualTo(2));
 
-            foreach (ExplicitItemStat explicitItemStat in result.ExplicitStats)
+            foreach (ItemStat itemStat in result.ExplicitStats)
             {
-                this.statsDataServiceMock.Verify(x => x.GetId(explicitItemStat));
+                this.statsDataServiceMock.Verify(x => x.GetStatData(itemStat));
             }
         }
 
@@ -83,19 +86,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             const string expected = "item stat id";
             string[] itemStringLines = this.itemStringBuilder
-                   .WithType("Thicket Map")
+                   .WithName("Divine Life Flask")
                    .WithItemLevel(60)
-                   .WithExplicitItemStat("Monsters deal 100% extra Damage as Fire")
+                   .WithExplicitItemStat("Grants 58% of Life Recovery to Minions")
                    .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetId(It.IsAny<ItemStat>()))
-                .Returns(expected);
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>()))
+                .Returns(new StatData { Id = expected });
 
-            MapItemStats result = this.mapItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
 
+            Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.ExplicitStats, Has.Count.EqualTo(1));
 
-            ExplicitItemStat stat = result.ExplicitStats.First();
+            ItemStat stat = result.ExplicitStats.First();
             Assert.That(stat.Id, Is.EqualTo(expected));
         }
     }

@@ -2,9 +2,9 @@
 using POETradeHelper.ItemSearch.Contract;
 using System;
 
-namespace POETradeHelper.PathOfExileTradeApi.Models
+namespace POETradeHelper.ItemSearch.Contract.Models
 {
-    internal class StatData
+    public class StatData
     {
         public string Id { get; set; }
 

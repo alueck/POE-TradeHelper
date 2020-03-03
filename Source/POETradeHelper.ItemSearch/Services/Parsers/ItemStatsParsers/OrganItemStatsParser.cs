@@ -7,17 +7,17 @@ using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class OrganItemStatsParser : ItemStatsParserBase, IOrganItemStatsParser
+    public class OrganItemStatsParser : ItemStatsParserBase, IItemStatsParser<OrganItem>
     {
         public OrganItemStatsParser(IStatsDataService statsDataService) : base(statsDataService)
         {
         }
 
-        public OrganItemStats Parse(string[] itemStringLines)
+        public ItemStats Parse(string[] itemStringLines)
         {
-            var result = new OrganItemStats();
+            var result = new ItemStats();
 
-            result.Stats.AddRange(this.ParseMonsterStats(itemStringLines));
+            result.AllStats.AddRange(this.ParseMonsterStats(itemStringLines));
 
             return result;
         }

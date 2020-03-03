@@ -5,14 +5,12 @@ using System.Text.RegularExpressions;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class FlaskItemParser : ItemParserBase
+    public class FlaskItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 1;
-        private IFlaskItemStatsParser flaskItemStatsParser;
 
-        public FlaskItemParser(IFlaskItemStatsParser flaskItemStatsParser)
+        public FlaskItemParser(IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
         {
-            this.flaskItemStatsParser = flaskItemStatsParser;
         }
 
         public override bool CanParse(string[] itemStringLines)
@@ -21,7 +19,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return itemStringLines[typeLineIndex].Contains(Resources.FlaskKeyword);
         }
 
-        public override Item Parse(string[] itemStringLines)
+        protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
             ItemRarity? rarity = this.GetRarity(itemStringLines);
             var flaskItem = new FlaskItem(rarity.Value)
@@ -31,11 +29,6 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 IsIdentified = this.IsIdentified(itemStringLines),
             };
-
-            if (flaskItem.IsIdentified)
-            {
-                flaskItem.Stats = this.flaskItemStatsParser.Parse(itemStringLines);
-            }
 
             return flaskItem;
         }

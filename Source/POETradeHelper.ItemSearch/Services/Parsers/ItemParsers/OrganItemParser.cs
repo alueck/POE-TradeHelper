@@ -6,9 +6,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class OrganItemParser : SimpleItemParserBase<OrganItem>
     {
-        private readonly IOrganItemStatsParser organItemStatsParser;
+        private readonly IItemStatsParser<OrganItem> organItemStatsParser;
 
-        public OrganItemParser(IOrganItemStatsParser organItemStatsParser)
+        public OrganItemParser(IItemStatsParser<OrganItem> organItemStatsParser)
         {
             this.organItemStatsParser = organItemStatsParser;
         }

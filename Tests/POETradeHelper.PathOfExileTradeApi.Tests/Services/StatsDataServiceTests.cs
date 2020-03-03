@@ -2,8 +2,8 @@
 using NUnit.Framework;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.Common.Wrappers;
+using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Models.ItemStats;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
@@ -82,12 +82,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
-        public async Task GetIdShouldReturnCorrectIdForExplicitStat()
+        public async Task GetStatDataShouldReturnCorrectStatDataForExplicitStat()
         {
-            string statCategory = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit;
-            var explicitItemStat = new ExplicitItemStat { Text = "+39 to maximum life", TextWithPlaceholders = "# to maximum life" };
+            StatCategory statCategory = StatCategory.Explicit;
+            var explicitItemStat = new ItemStat(statCategory) { Text = "+39 to maximum life", TextWithPlaceholders = "# to maximum life" };
 
-            var expected = new StatData { Id = "explicit.stat_3299347043", Text = explicitItemStat.TextWithPlaceholders, Type = statCategory.ToLower() };
+            var expected = new StatData { Id = "explicit.stat_3299347043", Text = explicitItemStat.TextWithPlaceholders, Type = statCategory.GetDisplayName().ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
                 .Returns(new QueryResult<Data<StatData>>
@@ -96,10 +96,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                                     new Data<StatData>
                                     {
-                                        Id = statCategory,
+                                        Id = statCategory.GetDisplayName(),
                                         Entries = new List<StatData>
                                         {
-                                            new StatData { Id = "explicit.stat_4220027924", Text = "#% to Cold Resistance", Type = statCategory.ToLower() },
+                                            new StatData { Id = "explicit.stat_4220027924", Text = "#% to Cold Resistance", Type = statCategory.GetDisplayName().ToLower() },
                                             expected
                                         }
                                     }
@@ -108,51 +108,65 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            string result = this.statsDataService.GetId(explicitItemStat);
+            StatData result = this.statsDataService.GetStatData(explicitItemStat);
 
-            Assert.That(result, Is.EqualTo(expected.Id));
+            Assert.That(result, Is.EqualTo(expected));
         }
 
         [Test]
-        public async Task GetIdShouldReturnCorrectIdForImplicitStat()
+        public async Task GetStatDataShouldReturnCorrectStatDataForImplicitStat()
         {
-            var implicitItemStat = new ImplicitItemStat { Text = "3% increased Movement Speed", TextWithPlaceholders = "#% increased Movement Speed" };
-            var expected = new StatData { Id = "stat_12345678", Text = implicitItemStat.TextWithPlaceholders, Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryImplicit.ToLower() };
+            const StatCategory statCategory = StatCategory.Implicit;
+            var implicitItemStat = new ItemStat(statCategory) { Text = "3% increased Movement Speed", TextWithPlaceholders = "#% increased Movement Speed" };
+            var expected = new StatData { Id = "stat_12345678", Text = implicitItemStat.TextWithPlaceholders, Type = statCategory.GetDisplayName().ToLower() };
 
-            await this.GetIdShouldReturnCorrectId(implicitItemStat, expected);
+            await this.GetStatDataShouldReturnCorrectStatData(implicitItemStat, expected);
         }
 
         [Test]
-        public async Task GetIdShouldReturnCorrectIdForCraftedStat()
+        public async Task GetStatDataShouldReturnCorrectStatDataForCraftedStat()
         {
-            var craftedItemStat = new CraftedItemStat { Text = "10% increased Movement Speed", TextWithPlaceholders = "#% increased Movement Speed" };
+            const StatCategory statCategory = StatCategory.Crafted;
+            var craftedItemStat = new ItemStat(statCategory) { Text = "10% increased Movement Speed", TextWithPlaceholders = "#% increased Movement Speed" };
 
-            var expected = new StatData { Id = "stat_1234", Text = craftedItemStat.TextWithPlaceholders, Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryCrafted.ToLower() };
+            var expected = new StatData { Id = "stat_1234", Text = craftedItemStat.TextWithPlaceholders, Type = statCategory.GetDisplayName().ToLower() };
 
-            await this.GetIdShouldReturnCorrectId(craftedItemStat, expected);
+            await this.GetStatDataShouldReturnCorrectStatData(craftedItemStat, expected);
         }
 
         [Test]
-        public async Task GetIdShouldReturnCorrectIdForMonsterStat()
+        public async Task GetStatDataShouldReturnCorrectStatDataForEnchantedStat()
+        {
+            const StatCategory statCategory = StatCategory.Enchant;
+            var craftedItemStat = new ItemStat(statCategory) { Text = "10% increased Movement Speed", TextWithPlaceholders = "#% increased Movement Speed" };
+
+            var expected = new StatData { Id = "stat_1234", Text = craftedItemStat.TextWithPlaceholders, Type = statCategory.GetDisplayName().ToLower() };
+
+            await this.GetStatDataShouldReturnCorrectStatData(craftedItemStat, expected);
+        }
+
+        [Test]
+        public async Task GetStatDataShouldReturnCorrectStatDataForMonsterStat()
         {
             var monsterItemStat = new MonsterItemStat { Text = "Drops additional Currency Items", TextWithPlaceholders = "Drops additional Currency Items (×#)", Count = 2 };
 
-            var expected = new StatData { Id = "stat_2250533757", Text = monsterItemStat.TextWithPlaceholders, Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryMonster.ToLower() };
+            var expected = new StatData { Id = "stat_2250533757", Text = monsterItemStat.TextWithPlaceholders, Type = monsterItemStat.StatCategory.GetDisplayName().ToLower() };
 
-            await this.GetIdShouldReturnCorrectId(monsterItemStat, expected);
+            await this.GetStatDataShouldReturnCorrectStatData(monsterItemStat, expected);
         }
 
         [Test]
-        public async Task GetIdShouldReturnCorrectIdEvenIfTextWithPlaceholdersDoesNotFullyMatch()
+        public async Task GetStatDataShouldReturnCorrectStatDataEvenIfTextWithPlaceholdersDoesNotFullyMatch()
         {
-            var explicitItemStat = new ImplicitItemStat { Text = "+10 to Maximum Mana per Green Socket", TextWithPlaceholders = "# to Maximum Mana per Green Socket" };
+            const StatCategory statCategory = StatCategory.Implicit;
+            var explicitItemStat = new ItemStat(statCategory) { Text = "+10 to Maximum Mana per Green Socket", TextWithPlaceholders = "# to Maximum Mana per Green Socket" };
 
-            var expected = new StatData { Id = "stat_2250533757", Text = "+# to Maximum Mana per Green Socket", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryImplicit.ToLower() };
+            var expected = new StatData { Id = "stat_2250533757", Text = "+# to Maximum Mana per Green Socket", Type = statCategory.GetDisplayName().ToLower() };
 
-            await this.GetIdShouldReturnCorrectId(explicitItemStat, expected);
+            await this.GetStatDataShouldReturnCorrectStatData(explicitItemStat, expected);
         }
 
-        private async Task GetIdShouldReturnCorrectId(ItemStat itemStat, StatData expectedStatData)
+        private async Task GetStatDataShouldReturnCorrectStatData(ItemStat itemStat, StatData expectedStatData)
         {
             string statCategory = itemStat.StatCategory.GetDisplayName();
 
@@ -182,9 +196,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            string result = this.statsDataService.GetId(itemStat);
+            StatData result = this.statsDataService.GetStatData(itemStat);
 
-            Assert.That(result, Is.EqualTo(expectedStatData.Id));
+            Assert.That(result, Is.EqualTo(expectedStatData));
         }
     }
 }

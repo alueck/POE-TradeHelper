@@ -42,14 +42,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             this.statsData = queryResult?.Result;
         }
 
-        public string GetId(ItemStat itemStat)
-        {
-            StatData statData = this.GetStatData(itemStat);
-
-            return statData?.Id;
-        }
-
-        private StatData GetStatData(ItemStat itemStat)
+        public StatData GetStatData(ItemStat itemStat)
         {
             IEnumerable<StatData> statData = this.GetStatDataListToSearch(itemStat.StatCategory.GetDisplayName());
             Predicate<string> predicate = GetSearchPredicate(itemStat.TextWithPlaceholders);

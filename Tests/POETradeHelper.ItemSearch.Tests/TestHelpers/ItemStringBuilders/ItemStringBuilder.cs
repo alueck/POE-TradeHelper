@@ -1,4 +1,5 @@
 ﻿using POETradeHelper.Common.Extensions;
+using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
@@ -13,7 +14,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
     {
         public ItemStatsGroup ItemStatsGroup { get; private set; } = new ItemStatsGroup();
 
-        public IList<ExplicitItemStat> ExplicitItemStats { get; } = new List<ExplicitItemStat>();
+        public IList<ItemStat> ExplicitItemStats { get; } = new List<ItemStat>();
 
         public ICollection<string> Descriptions { get; private set; } = new List<string>();
 
@@ -57,7 +58,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 
         public ItemStringBuilder WithExplicitItemStat(string statText)
         {
-            this.ExplicitItemStats.Add(new ExplicitItemStat { Text = statText });
+            this.ExplicitItemStats.Add(new ItemStat(StatCategory.Explicit) { Text = statText });
             return this;
         }
 

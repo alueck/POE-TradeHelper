@@ -1,8 +1,6 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models.ItemStats;
-
-namespace POETradeHelper.ItemSearch.Contract.Models
+﻿namespace POETradeHelper.ItemSearch.Contract.Models
 {
-    public class MapItem : Item, IIdentifiableItem, ICorruptableItem, IQualityItem
+    public class MapItem : ItemWithStats, IIdentifiableItem, ICorruptableItem, IQualityItem
     {
         public MapItem(ItemRarity rarity) : base(rarity)
         {
@@ -16,6 +14,5 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         public int MonsterPackSize { get; set; }
         public int Quality { get; set; }
         public bool IsBlighted { get; set; }
-        public MapItemStats Stats { get; set; }
     }
 }

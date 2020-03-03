@@ -5,6 +5,8 @@ namespace POETradeHelper.ItemSearch.Contract
 {
     public enum StatCategory
     {
+        Unknown,
+
         [Display(Name = nameof(Resources.StatCategoryPseudo), ResourceType = typeof(Resources))]
         Pseudo,
 
