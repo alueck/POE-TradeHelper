@@ -115,6 +115,38 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
+        public async Task GetStatDataShouldReturnCorrectStatDataForExplicitStatWithFixedValues()
+        {
+            StatCategory statCategory = StatCategory.Explicit;
+            var explicitItemStat = new ItemStat(statCategory) { Text = "60% chance for Poisons inflicted with this Weapon to deal 100% more Damage" };
+
+            var expected = new StatData { Id = "explicit.stat_3299347043", Text = "#% chance for Poisons inflicted with this Weapon to deal 100% more Damage", Type = statCategory.GetDisplayName().ToLower() };
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result = new List<Data<StatData>>
+                    {
+                                    new Data<StatData>
+                                    {
+                                        Id = statCategory.GetDisplayName(),
+                                        Entries = new List<StatData>
+                                        {
+                                            new StatData { Id = "explicit.stat_4220027924", Text = "#% chance for Poisons inflicted with this Weapon to deal 300% more Damage", Type = statCategory.GetDisplayName().ToLower() },
+                                            expected
+                                        }
+                                    }
+                    }
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            StatData result = this.statsDataService.GetStatData(explicitItemStat);
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test]
         public async Task GetStatDataShouldReturnCorrectStatDataForImplicitStat()
         {
             const StatCategory statCategory = StatCategory.Implicit;

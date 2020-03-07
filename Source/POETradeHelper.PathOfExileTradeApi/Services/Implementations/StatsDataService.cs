@@ -25,8 +25,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         private static readonly Regex NumberRegex = new Regex(@"[\+\-]?\d+", RegexOptions.Compiled);
 
-        private delegate bool MatchStatTextDelegate(string statDataText, string statText);
-
         public StatsDataService(IHttpClientFactoryWrapper httpclientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer)
         {
             this.httpClient = httpclientFactory.CreateClient();
@@ -53,9 +51,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         {
             IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(statCategoriesToSearch);
 
+            Predicate<string> predicate = GetMatchStatDataPredicate(itemStat.Text);
+
             return statDataListsToSearch
                 .SelectMany(x => x.Entries)
-                .FirstOrDefault(statData => IsMatchingStatData(statData, itemStat));
+                .FirstOrDefault(statData => predicate(statData.Text));
         }
 
         private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params StatCategory[] statCategoriesToSearch)
@@ -70,24 +70,38 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result ?? this.statsData;
         }
 
-        private static bool IsMatchingStatData(StatData statData, ItemStat itemStat)
+        private static Predicate<string> GetMatchStatDataPredicate(string statText)
         {
-            MatchStatTextDelegate matchStatTextDelegate = GetMatchStatTextDelegate(itemStat.Text);
-            return matchStatTextDelegate(GetNormalizedStatText(statData.Text), GetNormalizedStatText(itemStat.Text));
+            Predicate<string> result = null;
+
+            if (statText.StartsWith(Resources.MetamorphStatDescriptor, StringComparison.OrdinalIgnoreCase))
+            {
+                result = (statDataText) => statDataText.StartsWith(statText, StringComparison.OrdinalIgnoreCase);
+            }
+            else
+            {
+                Regex statDataTextRegex = GetStatDataTextRegex(statText);
+
+                result = (statDataText) => statDataTextRegex.IsMatch(statDataText);
+            }
+
+            return result;
         }
 
-        private static MatchStatTextDelegate GetMatchStatTextDelegate(string statText)
+        /// <summary>
+        /// Replaces all numbers in the given <paramref name="statText"/> with a regex capture group to build a regex pattern for matching
+        /// the correct stat data text and returns a regex created from this pattern.
+        /// </summary>
+        /// <example>
+        /// 60% chance for Poisons inflicted with this Weapon to deal 100% more Damage
+        /// becomes
+        /// (60|#)% chance for Poisons inflicted with this Weapon to deal (100|#)% more Damage
+        /// </example>
+        private static Regex GetStatDataTextRegex(string statText)
         {
-            return statText.StartsWith(Resources.MetamorphStatDescriptor, StringComparison.OrdinalIgnoreCase)
-                ? (statDataText, text) => statDataText.StartsWith(text, StringComparison.OrdinalIgnoreCase)
-                : (MatchStatTextDelegate)((statDataText, text) => string.Equals(statDataText, text, StringComparison.OrdinalIgnoreCase));
-        }
+            string regexString = NumberRegex.Replace(statText, match => $"({Regex.Escape(match.Value)}|{Regex.Escape(Placeholder)})");
 
-        private static string GetNormalizedStatText(string statText)
-        {
-            statText = NumberRegex.Replace(statText, Placeholder);
-
-            return statText.Replace($"+{Placeholder}", Placeholder);
+            return new Regex(regexString);
         }
     }
 }
