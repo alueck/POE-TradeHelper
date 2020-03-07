@@ -11,6 +11,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
     public class EquippableItemParserTests
     {
         private Mock<ISocketsParser> socketsParserMock;
+        private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
         private EquippableItemParser equippableItemParser;
         private ItemStringBuilder itemStringBuilder;
 
@@ -18,7 +19,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         public void Setup()
         {
             this.socketsParserMock = new Mock<ISocketsParser>();
-            this.equippableItemParser = new EquippableItemParser(this.socketsParserMock.Object);
+            this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
+            this.equippableItemParser = new EquippableItemParser(this.socketsParserMock.Object, this.itemStatsParserMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -355,6 +357,47 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
 
             Assert.That(result.Sockets, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void ParseShouldCallParseOnItemStatsParserIfItemIsIdentified()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                                           .WithType("Thicket Bow")
+                                           .BuildLines();
+
+            this.equippableItemParser.Parse(itemStringLines);
+
+            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines));
+        }
+
+        [Test]
+        public void ParseShouldNotCallParseOnItemStatsParserIfItemIsUnidentified()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                               .WithType("Thicket Bow")
+                               .WithUnidentified()
+                               .BuildLines();
+
+            this.equippableItemParser.Parse(itemStringLines);
+
+            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines), Times.Never);
+        }
+
+        [Test]
+        public void ParseShouldSetItemStatsFromItemStatsParserOnItem()
+        {
+            ItemStats expected = new ItemStats();
+            string[] itemStringLines = this.itemStringBuilder
+                               .WithType("Thicket Bow")
+                               .BuildLines();
+
+            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
+                .Returns(expected);
+
+            EquippableItem equippableItem = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
+
+            Assert.That(equippableItem.Stats, Is.SameAs(expected));
         }
     }
 }

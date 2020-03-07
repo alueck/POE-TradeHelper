@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class EquippableItemParser : ItemParserBase
+    public class EquippableItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 1;
         private ISocketsParser socketsParser;
 
-        public EquippableItemParser(ISocketsParser socketsParser)
+        public EquippableItemParser(ISocketsParser socketsParser, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
         {
             this.socketsParser = socketsParser;
         }
@@ -41,7 +41,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return itemStringLines.Skip(1).Take(3).Any(line => line.Contains(Resources.FlaskKeyword));
         }
 
-        public override Item Parse(string[] itemStringLines)
+        protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
             ItemRarity? itemRarity = this.GetRarity(itemStringLines);
             var equippableItem = new EquippableItem(itemRarity.Value)
