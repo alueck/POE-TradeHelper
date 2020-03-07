@@ -12,6 +12,6 @@ namespace POETradeHelper.ItemSearch.Contract.Models
 
         public string Type { get; set; }
 
-        public StatCategory? StatCategory => Type.ParseToEnumByDisplayName<StatCategory>(StringComparison.OrdinalIgnoreCase);
+        public StatCategory StatCategory => Type.ParseToEnumByDisplayName<StatCategory>(StringComparison.OrdinalIgnoreCase) ?? StatCategory.Unknown;
     }
 }

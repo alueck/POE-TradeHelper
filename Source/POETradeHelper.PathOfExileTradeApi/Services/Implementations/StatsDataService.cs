@@ -10,15 +10,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
     public class StatsDataService : IStatsDataService, IInitializable
     {
+        private const string Placeholder = "#";
+
         private readonly IHttpClientWrapper httpClient;
         private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer;
         private IList<Data<StatData>> statsData;
+
+        private static readonly Regex NumberRegex = new Regex(@"[\+\-]?\d+", RegexOptions.Compiled);
+
+        private delegate bool MatchStatTextDelegate(string statDataText, string statText);
 
         public StatsDataService(IHttpClientFactoryWrapper httpclientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer)
         {
@@ -42,29 +49,45 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             this.statsData = queryResult?.Result;
         }
 
-        public StatData GetStatData(ItemStat itemStat)
+        public StatData GetStatData(ItemStat itemStat, params StatCategory[] statCategoriesToSearch)
         {
-            IEnumerable<StatData> statData = this.GetStatDataListToSearch(itemStat.StatCategory.GetDisplayName());
-            Predicate<string> predicate = GetSearchPredicate(itemStat.TextWithPlaceholders);
+            IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(statCategoriesToSearch);
 
-            return statData.FirstOrDefault(s => predicate(s.Text) || predicate(s.Text.Replace("+#", "#")));
+            return statDataListsToSearch
+                .SelectMany(x => x.Entries)
+                .FirstOrDefault(statData => IsMatchingStatData(statData, itemStat));
         }
 
-        private IEnumerable<StatData> GetStatDataListToSearch(string statCategory)
+        private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params StatCategory[] statCategoriesToSearch)
         {
-            IEnumerable<StatData> result;
+            IEnumerable<Data<StatData>> result = null;
 
-            Data<StatData> statCategoryData = this.statsData.FirstOrDefault(x => string.Equals(x.Id, statCategory, StringComparison.OrdinalIgnoreCase));
-            result = statCategoryData?.Entries;
+            if (statCategoriesToSearch.Length != 0 && !statCategoriesToSearch.Any(x => x == StatCategory.Unknown))
+            {
+                result = this.statsData.Where(x => statCategoriesToSearch.Any(statCategory => string.Equals(x.Id, statCategory.GetDisplayName(), StringComparison.OrdinalIgnoreCase)));
+            }
 
-            return result ?? this.statsData.SelectMany(x => x.Entries);
+            return result ?? this.statsData;
         }
 
-        private static Predicate<string> GetSearchPredicate(string statText)
+        private static bool IsMatchingStatData(StatData statData, ItemStat itemStat)
+        {
+            MatchStatTextDelegate matchStatTextDelegate = GetMatchStatTextDelegate(itemStat.Text);
+            return matchStatTextDelegate(GetNormalizedStatText(statData.Text), GetNormalizedStatText(itemStat.Text));
+        }
+
+        private static MatchStatTextDelegate GetMatchStatTextDelegate(string statText)
         {
             return statText.StartsWith(Resources.MetamorphStatDescriptor, StringComparison.OrdinalIgnoreCase)
-                ? text => text.StartsWith(statText, StringComparison.OrdinalIgnoreCase)
-                : (Predicate<string>)(text => string.Equals(text, statText, StringComparison.OrdinalIgnoreCase));
+                ? (statDataText, text) => statDataText.StartsWith(text, StringComparison.OrdinalIgnoreCase)
+                : (MatchStatTextDelegate)((statDataText, text) => string.Equals(statDataText, text, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static string GetNormalizedStatText(string statText)
+        {
+            statText = NumberRegex.Replace(statText, Placeholder);
+
+            return statText.Replace($"+{Placeholder}", Placeholder);
         }
     }
 }

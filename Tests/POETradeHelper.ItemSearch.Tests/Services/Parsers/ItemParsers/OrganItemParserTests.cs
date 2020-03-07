@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
@@ -78,7 +79,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string[] itemStringLines = this.itemStringBuilder
                                 .WithType("Oriath's Virtue's Eye")
                                 .WithItemLevel(73)
-                                .WithExplicitItemStat(expected)
+                                .WithItemStat(expected, StatCategory.Monster)
                                 .BuildLines();
 
             ItemWithStats result = this.organItemParser.Parse(itemStringLines) as ItemWithStats;

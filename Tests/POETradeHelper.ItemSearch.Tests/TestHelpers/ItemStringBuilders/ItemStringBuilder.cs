@@ -14,7 +14,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
     {
         public ItemStatsGroup ItemStatsGroup { get; private set; } = new ItemStatsGroup();
 
-        public IList<ItemStat> ExplicitItemStats { get; } = new List<ItemStat>();
+        public IList<ItemStat> ItemStats { get; } = new List<ItemStat>();
 
         public ICollection<string> Descriptions { get; private set; } = new List<string>();
 
@@ -56,9 +56,9 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             return this;
         }
 
-        public ItemStringBuilder WithExplicitItemStat(string statText)
+        public ItemStringBuilder WithItemStat(string statText, StatCategory statCategory)
         {
-            this.ExplicitItemStats.Add(new ItemStat(StatCategory.Explicit) { Text = statText });
+            this.ItemStats.Add(new ItemStat(statCategory) { Text = statText });
             return this;
         }
 
@@ -75,9 +75,13 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.ItemLevel > 0)
                 .AppendLine($"{Resources.ItemLevelDescriptor} {this.ItemLevel}", () => this.ItemLevel > 0)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => !this.IsIdentified)
-                .AppendLine(Resources.UnidentifiedKeyword, () => !this.IsIdentified)
-                .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.ExplicitItemStats.Any())
-                .AppendLine(string.Join(Environment.NewLine, this.ExplicitItemStats.Select(x => x.Text)));
+                .AppendLine(Resources.UnidentifiedKeyword, () => !this.IsIdentified);
+
+            this.PrintItemStats(stringBuilder, StatCategory.Enchant);
+            this.PrintItemStats(stringBuilder, StatCategory.Implicit);
+            this.PrintItemStats(stringBuilder, StatCategory.Monster);
+            this.PrintItemStats(stringBuilder, StatCategory.Explicit);
+            this.PrintItemStats(stringBuilder, StatCategory.Crafted, false);
 
             foreach (var description in this.Descriptions)
             {
@@ -93,6 +97,16 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
                 .AppendLine(this.InfluenceType.GetDisplayName(), () => this.InfluenceType != InfluenceType.None);
 
             return stringBuilder.ToString();
+        }
+
+        private void PrintItemStats(StringBuilder stringBuilder, StatCategory statCategory, bool printPropertyGroupSeparator = true)
+        {
+            var implicitItemStats = this.ItemStats.Where(x => x.StatCategory == statCategory);
+            if (implicitItemStats.Any())
+            {
+                stringBuilder.AppendLine(ParserConstants.PropertyGroupSeparator)
+                             .AppendLine(string.Join(Environment.NewLine, implicitItemStats.Select(x => x.Text)));
+            }
         }
     }
 }

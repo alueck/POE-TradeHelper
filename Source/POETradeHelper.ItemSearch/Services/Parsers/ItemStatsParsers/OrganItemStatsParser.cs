@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class OrganItemStatsParser : ItemStatsParserBase, IItemStatsParser<OrganItem>
+    public class OrganItemStatsParser : ItemStatsParserBase<MonsterItemStat>, IItemStatsParser<OrganItem>
     {
         public OrganItemStatsParser(IStatsDataService statsDataService) : base(statsDataService)
         {
@@ -34,17 +34,12 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             var monsterItemStats = groupedItemStatLines.Select(group => new MonsterItemStat
             {
                 Text = group.Key,
-                Count = group.Count(),
-                TextWithPlaceholders = this.GetTextWithPlaceholders(group.Key)
-            }).ToList();
-            this.SetStatIds(monsterItemStats);
+                Count = group.Count()
+            })
+            .Select(this.GetCompleteItemStat)
+            .ToList();
 
             return monsterItemStats;
-        }
-
-        protected override string GetTextWithPlaceholders(string text)
-        {
-            return $"{text} (×#)";
         }
     }
 }
