@@ -50,7 +50,11 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             var gemExperienceProperty = listingResult.Item.AdditionalProperties?.FirstOrDefault(p => p.Name == "Experience");
             if (gemExperienceProperty != null)
             {
-                result.GemExperiencePercent = Math.Round(gemExperienceProperty.Progress * 100, 2);
+                result.GemExperiencePercent = Math.Round(gemExperienceProperty.Progress * 100, 2, MidpointRounding.AwayFromZero);
+            }
+            else
+            {
+                result.GemExperiencePercent = 0.00m; //otherwise these rows will have 0 instead of 0.00
             }
 
             return result;

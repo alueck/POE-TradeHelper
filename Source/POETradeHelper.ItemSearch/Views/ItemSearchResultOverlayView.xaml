@@ -16,6 +16,7 @@
   <Window.Resources>
     <commonUiConverters:MessageTypeToBrushConverter x:Key="messageTypeToBrushConverter" />
     <localConverters:ItemRarityToBrushConverter x:Key="itemRarityToBrushConverter" />
+    <localConverters:DoubleOffsetConverter x:Key="doubleOffsetConverter" />
   </Window.Resources>
 
   <Window.Styles>
@@ -44,7 +45,8 @@
     </Style>
   </Window.Styles>
 
-  <Grid Margin="10" MaxWidth="{Binding $parent[Window].Width}">
+  <Grid Margin="10"
+        MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}">
 
     <commonUiControls:MessageTextBlock Message="{Binding Message}"
                                        VerticalAlignment="Center" />
