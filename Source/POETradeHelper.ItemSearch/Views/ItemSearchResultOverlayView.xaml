@@ -60,9 +60,9 @@
         <RowDefinition />
       </Grid.RowDefinitions>
 
-      <TextBlock Text="{Binding ItemListings.Item.DisplayName}"
+      <TextBlock Text="{Binding ItemListings.ItemDescription}"
                  FontWeight="Bold"
-                 Foreground="{Binding ItemListings.Item.Rarity, Converter={StaticResource itemRarityToBrushConverter}}"
+                 Foreground="{Binding ItemListings.ItemRarity, Converter={StaticResource itemRarityToBrushConverter}}"
                  Margin ="0,0,0,5" />
 
       <Button Grid.Column="1"
@@ -78,16 +78,11 @@
               Cursor="Hand" />
 
       <Grid Grid.Row="1" Grid.ColumnSpan="2">
-        <DataGrid Items="{Binding ItemListings.Result}"
+        <DataGrid Name="ListingsGrid" Items="{Binding ItemListings.Listings}"
                   IsReadOnly="True"
                   ColumnWidth="Auto"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="Account name" Binding="{Binding Listing.Account.Name}" />
-            <DataGridTextColumn Header="Item level" Binding="{Binding Item.ItemLevel}" CellStyleClasses="alignRight" />
-            <DataGridTextColumn Header="Price" Binding="{Binding Listing.Price.PriceText}" />
-            <DataGridTextColumn Header="Age" Binding="{Binding Listing.AgeText}" CellStyleClasses="alignRight" />
-          </DataGrid.Columns>
+                  ScrollViewer.VerticalScrollBarVisibility="Visible"
+                  AutoGenerateColumns="True">
         </DataGrid>
       </Grid>
     </Grid>

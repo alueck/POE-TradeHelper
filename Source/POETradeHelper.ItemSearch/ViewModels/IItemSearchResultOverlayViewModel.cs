@@ -5,7 +5,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
 {
     public interface IItemSearchResultOverlayViewModel
     {
-        ItemListingsQueryResult ItemListings { get; set; }
+        ItemListingsViewModel ItemListings { get; set; }
 
         Task SetListingForItemUnderCursorAsync(System.Threading.CancellationToken token = default);
     }

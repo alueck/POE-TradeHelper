@@ -1,23 +1,21 @@
-﻿using System.Text.Json.Serialization;
+﻿using POETradeHelper.PathOfExileTradeApi.JsonConverters;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
     public class ItemListing
     {
-        public bool Verified { get; set; }
-
-        [JsonPropertyName("icon")]
-        public string IconUri { get; set; }
-
-        public string Name { get; set; }
-
-        public string TypeLine { get; set; }
-
         public bool Identified { get; set; }
 
         public bool Corrupted { get; set; }
 
         [JsonPropertyName("ilvl")]
         public byte ItemLevel { get; set; }
+
+        public IList<Property> Properties { get; set; }
+
+        public IList<Property> AdditionalProperties { get; set; }
     }
 }

@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccountNameColumn" xml:space="preserve">
+    <value>Account name</value>
+  </data>
+  <data name="AgeColumn" xml:space="preserve">
+    <value>Age</value>
+  </data>
   <data name="CouldNotParseRarityExceptionMessage" xml:space="preserve">
     <value>Failed to parse item rarity.</value>
+  </data>
+  <data name="GemExperiencePercentColumn" xml:space="preserve">
+    <value>Experience %</value>
+  </data>
+  <data name="GemLevelColumn" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="ItemLevelColumn" xml:space="preserve">
+    <value>Item level</value>
+  </data>
+  <data name="PriceColumn" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="QualityColumn" xml:space="preserve">
+    <value>Quality</value>
   </data>
 </root>

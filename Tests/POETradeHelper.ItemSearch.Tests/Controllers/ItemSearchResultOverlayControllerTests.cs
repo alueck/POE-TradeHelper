@@ -76,14 +76,6 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
         }
 
         [Test]
-        public void SearchItemShouldNotSetItemListingOnViewModelIfTradeClientReturnsNull()
-        {
-            TriggerSearchItemEvent();
-
-            this.viewModelMock.VerifySet(x => x.ItemListings = It.IsAny<ItemListingsQueryResult>(), Times.Never);
-        }
-
-        [Test]
         public void SearchItemShouldOpenOverlay()
         {
             this.pathOfExileProcessHelper.Setup(x => x.IsPathOfExileActiveWindow())

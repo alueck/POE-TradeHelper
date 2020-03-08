@@ -2,6 +2,7 @@
 using POETradeHelper.Common.UI.Models;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
+using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using ReactiveUI;
@@ -18,19 +19,21 @@ namespace POETradeHelper.ItemSearch.ViewModels
         private readonly ISearchItemProvider searchItemProvider;
         private readonly IPoeTradeApiClient poeTradeApiClient;
 
-        public ItemSearchResultOverlayViewModel(ISearchItemProvider searchItemProvider, IPoeTradeApiClient tradeClient)
+        public ItemSearchResultOverlayViewModel(ISearchItemProvider searchItemProvider, IPoeTradeApiClient tradeClient, IItemListingsViewModelFactory itemListingsViewModelFactory)
         {
             this.searchItemProvider = searchItemProvider;
             this.poeTradeApiClient = tradeClient;
+            this.itemListingsViewModelFactory = itemListingsViewModelFactory;
 
-            var canExecuteOpenQueryInBrowser = this.WhenAnyValue(x => x.ItemListings, (ItemListingsQueryResult itemListing) => itemListing != null);
-            this.OpenQueryInBrowserCommand = ReactiveCommand.Create((IHideable hideableWindow) => this.OpenUrl(this.ItemListings.Uri.ToString(), hideableWindow), canExecuteOpenQueryInBrowser);
+            var canExecuteOpenQueryInBrowser = this.WhenAnyValue(x => x.ItemListings, (ItemListingsViewModel itemListings) => itemListings != null);
+            this.OpenQueryInBrowserCommand = ReactiveCommand.Create((IHideable hideableWindow) => this.OpenUrl(this.ItemListings.ListingsUri.ToString(), hideableWindow), canExecuteOpenQueryInBrowser);
         }
 
-        private ItemListingsQueryResult itemListing;
+        private ItemListingsViewModel itemListing;
         private Message message;
+        private readonly IItemListingsViewModelFactory itemListingsViewModelFactory;
 
-        public ItemListingsQueryResult ItemListings
+        public ItemListingsViewModel ItemListings
         {
             get => this.itemListing;
             set => this.RaiseAndSetIfChanged(ref itemListing, value);
@@ -56,7 +59,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
                 if (itemListing != null && !cancellationToken.IsCancellationRequested)
                 {
-                    this.ItemListings = itemListing;
+                    this.ItemListings = this.itemListingsViewModelFactory.Create(itemListing);
                 }
             }
             catch (Exception exception)
