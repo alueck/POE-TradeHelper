@@ -10,6 +10,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
     {
         private const string QualityPropertyName = "Quality";
         private const string GemLevelPropertyName = "Level";
+        private const string GemExperiencePropertyName = "Experience";
 
         public SimpleListingViewModel Create(ListingResult listingResult, Item item)
         {
@@ -47,14 +48,14 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 Quality = GetPropertyStringValue(listingResult.Item, QualityPropertyName)
             };
 
-            var gemExperienceProperty = listingResult.Item.AdditionalProperties?.FirstOrDefault(p => p.Name == "Experience");
+            var gemExperienceProperty = listingResult.Item.AdditionalProperties?.FirstOrDefault(p => p.Name == GemExperiencePropertyName);
             if (gemExperienceProperty != null)
             {
                 result.GemExperiencePercent = Math.Round(gemExperienceProperty.Progress * 100, 2, MidpointRounding.AwayFromZero);
             }
             else
             {
-                result.GemExperiencePercent = 0.00m; //otherwise these rows will have 0 instead of 0.00
+                result.GemExperiencePercent = 0.00m; //otherwise these rows will show 0 instead of 0.00
             }
 
             return result;
