@@ -3,38 +3,17 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
-    public class GemItemSearchQueryRequestMapperTests
+    public class GemItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<GemItem>
     {
         private GemItemSearchQueryRequestMapper gemItemSearchQueryRequestMapper;
 
         [SetUp]
         public void Setup()
         {
-            this.gemItemSearchQueryRequestMapper = new GemItemSearchQueryRequestMapper();
-        }
-
-        [Test]
-        public void CanMapShouldReturnTrueForGemItem()
-        {
-            var item = new GemItem();
-
-            bool result = this.gemItemSearchQueryRequestMapper.CanMap(item);
-
-            Assert.IsTrue(result);
-        }
-
-        [TestCaseSource(nameof(NonGemItems))]
-        public void CanMapShouldReturnFalseForNonGemItems(Item nonGemItem)
-        {
-            bool result = this.gemItemSearchQueryRequestMapper.CanMap(nonGemItem);
-
-            Assert.IsFalse(result);
+            this.ItemSearchQueryRequestMapper = this.gemItemSearchQueryRequestMapper = new GemItemSearchQueryRequestMapper();
         }
 
         [TestCase("Vaal Flameblast")]
@@ -107,21 +86,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             Assert.IsNotNull(qualityFilter);
             Assert.That(qualityFilter.Min, Is.EqualTo(expected));
             Assert.IsNull(qualityFilter.Max);
-        }
-
-        private static IEnumerable<Item> NonGemItems
-        {
-            get
-            {
-                yield return new CurrencyItem();
-                yield return new DivinationCardItem();
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new FragmentItem();
-                yield return new MapItem(ItemRarity.Normal);
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-                yield return new EquippableItem(ItemRarity.Normal);
-            }
         }
     }
 }

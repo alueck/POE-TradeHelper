@@ -2,36 +2,17 @@
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System.Collections.Generic;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
-    public class FlaskItemSearchQueryRequestMapperTests
+    public class FlaskItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<FlaskItem>
     {
         private FlaskItemSearchQueryRequestMapper flaskItemSearchQueryRequestMapper;
 
         [SetUp]
         public void Setup()
         {
-            this.flaskItemSearchQueryRequestMapper = new FlaskItemSearchQueryRequestMapper();
-        }
-
-        [Test]
-        public void CanMapShouldReturnTrueForFlaskItem()
-        {
-            var item = new FlaskItem(ItemRarity.Normal);
-
-            bool result = this.flaskItemSearchQueryRequestMapper.CanMap(item);
-
-            Assert.IsTrue(result);
-        }
-
-        [TestCaseSource(nameof(NonFlaskItems))]
-        public void CanMapShouldReturnFalseForNonFlaskItems(Item nonFlaskItem)
-        {
-            bool result = this.flaskItemSearchQueryRequestMapper.CanMap(nonFlaskItem);
-
-            Assert.IsFalse(result);
+            this.ItemSearchQueryRequestMapper = this.flaskItemSearchQueryRequestMapper = new FlaskItemSearchQueryRequestMapper();
         }
 
         [Test]
@@ -87,31 +68,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
             Assert.IsNull(result.Query.Name);
-        }
-
-        private static IEnumerable<Item> NonFlaskItems
-        {
-            get
-            {
-                yield return new CurrencyItem();
-                yield return new DivinationCardItem();
-                yield return new FragmentItem();
-                yield return new GemItem();
-                yield return new MapItem(ItemRarity.Normal);
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-                yield return new EquippableItem(ItemRarity.Normal);
-            }
-        }
-
-        private static IEnumerable<ItemRarity> NonUniqueItemRarities
-        {
-            get
-            {
-                yield return ItemRarity.Normal;
-                yield return ItemRarity.Magic;
-                yield return ItemRarity.Rare;
-            }
         }
     }
 }

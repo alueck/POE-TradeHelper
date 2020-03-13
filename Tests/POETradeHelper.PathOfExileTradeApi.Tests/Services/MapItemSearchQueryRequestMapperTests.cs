@@ -8,32 +8,14 @@ using System.Collections.Generic;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
-    public class MapItemSearchQueryRequestMapperTests
+    public class MapItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<MapItem>
     {
         private MapItemSearchQueryRequestMapper mapItemSearchQueryRequestMapper;
 
         [SetUp]
         public void Setup()
         {
-            this.mapItemSearchQueryRequestMapper = new MapItemSearchQueryRequestMapper();
-        }
-
-        [Test]
-        public void CanMapShouldReturnTrueForMapItem()
-        {
-            var item = new MapItem(ItemRarity.Normal);
-
-            bool result = this.mapItemSearchQueryRequestMapper.CanMap(item);
-
-            Assert.IsTrue(result);
-        }
-
-        [TestCaseSource(nameof(NonMapItems))]
-        public void CanMapShouldReturnFalseForNonMapItems(Item nonMapItem)
-        {
-            bool result = this.mapItemSearchQueryRequestMapper.CanMap(nonMapItem);
-
-            Assert.IsFalse(result);
+            this.ItemSearchQueryRequestMapper = this.mapItemSearchQueryRequestMapper = new MapItemSearchQueryRequestMapper();
         }
 
         [Test]
@@ -143,31 +125,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             Assert.NotNull(mapTierFilter);
             Assert.That(mapTierFilter.Min, Is.EqualTo(mapTier));
             Assert.That(mapTierFilter.Max, Is.EqualTo(mapTier));
-        }
-
-        private static IEnumerable<Item> NonMapItems
-        {
-            get
-            {
-                yield return new CurrencyItem();
-                yield return new DivinationCardItem();
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new FragmentItem();
-                yield return new GemItem();
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-                yield return new EquippableItem(ItemRarity.Normal);
-            }
-        }
-
-        private static IEnumerable<ItemRarity> NonUniqueItemRarities
-        {
-            get
-            {
-                yield return ItemRarity.Normal;
-                yield return ItemRarity.Magic;
-                yield return ItemRarity.Rare;
-            }
         }
     }
 }

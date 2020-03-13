@@ -38,7 +38,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private bool IsFlaskItem(string[] itemStringLines)
         {
-            return itemStringLines.Skip(1).Take(3).Any(line => line.Contains(Resources.FlaskKeyword));
+            return itemStringLines.Skip(1).Take(2).Any(line => line.Contains(Resources.FlaskKeyword));
         }
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)

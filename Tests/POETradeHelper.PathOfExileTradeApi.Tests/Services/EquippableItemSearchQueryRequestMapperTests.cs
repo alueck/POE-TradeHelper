@@ -9,11 +9,10 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
-    public class EquippableItemSearchQueryRequestMapperTests
+    public class EquippableItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<EquippableItem>
     {
         private Mock<IOptions<ItemSearchOptions>> itemSearchOptionsMock;
         private EquippableItemSearchQueryRequestMapper equippableItemToQueryRequestMapper;
@@ -25,25 +24,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.itemSearchOptionsMock.Setup(x => x.Value)
                 .Returns(new ItemSearchOptions());
 
-            this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.itemSearchOptionsMock.Object);
-        }
-
-        [Test]
-        public void CanMapShouldReturnTrueForEquippableItem()
-        {
-            var item = new EquippableItem(ItemRarity.Normal);
-
-            bool result = this.equippableItemToQueryRequestMapper.CanMap(item);
-
-            Assert.IsTrue(result);
-        }
-
-        [TestCaseSource(nameof(NonEquippableItems))]
-        public void CanMapShouldReturnFalseForOtherItems(Item nonEquippableItem)
-        {
-            bool result = this.equippableItemToQueryRequestMapper.CanMap(nonEquippableItem);
-
-            Assert.IsFalse(result);
+            this.ItemSearchQueryRequestMapper = this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.itemSearchOptionsMock.Object);
         }
 
         [Test]
@@ -125,7 +106,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [TestCase(2)]
         [TestCase(3)]
         [TestCase(4)]
-        public void MapToQueryItemShoulNotdMapLinksIfLinkCountIsLowerThanFive(int linkCount)
+        public void MapToQueryItemShoulNotMapLinksIfLinkCountIsLowerThanFive(int linkCount)
         {
             var item = new EquippableItem(ItemRarity.Normal)
             {
@@ -248,31 +229,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             }
 
             return result;
-        }
-
-        private static IEnumerable<Item> NonEquippableItems
-        {
-            get
-            {
-                yield return new CurrencyItem();
-                yield return new DivinationCardItem();
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new FragmentItem();
-                yield return new GemItem();
-                yield return new MapItem(ItemRarity.Normal);
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-            }
-        }
-
-        private static IEnumerable<ItemRarity> NonUniqueItemRarities
-        {
-            get
-            {
-                yield return ItemRarity.Normal;
-                yield return ItemRarity.Magic;
-                yield return ItemRarity.Rare;
-            }
         }
     }
 }

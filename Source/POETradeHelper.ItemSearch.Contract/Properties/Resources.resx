@@ -243,4 +243,7 @@
   <data name="StatCategoryPseudo" xml:space="preserve">
     <value>Pseudo</value>
   </data>
+  <data name="JewelKeyword" xml:space="preserve">
+    <value>Jewel</value>
+  </data>
 </root>

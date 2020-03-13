@@ -223,6 +223,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Jewel.
+        /// </summary>
+        public static string JewelKeyword {
+            get {
+                return ResourceManager.GetString("JewelKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Level:.
         /// </summary>
         public static string LevelDescriptor {
