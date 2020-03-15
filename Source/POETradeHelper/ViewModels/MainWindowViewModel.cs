@@ -69,7 +69,7 @@ namespace POETradeHelper.ViewModels
 
                 string json = JsonSerializer.Serialize(this.appSettings.Value, new JsonSerializerOptions { WriteIndented = true });
 
-                File.WriteAllText("appsettings.json", json);
+                File.WriteAllText(FileConfiguration.PoeTradeHelperAppSettingsPath, json);
             }
             catch (Exception exception)
             {

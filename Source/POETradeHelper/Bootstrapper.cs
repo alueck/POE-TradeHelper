@@ -22,15 +22,6 @@ namespace POETradeHelper
 {
     public class Bootstrapper : IEnableLogger
     {
-        private static string PoeTradeHelperAppDataFolder
-        {
-            get
-            {
-                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                return Path.Combine(appDataFolder, "POETradeHelper");
-            }
-        }
-
         public async Task BuildAsync()
         {
             RegisterDependencies();
@@ -84,12 +75,10 @@ namespace POETradeHelper
 
         private static void ConfigureOptions(ServiceCollection serviceCollection)
         {
-            string poeTradeHelperAppSettingsPath = Path.Combine(PoeTradeHelperAppDataFolder, "appsettings.json");
-
-            CreateAppSettingsFileIfMissing(PoeTradeHelperAppDataFolder, poeTradeHelperAppSettingsPath);
+            CreateAppSettingsFileIfMissing();
 
             IConfiguration config = new ConfigurationBuilder()
-                          .AddJsonFile(poeTradeHelperAppSettingsPath, false, true)
+                          .AddJsonFile(FileConfiguration.PoeTradeHelperAppSettingsPath, false, true)
                           .Build();
 
             serviceCollection
@@ -98,15 +87,15 @@ namespace POETradeHelper
                 .Configure<ItemSearchOptions>(config.GetSection("ItemSearchOptions"));
         }
 
-        private static void CreateAppSettingsFileIfMissing(string poeTradeHelperAppDataFolder, string poeTradeHelperAppSettingsPath)
+        private static void CreateAppSettingsFileIfMissing()
         {
-            Directory.CreateDirectory(poeTradeHelperAppDataFolder);
+            Directory.CreateDirectory(FileConfiguration.PoeTradeHelperAppDataFolder);
 
-            if (!File.Exists(poeTradeHelperAppSettingsPath))
+            if (!File.Exists(FileConfiguration.PoeTradeHelperAppSettingsPath))
             {
                 string defaultAppSettingsJson = JsonSerializer.Serialize(new AppSettings(), new JsonSerializerOptions { WriteIndented = true });
 
-                File.WriteAllText(poeTradeHelperAppSettingsPath, defaultAppSettingsJson);
+                File.WriteAllText(FileConfiguration.PoeTradeHelperAppSettingsPath, defaultAppSettingsJson);
             }
         }
 
@@ -116,7 +105,7 @@ namespace POETradeHelper
                             .MinimumLevel.Is(Serilog.Events.LogEventLevel.Verbose)
                             .Enrich.WithExceptionDetails()
                             .WriteTo.Debug()
-                            .WriteTo.File(Path.Combine(PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
+                            .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
 
             Locator.CurrentMutable.UseSerilogFullLogger();
         }
