@@ -32,30 +32,7 @@
     </Style>
   </Window.Styles>
 
-  <Grid>
-
-    <Grid ZIndex="9999" IsVisible="{Binding IsBusy}">
-      <Grid.Background>
-        <SolidColorBrush Color="Gray" Opacity="0.8" />
-      </Grid.Background>
-
-      <Grid.RowDefinitions>
-        <RowDefinition Height="2*" />
-        <RowDefinition Height="*" />
-        <RowDefinition Height="2*" />
-      </Grid.RowDefinitions>
-
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="2*" MinWidth="100" />
-        <ColumnDefinition Width="*" MinWidth="100" />
-        <ColumnDefinition Width="2*" MinWidth="100" />
-      </Grid.ColumnDefinitions>
-
-      <Panel Grid.Row="1" Grid.Column="1">
-        <TextBlock Text="{x:Static resx:Resources.Initializing}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" />
-      </Panel>
-    </Grid>
-
+  <commonUiControls:BusyIndicator IsBusy="{Binding IsBusy}" DisplayAfter="0:0:0.200">
     <StackPanel ZIndex="999" Margin="20" Spacing="10">
       <ItemsControl Items="{Binding SettingsViewModels}">
         <ItemsControl.ItemTemplate>
@@ -68,5 +45,5 @@
       <Button Command="{Binding SaveSettingsCommand}">Save</Button>
       <commonUiControls:MessageTextBlock Message="{Binding SaveSettingsMessage}" />
     </StackPanel>
-  </Grid>
+  </commonUiControls:BusyIndicator>
 </Window>
