@@ -16,6 +16,7 @@
                 <ModulePath>.*reactiveui.dll$</ModulePath>
                 <ModulePath>.*system.reactive.dll$</ModulePath>
                 <ModulePath>.*\.tests.dll$</ModulePath>
+                <ModulePath>.*dynamicdata.dll$</ModulePath>
               </Exclude>
             </ModulePaths>
             <!-- Match fully qualified names of functions: -->
@@ -28,6 +29,7 @@
                 <Function>.*\.Exceptions\..*</Function>
                 <Function>.*\.Models\..*</Function>
                 <Function>.*\.Views\..*</Function>
+                <Function>.*\.UserControls\..*</Function>
               </Exclude>
             </Functions>
             <!-- Match attributes on any code element: -->
