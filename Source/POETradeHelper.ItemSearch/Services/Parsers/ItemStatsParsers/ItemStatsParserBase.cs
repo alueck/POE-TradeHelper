@@ -45,7 +45,6 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             else
             {
                 statCategoriesToSearch.Add(StatCategory.Explicit);
-                statCategoriesToSearch.Add(StatCategory.Enchant);
             }
 
             return statCategoriesToSearch.ToArray();

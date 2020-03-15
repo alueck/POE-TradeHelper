@@ -27,7 +27,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage", "Minions deal 1 to 15 additional Physical Damage")]
         [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)", "+25% to Cold Resistance")]
         [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)", "+25% to Cold Resistance")]
-        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently", "10% increased Movement Speed if you haven't been Hit Recently")]
+        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)", "10% increased Movement Speed if you haven't been Hit Recently")]
         public void ParseShouldParseStatText(StatCategory statCategory, string statText, string expected)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -50,7 +50,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage", "Minions deal # to # additional Physical Damage")]
         [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)", "#% to Cold Resistance")]
         [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)", "#% to Cold Resistance")]
-        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently", "#% increased Movement Speed if you haven't been Hit Recently")]
+        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)", "#% increased Movement Speed if you haven't been Hit Recently")]
         public void ParseShouldSetTextWithPlaceholdersFromStatData(StatCategory statCategory, string statText, string expected)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -73,7 +73,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage")]
         [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)")]
         [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)")]
-        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently")]
+        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)")]
         public void ParseShouldParseStatTextInCorrectCategory(StatCategory expected, string statText)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -108,14 +108,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.AllStats, Is.Empty);
         }
 
-        /// <summary>
-        /// Stat categories Explicit and Enchant cannot really be distinguished when parsing. To ensure that we retrieve the correct
-        /// stat data (mainly because there are explicit and implicit stats with the samte text) for a stat whose category is currently unknown to us,
-        /// we pass a list of expected stat categories to the <see cref="IStatsDataService"/>.
-        /// </summary>
-        /// <param name="statCategory"></param>
         [TestCase(StatCategory.Explicit)]
-        [TestCase(StatCategory.Enchant)]
         public void ParseShouldCallGetStatDataWithExpectedStatCategories(StatCategory statCategory)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -126,11 +119,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.itemStatsParser.Parse(itemStringLines);
 
-            this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<ItemStat>(), StatCategory.Explicit, StatCategory.Enchant));
+            this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<ItemStat>(), StatCategory.Explicit));
         }
 
         [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)")]
         [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)")]
+        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)")]
         public void ParseShouldCallGetStatDataWithStatCategory(StatCategory statCategory, string statText)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -147,7 +141,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage")]
         [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)")]
         [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)")]
-        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently")]
+        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)")]
         public void ParseShouldSetIdOnStatFromStatsDataService(StatCategory statCategory, string statText)
         {
             const string expected = "item stat id";
@@ -213,7 +207,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                    .WithItemStat(expectedExplicitItemStat.Text, expectedExplicitItemStat.StatCategory)
                    .WithItemStat($"{expectedImplicitItemStat.Text} ({StatCategory.Implicit.GetDisplayName().ToLower()})", expectedImplicitItemStat.StatCategory)
                    .WithItemStat($"{expectedCraftedItemStat.Text} ({StatCategory.Crafted.GetDisplayName().ToLower()})", expectedCraftedItemStat.StatCategory)
-                   .WithItemStat(expectedEnchantedItemStat.Text, expectedEnchantedItemStat.StatCategory)
+                   .WithItemStat($"{expectedEnchantedItemStat.Text} ({StatCategory.Enchant.GetDisplayName().ToLower()})", expectedEnchantedItemStat.StatCategory)
                    .BuildLines();
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines);

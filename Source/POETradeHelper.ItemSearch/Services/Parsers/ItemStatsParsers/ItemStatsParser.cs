@@ -33,7 +33,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         {
             ItemStat result;
 
-            if (!TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
+            if (!TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out result)
+                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
                 && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result))
             {
                 result = new ItemStat()
