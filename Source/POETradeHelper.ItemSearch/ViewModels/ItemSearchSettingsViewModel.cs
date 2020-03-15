@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+﻿using POETradeHelper.Common;
 using POETradeHelper.Common.UI;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.PathOfExileTradeApi.Services;
@@ -16,9 +16,9 @@ namespace POETradeHelper.ItemSearch.ViewModels
         private IList<League> leagues;
         private League selectedLeague;
         private readonly IPoeTradeApiClient poeTradeApiClient;
-        private readonly IOptions<ItemSearchOptions> itemSearchOptions;
+        private readonly IWritableOptions<ItemSearchOptions> itemSearchOptions;
 
-        public ItemSearchSettingsViewModel(IPoeTradeApiClient poeTradeApiClient, IOptions<ItemSearchOptions> itemSearchOptions)
+        public ItemSearchSettingsViewModel(IPoeTradeApiClient poeTradeApiClient, IWritableOptions<ItemSearchOptions> itemSearchOptions)
         {
             this.poeTradeApiClient = poeTradeApiClient;
             this.itemSearchOptions = itemSearchOptions;
@@ -51,13 +51,30 @@ namespace POETradeHelper.ItemSearch.ViewModels
             this.IsBusy = true;
             this.Leagues = await this.poeTradeApiClient.GetLeaguesAsync();
             this.SelectedLeague = this.Leagues.FirstOrDefault(league => string.Equals(this.itemSearchOptions.Value.League?.Id, league.Id, StringComparison.Ordinal)) ?? this.Leagues.First();
-            this.SaveSettings();
+            this.SaveSettingsPrivate(false);
             this.IsBusy = false;
         }
 
         public void SaveSettings()
         {
-            this.itemSearchOptions.Value.League = this.SelectedLeague;
+            SaveSettingsPrivate(true);
+        }
+
+        private void SaveSettingsPrivate(bool resetIsBusy)
+        {
+            try
+            {
+                this.IsBusy = true;
+
+                this.itemSearchOptions.Update(o =>
+                {
+                    o.League = this.SelectedLeague;
+                });
+            }
+            finally
+            {
+                this.IsBusy = !resetIsBusy;
+            }
         }
     }
 }

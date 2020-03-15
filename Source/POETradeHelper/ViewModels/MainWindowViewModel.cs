@@ -66,10 +66,6 @@ namespace POETradeHelper.ViewModels
                 {
                     settingsViewModel.SaveSettings();
                 }
-
-                string json = JsonSerializer.Serialize(this.appSettings.Value, new JsonSerializerOptions { WriteIndented = true });
-
-                File.WriteAllText(FileConfiguration.PoeTradeHelperAppSettingsPath, json);
             }
             catch (Exception exception)
             {

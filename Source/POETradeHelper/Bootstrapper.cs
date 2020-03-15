@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using POETradeHelper.Common;
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch;
 using Serilog;
 using Serilog.Exceptions;
@@ -11,6 +12,7 @@ using Splat.Autofac;
 using Splat.Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,6 +22,7 @@ using WindowsHook;
 
 namespace POETradeHelper
 {
+    [ExcludeFromCodeCoverage]
     public class Bootstrapper : IEnableLogger
     {
         public async Task BuildAsync()
@@ -84,7 +87,7 @@ namespace POETradeHelper
             serviceCollection
                 .AddOptions()
                 .Configure<AppSettings>(config)
-                .Configure<ItemSearchOptions>(config.GetSection("ItemSearchOptions"));
+                .ConfigureWritable<ItemSearchOptions>(config.GetSection("ItemSearchOptions"), FileConfiguration.PoeTradeHelperAppSettingsPath);
         }
 
         private static void CreateAppSettingsFileIfMissing()
