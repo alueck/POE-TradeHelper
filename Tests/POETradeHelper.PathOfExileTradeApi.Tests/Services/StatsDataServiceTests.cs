@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.Common.Wrappers;
@@ -39,7 +40,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.poeTradeApiJsonSerializerMock = new Mock<IPoeTradeApiJsonSerializer>();
 
-            this.statsDataService = new StatsDataService(httpClientFactoryWrapperMock.Object, this.poeTradeApiJsonSerializerMock.Object);
+            this.statsDataService = new StatsDataService(httpClientFactoryWrapperMock.Object, this.poeTradeApiJsonSerializerMock.Object, Mock.Of<ILogger<StatsDataService>>());
         }
 
         [Test]
@@ -101,6 +102,38 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                         Entries = new List<StatData>
                                         {
                                             new StatData { Id = "explicit.stat_4220027924", Text = "#% to Cold Resistance", Type = statCategory.GetDisplayName().ToLower() },
+                                            expected
+                                        }
+                                    }
+                    }
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            StatData result = this.statsDataService.GetStatData(explicitItemStat);
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public async Task GetStatDataShouldReturnCorrectStatData()
+        {
+            StatCategory statCategory = StatCategory.Explicit;
+            var explicitItemStat = new ItemStat(statCategory) { Text = "Adds 10 to 20 Chaos Damage" };
+
+            var expected = new StatData { Id = "explicit.stat_3299347043", Text = "Adds # to # Chaos Damage", Type = statCategory.GetDisplayName().ToLower() };
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result = new List<Data<StatData>>
+                    {
+                                    new Data<StatData>
+                                    {
+                                        Id = statCategory.GetDisplayName(),
+                                        Entries = new List<StatData>
+                                        {
+                                            new StatData { Id = "explicit.stat_4220027924", Text = "Adds # to # Chaos Damage to Attacks", Type = statCategory.GetDisplayName().ToLower() },
                                             expected
                                         }
                                     }

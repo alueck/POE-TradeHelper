@@ -2,6 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using POETradeHelper.Common;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch;
@@ -9,6 +10,7 @@ using Serilog;
 using Serilog.Exceptions;
 using Splat;
 using Splat.Autofac;
+using Splat.Microsoft.Extensions.Logging;
 using Splat.Serilog;
 using System;
 using System.Collections.Generic;
@@ -63,13 +65,21 @@ namespace POETradeHelper
 
             container.UseAutofacDependencyResolver();
 
-            ConfigureLogging();
+            Locator.CurrentMutable.UseMicrosoftExtensionsLoggingWithWrappingFullLogger(Locator.Current.GetService<ILoggerFactory>());
         }
 
         private static ServiceCollection ConfigureServiceCollection()
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddHttpClient();
+
+            Serilog.Log.Logger = new LoggerConfiguration()
+                            .MinimumLevel.Is(Serilog.Events.LogEventLevel.Verbose)
+                            .Enrich.WithExceptionDetails()
+                            .WriteTo.Debug()
+                            .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
+
+            serviceCollection.AddLogging(builder => builder.AddSerilog());
 
             ConfigureOptions(serviceCollection);
 
@@ -100,17 +110,6 @@ namespace POETradeHelper
 
                 File.WriteAllText(FileConfiguration.PoeTradeHelperAppSettingsPath, defaultAppSettingsJson);
             }
-        }
-
-        private static void ConfigureLogging()
-        {
-            var logger = Serilog.Log.Logger = new LoggerConfiguration()
-                            .MinimumLevel.Is(Serilog.Events.LogEventLevel.Verbose)
-                            .Enrich.WithExceptionDetails()
-                            .WriteTo.Debug()
-                            .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
-
-            Locator.CurrentMutable.UseSerilogFullLogger();
         }
     }
 }

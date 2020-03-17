@@ -1,4 +1,5 @@
-﻿using POETradeHelper.Common;
+﻿using Microsoft.Extensions.Logging;
+using POETradeHelper.Common;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.ItemSearch.Contract;
@@ -24,11 +25,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         private IList<Data<StatData>> statsData;
 
         private static readonly Regex NumberRegex = new Regex(@"[\+\-]?\d+", RegexOptions.Compiled);
+        private readonly ILogger<StatsDataService> logger;
 
-        public StatsDataService(IHttpClientFactoryWrapper httpclientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer)
+        public StatsDataService(IHttpClientFactoryWrapper httpclientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer, ILogger<StatsDataService> logger)
         {
             this.httpClient = httpclientFactory.CreateClient();
             this.poeTradeApiJsonSerializer = poeTradeApiJsonSerializer;
+            this.logger = logger;
         }
 
         public async Task OnInitAsync()
@@ -49,13 +52,20 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         public StatData GetStatData(ItemStat itemStat, params StatCategory[] statCategoriesToSearch)
         {
+            StatData result = null;
+
             IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(statCategoriesToSearch);
 
-            Predicate<string> predicate = GetMatchStatDataPredicate(itemStat.Text);
+            if (itemStat is MonsterItemStat monsterItemStat)
+            {
+                result = GetStatDataPrivate(statDataListsToSearch, monsterItemStat);
+            }
+            else
+            {
+                result = this.GetStataDataPrivate(statDataListsToSearch, itemStat);
+            }
 
-            return statDataListsToSearch
-                .SelectMany(x => x.Entries)
-                .FirstOrDefault(statData => predicate(statData.Text));
+            return result;
         }
 
         private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params StatCategory[] statCategoriesToSearch)
@@ -70,38 +80,105 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result ?? this.statsData;
         }
 
-        private static Predicate<string> GetMatchStatDataPredicate(string statText)
+        private static StatData GetStatDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, MonsterItemStat monsterItemStat)
         {
-            Predicate<string> result = null;
+            return statDataListsToSearch
+                .SelectMany(x => x.Entries)
+                .FirstOrDefault(statData => statData.Text.StartsWith(monsterItemStat.Text, StringComparison.OrdinalIgnoreCase));
+        }
 
-            if (statText.StartsWith(Resources.MetamorphStatDescriptor, StringComparison.OrdinalIgnoreCase))
+        private StatData GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, ItemStat itemStat)
+        {
+            StatData result = null;
+
+            IList<StatDataTextMatchResult> statDataMatches = GetStatDataMatches(statDataListsToSearch, itemStat);
+
+            result = statDataMatches.FirstOrDefault(match => match.IsExactMatch)?.StatData;
+
+            if (result == null && statDataMatches.Count == 1)
             {
-                result = (statDataText) => statDataText.StartsWith(statText, StringComparison.OrdinalIgnoreCase);
+                result = statDataMatches[0].StatData;
             }
             else
             {
-                Regex statDataTextRegex = GetStatDataTextRegex(statText);
-
-                result = (statDataText) => statDataTextRegex.IsMatch(statDataText);
+                this.logger.LogWarning("Failed to find matching stat data for {@itemStat}. Found: {@statDataMatches}", itemStat, statDataMatches);
             }
 
             return result;
         }
 
-        /// <summary>
-        /// Replaces all numbers in the given <paramref name="statText"/> with a regex capture group to build a regex pattern for matching
-        /// the correct stat data text and returns a regex created from this pattern.
-        /// </summary>
-        /// <example>
-        /// 60% chance for Poisons inflicted with this Weapon to deal 100% more Damage
-        /// becomes
-        /// (60|#)% chance for Poisons inflicted with this Weapon to deal (100|#)% more Damage
-        /// </example>
-        private static Regex GetStatDataTextRegex(string statText)
+        private static IList<StatDataTextMatchResult> GetStatDataMatches(IEnumerable<Data<StatData>> statDataListsToSearch, ItemStat itemStat)
         {
-            string regexString = NumberRegex.Replace(statText, match => $"({Regex.Escape(match.Value)}|{Regex.Escape(Placeholder)})");
+            var statDataTextMatcher = new StatDataTextMatcher(itemStat.Text);
 
-            return new Regex(regexString);
+            var statDataMatches = new List<StatDataTextMatchResult>();
+
+            foreach (var statData in statDataListsToSearch.SelectMany(x => x.Entries))
+            {
+                StatDataTextMatchResult matchResult = statDataTextMatcher.Match(statData);
+
+                if (matchResult.IsMatch)
+                {
+                    statDataMatches.Add(matchResult);
+
+                    if (matchResult.IsExactMatch)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return statDataMatches;
+        }
+
+        private class StatDataTextMatcher
+        {
+            private const string ExactMatchGroupName = "exactMatchGroup";
+
+            private readonly Regex regex;
+
+            public StatDataTextMatcher(string statText)
+            {
+                this.regex = GetStatDataTextRegex(statText);
+            }
+
+            public StatDataTextMatchResult Match(StatData statData)
+            {
+                var match = this.regex.Match(statData.Text);
+
+                return new StatDataTextMatchResult(statData, match.Success, match.Groups[ExactMatchGroupName].Success);
+            }
+
+            /// <summary>
+            /// Replaces all numbers in the given <paramref name="statText"/> with a regex capture group to build a regex pattern for matching
+            /// the correct stat data text and returns a regex created from this pattern.
+            /// </summary>
+            /// <example>
+            /// 60% chance for Poisons inflicted with this Weapon to deal 100% more Damage
+            /// becomes
+            /// (60|#)% chance for Poisons inflicted with this Weapon to deal (100|#)% more Damage
+            /// </example>
+            private static Regex GetStatDataTextRegex(string statText)
+            {
+                string regexString = NumberRegex.Replace(statText, match => $"({Regex.Escape(match.Value)}|{Regex.Escape(Placeholder)})");
+
+                return new Regex($"(?<{ExactMatchGroupName}>^{regexString}$)|({regexString})");
+            }
+        }
+
+        private class StatDataTextMatchResult
+        {
+            public StatDataTextMatchResult(StatData statData, bool isMatch, bool isExactMatch)
+            {
+                this.IsMatch = isMatch;
+                this.IsExactMatch = isExactMatch;
+                StatData = statData;
+            }
+
+            public StatData StatData { get; }
+            public bool IsMatch { get; }
+
+            public bool IsExactMatch { get; }
         }
     }
 }
