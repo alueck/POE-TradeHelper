@@ -18,7 +18,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
             {
                 Id = this.Id,
                 Text = this.Text,
-                Value = (MinMaxFilter)this.Value.Clone()
+                Value = (MinMaxFilter)this.Value?.Clone()
             };
         }
     }

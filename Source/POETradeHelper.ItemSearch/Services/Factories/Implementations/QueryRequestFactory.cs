@@ -11,7 +11,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
         {
             IQueryRequest result = (IQueryRequest)advancedQueryViewModel.QueryRequest.Clone();
 
-            if (advancedQueryViewModel.QueryRequest is SearchQueryRequest searchQueryRequest)
+            if (result is SearchQueryRequest searchQueryRequest)
             {
                 var enabledStatFilterViewModels = advancedQueryViewModel.AllFilters.Where(f => f.IsEnabled).OfType<StatFilterViewModel>();
 
