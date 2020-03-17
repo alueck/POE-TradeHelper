@@ -70,6 +70,15 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Advanced query.
+        /// </summary>
+        public static string AdvancedQuery {
+            get {
+                return ResourceManager.GetString("AdvancedQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Age.
         /// </summary>
         public static string AgeColumn {
@@ -84,6 +93,15 @@ namespace POETradeHelper.ItemSearch.Properties {
         public static string CouldNotParseRarityExceptionMessage {
             get {
                 return ResourceManager.GetString("CouldNotParseRarityExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current.
+        /// </summary>
+        public static string Current {
+            get {
+                return ResourceManager.GetString("Current", resourceCulture);
             }
         }
         
@@ -115,6 +133,42 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to League:.
+        /// </summary>
+        public static string LeagueLabel {
+            get {
+                return ResourceManager.GetString("LeagueLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max.
+        /// </summary>
+        public static string Max {
+            get {
+                return ResourceManager.GetString("Max", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min.
+        /// </summary>
+        public static string Min {
+            get {
+                return ResourceManager.GetString("Min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open in browser.
+        /// </summary>
+        public static string OpenInBrowser {
+            get {
+                return ResourceManager.GetString("OpenInBrowser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Price.
         /// </summary>
         public static string PriceColumn {
@@ -129,6 +183,24 @@ namespace POETradeHelper.ItemSearch.Properties {
         public static string QualityColumn {
             get {
                 return ResourceManager.GetString("QualityColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        public static string Select {
+            get {
+                return ResourceManager.GetString("Select", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stat.
+        /// </summary>
+        public static string Stat {
+            get {
+                return ResourceManager.GetString("Stat", resourceCulture);
             }
         }
     }

@@ -1,6 +1,8 @@
-﻿namespace POETradeHelper.PathOfExileTradeApi.Models
+﻿using System;
+
+namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public interface IQueryRequest
+    public interface IQueryRequest : ICloneable
     {
         string Endpoint { get; }
     }

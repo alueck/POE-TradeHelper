@@ -3,8 +3,8 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
-    public interface IItemListingsViewModelFactory
+    public interface IQueryRequestFactory
     {
-        ItemListingsViewModel Create(ItemListingsQueryResult itemListingsQueryResult);
+        IQueryRequest Map(AdvancedQueryViewModel advancedQueryViewModel);
     }
 }

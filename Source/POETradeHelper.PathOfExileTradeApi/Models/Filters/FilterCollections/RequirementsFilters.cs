@@ -2,7 +2,7 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
-    public class RequirementsFilters : FiltersBase
+    public class RequirementsFilters : FiltersBase<RequirementsFilters>
     {
         private const string LevelFilterName = "lvl";
         private const string StrengthFilterName = "str";

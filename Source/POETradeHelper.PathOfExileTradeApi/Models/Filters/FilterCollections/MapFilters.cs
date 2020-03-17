@@ -2,7 +2,7 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
-    public class MapFilters : FiltersBase
+    public class MapFilters : FiltersBase<MapFilters>
     {
         private const string MapIncreasedItemQuantityFilterName = "map_iiq";
         private const string MapIncreasedItemRarityFilterName = "map_iir";

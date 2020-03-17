@@ -2,7 +2,7 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
-    public class TypeFilters : FiltersBase
+    public class TypeFilters : FiltersBase<TypeFilters>
     {
         [JsonIgnore]
         public OptionFilter Category

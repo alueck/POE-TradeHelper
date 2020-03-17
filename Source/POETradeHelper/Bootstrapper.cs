@@ -74,7 +74,7 @@ namespace POETradeHelper
             serviceCollection.AddHttpClient();
 
             Serilog.Log.Logger = new LoggerConfiguration()
-                            .MinimumLevel.Is(Serilog.Events.LogEventLevel.Verbose)
+                            .MinimumLevel.Is(Serilog.Events.LogEventLevel.Warning)
                             .Enrich.WithExceptionDetails()
                             .WriteTo.Debug()
                             .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();

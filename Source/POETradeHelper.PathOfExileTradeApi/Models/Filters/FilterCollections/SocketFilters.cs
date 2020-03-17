@@ -2,7 +2,7 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
-    public class SocketFilters : FiltersBase
+    public class SocketFilters : FiltersBase<SocketFilters>
     {
         [JsonIgnore]
         public SocketsFilter Sockets

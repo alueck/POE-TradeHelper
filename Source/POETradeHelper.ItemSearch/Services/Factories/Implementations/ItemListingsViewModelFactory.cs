@@ -2,6 +2,7 @@
 using POETradeHelper.PathOfExileTradeApi.Models;
 using System.Linq;
 using DynamicData;
+using POETradeHelper.ItemSearch.Contract.Models;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -14,16 +15,16 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             this.listingViewModelFactory = listingViewModelFactory;
         }
 
-        public ItemListingsViewModel Create(ItemListingsQueryResult itemListingsQueryResult)
+        public ItemListingsViewModel Create(Item item, ItemListingsQueryResult itemListingsQueryResult)
         {
             var result = new ItemListingsViewModel
             {
                 ListingsUri = itemListingsQueryResult.Uri,
-                ItemDescription = itemListingsQueryResult.Item.DisplayName,
-                ItemRarity = itemListingsQueryResult.Item.Rarity
+                ItemDescription = item.DisplayName,
+                ItemRarity = item.Rarity
             };
 
-            result.Listings.AddRange(itemListingsQueryResult.Result.Select(x => this.listingViewModelFactory.Create(x, itemListingsQueryResult.Item)));
+            result.Listings.AddRange(itemListingsQueryResult.Result.Select(x => this.listingViewModelFactory.Create(x, item)));
 
             return result;
         }

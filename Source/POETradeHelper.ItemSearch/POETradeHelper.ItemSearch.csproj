@@ -15,10 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaResource Remove="UserControls\Filters.xaml" />
     <AvaloniaResource Remove="Views\ItemSearchSettingsView.xaml" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="UserControls\Filters.xaml" />
     <None Remove="Views\ItemSearchSettingsView.xaml" />
   </ItemGroup>
 
@@ -56,6 +58,12 @@
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="UserControls\Filters.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

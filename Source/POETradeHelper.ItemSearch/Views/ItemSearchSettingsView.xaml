@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="POETradeHelper.ItemSearch.Views.ItemSearchSettingsView">
 
@@ -17,7 +18,7 @@
       <RowDefinition Height="Auto" MinHeight="25" />
     </Grid.RowDefinitions>
 
-    <TextBlock VerticalAlignment="Center">League:</TextBlock>
+    <TextBlock VerticalAlignment="Center" Text="{x:Static resources:Resources.LeagueLabel}" />
     <ComboBox Name="LeaguesDropDown" Grid.Column="2" Items="{Binding Leagues}" SelectedItem="{Binding SelectedLeague}">
       <ComboBox.ItemTemplate>
         <DataTemplate>

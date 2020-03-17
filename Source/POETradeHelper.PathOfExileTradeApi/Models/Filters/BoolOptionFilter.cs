@@ -7,5 +7,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
     {
         [JsonConverter(typeof(JsonBoolStringConverter))]
         public bool Option { get; set; }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

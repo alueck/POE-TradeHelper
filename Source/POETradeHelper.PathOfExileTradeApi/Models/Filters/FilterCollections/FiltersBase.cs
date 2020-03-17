@@ -5,7 +5,8 @@ using System.Runtime.CompilerServices;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
-    public abstract class FiltersBase
+    public abstract class FiltersBase<TType> : ICloneable
+        where TType : FiltersBase<TType>, new()
     {
         private static readonly JsonSnakeCaseNamingPolicy snakeCaseNamingPolicy = new JsonSnakeCaseNamingPolicy();
 
@@ -35,6 +36,18 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
             }
 
             return this.filters.TryGetValue(snakeCaseNamingPolicy.ConvertName(filterName), out object filter) ? (TFilter)filter : default;
+        }
+
+        public object Clone()
+        {
+            var result = new TType();
+
+            foreach (var entry in this.filters)
+            {
+                result.filters.Add(entry.Key, ((ICloneable)entry.Value).Clone());
+            }
+
+            return result;
         }
 
         private readonly Dictionary<string, object> filters = new Dictionary<string, object>();

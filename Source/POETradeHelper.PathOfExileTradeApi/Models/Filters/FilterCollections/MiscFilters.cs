@@ -2,7 +2,7 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
-    public class MiscFilters : FiltersBase
+    public class MiscFilters : FiltersBase<MiscFilters>
     {
         private const string ItemLevelFilterName = "ilvl";
 

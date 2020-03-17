@@ -1,6 +1,8 @@
-﻿namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
+﻿using System;
+
+namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
-    public interface IFilter
+    public interface IFilter : ICloneable
     {
     }
 }

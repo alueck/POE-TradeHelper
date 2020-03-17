@@ -120,11 +120,17 @@
   <data name="AccountNameColumn" xml:space="preserve">
     <value>Account name</value>
   </data>
+  <data name="AdvancedQuery" xml:space="preserve">
+    <value>Advanced query</value>
+  </data>
   <data name="AgeColumn" xml:space="preserve">
     <value>Age</value>
   </data>
   <data name="CouldNotParseRarityExceptionMessage" xml:space="preserve">
     <value>Failed to parse item rarity.</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Current</value>
   </data>
   <data name="GemExperiencePercentColumn" xml:space="preserve">
     <value>Experience %</value>
@@ -135,10 +141,28 @@
   <data name="ItemLevelColumn" xml:space="preserve">
     <value>Item level</value>
   </data>
+  <data name="LeagueLabel" xml:space="preserve">
+    <value>League:</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Max</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
+  </data>
+  <data name="OpenInBrowser" xml:space="preserve">
+    <value>Open in browser</value>
+  </data>
   <data name="PriceColumn" xml:space="preserve">
     <value>Price</value>
   </data>
   <data name="QualityColumn" xml:space="preserve">
     <value>Quality</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="Stat" xml:space="preserve">
+    <value>Stat</value>
   </data>
 </root>

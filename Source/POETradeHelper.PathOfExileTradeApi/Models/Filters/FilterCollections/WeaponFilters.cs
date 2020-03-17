@@ -2,7 +2,7 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
-    public class WeaponFilters : FiltersBase
+    public class WeaponFilters : FiltersBase<WeaponFilters>
     {
         private const string AttacksPerSecondFilterName = "aps";
         private const string CriticalChanceFilterName = "crit";

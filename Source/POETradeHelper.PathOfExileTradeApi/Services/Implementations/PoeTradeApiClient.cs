@@ -36,13 +36,23 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
         public async Task<ItemListingsQueryResult> GetListingsAsync(Item item, CancellationToken cancellationToken = default)
         {
+            IQueryRequest queryRequest = this.itemToQueryRequestMapperAggregator.MapToQueryRequest(item);
+
+            return await this.GetItemListingsQueryResult(queryRequest, cancellationToken);
+        }
+
+        public Task<ItemListingsQueryResult> GetListingsAsync(IQueryRequest queryRequest, CancellationToken cancellationToken = default)
+        {
+            return this.GetItemListingsQueryResult(queryRequest, cancellationToken);
+        }
+
+        private async Task<ItemListingsQueryResult> GetItemListingsQueryResult(IQueryRequest queryRequest, CancellationToken cancellationToken)
+        {
             try
             {
-                IQueryRequest queryRequest = this.itemToQueryRequestMapperAggregator.MapToQueryRequest(item);
-
                 SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(queryRequest, cancellationToken);
 
-                return await this.GetListingsQueryResult(item, searchQueryResult, cancellationToken);
+                return await this.GetListingsQueryResult(searchQueryResult, cancellationToken);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -79,7 +89,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             return new StringContent(serializedQueryRequest, Encoding.UTF8, "application/json");
         }
 
-        private async Task<ItemListingsQueryResult> GetListingsQueryResult(Item item, SearchQueryResult searchQueryResult, CancellationToken cancellationToken)
+        private async Task<ItemListingsQueryResult> GetListingsQueryResult(SearchQueryResult searchQueryResult, CancellationToken cancellationToken)
         {
             ItemListingsQueryResult itemListingsQueryResult = null;
 
@@ -91,7 +101,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             itemListingsQueryResult = itemListingsQueryResult ?? new ItemListingsQueryResult();
             itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}/{searchQueryResult.Id}");
             itemListingsQueryResult.TotalCount = searchQueryResult.Total;
-            itemListingsQueryResult.Item = item;
             itemListingsQueryResult.SearchQueryRequest = searchQueryResult.Request;
 
             return itemListingsQueryResult;

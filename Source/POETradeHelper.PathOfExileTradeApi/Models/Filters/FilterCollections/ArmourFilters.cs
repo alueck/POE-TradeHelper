@@ -2,7 +2,7 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
-    public class ArmourFilters : FiltersBase
+    public class ArmourFilters : FiltersBase<ArmourFilters>
     {
         private const string ArmourFilterName = "ar";
         private const string EvasionFilterName = "ev";

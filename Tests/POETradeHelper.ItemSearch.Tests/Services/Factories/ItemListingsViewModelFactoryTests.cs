@@ -26,11 +26,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         {
             var itemListingsQueryResult = new ItemListingsQueryResult
             {
-                Uri = new Uri("http://www.google.de"),
-                Item = new CurrencyItem()
+                Uri = new Uri("http://www.google.de")
             };
 
-            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(itemListingsQueryResult);
+            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(new CurrencyItem(), itemListingsQueryResult);
 
             Assert.That(result.ListingsUri, Is.EqualTo(itemListingsQueryResult.Uri));
         }
@@ -38,31 +37,27 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [Test]
         public void CreateShouldSetItemDescription()
         {
-            var itemListingsQueryResult = new ItemListingsQueryResult
+            var itemListingsQueryResult = new ItemListingsQueryResult();
+            var item = new EquippableItem(ItemRarity.Rare)
             {
-                Item = new EquippableItem(ItemRarity.Rare)
-                {
-                    Name = "Brood Blast",
-                    Type = "Thicket Bow"
-                }
+                Name = "Brood Blast",
+                Type = "Thicket Bow"
             };
 
-            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(itemListingsQueryResult);
+            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(item, itemListingsQueryResult);
 
-            Assert.That(result.ItemDescription, Is.EqualTo(itemListingsQueryResult.Item.DisplayName));
+            Assert.That(result.ItemDescription, Is.EqualTo(item.DisplayName));
         }
 
         [Test]
         public void CreateShouldSetItemRarity()
         {
-            var itemListingsQueryResult = new ItemListingsQueryResult
-            {
-                Item = new EquippableItem(ItemRarity.Rare)
-            };
+            var itemListingsQueryResult = new ItemListingsQueryResult();
+            var item = new EquippableItem(ItemRarity.Rare);
 
-            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(itemListingsQueryResult);
+            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(item, itemListingsQueryResult);
 
-            Assert.That(result.ItemRarity, Is.EqualTo(itemListingsQueryResult.Item.Rarity));
+            Assert.That(result.ItemRarity, Is.EqualTo(item.Rarity));
         }
 
         [Test]
@@ -75,13 +70,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                     new ListingResult(),
                     new ListingResult()
                 },
-                Item = new CurrencyItem()
             };
+            var item = new CurrencyItem();
 
-            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(itemListingsQueryResult);
+            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(item, itemListingsQueryResult);
 
-            this.listingViewModelFactoryMock.Verify(x => x.Create(itemListingsQueryResult.Result[0], itemListingsQueryResult.Item));
-            this.listingViewModelFactoryMock.Verify(x => x.Create(itemListingsQueryResult.Result[1], itemListingsQueryResult.Item));
+            this.listingViewModelFactoryMock.Verify(x => x.Create(itemListingsQueryResult.Result[0], item));
+            this.listingViewModelFactoryMock.Verify(x => x.Create(itemListingsQueryResult.Result[1], item));
         }
     }
 }
