@@ -62,12 +62,13 @@ namespace POETradeHelper.ItemSearch.Controllers
             e.Handled = true;
 
             this.CancelSearchItemToken();
-            await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token);
 
             if (!this.searchItemCancellationTokenSource.IsCancellationRequested)
             {
                 this.View.Show();
             }
+
+            await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token);
         }
 
         private void UserInputEventProvider_HideOverlay(object sender, HandledEventArgs e)
