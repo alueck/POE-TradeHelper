@@ -3,6 +3,8 @@ name: .NET Core
 on:
   pull_request:
     branches: [ '**' ]
+  push:
+    branches: [ master ]
 
 jobs:
   build:
