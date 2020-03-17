@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="POETradeHelper.Common.UI.UserControls.BusyIndicator">
+
+  <UserControl.Template>
+    <ControlTemplate TargetType="{x:Type local:BusyIndicator}">
+      <Grid>
+        <ContentPresenter Content="{TemplateBinding Content}" ZIndex="1" />
+
+        <Border HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                ZIndex="999"
+                IsVisible="{Binding $parent[UserControl].IsBusyIndicatorVisible}">
+
+          <Border.Background>
+            <SolidColorBrush Color="{DynamicResource ThemeBackgroundColor}" Opacity="0.6" />
+          </Border.Background>
+
+          <ProgressBar IsIndeterminate="True" Height="20" Margin="8" />
+        </Border>
+      </Grid>
+    </ControlTemplate>
+  </UserControl.Template>
+</UserControl>

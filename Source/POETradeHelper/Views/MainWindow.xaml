@@ -1,0 +1,49 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
+        xmlns:resx="clr-namespace:POETradeHelper.Properties;assembly=POETradeHelper"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="POETradeHelper.Views.MainWindow"
+        Title="POE Trade Helper"
+        Width="640"
+        Height="480">
+
+  <Window.Styles>
+    <Style Selector="HeaderedContentControl">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Border>
+              <StackPanel Spacing="5">
+                <ContentPresenter TextBlock.FontWeight="Bold" Content="{TemplateBinding Header}" />
+                <Border
+                    BorderBrush="Gray"
+                    BorderThickness="0.5"
+                    CornerRadius="5">
+                  <ContentPresenter Content="{TemplateBinding Content}" Margin="20" />
+                </Border>
+              </StackPanel>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Styles>
+
+  <commonUiControls:BusyIndicator IsBusy="{Binding IsBusy}" DisplayAfter="0:0:0.200">
+    <StackPanel ZIndex="999" Margin="20" Spacing="10">
+      <ItemsControl Items="{Binding SettingsViewModels}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <HeaderedContentControl Content="{Binding .}" Header="{Binding Title}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <Button Command="{Binding SaveSettingsCommand}">Save</Button>
+      <commonUiControls:MessageTextBlock Message="{Binding SaveSettingsMessage}" />
+    </StackPanel>
+  </commonUiControls:BusyIndicator>
+</Window>

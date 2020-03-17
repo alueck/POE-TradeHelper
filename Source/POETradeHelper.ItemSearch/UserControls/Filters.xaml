@@ -1,0 +1,53 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:localVMs="clr-namespace:POETradeHelper.ItemSearch.ViewModels;assembly=POETradeHelper.ItemSearch"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="POETradeHelper.ItemSearch.UserControls.Filters">
+
+  <Grid DataContext="{Binding $parent[UserControl]}">
+    <Grid.RowDefinitions>
+      <RowDefinition />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <ItemsControl Items="{Binding Items}">
+      <ItemsControl.DataTemplates>
+        <DataTemplate DataType="{x:Type localVMs:IMinMaxFilterViewModel}">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition SharedSizeGroup="StatColumn" />
+              <ColumnDefinition SharedSizeGroup="MinColumn" MinWidth="40" MaxWidth="40" />
+              <ColumnDefinition SharedSizeGroup="CurrentColumn" MinWidth="40" MaxWidth="40" />
+              <ColumnDefinition SharedSizeGroup="MaxColumn" MinWidth="40" MaxWidth="40" />
+              <ColumnDefinition SharedSizeGroup="SelectColumn" MinWidth="20" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="{Binding Text}" Margin="5" VerticalAlignment="Center" TextWrapping="Wrap" />
+            <TextBox Grid.Column="1" Text="{Binding Min}" HorizontalAlignment="Stretch" Margin="5" TextAlignment="Right" />
+            <TextBlock Grid.Column="2" Text="{Binding Current}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5" />
+            <TextBox Grid.Column="3" Text="{Binding Max}" HorizontalAlignment="Stretch" Margin="5" TextAlignment="Right" />
+            <CheckBox Grid.Column="4" IsChecked="{Binding IsEnabled}" Margin="5" HorizontalAlignment="Center" />
+          </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type localVMs:FilterViewModel}">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition SharedSizeGroup="StatColumn" />
+              <ColumnDefinition SharedSizeGroup="MinColumn" MinWidth="40" MaxWidth="40" />
+              <ColumnDefinition SharedSizeGroup="CurrentColumn" MinWidth="40" MaxWidth="40" />
+              <ColumnDefinition SharedSizeGroup="MaxColumn" MinWidth="40" MaxWidth="40" />
+              <ColumnDefinition SharedSizeGroup="SelectColumn" MinWidth="20" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="{Binding Text}" Margin="5" VerticalAlignment="Center" TextWrapping="Wrap" />
+            <CheckBox Grid.Column="4" IsChecked="{Binding IsEnabled}" Margin="5" HorizontalAlignment="Center" />
+          </Grid>
+        </DataTemplate>
+      </ItemsControl.DataTemplates>
+    </ItemsControl>
+    <Separator Grid.Row="1" IsVisible="{Binding !!Items.Count}" />
+  </Grid>
+</UserControl>
