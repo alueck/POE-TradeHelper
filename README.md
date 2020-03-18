@@ -14,5 +14,5 @@ This is still work in progress. So if you decide to try it out, you can be sure 
 
 # License
 
-This software is licensed under the MIT license (see [LICENSE.md](LICENSE.md)) and uses third party libraries that are licensed under their own terms and conditions . (see [LICENSE-3RD-PARTY.md](LICENSE-3RD-PARTY.md)).
+This software is licensed under the MIT license (see [LICENSE](LICENSE)) and uses third party libraries that are licensed under their own terms and conditions . (see [LICENSE-3RD-PARTY.md](LICENSE-3RD-PARTY.md)).
 
