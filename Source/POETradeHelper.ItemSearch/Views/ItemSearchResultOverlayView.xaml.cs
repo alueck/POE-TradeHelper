@@ -1,13 +1,17 @@
-﻿using Avalonia;
+﻿using POETradeHelper.ItemSearch.Attributes;
+using POETradeHelper.ItemSearch.ViewModels;
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Layout;
+using Avalonia;
 using Avalonia.Markup.Xaml;
-using POETradeHelper.ItemSearch.Attributes;
-using ReactiveUI;
-using System;
 using System.Reactive;
+using ReactiveUI;
+using Avalonia.Layout;
+using System;
 using System.Reflection;
+using Avalonia.Input;
+using System.Linq;
+using Avalonia.Markup.Xaml.Templates;
+using System.ComponentModel.DataAnnotations;
 
 namespace POETradeHelper.ItemSearch.Views
 {
@@ -67,8 +71,18 @@ namespace POETradeHelper.ItemSearch.Views
             if (itemsEnumerator.MoveNext())
             {
                 Type itemType = itemsEnumerator.Current.GetType();
+                PropertyInfo property = itemType.GetProperty(e.PropertyName);
 
-                var styleClassAttribute = itemType.GetProperty(e.PropertyName).GetCustomAttribute<StyleClassesAttribute>();
+                if (e.PropertyName == nameof(SimpleListingViewModel.Price))
+                {
+                    e.Column = new DataGridTemplateColumn
+                    {
+                        Header = property.GetCustomAttribute<DisplayAttribute>()?.GetShortName() ?? property.Name,
+                        CellTemplate = dataGrid.DataTemplates.OfType<DataTemplate>().Single(d => d.DataType == typeof(PriceViewModel)),
+                    };
+                }
+
+                var styleClassAttribute = property.GetCustomAttribute<StyleClassesAttribute>();
                 if (styleClassAttribute != null)
                 {
                     e.Column.CellStyleClasses.AddRange(styleClassAttribute.StyleClasses);

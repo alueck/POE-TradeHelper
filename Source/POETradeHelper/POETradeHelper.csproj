@@ -17,6 +17,7 @@
     <PackageReference Include="Avalonia" Version="0.9.4" />
     <PackageReference Include="Avalonia.Desktop" Version="0.9.4" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.4" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.2" />
@@ -27,7 +28,6 @@
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="Splat.Autofac" Version="9.3.11" />
     <PackageReference Include="Splat.Microsoft.Extensions.Logging" Version="9.3.11" />
-    <PackageReference Include="Splat.Serilog" Version="9.3.11" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />

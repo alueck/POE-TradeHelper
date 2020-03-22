@@ -1,8 +1,7 @@
-﻿using POETradeHelper.ItemSearch.ViewModels;
+﻿using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System.Linq;
-using DynamicData;
-using POETradeHelper.ItemSearch.Contract.Models;
+using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -15,7 +14,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             this.listingViewModelFactory = listingViewModelFactory;
         }
 
-        public ItemListingsViewModel Create(Item item, ItemListingsQueryResult itemListingsQueryResult)
+        public async Task<ItemListingsViewModel> CreateAsync(Item item, ItemListingsQueryResult itemListingsQueryResult)
         {
             var result = new ItemListingsViewModel
             {
@@ -24,7 +23,11 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 ItemRarity = item.Rarity
             };
 
-            result.Listings.AddRange(itemListingsQueryResult.Result.Select(x => this.listingViewModelFactory.Create(x, item)));
+            foreach (var listingResult in itemListingsQueryResult.Result)
+            {
+                SimpleListingViewModel itemListingViewModel = await this.listingViewModelFactory.CreateAsync(listingResult, item);
+                result.Listings.Add(itemListingViewModel);
+            }
 
             return result;
         }

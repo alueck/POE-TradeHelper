@@ -6,6 +6,7 @@
         xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
         xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.Converters;assembly=POETradeHelper.ItemSearch"
         xmlns:local="clr-namespace:POETradeHelper.ItemSearch;assembly=POETradeHelper.ItemSearch"
+        xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.ViewModels;assembly=POETradeHelper.ItemSearch"
         xmlns:localControls="clr-namespace:POETradeHelper.ItemSearch.UserControls;assembly=POETradeHelper.ItemSearch"
         xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="220"
@@ -108,6 +109,15 @@
                       ColumnWidth="Auto"
                       ScrollViewer.VerticalScrollBarVisibility="Visible"
                       AutoGenerateColumns="True">
+              <DataGrid.DataTemplates>
+                <DataTemplate DataType="{x:Type localVms:PriceViewModel}">
+                  <StackPanel Orientation="Horizontal" DataContext="{Binding Price}">
+                    <TextBlock Text="{Binding Amount}" VerticalAlignment="Center" />
+                    <TextBlock Text=" " />
+                    <Image Source="{Binding Image}" Height="30" VerticalAlignment="Center" ToolTip.Tip="{Binding Currency}" />
+                  </StackPanel>
+                </DataTemplate>
+              </DataGrid.DataTemplates>
             </DataGrid>
           </Grid>
         </Grid>

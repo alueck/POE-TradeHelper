@@ -120,6 +120,9 @@
   <data name="MetamorphStatDescriptor" xml:space="preserve">
     <value>Drops</value>
   </data>
+  <data name="PoeCdnUrl" xml:space="preserve">
+    <value>https://web.poecdn.com</value>
+  </data>
   <data name="PoeTradeApiBaseUrl" xml:space="preserve">
     <value>https://www.pathofexile.com/api/trade</value>
   </data>

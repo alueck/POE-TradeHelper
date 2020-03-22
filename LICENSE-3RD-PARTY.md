@@ -9,7 +9,7 @@ applies to:
 - Avalonia, Copyright (c) 2014 Steven Kirk
 - Serilog.Exceptions, Copyright (c) 2015 Muhammad Rehan Saeed
 - Splat.Autofac, Copyright (c) .NET Foundation and Contributors
-- Splat.Serilog, Copyright (c) .NET Foundation and Contributors
+- Splat.Microsoft.Extensions.Logging, Copyright (c) .NET Foundation and Contributors
 - WindowsHook, Copyright (c) 2010-2018 George Mamaladze
 
 -----------------------------------------------------------------------------
@@ -37,7 +37,9 @@ THE SOFTWARE.
 
 Apache 2.0 License
 
-applies to: 
+applies to:
+- Microsoft.Extensions.Caching.Abstractions
+- Microsoft.Extensions.Caching.Memory
 - Microsoft.Extensions.Configuration
 - Microsoft.Extensions.Configuration.Json
 - Microsoft.Extensions.DependencyInjection

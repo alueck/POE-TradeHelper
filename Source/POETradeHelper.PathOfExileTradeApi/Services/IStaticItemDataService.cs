@@ -1,4 +1,5 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
+using System;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
@@ -11,5 +12,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         /// </summary>
         /// <param name="item">an item of type <see cref="CurrencyItem"/>, <see cref="DivinationCardItem"/> or <see cref="FragmentItem"/> for which to retrieve the id</param>
         string GetId(Item item);
+
+        Uri GetImageUrl(string id);
+
+        string GetText(string id);
     }
 }
