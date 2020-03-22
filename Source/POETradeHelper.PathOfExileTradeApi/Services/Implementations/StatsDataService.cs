@@ -95,13 +95,16 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
             result = statDataMatches.FirstOrDefault(match => match.IsExactMatch)?.StatData;
 
-            if (result == null && statDataMatches.Count == 1)
+            if (result == null)
             {
-                result = statDataMatches[0].StatData;
-            }
-            else
-            {
-                this.logger.LogWarning("Failed to find matching stat data for {@itemStat}. Found: {@statDataMatches}", itemStat, statDataMatches);
+                if (statDataMatches.Count == 1)
+                {
+                    result = statDataMatches[0].StatData;
+                }
+                else
+                {
+                    this.logger.LogWarning("Failed to find matching stat data for {@itemStat}. Found: {@statDataMatches}", itemStat, statDataMatches);
+                }
             }
 
             return result;
