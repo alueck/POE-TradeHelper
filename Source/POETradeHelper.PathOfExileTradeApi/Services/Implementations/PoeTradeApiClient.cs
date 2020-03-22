@@ -21,12 +21,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         private readonly IHttpClientWrapper httpClient;
         private readonly IPoeTradeApiJsonSerializer jsonSerializer;
         private readonly IItemSearchQueryRequestMapperAggregator itemToQueryRequestMapperAggregator;
-        private readonly IOptions<ItemSearchOptions> itemSearchOptions;
+        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
 
         public PoeTradeApiClient(IHttpClientFactoryWrapper httpClientFactory,
             IPoeTradeApiJsonSerializer jsonSerializer,
             IItemSearchQueryRequestMapperAggregator itemSearchQueryRequestMapperAggregator,
-            IOptions<ItemSearchOptions> itemSearchOptions)
+            IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {
             this.httpClient = httpClientFactory.CreateClient();
             this.jsonSerializer = jsonSerializer;
@@ -68,7 +68,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
             StringContent content = this.GetJsonStringContent(queryRequest);
 
-            string requestUri = $"{Resources.PoeTradeApiBaseUrl}{queryRequest.Endpoint}/{this.itemSearchOptions.Value.League.Id}";
+            string requestUri = $"{Resources.PoeTradeApiBaseUrl}{queryRequest.Endpoint}/{this.itemSearchOptions.CurrentValue.League.Id}";
             HttpResponseMessage response = await this.httpClient.PostAsync(requestUri, content, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
@@ -99,7 +99,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             }
 
             itemListingsQueryResult = itemListingsQueryResult ?? new ItemListingsQueryResult();
-            itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.Value.League.Id}/{searchQueryResult.Id}");
+            itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.CurrentValue.League.Id}/{searchQueryResult.Id}");
             itemListingsQueryResult.TotalCount = searchQueryResult.Total;
             itemListingsQueryResult.SearchQueryRequest = searchQueryResult.Request;
 
