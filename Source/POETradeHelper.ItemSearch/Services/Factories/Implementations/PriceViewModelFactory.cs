@@ -1,8 +1,7 @@
-﻿using POETradeHelper.Common.UI;
+﻿using POETradeHelper.Common.UI.Services;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Services.Factories

@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace POETradeHelper.Common.UI
+namespace POETradeHelper.Common.UI.Services
 {
     public interface IImageService
     {

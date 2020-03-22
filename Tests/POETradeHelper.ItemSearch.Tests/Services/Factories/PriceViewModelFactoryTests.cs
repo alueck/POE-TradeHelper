@@ -4,7 +4,7 @@ using Avalonia.Platform;
 using Avalonia.Utilities;
 using Moq;
 using NUnit.Framework;
-using POETradeHelper.Common.UI;
+using POETradeHelper.Common.UI.Services;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
