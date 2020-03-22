@@ -5,7 +5,7 @@ using System.IO;
 namespace POETradeHelper.Common.UI.Services
 {
     [ExcludeFromCodeCoverage]
-    public class ImageFactory : IImageFactory
+    public class BitmapFactory : IBitmapFactory
     {
         public IBitmap Create(Stream stream)
         {

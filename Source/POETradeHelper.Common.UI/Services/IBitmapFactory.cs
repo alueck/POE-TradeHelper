@@ -3,7 +3,7 @@ using System.IO;
 
 namespace POETradeHelper.Common.UI.Services
 {
-    public interface IImageFactory
+    public interface IBitmapFactory
     {
         IBitmap Create(Stream stream);
     }

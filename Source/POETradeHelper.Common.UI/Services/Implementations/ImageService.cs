@@ -11,13 +11,13 @@ namespace POETradeHelper.Common.UI.Services
     {
         private readonly IMemoryCache memoryCache;
         private readonly IHttpClientWrapper httpClient;
-        private readonly IImageFactory imageFactory;
+        private readonly IBitmapFactory bitmapFactory;
 
-        public ImageService(IMemoryCache memoryCache, IHttpClientFactoryWrapper httpClientFactory, IImageFactory imageFactory)
+        public ImageService(IMemoryCache memoryCache, IHttpClientFactoryWrapper httpClientFactory, IBitmapFactory bitmapFactory)
         {
             this.memoryCache = memoryCache;
             this.httpClient = httpClientFactory.CreateClient();
-            this.imageFactory = imageFactory;
+            this.bitmapFactory = bitmapFactory;
         }
 
         public async Task<IBitmap> GetImageAsync(Uri uri)
@@ -30,7 +30,7 @@ namespace POETradeHelper.Common.UI.Services
                 {
                     var responseStream = await response.Content.ReadAsStreamAsync();
 
-                    image = this.imageFactory.Create(responseStream);
+                    image = this.bitmapFactory.Create(responseStream);
 
                     ICacheEntry cacheEntry = this.memoryCache.CreateEntry(uri);
                     cacheEntry.SetValue(image);

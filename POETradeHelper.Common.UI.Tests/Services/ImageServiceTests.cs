@@ -20,7 +20,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
     {
         private Mock<IMemoryCache> memoryCacheMock;
         private Mock<IHttpClientWrapper> httpClientWrapperMock;
-        private Mock<IImageFactory> imageFactoryMock;
+        private Mock<IBitmapFactory> bitmapFactoryMock;
         private ImageService imageService;
 
         [SetUp]
@@ -28,13 +28,13 @@ namespace POETradeHelper.Common.UI.Tests.Services
         {
             this.memoryCacheMock = new Mock<IMemoryCache>();
             this.httpClientWrapperMock = new Mock<IHttpClientWrapper>();
-            this.imageFactoryMock = new Mock<IImageFactory>();
+            this.bitmapFactoryMock = new Mock<IBitmapFactory>();
 
             var httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
             httpClientFactoryWrapperMock.Setup(x => x.CreateClient())
                 .Returns(this.httpClientWrapperMock.Object);
 
-            this.imageService = new ImageService(this.memoryCacheMock.Object, httpClientFactoryWrapperMock.Object, this.imageFactoryMock.Object);
+            this.imageService = new ImageService(this.memoryCacheMock.Object, httpClientFactoryWrapperMock.Object, this.bitmapFactoryMock.Object);
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
         }
 
         [Test]
-        public async Task GetImageAsyncShouldCallCreateOnImageFactoryIfHttpResponseIndicatesSuccess()
+        public async Task GetImageAsyncShouldCallCreateOnBitmapFactoryIfHttpResponseIndicatesSuccess()
         {
             Uri uri = new Uri("http://www.google.de");
 
@@ -96,7 +96,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             await this.imageService.GetImageAsync(uri);
 
             var stream = await httpResponse.Content.ReadAsStreamAsync();
-            this.imageFactoryMock.Verify(x => x.Create(stream));
+            this.bitmapFactoryMock.Verify(x => x.Create(stream));
         }
 
         [Test]
@@ -145,7 +145,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.memoryCacheMock.Setup(x => x.CreateEntry(It.IsAny<object>()))
                 .Returns(cacheEntryMock.Object);
 
-            this.imageFactoryMock.Setup(x => x.Create(It.IsAny<Stream>()))
+            this.bitmapFactoryMock.Setup(x => x.Create(It.IsAny<Stream>()))
                 .Returns(expectedValue);
 
             await this.imageService.GetImageAsync(uri);
@@ -201,7 +201,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.memoryCacheMock.Setup(x => x.CreateEntry(It.IsAny<object>()))
                 .Returns(Mock.Of<ICacheEntry>());
 
-            this.imageFactoryMock.Setup(x => x.Create(It.IsAny<Stream>()))
+            this.bitmapFactoryMock.Setup(x => x.Create(It.IsAny<Stream>()))
                 .Returns(expected);
 
             IBitmap result = await this.imageService.GetImageAsync(uri);
