@@ -122,6 +122,99 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             Assert.That(exception.Message, Contains.Substring(unsupportedItem.GetType().Name));
         }
 
+        [Test]
+        public async Task GetTextShouldReturnCorrectTextForId()
+        {
+            const string expected = "Scroll of Wisdom";
+            const string id = "wis";
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StaticData>>
+                {
+                    Result = new List<Data<StaticData>>
+                    {
+                        new Data<StaticData>
+                        {
+                            Id = "Currency",
+                            Entries = new List<StaticData>
+                            {
+                                new StaticData { Id = "alt", Text = "Orb of Alteration" },
+                                new StaticData { Id = id, Text = expected }
+                            }
+                        }
+                    }
+                });
+
+            await this.staticItemDataService.OnInitAsync();
+
+            string result = this.staticItemDataService.GetText(id);
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public async Task GetTextShouldThrowKeyNotFoundExceptionIfEntryIsNotFound()
+        {
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StaticData>>
+                {
+                    Result = new List<Data<StaticData>>()
+                });
+
+            await this.staticItemDataService.OnInitAsync();
+
+            TestDelegate testDelegate = () => this.staticItemDataService.GetText("abc");
+
+            Assert.Throws<KeyNotFoundException>(testDelegate);
+        }
+
+        [Test]
+        public async Task GetImageurlShouldReturnCorrectUrlForId()
+        {
+            const string entryUrl = "image/Art/2DItems/Currency/CurrencyRerollRare.png";
+            string expected = Resources.PoeCdnUrl + entryUrl;
+            const string id = "wis";
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StaticData>>
+                {
+                    Result = new List<Data<StaticData>>
+                    {
+                        new Data<StaticData>
+                        {
+                            Id = "Currency",
+                            Entries = new List<StaticData>
+                            {
+                                new StaticData { Id = "alt",  Image = "abc" },
+                                new StaticData { Id = id, Image = entryUrl }
+                            }
+                        }
+                    }
+                });
+
+            await this.staticItemDataService.OnInitAsync();
+
+            Uri result = this.staticItemDataService.GetImageUrl(id);
+
+            Assert.That(result.ToString(), Is.EqualTo(expected));
+        }
+
+        [Test]
+        public async Task GetImageUrlShouldThrowKeyNotFoundExceptionIfEntryIsNotFound()
+        {
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StaticData>>
+                {
+                    Result = new List<Data<StaticData>>()
+                });
+
+            await this.staticItemDataService.OnInitAsync();
+
+            TestDelegate testDelegate = () => this.staticItemDataService.GetImageUrl("abc");
+
+            Assert.Throws<KeyNotFoundException>(testDelegate);
+        }
+
         private static IEnumerable<Item> UnsupportedItems
         {
             get

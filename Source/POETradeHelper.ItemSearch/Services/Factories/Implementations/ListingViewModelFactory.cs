@@ -3,6 +3,7 @@ using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -11,39 +12,46 @@ namespace POETradeHelper.ItemSearch.Services.Factories
         private const string QualityPropertyName = "Quality";
         private const string GemLevelPropertyName = "Level";
         private const string GemExperiencePropertyName = "Experience";
+        private readonly IPriceViewModelFactory priceViewModelFactory;
 
-        public SimpleListingViewModel Create(ListingResult listingResult, Item item)
+        public ListingViewModelFactory(IPriceViewModelFactory priceViewModelFactory)
         {
-            SimpleListingViewModel result = new SimpleListingViewModel
-            {
-                AccountName = listingResult.Listing.Account?.Name,
-                Price = listingResult.Listing.Price?.PriceText,
-                Age = listingResult.Listing.AgeText,
-            };
+            this.priceViewModelFactory = priceViewModelFactory;
+        }
+
+        public async Task<SimpleListingViewModel> CreateAsync(ListingResult listingResult, Item item)
+        {
+            SimpleListingViewModel result = new SimpleListingViewModel();
 
             if (item is GemItem)
             {
-                result = CreateGemItemListingViewModel(listingResult);
+                result = this.CreateGemItemListingViewModel(listingResult);
             }
             else if (item is EquippableItem || item is OrganItem)
             {
-                result = CreateItemListingViewModelWithItemLevel(listingResult);
+                result = this.CreateItemListingViewModelWithItemLevel(listingResult);
             }
             else if (item is FlaskItem)
             {
-                result = CreateFlaskItemViewModel(listingResult);
+                result = this.CreateFlaskItemViewModel(listingResult);
             }
+
+            await this.SetSimpleListingViewModelProperties(result, listingResult);
 
             return result;
         }
 
-        private static SimpleListingViewModel CreateGemItemListingViewModel(ListingResult listingResult)
+        private async Task SetSimpleListingViewModelProperties(SimpleListingViewModel result, ListingResult listingResult)
+        {
+            result.AccountName = listingResult.Listing.Account?.Name;
+            result.Price = await this.priceViewModelFactory.CreateAsync(listingResult.Listing.Price);
+            result.Age = listingResult.Listing.AgeText;
+        }
+
+        private SimpleListingViewModel CreateGemItemListingViewModel(ListingResult listingResult)
         {
             var result = new GemItemListingViewModel
             {
-                AccountName = listingResult.Listing.Account?.Name,
-                Price = listingResult.Listing.Price?.PriceText,
-                Age = listingResult.Listing.AgeText,
                 Level = GetPropertyStringValue(listingResult.Item, GemLevelPropertyName),
                 Quality = GetPropertyStringValue(listingResult.Item, QualityPropertyName)
             };
@@ -61,13 +69,10 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return result;
         }
 
-        private static SimpleListingViewModel CreateFlaskItemViewModel(ListingResult listingResult)
+        private SimpleListingViewModel CreateFlaskItemViewModel(ListingResult listingResult)
         {
             return new FlaskItemListingViewModel
             {
-                AccountName = listingResult.Listing.Account?.Name,
-                Price = listingResult.Listing.Price?.PriceText,
-                Age = listingResult.Listing.AgeText,
                 Quality = GetPropertyStringValue(listingResult.Item, QualityPropertyName)
             };
         }
@@ -79,13 +84,10 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return qualityProperty?.Values[0][0].GetString();
         }
 
-        private static SimpleListingViewModel CreateItemListingViewModelWithItemLevel(ListingResult listingResult)
+        private SimpleListingViewModel CreateItemListingViewModelWithItemLevel(ListingResult listingResult)
         {
             return new ItemListingViewModelWithItemLevel
             {
-                AccountName = listingResult.Listing.Account?.Name,
-                Price = listingResult.Listing.Price?.PriceText,
-                Age = listingResult.Listing.AgeText,
                 ItemLevel = listingResult.Item.ItemLevel
             };
         }

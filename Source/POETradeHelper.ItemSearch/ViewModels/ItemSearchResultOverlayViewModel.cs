@@ -94,7 +94,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
                 if (itemListing != null && !cancellationToken.IsCancellationRequested)
                 {
-                    this.ItemListings = this.itemListingsViewModelFactory.Create(Item, itemListing);
+                    this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(Item, itemListing);
                     this.AdvancedQuery = this.advancedQueryViewModelFactory.Create(Item, itemListing.SearchQueryRequest);
                 }
             }
@@ -143,7 +143,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
                 ItemListingsQueryResult itemListingsQueryResult = await this.poeTradeApiClient.GetListingsAsync(queryRequest);
 
-                this.ItemListings = this.itemListingsViewModelFactory.Create(this.Item, itemListingsQueryResult);
+                this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item, itemListingsQueryResult);
                 this.AdvancedQuery = this.advancedQueryViewModelFactory.Create(this.Item, queryRequest);
             }
             catch (Exception exception)

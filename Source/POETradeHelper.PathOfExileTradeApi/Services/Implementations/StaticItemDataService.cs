@@ -16,7 +16,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
     {
         private readonly IHttpClientWrapper httpClient;
         private readonly IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer;
-        private IDictionary<string, StaticData> nameToStaticDataMappings;
+        private IDictionary<string, StaticData> idToStaticDataMappings;
 
         public StaticItemDataService(IHttpClientFactoryWrapper httpClientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer)
         {
@@ -28,10 +28,20 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
             if (item is CurrencyItem || item is DivinationCardItem || item is FragmentItem)
             {
-                return this.nameToStaticDataMappings[item.Name].Id;
+                return this.idToStaticDataMappings.Values.FirstOrDefault(entry => string.Equals(entry.Text, item.Name, StringComparison.Ordinal))?.Id;
             }
 
             throw new NotSupportedException($"Item of type '{item?.GetType()}' is not supported.");
+        }
+
+        public Uri GetImageUrl(string id)
+        {
+            return new Uri(Resources.PoeCdnUrl + this.idToStaticDataMappings[id].Image);
+        }
+
+        public string GetText(string id)
+        {
+            return this.idToStaticDataMappings[id].Text;
         }
 
         public async Task OnInitAsync()
@@ -47,10 +57,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             string content = await httpResponse.Content.ReadAsStringAsync();
             var queryResult = this.poeTradeApiJsonSerializer.Deserialize<QueryResult<Data<StaticData>>>(content);
 
-            this.nameToStaticDataMappings = queryResult?.Result?
+            this.idToStaticDataMappings = queryResult?.Result?
                                                 .Where(x => !x.Id.StartsWith("Map"))
                                                 .SelectMany(x => x.Entries)
-                                                .ToDictionary(x => x.Text);
+                                                .ToDictionary(x => x.Id);
         }
     }
 }

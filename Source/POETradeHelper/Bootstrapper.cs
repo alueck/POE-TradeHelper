@@ -11,7 +11,6 @@ using Serilog.Exceptions;
 using Splat;
 using Splat.Autofac;
 using Splat.Microsoft.Extensions.Logging;
-using Splat.Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -80,6 +79,7 @@ namespace POETradeHelper
                             .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
 
             serviceCollection.AddLogging(builder => builder.AddSerilog());
+            serviceCollection.AddMemoryCache(builder => builder.SizeLimit = 20971520);
 
             ConfigureOptions(serviceCollection);
 

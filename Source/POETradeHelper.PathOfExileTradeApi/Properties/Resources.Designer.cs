@@ -70,6 +70,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://web.poecdn.com.
+        /// </summary>
+        public static string PoeCdnUrl {
+            get {
+                return ResourceManager.GetString("PoeCdnUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://www.pathofexile.com/api/trade.
         /// </summary>
         public static string PoeTradeApiBaseUrl {

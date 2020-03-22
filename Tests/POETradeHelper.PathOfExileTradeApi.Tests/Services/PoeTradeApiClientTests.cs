@@ -26,7 +26,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         private Mock<IHttpClientFactoryWrapper> httpClientFactoryWrapperMock;
         private Mock<IPoeTradeApiJsonSerializer> poeTradeApiJsonSerializerMock;
         private Mock<IItemSearchQueryRequestMapperAggregator> itemToQueryRequestMapperAggregatorMock;
-        private Mock<IOptions<ItemSearchOptions>> itemSearchOptionsMock;
+        private Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
         private PoeTradeApiClient poeTradeApiClient;
 
         [SetUp]
@@ -56,8 +56,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.itemToQueryRequestMapperAggregatorMock.Setup(x => x.MapToQueryRequest(It.IsAny<Item>()))
                 .Returns(new SearchQueryRequest());
 
-            this.itemSearchOptionsMock = new Mock<IOptions<ItemSearchOptions>>();
-            this.itemSearchOptionsMock.Setup(x => x.Value)
+            this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions { League = new League() });
 
             this.poeTradeApiClient = new PoeTradeApiClient(this.httpClientFactoryWrapperMock.Object, this.poeTradeApiJsonSerializerMock.Object, this.itemToQueryRequestMapperAggregatorMock.Object, this.itemSearchOptionsMock.Object);
@@ -702,7 +702,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 }
             };
 
-            this.itemSearchOptionsMock.Setup(x => x.Value)
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(itemSearchOptions);
         }
     }

@@ -6,6 +6,7 @@ using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
@@ -22,20 +23,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         }
 
         [Test]
-        public void CreateShouldSetUri()
+        public async Task CreateAsyncShouldSetUri()
         {
             var itemListingsQueryResult = new ItemListingsQueryResult
             {
                 Uri = new Uri("http://www.google.de")
             };
 
-            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(new CurrencyItem(), itemListingsQueryResult);
+            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(new CurrencyItem(), itemListingsQueryResult);
 
             Assert.That(result.ListingsUri, Is.EqualTo(itemListingsQueryResult.Uri));
         }
 
         [Test]
-        public void CreateShouldSetItemDescription()
+        public async Task CreateAsyncShouldSetItemDescription()
         {
             var itemListingsQueryResult = new ItemListingsQueryResult();
             var item = new EquippableItem(ItemRarity.Rare)
@@ -44,24 +45,24 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Type = "Thicket Bow"
             };
 
-            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(item, itemListingsQueryResult);
+            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult);
 
             Assert.That(result.ItemDescription, Is.EqualTo(item.DisplayName));
         }
 
         [Test]
-        public void CreateShouldSetItemRarity()
+        public async Task CreateAsyncShouldSetItemRarity()
         {
             var itemListingsQueryResult = new ItemListingsQueryResult();
             var item = new EquippableItem(ItemRarity.Rare);
 
-            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(item, itemListingsQueryResult);
+            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult);
 
             Assert.That(result.ItemRarity, Is.EqualTo(item.Rarity));
         }
 
         [Test]
-        public void CreateShouldCallCreateOnListingViewModelFactory()
+        public async Task CreateAsyncShouldCallCreateOnListingViewModelFactory()
         {
             var itemListingsQueryResult = new ItemListingsQueryResult
             {
@@ -73,10 +74,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             var item = new CurrencyItem();
 
-            ItemListingsViewModel result = this.itemListingsViewModelFactory.Create(item, itemListingsQueryResult);
+            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult);
 
-            this.listingViewModelFactoryMock.Verify(x => x.Create(itemListingsQueryResult.Result[0], item));
-            this.listingViewModelFactoryMock.Verify(x => x.Create(itemListingsQueryResult.Result[1], item));
+            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[0], item));
+            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[1], item));
         }
     }
 }
