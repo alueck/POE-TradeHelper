@@ -44,7 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CodeCoverage.runsettings = CodeCoverage.runsettings
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.Common.UI.Tests", "POETradeHelper.Common.UI.Tests\POETradeHelper.Common.UI.Tests.csproj", "{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.Common.UI.Tests", "Tests\POETradeHelper.Common.UI.Tests\POETradeHelper.Common.UI.Tests.csproj", "{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
