@@ -5,7 +5,6 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -111,18 +110,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
         private static ItemWithStats CreateItemWithStats(StatCategory statCategory)
         {
-            Func<string, ItemStat> itemStatFactory = statCategory == StatCategory.Monster
-                ? itemStatId => new MonsterItemStat { Id = itemStatId }
-                : (Func<string, ItemStat>)(itemStatId => new ItemStat(statCategory) { Id = itemStatId });
-
             return new EquippableItem(ItemRarity.Rare)
             {
                 Stats = new ItemStats
                 {
                     AllStats =
                     {
-                        itemStatFactory($"{statCategory}ItemStatId"),
-                        itemStatFactory($"{statCategory}ItemStatId1")
+                        new ItemStat(statCategory){ Id = $"{statCategory}ItemStatId" },
+                        new ItemStat(statCategory){ Id = $"{statCategory}ItemStatId1" },
                     }
                 }
             };

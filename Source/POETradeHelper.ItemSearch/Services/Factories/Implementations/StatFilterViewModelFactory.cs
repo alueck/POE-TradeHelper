@@ -1,37 +1,25 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using POETradeHelper.ItemSearch.Contract;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
     public class StatFilterViewModelFactory : IStatFilterViewModelFactory
     {
-        private const char Placeholder = '#';
-
         public StatFilterViewModel Create(ItemStat itemStat, SearchQueryRequest queryRequest, StatFilterViewModelFactoryConfiguration configuration)
         {
             StatFilterViewModel result;
 
             var matchingFilter = FindMatchingFilter(itemStat, queryRequest);
 
-            (int? minValue, int? maxValue) minMaxTuple;
+            (int minValue, int maxValue)? minMaxTuple = GetMinMaxTuple(itemStat);
 
-            if (itemStat is MonsterItemStat monsterItemStat)
-            {
-                configuration = new StatFilterViewModelFactoryConfiguration();
-                minMaxTuple = GetItemStatMinAndMaxValue(monsterItemStat);
-            }
-            else
-            {
-                minMaxTuple = GetItemStatMinAndMaxValue(itemStat);
-            }
-
-            result = minMaxTuple.minValue.HasValue
-                ? GetMinMaxStatFilterViewModel(itemStat, configuration, matchingFilter, minMaxTuple)
+            result = minMaxTuple.HasValue
+                ? GetMinMaxStatFilterViewModel(itemStat, configuration, matchingFilter, minMaxTuple.Value)
                 : GetStatFilterViewModel(itemStat, matchingFilter);
 
             return result;
@@ -42,58 +30,29 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return queryRequest.Query.Stats.SelectMany(s => s.Filters).FirstOrDefault(filter => string.Equals(filter.Id, itemStat.Id, StringComparison.Ordinal));
         }
 
-        private (int? minValue, int? maxValue) GetItemStatMinAndMaxValue(MonsterItemStat monsterItemStat)
+        private static (int minValue, int maxValue)? GetMinMaxTuple(ItemStat itemStat)
         {
-            return (monsterItemStat.Count, null);
-        }
+            (int minValue, int maxValue)? minMaxTuple = null;
 
-        private (int? minValue, int? maxValue) GetItemStatMinAndMaxValue(ItemStat itemStat)
-        {
-            int? maxValue = null;
-            int maxValueIndex = itemStat.TextWithPlaceholders.LastIndexOf(Placeholder);
-            if (maxValueIndex >= 0)
+            if (itemStat is SingleValueItemStat singleValueItemStat)
             {
-                maxValue = GetFirstNumericValue(itemStat.Text.Substring(maxValueIndex));
+                minMaxTuple = (singleValueItemStat.Value, singleValueItemStat.Value);
+            }
+            else if (itemStat is MinMaxValueItemStat minMaxValueItemStat)
+            {
+                minMaxTuple = (minMaxValueItemStat.MinValue, minMaxValueItemStat.MaxValue);
             }
 
-            int? minValue = null;
-            int minValueIndex = GetMinValueIndex(itemStat, maxValueIndex);
-            if (minValueIndex >= 0)
+            return minMaxTuple;
+        }
+
+        private static StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilterViewModelFactoryConfiguration configuration, StatFilter matchingFilter, (int minValue, int maxValue) minMaxTuple)
+        {
+            if (itemStat.StatCategory == StatCategory.Monster)
             {
-                minValue = GetFirstNumericValue(itemStat.Text.Substring(minValueIndex));
+                configuration = new StatFilterViewModelFactoryConfiguration();
             }
 
-            return (minValue, maxValue);
-        }
-
-        private static int? GetFirstNumericValue(string text)
-        {
-            Match match = Regex.Match(text, @"[\+\-]?\d+");
-
-            return match.Success
-                ? int.Parse(match.Value)
-                : (int?)null;
-        }
-
-        private static int GetMinValueIndex(ItemStat itemStat, int maxValueIndex)
-        {
-            int minValueIndex = maxValueIndex;
-
-            if (maxValueIndex >= 0)
-            {
-                minValueIndex = itemStat.TextWithPlaceholders.Substring(0, maxValueIndex).IndexOf(Placeholder);
-
-                if (minValueIndex < 0)
-                {
-                    minValueIndex = maxValueIndex;
-                }
-            }
-
-            return minValueIndex;
-        }
-
-        private static StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilterViewModelFactoryConfiguration configuration, StatFilter matchingFilter, (int? minValue, int? maxValue) minMaxTuple)
-        {
             return new MinMaxStatFilterViewModel
             {
                 Id = itemStat.Id,

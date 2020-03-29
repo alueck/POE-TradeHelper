@@ -214,9 +214,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetStatDataShouldReturnCorrectStatDataForMonsterStat()
         {
-            var monsterItemStat = new MonsterItemStat { Text = "Drops additional Currency Items" };
+            const StatCategory statCategory = StatCategory.Monster;
+            var monsterItemStat = new ItemStat(statCategory) { Text = "Drops additional Currency Items" };
 
-            var expected = new StatData { Id = "stat_2250533757", Text = "Drops additional Currency Items (×#)", Type = monsterItemStat.StatCategory.GetDisplayName().ToLower() };
+            var expected = new StatData { Id = "stat_2250533757", Text = "Drops additional Currency Items (×#)", Type = statCategory.GetDisplayName().ToLower() };
 
             await this.GetStatDataShouldReturnCorrectStatData(monsterItemStat, expected);
         }
@@ -271,7 +272,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         public async Task GetStatDataShouldReturnOnlyMatchingStatDataFromGivenCategories()
         {
             const StatCategory statCategoryToSearch = StatCategory.Implicit;
-            var itemStat = new ItemStat { Text = "3% increased Movement Speed" };
+            var itemStat = new ItemStat(StatCategory.Unknown) { Text = "3% increased Movement Speed" };
             var expectedStatData = new StatData { Id = "expectedId", Text = "#% increased Movement Speed", Type = statCategoryToSearch.GetDisplayName().ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))

@@ -52,18 +52,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         public StatData GetStatData(ItemStat itemStat, params StatCategory[] statCategoriesToSearch)
         {
-            StatData result = null;
-
             IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(statCategoriesToSearch);
-
-            if (itemStat is MonsterItemStat monsterItemStat)
-            {
-                result = GetStatDataPrivate(statDataListsToSearch, monsterItemStat);
-            }
-            else
-            {
-                result = this.GetStataDataPrivate(statDataListsToSearch, itemStat);
-            }
+            StatData result = this.GetStataDataPrivate(statDataListsToSearch, itemStat);
 
             return result;
         }
@@ -78,13 +68,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             }
 
             return result ?? this.statsData;
-        }
-
-        private static StatData GetStatDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, MonsterItemStat monsterItemStat)
-        {
-            return statDataListsToSearch
-                .SelectMany(x => x.Entries)
-                .FirstOrDefault(statData => statData.Text.StartsWith(monsterItemStat.Text, StringComparison.OrdinalIgnoreCase));
         }
 
         private StatData GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, ItemStat itemStat)
