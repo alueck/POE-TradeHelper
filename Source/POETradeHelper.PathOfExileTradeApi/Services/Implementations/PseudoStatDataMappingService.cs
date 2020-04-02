@@ -17,7 +17,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             this.statsDataService = statsDataService;
         }
 
-        public IEnumerable<StatData> GetPseudoStatDatas(string itemStatId)
+        public IEnumerable<StatData> GetPseudoStatData(string itemStatId)
         {
             IEnumerable<StatData> result = Enumerable.Empty<StatData>();
 

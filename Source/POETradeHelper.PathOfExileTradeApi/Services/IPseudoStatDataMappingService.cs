@@ -5,6 +5,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public interface IPseudoStatDataMappingService
     {
-        IEnumerable<StatData> GetPseudoStatDatas(string itemStatId);
+        IEnumerable<StatData> GetPseudoStatData(string itemStatId);
     }
 }

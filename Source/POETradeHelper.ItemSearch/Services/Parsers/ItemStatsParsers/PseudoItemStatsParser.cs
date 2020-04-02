@@ -54,9 +54,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             IDictionary<StatData, IList<ItemStat>> pseudoStatDataMapping = new Dictionary<StatData, IList<ItemStat>>();
             foreach (var itemStat in itemStats)
             {
-                var pseudoStatDatas = this.pseudoStatDataMappingService.GetPseudoStatDatas(itemStat.Id);
+                var pseudoStatDataList = this.pseudoStatDataMappingService.GetPseudoStatData(itemStat.Id);
 
-                foreach (var pseudoStatData in pseudoStatDatas)
+                foreach (var pseudoStatData in pseudoStatDataList)
                 {
                     if (!pseudoStatDataMapping.TryGetValue(pseudoStatData, out IList<ItemStat> mappedItemStats))
                     {
