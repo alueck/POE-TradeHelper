@@ -1,10 +1,12 @@
 ﻿using NUnit.Framework;
 using NUnit.Framework.Internal;
+using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
+using System.Collections.Generic;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
@@ -31,25 +33,32 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         }
 
         [Test]
-        public void CreateShouldReturnMinMaxStatFilterViewModelIfStatTextContainsValueForPlaceholder()
+        public void CreateShouldReturnMinMaxStatFilterViewModelIfItemStatIsSingleValueItemStat()
         {
-            const string textWithPlaceholders = "# to Maximum Life";
-            const string statText = "+79 to Maximum Life";
-            var itemStat = GetItemStat(textWithPlaceholders: textWithPlaceholders, statText: statText);
+            var itemStat = new SingleValueItemStat(StatCategory.Explicit);
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
 
             Assert.IsInstanceOf<MinMaxStatFilterViewModel>(result);
         }
 
-        [TestCase("#% chance to Trigger Edict of Frost on Kill", "Trigger Edict of Frost on Kill")]
-        [TestCase("Extra gore", "Extra gore")]
-        public void CreateShouldNotReturnMinMaxFilterViewModelIfStatTextDoesNotContainValueForPlaceholder(string textWithPlaceholders, string statText)
+        [Test]
+        public void CreateShouldReturnMinMaxStatFilterViewModelIfItemStatIsMinMaxValueItemStat()
         {
-            var itemStat = GetItemStat(textWithPlaceholders: textWithPlaceholders, statText: statText);
+            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit);
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
 
+            Assert.IsInstanceOf<MinMaxStatFilterViewModel>(result);
+        }
+
+        public void CreateShouldNotReturnStatFilterViewModelIfItemStatIsItemStatWithoutValue()
+        {
+            var itemStat = new ItemStat(StatCategory.Explicit);
+
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
+
+            Assert.IsNotNull(result);
             Assert.IsNotInstanceOf<MinMaxStatFilterViewModel>(result);
         }
 
@@ -57,8 +66,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         public void CreateShouldReturnStatFilterViewModelWithText()
         {
             const string expected = "# to Maximum Life";
-            const string statText = "+79 to Maximum Life";
-            var itemStat = GetItemStat(textWithPlaceholders: expected, statText: statText);
+            var itemStat = new SingleValueItemStat(GetItemStat(textWithPlaceholders: expected));
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
 
@@ -66,12 +74,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result.Text, Is.EqualTo(expected));
         }
 
-        [TestCase("# to Maximum Life", "+79 to Maximum Life", "79")]
-        [TestCase("# to Maximum Mana", "+20 to Maximum Mana", "20")]
-        [TestCase("Adds # to # Chaos Damage", "Adds 10 to 20 Chaos Damage", "10 - 20")]
-        public void CreateShouldReturnStatFilterViewModelWithCurrentValue(string textWithPlaceholders, string statText, string expected)
+        [Test]
+        public void CreateShouldReturnStatFilterViewModelWithCurrentValueForSingleValueItemStat()
         {
-            var itemStat = GetItemStat(textWithPlaceholders: textWithPlaceholders, statText: statText);
+            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            {
+                Value = 10
+            };
+            string expected = itemStat.Value.ToString();
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
 
@@ -79,13 +89,30 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result.Current, Is.EqualTo(expected));
         }
 
-        [TestCase("# to Maximum Life", "+79 to Maximum Life", 79)]
-        [TestCase("# to Maximum Life", "-20 to Maximum Life", -20)]
-        [TestCase("# to Maximum Mana", "+20 to Maximum Mana", 20)]
-        [TestCase("#% chance for Poisons inflicted with this Weapon to deal 100% more Damage", "60% chance for Poisons inflicted with this Weapon to deal 100% more Damage", 60)]
-        public void CreateShouldReturnStatFilterViewModelWithMinValue(string textWithPlaceholders, string statText, int? expected)
+        [Test]
+        public void CreateShouldReturnStatFilterViewModelWithCurrentValueForMinMaxValueItemStat()
         {
-            var itemStat = GetItemStat(textWithPlaceholders: textWithPlaceholders, statText: statText);
+            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            {
+                MinValue = 10,
+                MaxValue = 20
+            };
+            string expected = $"{itemStat.MinValue} - {itemStat.MaxValue}";
+
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+
+            Assert.NotNull(result);
+            Assert.That(result.Current, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void CreateShouldReturnStatFilterViewModelWithMinValueForSingleValueItemStat()
+        {
+            const int expected = 15;
+            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            {
+                Value = expected
+            };
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
 
@@ -93,11 +120,44 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result.Min, Is.EqualTo(expected));
         }
 
-        [TestCase("Adds # to # Chaos Damage", "Adds 10 to 20 Chaos Damage", 20)]
-        [TestCase("# to Maximum Life", "+79 to Maximum Life", 79)]
-        public void CreateShouldReturnStatFilterViewModelWithMaxValue(string textWithPlaceholders, string statText, int? expected)
+        [Test]
+        public void CreateShouldReturnStatFilterViewModelWithMaxValueForSingleValueItemStat()
         {
-            var itemStat = GetItemStat(textWithPlaceholders: textWithPlaceholders, statText: statText);
+            const int expected = 20;
+            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            {
+                Value = expected
+            };
+
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+
+            Assert.NotNull(result);
+            Assert.That(result.Max, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void CreateShouldReturnStatFilterViewModelWithMinValueForMinMaxValueItemStat()
+        {
+            const int expected = 15;
+            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            {
+                MinValue = expected
+            };
+
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+
+            Assert.NotNull(result);
+            Assert.That(result.Min, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void CreateShouldReturnStatFilterViewModelWithMaxValueForMinMaxValueItemStat()
+        {
+            const int expected = 20;
+            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            {
+                MaxValue = expected
+            };
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
 
@@ -108,16 +168,35 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(-0.1, 10, 9)]
         [TestCase(-0.15, 10, 8)]
         [TestCase(0.1, 10, 11)]
-        public void CreateShouldConsiderMinValuePercentageOffset(double offset, int minValue, int expected)
+        public void CreateShouldConsiderMinValuePercentageOffsetForSingleValueItemStat(double offset, int value, int expected)
         {
-            const string textWithPlaceholders = "Adds # to # Chaos Damage";
-            string statText = $"Adds 10 to {minValue} Chaos Damage";
-            var configuration = new StatFilterViewModelFactoryConfiguration
+            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
             {
-                MinValuePercentageOffset = offset
+                Value = value
             };
 
-            var itemStat = GetItemStat(textWithPlaceholders: textWithPlaceholders, statText: statText);
+            this.CreateShouldConsiderMinValuePercentageOffsetForItemStat(itemStat, offset, expected);
+        }
+
+        [TestCase(-0.1, 10, 9)]
+        [TestCase(-0.15, 10, 8)]
+        [TestCase(0.1, 10, 11)]
+        public void CreateShouldConsiderMinValuePercentageOffsetForMinMaxValueItemStat(double offset, int minValue, int expected)
+        {
+            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            {
+                MinValue = minValue
+            };
+
+            this.CreateShouldConsiderMinValuePercentageOffsetForItemStat(itemStat, offset, expected);
+        }
+
+        private void CreateShouldConsiderMinValuePercentageOffsetForItemStat(ItemStat itemStat, double percentageOffset, int expected)
+        {
+            var configuration = new StatFilterViewModelFactoryConfiguration
+            {
+                MinValuePercentageOffset = percentageOffset
+            };
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), configuration) as MinMaxStatFilterViewModel;
 
@@ -128,16 +207,35 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(0.1, 20, 22)]
         [TestCase(0.15, 20, 23)]
         [TestCase(-0.1, 20, 18)]
-        public void CreateShouldConsiderMaxValuePercentageOffset(double offset, int maxValue, int expected)
+        public void CreateShouldConsiderMaxValuePercentageOffsetForSingleValueItemStat(double offset, int value, int expected)
         {
-            const string textWithPlaceholders = "Adds # to # Chaos Damage";
-            string statText = $"Adds 10 to {maxValue} Chaos Damage";
-            var configuration = new StatFilterViewModelFactoryConfiguration
+            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
             {
-                MaxValuePercentageOffset = offset
+                Value = value
             };
 
-            var itemStat = GetItemStat(textWithPlaceholders: textWithPlaceholders, statText: statText);
+            this.CreateShouldConsiderMaxValuePercentageOffsetForItemStat(itemStat, offset, expected);
+        }
+
+        [TestCase(0.1, 20, 22)]
+        [TestCase(0.15, 20, 23)]
+        [TestCase(-0.1, 20, 18)]
+        public void CreateShouldConsiderMaxValuePercentageOffsetForMinMaxValueItemStat(double offset, int maxValue, int expected)
+        {
+            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            {
+                MaxValue = maxValue
+            };
+
+            this.CreateShouldConsiderMaxValuePercentageOffsetForItemStat(itemStat, offset, expected);
+        }
+
+        private void CreateShouldConsiderMaxValuePercentageOffsetForItemStat(ItemStat itemStat, double percentageOffset, int expected)
+        {
+            var configuration = new StatFilterViewModelFactoryConfiguration
+            {
+                MaxValuePercentageOffset = percentageOffset
+            };
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), configuration) as MinMaxStatFilterViewModel;
 
@@ -146,12 +244,16 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         }
 
         [Test]
-        public void CreateShouldUseTextInsteadOfTextWithPlaceholders()
+        public void CreateShouldUseTextInsteadOfTextWithPlaceholdersForItemStatWithoutValue()
         {
             const string textWithPlaceholders = "#% chance to Trigger Edict of Frost on Kill";
             const string statText = "Trigger Edict of Frost on Kill";
 
-            var itemStat = GetItemStat(textWithPlaceholders: textWithPlaceholders, statText: statText);
+            var itemStat = new ItemStat(StatCategory.Enchant)
+            {
+                Text = statText,
+                TextWithPlaceholders = textWithPlaceholders
+            };
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
 
@@ -162,14 +264,33 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(null)]
         [TestCase(15)]
         [TestCase(20)]
-        public void CreateShouldTakeMinValueFromQueryRequest(int expected)
+        public void CreateShouldTakeMinValueFromQueryRequestForSingleValueItemStat(int? expected)
         {
-            const string id = "item stat id";
-            const string textWithPlaceholders = "Adds # to # Chaos Damage";
-            string statText = "Adds 10 to 25 Chaos Damage";
+            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            {
+                Value = 10
+            };
 
-            var itemStat = GetItemStat(id, textWithPlaceholders, statText);
-            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(id, new MinMaxFilter { Min = expected });
+            this.CreateShouldTakeMinValueFromQueryRequest(itemStat, expected);
+        }
+
+        [TestCase(null)]
+        [TestCase(15)]
+        [TestCase(20)]
+        public void CreateShouldTakeMinValueFromQueryRequestForMinMaxValueItemStat(int? expected)
+        {
+            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            {
+                MinValue = 10
+            };
+
+            this.CreateShouldTakeMinValueFromQueryRequest(itemStat, expected);
+        }
+
+        private void CreateShouldTakeMinValueFromQueryRequest(ItemStat itemStat, int? expected)
+        {
+            itemStat.Id = "item stat id";
+            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Min = expected });
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
 
             Assert.That(result.Min, Is.EqualTo(expected));
@@ -178,79 +299,85 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(null)]
         [TestCase(30)]
         [TestCase(40)]
-        public void CreateShouldTakeMaxValueFromQueryRequest(int expected)
+        public void CreateShouldTakeMaxValueFromQueryRequestForSingleValueItemStat(int? expected)
         {
-            const string id = "statId";
-            const string textWithPlaceholders = "Adds # to # Chaos Damage";
-            string statText = "Adds 10 to 25 Chaos Damage";
+            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            {
+                Value = 10
+            };
 
-            var itemStat = GetItemStat(id, textWithPlaceholders, statText);
+            this.CreateShouldTakeMaxValueFromQueryRequest(itemStat, expected);
+        }
 
-            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(id, new MinMaxFilter { Max = expected });
+        [TestCase(null)]
+        [TestCase(30)]
+        [TestCase(40)]
+        public void CreateShouldTakeMaxValueFromQueryRequestForMinMaxValueItemStat(int? expected)
+        {
+            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            {
+                MaxValue = 20
+            };
+
+            this.CreateShouldTakeMaxValueFromQueryRequest(itemStat, expected);
+        }
+
+        private void CreateShouldTakeMaxValueFromQueryRequest(ItemStat itemStat, int? expected)
+        {
+            itemStat.Id = "item stat id";
+            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Max = expected });
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
 
             Assert.That(result.Max, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void CreateShouldSetIsEnabledTrueIfQueryRequestContainsFilter()
+        [TestCaseSource(nameof(ItemStatsWithIds))]
+        public void CreateShouldSetIsEnabledTrueIfQueryRequestContainsFilter(ItemStat itemStat)
         {
-            const string id = "statId";
-            const string textWithPlaceholders = "Adds # to # Chaos Damage";
-            string statText = "Adds 10 to 25 Chaos Damage";
+            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter());
 
-            var itemStat = GetItemStat(id, textWithPlaceholders, statText);
-
-            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(id, new MinMaxFilter());
-
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration());
 
             Assert.That(result.IsEnabled);
         }
 
-        [Test]
-        public void CreateShouldNotSetIsEnabledTrueIfQueryRequestDoesNotContainFilter()
+        [TestCaseSource(nameof(ItemStatsWithIds))]
+        public void CreateShouldNotSetIsEnabledTrueIfQueryRequestDoesNotContainFilter(ItemStat itemStat)
         {
-            const string id = "statId";
-            const string textWithPlaceholders = "Adds # to # Chaos Damage";
-            string statText = "Adds 10 to 25 Chaos Damage";
-
-            var itemStat = GetItemStat(id, textWithPlaceholders, statText);
-
             SearchQueryRequest queryRequest = new SearchQueryRequest();
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration());
 
             Assert.That(result.IsEnabled, Is.False);
         }
 
         [Test]
-        public void CreateShouldMapCountOfMonsterItemStatToMinValue()
+        public void CreateShouldMapValueOfSingleValueItemStatToMinValue()
         {
             const int expected = 2;
-            var itemStat = new MonsterItemStat { Id = "monsterItemStat", Count = expected };
+            var itemStat = new SingleValueItemStat(StatCategory.Monster) { Value = expected };
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
 
             Assert.That(result.Min, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void CreateShouldNotSetMaxValueForMonsterItemStat()
+        private static IEnumerable<ItemStat> ItemStatsWithIds
         {
-            var itemStat = new MonsterItemStat { Id = "monsterItemStat", Count = 3 };
-
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
-
-            Assert.That(result.Max, Is.Null);
+            get
+            {
+                yield return new ItemStat(StatCategory.Explicit) { Id = "item stat id" };
+                yield return new SingleValueItemStat(StatCategory.Explicit) { Id = "single value item stat id" };
+                yield return new MinMaxValueItemStat(StatCategory.Enchant) { Id = "min max value item stat id" };
+            }
         }
 
         [Test]
         public void CreateShouldIgnoreConfigurationForMonsterItemStat()
         {
             const int expected = 3;
-            var itemStat = new MonsterItemStat { Id = "monsterItemStat", Count = expected };
+            var itemStat = new SingleValueItemStat(StatCategory.Monster) { Id = "monsterItemStat", Value = expected };
 
             StatFilterViewModelFactoryConfiguration configuration = new StatFilterViewModelFactoryConfiguration
             {
@@ -288,7 +415,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
         private static ItemStat GetItemStat(string id = "", string textWithPlaceholders = "", string statText = "")
         {
-            return new ItemStat { Id = id, TextWithPlaceholders = textWithPlaceholders, Text = statText };
+            return new ItemStat(StatCategory.Unknown) { Id = id, TextWithPlaceholders = textWithPlaceholders, Text = statText };
         }
     }
 }

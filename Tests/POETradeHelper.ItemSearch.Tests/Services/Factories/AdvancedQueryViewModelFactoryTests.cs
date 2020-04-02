@@ -5,7 +5,6 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -62,6 +61,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(StatCategory.Explicit)]
         [TestCase(StatCategory.Crafted)]
         [TestCase(StatCategory.Monster)]
+        [TestCase(StatCategory.Pseudo)]
         public void CreateShouldCallCreateOnStatFilterViewModelFactoryForItemStats(StatCategory statCategory)
         {
             ItemWithStats item = CreateItemWithStats(statCategory);
@@ -111,18 +111,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
         private static ItemWithStats CreateItemWithStats(StatCategory statCategory)
         {
-            Func<string, ItemStat> itemStatFactory = statCategory == StatCategory.Monster
-                ? itemStatId => new MonsterItemStat { Id = itemStatId }
-                : (Func<string, ItemStat>)(itemStatId => new ItemStat(statCategory) { Id = itemStatId });
-
             return new EquippableItem(ItemRarity.Rare)
             {
                 Stats = new ItemStats
                 {
                     AllStats =
                     {
-                        itemStatFactory($"{statCategory}ItemStatId"),
-                        itemStatFactory($"{statCategory}ItemStatId1")
+                        new ItemStat(statCategory){ Id = $"{statCategory}ItemStatId" },
+                        new ItemStat(statCategory){ Id = $"{statCategory}ItemStatId1" },
                     }
                 }
             };
@@ -139,6 +135,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 yield return new TestCaseData(StatCategory.Explicit, (GetFilterViewModels)(x => x.ExplicitItemStatFilters));
                 yield return new TestCaseData(StatCategory.Crafted, (GetFilterViewModels)(x => x.CraftedItemStatFilters));
                 yield return new TestCaseData(StatCategory.Monster, (GetFilterViewModels)(x => x.MonsterItemStatFilters));
+                yield return new TestCaseData(StatCategory.Pseudo, (GetFilterViewModels)(x => x.PseudoItemStatFilters));
             }
         }
 

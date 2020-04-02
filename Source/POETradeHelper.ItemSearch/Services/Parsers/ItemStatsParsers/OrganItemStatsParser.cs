@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class OrganItemStatsParser : ItemStatsParserBase<MonsterItemStat>, IItemStatsParser<OrganItem>
+    public class OrganItemStatsParser : ItemStatsParserBase, IItemStatsParser<OrganItem>
     {
         public OrganItemStatsParser(IStatsDataService statsDataService) : base(statsDataService)
         {
@@ -22,7 +22,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return result;
         }
 
-        private IEnumerable<MonsterItemStat> ParseMonsterStats(string[] itemStringLines)
+        private IEnumerable<ItemStat> ParseMonsterStats(string[] itemStringLines)
         {
             int statsStartIndex = GetStatsStartIndex(itemStringLines);
 
@@ -31,15 +31,15 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 .TakeWhile(l => l != ParserConstants.PropertyGroupSeparator)
                 .GroupBy(x => x);
 
-            var monsterItemStats = groupedItemStatLines.Select(group => new MonsterItemStat
+            var itemStats = groupedItemStatLines.Select(group => new SingleValueItemStat(StatCategory.Monster)
             {
                 Text = group.Key,
-                Count = group.Count()
+                Value = group.Count()
             })
             .Select(this.GetCompleteItemStat)
             .ToList();
 
-            return monsterItemStats;
+            return itemStats;
         }
     }
 }

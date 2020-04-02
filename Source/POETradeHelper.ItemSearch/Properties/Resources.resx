@@ -132,6 +132,21 @@
   <data name="Current" xml:space="preserve">
     <value>Current</value>
   </data>
+  <data name="FilterCategory_Crafted" xml:space="preserve">
+    <value>Crafted</value>
+  </data>
+  <data name="FilterCategory_Enchant" xml:space="preserve">
+    <value>Enchant</value>
+  </data>
+  <data name="FilterCategory_Explicit" xml:space="preserve">
+    <value>Explicit</value>
+  </data>
+  <data name="FilterCategory_Implicit" xml:space="preserve">
+    <value>Implicit</value>
+  </data>
+  <data name="FilterCategory_Pseudo" xml:space="preserve">
+    <value>Pseudo</value>
+  </data>
   <data name="GemExperiencePercentColumn" xml:space="preserve">
     <value>Experience %</value>
   </data>

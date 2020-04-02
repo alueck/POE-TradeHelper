@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
@@ -20,7 +21,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             this.statsDataServiceMock = new Mock<IStatsDataService>();
             this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>(), StatCategory.Monster))
-                .Returns(new StatData());
+                .Returns((ItemStat itemStat, StatCategory[] _) => new StatData
+                {
+                    Type = itemStat.StatCategory.GetDisplayName().ToLower(),
+                    Text = itemStat.TextWithPlaceholders
+                });
 
             this.organItemStatsParser = new OrganItemStatsParser(this.statsDataServiceMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
@@ -42,7 +47,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
 
-            MonsterItemStat stat = result.MonsterStats.First();
+            ItemStat stat = result.MonsterStats.First();
             Assert.That(stat.Text, Is.EqualTo(expected));
         }
 
@@ -64,8 +69,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
 
-            MonsterItemStat stat = result.MonsterStats.First();
-            Assert.That(stat.Count, Is.EqualTo(3));
+            SingleValueItemStat stat = result.MonsterStats.First() as SingleValueItemStat;
+            Assert.NotNull(stat);
+            Assert.That(stat.Value, Is.EqualTo(3));
         }
 
         [Test]
@@ -101,14 +107,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .BuildLines();
 
             this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>(), StatCategory.Monster))
-                .Returns(new StatData { Id = expected });
+                .Returns(new StatData
+                {
+                    Id = expected,
+                    Type = StatCategory.Monster.GetDisplayName()
+                });
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
 
-            MonsterItemStat stat = result.MonsterStats.First();
+            ItemStat stat = result.MonsterStats.First();
             Assert.That(stat.Id, Is.EqualTo(expected));
         }
 
@@ -124,14 +134,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .BuildLines();
 
             this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>(), StatCategory.Monster))
-                .Returns(new StatData { Text = expected });
+                .Returns(new StatData
+                {
+                    Text = expected,
+                    Type = StatCategory.Monster.GetDisplayName()
+                });
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
 
-            MonsterItemStat stat = result.MonsterStats.First();
+            ItemStat stat = result.MonsterStats.First();
             Assert.That(stat.TextWithPlaceholders, Is.EqualTo(expected));
         }
     }

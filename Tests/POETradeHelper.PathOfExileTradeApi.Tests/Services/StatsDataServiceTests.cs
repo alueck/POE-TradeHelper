@@ -214,9 +214,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetStatDataShouldReturnCorrectStatDataForMonsterStat()
         {
-            var monsterItemStat = new MonsterItemStat { Text = "Drops additional Currency Items" };
+            const StatCategory statCategory = StatCategory.Monster;
+            var monsterItemStat = new ItemStat(statCategory) { Text = "Drops additional Currency Items" };
 
-            var expected = new StatData { Id = "stat_2250533757", Text = "Drops additional Currency Items (×#)", Type = monsterItemStat.StatCategory.GetDisplayName().ToLower() };
+            var expected = new StatData { Id = "stat_2250533757", Text = "Drops additional Currency Items (×#)", Type = statCategory.GetDisplayName().ToLower() };
 
             await this.GetStatDataShouldReturnCorrectStatData(monsterItemStat, expected);
         }
@@ -271,7 +272,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         public async Task GetStatDataShouldReturnOnlyMatchingStatDataFromGivenCategories()
         {
             const StatCategory statCategoryToSearch = StatCategory.Implicit;
-            var itemStat = new ItemStat { Text = "3% increased Movement Speed" };
+            var itemStat = new ItemStat(StatCategory.Unknown) { Text = "3% increased Movement Speed" };
             var expectedStatData = new StatData { Id = "expectedId", Text = "#% increased Movement Speed", Type = statCategoryToSearch.GetDisplayName().ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
@@ -303,6 +304,63 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             StatData result = this.statsDataService.GetStatData(itemStat, statCategoryToSearch);
 
             Assert.That(result, Is.EqualTo(expectedStatData));
+        }
+
+        [TestCase("")]
+        [TestCase(null)]
+        [TestCase("non existing id")]
+        public async Task GetStatDataWithIdShouldReturnNull(string itemStatId)
+        {
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result = new List<Data<StatData>>
+                    {
+                        new Data<StatData>
+                        {
+                            Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                            Entries = new List<StatData>
+                            {
+                                new StatData { Id = "random id", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() },
+                            }
+                        }
+                    }
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            StatData result = this.statsDataService.GetStatData(itemStatId);
+
+            Assert.IsNull(result);
+        }
+
+        [Test]
+        public async Task GetStatDataWithIdShouldReturnCorrectStatData()
+        {
+            StatData expected = new StatData { Id = "expectedId", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() };
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result = new List<Data<StatData>>
+                    {
+                                    new Data<StatData>
+                                    {
+                                        Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                                        Entries = new List<StatData>
+                                        {
+                                            new StatData { Id = "random id", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() },
+                                            expected
+                                        }
+                                    }
+                    }
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            StatData result = this.statsDataService.GetStatData(expected.Id);
+
+            Assert.That(result, Is.EqualTo(expected));
         }
     }
 }

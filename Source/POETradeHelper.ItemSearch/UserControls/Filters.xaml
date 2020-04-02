@@ -8,11 +8,32 @@
 
   <Grid DataContext="{Binding $parent[UserControl]}">
     <Grid.RowDefinitions>
-      <RowDefinition />
       <RowDefinition Height="Auto" />
+      <RowDefinition />
     </Grid.RowDefinitions>
 
-    <ItemsControl Items="{Binding Items}">
+    <Grid IsVisible="{Binding !!Items.Count}">
+
+      <Grid IsVisible="{Binding Header, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+
+        <Grid.RowDefinitions>
+          <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="15" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Separator Grid.Column="0" Margin="0,2,0,0" Width="{Binding $parent.Width}" />
+        <TextBlock Grid.Column="1" Text="{Binding Header}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="5, 0, 5, 0" />
+        <Separator Grid.Column="2" Margin="0,2,0,0" Width="{Binding $parent.Width}" />
+      </Grid>
+
+      <Separator Margin="0,2,0,0" IsVisible="{Binding Header, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
+    </Grid>
+
+    <ItemsControl Grid.Row="1" Items="{Binding Items}">
       <ItemsControl.DataTemplates>
         <DataTemplate DataType="{x:Type localVMs:IMinMaxFilterViewModel}">
           <Grid>
@@ -48,6 +69,5 @@
         </DataTemplate>
       </ItemsControl.DataTemplates>
     </ItemsControl>
-    <Separator Grid.Row="1" IsVisible="{Binding !!Items.Count}" />
   </Grid>
 </UserControl>

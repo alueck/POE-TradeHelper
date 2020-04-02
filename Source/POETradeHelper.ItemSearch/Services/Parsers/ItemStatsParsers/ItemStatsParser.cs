@@ -5,13 +5,18 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public class ItemStatsParser : ItemStatsParserBase<ItemStat>, IItemStatsParser<ItemWithStats>
+    public class ItemStatsParser : ItemStatsParserBase, IItemStatsParser<ItemWithStats>
     {
-        public ItemStatsParser(IStatsDataService statsDataService) : base(statsDataService)
+        private const char Placeholder = '#';
+        private readonly IPseudoItemStatsParser pseudoItemStatsParser;
+
+        public ItemStatsParser(IStatsDataService statsDataService, IPseudoItemStatsParser pseudoItemStatsParser) : base(statsDataService)
         {
+            this.pseudoItemStatsParser = pseudoItemStatsParser;
         }
 
         public ItemStats Parse(string[] itemStringLines)
@@ -23,8 +28,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             var statTexts = itemStringLines.Skip(statsStartIndex).Where(s => s != ParserConstants.PropertyGroupSeparator);
 
             var itemStats = statTexts.Select(ParseStatText).Where(x => x != null).ToList();
+            var pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
             result.AllStats.AddRange(itemStats);
+            result.AllStats.AddRange(pseudoItemStats);
 
             return result;
         }
@@ -37,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
                 && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result))
             {
-                result = new ItemStat()
+                result = new ItemStat(StatCategory.Unknown)
                 {
                     Text = statText,
                 };
@@ -66,6 +73,80 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             }
 
             return false;
+        }
+
+        protected override ItemStat GetCompleteItemStat(ItemStat itemStat)
+        {
+            ItemStat result = base.GetCompleteItemStat(itemStat);
+
+            var placeholderCount = result?.TextWithPlaceholders?.Count(c => c == Placeholder);
+            if (placeholderCount == 1)
+            {
+                result = GetSingleValueItemStat(itemStat);
+            }
+            else if (placeholderCount == 2)
+            {
+                result = GetMinMaxValueItemStat(itemStat);
+            }
+
+            return result;
+        }
+
+        private static ItemStat GetSingleValueItemStat(ItemStat itemStat)
+        {
+            int? value = GetFirstNumericValue(itemStat.Text.Substring(itemStat.TextWithPlaceholders.IndexOf(Placeholder)));
+
+            return value.HasValue
+                ? new SingleValueItemStat(itemStat)
+                {
+                    Value = value.Value
+                }
+                : itemStat;
+        }
+
+        private static ItemStat GetMinMaxValueItemStat(ItemStat itemStat)
+        {
+            var result = new MinMaxValueItemStat(itemStat);
+
+            int maxValueIndex = itemStat.TextWithPlaceholders.LastIndexOf(Placeholder);
+            if (maxValueIndex >= 0)
+            {
+                result.MaxValue = GetFirstNumericValue(itemStat.Text.Substring(maxValueIndex)).GetValueOrDefault();
+            }
+
+            int minValueIndex = GetMinValueIndex(itemStat, maxValueIndex);
+            if (minValueIndex >= 0)
+            {
+                result.MinValue = GetFirstNumericValue(itemStat.Text.Substring(minValueIndex)).GetValueOrDefault();
+            }
+
+            return result;
+        }
+
+        private static int? GetFirstNumericValue(string text)
+        {
+            Match match = Regex.Match(text, @"[\+\-]?\d+");
+
+            return match.Success
+                ? int.Parse(match.Value)
+                : (int?)null;
+        }
+
+        private static int GetMinValueIndex(ItemStat itemStat, int maxValueIndex)
+        {
+            int minValueIndex = maxValueIndex;
+
+            if (maxValueIndex >= 0)
+            {
+                minValueIndex = itemStat.TextWithPlaceholders.Substring(0, maxValueIndex).IndexOf(Placeholder);
+
+                if (minValueIndex < 0)
+                {
+                    minValueIndex = maxValueIndex;
+                }
+            }
+
+            return minValueIndex;
         }
     }
 }

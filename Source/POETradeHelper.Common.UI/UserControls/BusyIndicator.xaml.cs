@@ -31,6 +31,11 @@ namespace POETradeHelper.Common.UI.UserControls
 
         private void OnIsBusyChanged(AvaloniaPropertyChangedEventArgs eventArgs)
         {
+            if (eventArgs.Sender != this)
+            {
+                return;
+            }
+
             if ((bool)eventArgs.NewValue)
             {
                 if (DisplayAfter == TimeSpan.Zero)

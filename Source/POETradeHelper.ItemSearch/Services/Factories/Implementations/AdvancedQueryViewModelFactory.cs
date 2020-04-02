@@ -33,6 +33,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 result.ExplicitItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.ExplicitStats, searchQueryRequest));
                 result.CraftedItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.CraftedStats, searchQueryRequest));
                 result.MonsterItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.MonsterStats, searchQueryRequest));
+                result.PseudoItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.PseudoStats, searchQueryRequest));
             }
 
             return result;

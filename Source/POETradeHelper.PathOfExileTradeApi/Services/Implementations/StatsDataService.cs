@@ -22,7 +22,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         private readonly IHttpClientWrapper httpClient;
         private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer;
-        private IList<Data<StatData>> statsData;
+        private IList<Data<StatData>> statsData = new List<Data<StatData>>();
+        private IDictionary<string, StatData> statsDataDictionary = new Dictionary<string, StatData>();
 
         private static readonly Regex NumberRegex = new Regex(@"[\+\-]?\d+", RegexOptions.Compiled);
         private readonly ILogger<StatsDataService> logger;
@@ -47,23 +48,17 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             string content = await httpResponse.Content.ReadAsStringAsync();
             var queryResult = this.poeTradeApiJsonSerializer.Deserialize<QueryResult<Data<StatData>>>(content);
 
-            this.statsData = queryResult?.Result;
+            if (queryResult != null)
+            {
+                this.statsData = queryResult.Result;
+                this.statsDataDictionary = queryResult.Result.SelectMany(x => x.Entries).ToDictionary(statData => statData.Id);
+            }
         }
 
         public StatData GetStatData(ItemStat itemStat, params StatCategory[] statCategoriesToSearch)
         {
-            StatData result = null;
-
             IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(statCategoriesToSearch);
-
-            if (itemStat is MonsterItemStat monsterItemStat)
-            {
-                result = GetStatDataPrivate(statDataListsToSearch, monsterItemStat);
-            }
-            else
-            {
-                result = this.GetStataDataPrivate(statDataListsToSearch, itemStat);
-            }
+            StatData result = this.GetStataDataPrivate(statDataListsToSearch, itemStat);
 
             return result;
         }
@@ -78,13 +73,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             }
 
             return result ?? this.statsData;
-        }
-
-        private static StatData GetStatDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, MonsterItemStat monsterItemStat)
-        {
-            return statDataListsToSearch
-                .SelectMany(x => x.Entries)
-                .FirstOrDefault(statData => statData.Text.StartsWith(monsterItemStat.Text, StringComparison.OrdinalIgnoreCase));
         }
 
         private StatData GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, ItemStat itemStat)
@@ -132,6 +120,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             }
 
             return statDataMatches;
+        }
+
+        public StatData GetStatData(string itemStatId)
+        {
+            return !string.IsNullOrEmpty(itemStatId) && this.statsDataDictionary.TryGetValue(itemStatId, out StatData statData)
+                ? statData
+                : null;
         }
 
         private class StatDataTextMatcher

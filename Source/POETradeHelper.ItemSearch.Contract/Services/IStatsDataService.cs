@@ -12,5 +12,7 @@ namespace POETradeHelper.ItemSearch.Contract
         /// <param name="statCategoriesToSearch">a list of <see cref="StatCategory"/> to search, if it is empty or contains <see cref="StatCategory.Unknown"/> all stat categories are searched</param>
         /// <returns></returns>
         StatData GetStatData(ItemStat itemStat, params StatCategory[] statCategoriesToSearch);
+
+        StatData GetStatData(string itemStatId);
     }
 }

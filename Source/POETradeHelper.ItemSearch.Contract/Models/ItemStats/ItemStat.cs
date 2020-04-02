@@ -2,9 +2,17 @@
 {
     public class ItemStat
     {
-        public ItemStat(StatCategory statCategory = StatCategory.Unknown)
+        public ItemStat(StatCategory statCategory)
         {
             this.StatCategory = statCategory;
+        }
+
+        public ItemStat(ItemStat itemStat)
+        {
+            this.Id = itemStat.Id;
+            this.Text = itemStat.Text;
+            this.TextWithPlaceholders = itemStat.TextWithPlaceholders;
+            this.StatCategory = itemStat.StatCategory;
         }
 
         public string Id { get; set; }

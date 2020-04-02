@@ -4,12 +4,10 @@ using POETradeHelper.ItemSearch.Contract.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
-    public abstract class ItemStatsParserBase<TItemStat>
-        where TItemStat : ItemStat
+    public abstract class ItemStatsParserBase
     {
         private readonly IStatsDataService statsDataService;
 
@@ -18,7 +16,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             this.statsDataService = statsDataService;
         }
 
-        protected TItemStat GetCompleteItemStat(TItemStat itemStat)
+        protected virtual ItemStat GetCompleteItemStat(ItemStat itemStat)
         {
             var statData = this.statsDataService.GetStatData(itemStat, this.GetStatCategoriesToSearch(itemStat));
 
