@@ -3,8 +3,11 @@ using NUnit.Framework;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
@@ -12,6 +15,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
     public class ItemStatsParserTests
     {
         private Mock<IStatsDataService> statsDataServiceMock;
+        private Mock<IPseudoItemStatsParser> pseudoItemStatsParserMock;
         private ItemStatsParser itemStatsParser;
         private ItemStringBuilder itemStringBuilder;
 
@@ -19,7 +23,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         public void Setup()
         {
             this.statsDataServiceMock = new Mock<IStatsDataService>();
-            this.itemStatsParser = new ItemStatsParser(this.statsDataServiceMock.Object);
+            this.pseudoItemStatsParserMock = new Mock<IPseudoItemStatsParser>();
+            this.itemStatsParser = new ItemStatsParser(this.statsDataServiceMock.Object, this.pseudoItemStatsParserMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -299,6 +304,48 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             MinMaxValueItemStat itemStat = result.AllStats.First() as MinMaxValueItemStat;
             Assert.That(itemStat.MaxValue, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void ParseShouldCallParseOnPseudoItemStatsParser()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                .WithName("Titan Greaves")
+                .WithItemLevel(75)
+                .WithItemStat("statText", StatCategory.Explicit)
+                .BuildLines();
+
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>(), It.IsAny<StatCategory[]>()))
+                .Returns(new StatData());
+
+            this.pseudoItemStatsParserMock.Setup(x => x.Parse(It.IsAny<IEnumerable<ItemStat>>()))
+                .Callback(() => this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<ItemStat>(), It.IsAny<StatCategory[]>())));
+
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+
+            this.pseudoItemStatsParserMock.Verify(x => x.Parse(It.Is<IEnumerable<ItemStat>>(enumerable => enumerable.SequenceEqual(result.AllStats))));
+        }
+
+        [Test]
+        public void ParseShouldAddResultFromPseudoItemStatsParserToResult()
+        {
+            ItemStat expected = new ItemStat(StatCategory.Pseudo) { Id = "test id" };
+
+            string[] itemStringLines = this.itemStringBuilder
+                .WithName("Titan Greaves")
+                .WithItemLevel(75)
+                .WithItemStat("statText", StatCategory.Explicit)
+                .BuildLines();
+
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>(), It.IsAny<StatCategory[]>()))
+                .Returns(new StatData());
+
+            this.pseudoItemStatsParserMock.Setup(x => x.Parse(It.IsAny<IEnumerable<ItemStat>>()))
+                .Returns(new List<ItemStat> { expected });
+
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+
+            Assert.That(result.AllStats, Contains.Item(expected));
         }
 
         [Test]

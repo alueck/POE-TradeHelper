@@ -11,6 +11,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
         public IList<StatFilterViewModel> ExplicitItemStatFilters { get; } = new List<StatFilterViewModel>();
         public IList<StatFilterViewModel> CraftedItemStatFilters { get; } = new List<StatFilterViewModel>();
         public IList<StatFilterViewModel> MonsterItemStatFilters { get; } = new List<StatFilterViewModel>();
+        public IList<StatFilterViewModel> PseudoItemStatFilters { get; } = new List<StatFilterViewModel>();
         public IList<FilterViewModel> AdditionalFilters { get; } = new List<FilterViewModel>();
 
         public IEnumerable<FilterViewModel> AllFilters => this.EnchantedItemStatFilters
@@ -18,6 +19,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             .Concat(this.ExplicitItemStatFilters)
             .Concat(this.CraftedItemStatFilters)
             .Concat(this.MonsterItemStatFilters)
+            .Concat(this.PseudoItemStatFilters)
             .Concat(this.AdditionalFilters);
 
         public bool IsVisible => this.AllFilters.Any(f => f.IsEnabled);

@@ -106,6 +106,51 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crafted.
+        /// </summary>
+        public static string FilterCategory_Crafted {
+            get {
+                return ResourceManager.GetString("FilterCategory_Crafted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enchant.
+        /// </summary>
+        public static string FilterCategory_Enchant {
+            get {
+                return ResourceManager.GetString("FilterCategory_Enchant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Explicit.
+        /// </summary>
+        public static string FilterCategory_Explicit {
+            get {
+                return ResourceManager.GetString("FilterCategory_Explicit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Implicit.
+        /// </summary>
+        public static string FilterCategory_Implicit {
+            get {
+                return ResourceManager.GetString("FilterCategory_Implicit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pseudo.
+        /// </summary>
+        public static string FilterCategory_Pseudo {
+            get {
+                return ResourceManager.GetString("FilterCategory_Pseudo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Experience %.
         /// </summary>
         public static string GemExperiencePercentColumn {

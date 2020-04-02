@@ -12,9 +12,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
     public class ItemStatsParser : ItemStatsParserBase, IItemStatsParser<ItemWithStats>
     {
         private const char Placeholder = '#';
+        private readonly IPseudoItemStatsParser pseudoItemStatsParser;
 
-        public ItemStatsParser(IStatsDataService statsDataService) : base(statsDataService)
+        public ItemStatsParser(IStatsDataService statsDataService, IPseudoItemStatsParser pseudoItemStatsParser) : base(statsDataService)
         {
+            this.pseudoItemStatsParser = pseudoItemStatsParser;
         }
 
         public ItemStats Parse(string[] itemStringLines)
@@ -26,8 +28,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             var statTexts = itemStringLines.Skip(statsStartIndex).Where(s => s != ParserConstants.PropertyGroupSeparator);
 
             var itemStats = statTexts.Select(ParseStatText).Where(x => x != null).ToList();
+            var pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
             result.AllStats.AddRange(itemStats);
+            result.AllStats.AddRange(pseudoItemStats);
 
             return result;
         }
@@ -118,6 +122,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
             return result;
         }
+
         private static int? GetFirstNumericValue(string text)
         {
             Match match = Regex.Match(text, @"[\+\-]?\d+");

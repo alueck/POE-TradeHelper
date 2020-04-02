@@ -61,6 +61,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(StatCategory.Explicit)]
         [TestCase(StatCategory.Crafted)]
         [TestCase(StatCategory.Monster)]
+        [TestCase(StatCategory.Pseudo)]
         public void CreateShouldCallCreateOnStatFilterViewModelFactoryForItemStats(StatCategory statCategory)
         {
             ItemWithStats item = CreateItemWithStats(statCategory);
@@ -134,6 +135,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 yield return new TestCaseData(StatCategory.Explicit, (GetFilterViewModels)(x => x.ExplicitItemStatFilters));
                 yield return new TestCaseData(StatCategory.Crafted, (GetFilterViewModels)(x => x.CraftedItemStatFilters));
                 yield return new TestCaseData(StatCategory.Monster, (GetFilterViewModels)(x => x.MonsterItemStatFilters));
+                yield return new TestCaseData(StatCategory.Pseudo, (GetFilterViewModels)(x => x.PseudoItemStatFilters));
             }
         }
 

@@ -305,5 +305,62 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             Assert.That(result, Is.EqualTo(expectedStatData));
         }
+
+        [TestCase("")]
+        [TestCase(null)]
+        [TestCase("non existing id")]
+        public async Task GetStatDataWithIdShouldReturnNull(string itemStatId)
+        {
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result = new List<Data<StatData>>
+                    {
+                        new Data<StatData>
+                        {
+                            Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                            Entries = new List<StatData>
+                            {
+                                new StatData { Id = "random id", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() },
+                            }
+                        }
+                    }
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            StatData result = this.statsDataService.GetStatData(itemStatId);
+
+            Assert.IsNull(result);
+        }
+
+        [Test]
+        public async Task GetStatDataWithIdShouldReturnCorrectStatData()
+        {
+            StatData expected = new StatData { Id = "expectedId", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() };
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result = new List<Data<StatData>>
+                    {
+                                    new Data<StatData>
+                                    {
+                                        Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                                        Entries = new List<StatData>
+                                        {
+                                            new StatData { Id = "random id", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() },
+                                            expected
+                                        }
+                                    }
+                    }
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            StatData result = this.statsDataService.GetStatData(expected.Id);
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
     }
 }

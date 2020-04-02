@@ -22,7 +22,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         private readonly IHttpClientWrapper httpClient;
         private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer;
-        private IList<Data<StatData>> statsData;
+        private IList<Data<StatData>> statsData = new List<Data<StatData>>();
+        private IDictionary<string, StatData> statsDataDictionary = new Dictionary<string, StatData>();
 
         private static readonly Regex NumberRegex = new Regex(@"[\+\-]?\d+", RegexOptions.Compiled);
         private readonly ILogger<StatsDataService> logger;
@@ -47,7 +48,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             string content = await httpResponse.Content.ReadAsStringAsync();
             var queryResult = this.poeTradeApiJsonSerializer.Deserialize<QueryResult<Data<StatData>>>(content);
 
-            this.statsData = queryResult?.Result;
+            if (queryResult != null)
+            {
+                this.statsData = queryResult.Result;
+                this.statsDataDictionary = queryResult.Result.SelectMany(x => x.Entries).ToDictionary(statData => statData.Id);
+            }
         }
 
         public StatData GetStatData(ItemStat itemStat, params StatCategory[] statCategoriesToSearch)
@@ -115,6 +120,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             }
 
             return statDataMatches;
+        }
+
+        public StatData GetStatData(string itemStatId)
+        {
+            return !string.IsNullOrEmpty(itemStatId) && this.statsDataDictionary.TryGetValue(itemStatId, out StatData statData)
+                ? statData
+                : null;
         }
 
         private class StatDataTextMatcher

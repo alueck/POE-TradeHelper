@@ -24,5 +24,13 @@ namespace POETradeHelper.ItemSearch.UserControls
         }
 
         public static AvaloniaProperty<ICollection> ItemsProperty = AvaloniaProperty.Register<Filters, ICollection>(nameof(Items));
+
+        public string Header
+        {
+            get => GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
+        }
+
+        public static AvaloniaProperty<string> HeaderProperty = AvaloniaProperty.Register<Filters, string>(nameof(Header));
     }
 }
