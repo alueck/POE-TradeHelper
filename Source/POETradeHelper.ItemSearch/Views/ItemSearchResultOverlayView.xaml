@@ -92,23 +92,23 @@
            Margin ="0,0,0,5" />
 
           <Button Grid.Column="1"
-        Content="{x:Static resources:Resources.OpenInBrowser}"
-        Command="{Binding OpenQueryInBrowserCommand}"
-        CommandParameter="{Binding $parent[Window]}"
-        Background="Transparent"
-        BorderThickness="0"
-        Padding="0"
-        Margin="0,0,0,5"
-        HorizontalAlignment="Right"
-        Foreground="{DynamicResource ThemeAccentBrush}"
-        Cursor="Hand" />
+            Content="{x:Static resources:Resources.OpenInBrowser}"
+            Command="{Binding OpenQueryInBrowserCommand}"
+            CommandParameter="{Binding $parent[Window]}"
+            Background="Transparent"
+            BorderThickness="0"
+            Padding="0"
+            Margin="0,0,0,5"
+            HorizontalAlignment="Right"
+            Foreground="{DynamicResource ThemeAccentBrush}"
+            Cursor="Hand" />
 
           <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <DataGrid Name="ListingsGrid" Items="{Binding ItemListings.Listings}"
-          IsReadOnly="True"
-          ColumnWidth="Auto"
-          ScrollViewer.VerticalScrollBarVisibility="Visible"
-          AutoGenerateColumns="True">
+              IsReadOnly="True"
+              ColumnWidth="Auto"
+              ScrollViewer.VerticalScrollBarVisibility="Visible"
+              AutoGenerateColumns="True">
               <DataGrid.DataTemplates>
                 <DataTemplate DataType="{x:Type localVms:PriceViewModel}">
                   <StackPanel Orientation="Horizontal" DataContext="{Binding Price}">
@@ -163,12 +163,40 @@
                 <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
 
-              <localControls:Filters Grid.Row="0" Name="EnchantedItemStatFilters" Header="{x:Static resources:Resources.FilterCategory_Enchant}" Items="{Binding AdvancedQuery.EnchantedItemStatFilters}" />
-              <localControls:Filters Grid.Row="1" Name="ImplicitItemStatFilters" Header="{x:Static resources:Resources.FilterCategory_Implicit}" Items="{Binding AdvancedQuery.ImplicitItemStatFilters}" IsVisible="{Binding !!AdvancedQuery.ImplicitItemStatFilters.Count}" />
-              <localControls:Filters Grid.Row="2" Name="ExplicitItemStatFilters" Header="{x:Static resources:Resources.FilterCategory_Explicit}" Items="{Binding AdvancedQuery.ExplicitItemStatFilters}" />
-              <localControls:Filters Grid.Row="3" Name="CraftedItemStatFilters" Header="{x:Static resources:Resources.FilterCategory_Crafted}" Items="{Binding AdvancedQuery.CraftedItemStatFilters}" />
-              <localControls:Filters Grid.Row="4" Name="MonsterItemStatFilters" Items="{Binding AdvancedQuery.MonsterItemStatFilters}" />
-              <localControls:Filters Grid.Row="5" Name="PseudoItemStatFilters" Header="{x:Static resources:Resources.FilterCategory_Pseudo}" Items="{Binding AdvancedQuery.PseudoItemStatFilters}" />
+              <localControls:Filters
+                Grid.Row="0"
+                Name="EnchantedItemStatFilters"
+                Header="{x:Static resources:Resources.FilterCategory_Enchant}"
+                Items="{Binding AdvancedQuery.EnchantedItemStatFilters}" />
+
+              <localControls:Filters
+                Grid.Row="1"
+                Name="ImplicitItemStatFilters"
+                Header="{x:Static resources:Resources.FilterCategory_Implicit}"
+                Items="{Binding AdvancedQuery.ImplicitItemStatFilters}" />
+
+              <localControls:Filters
+                Grid.Row="2"
+                Name="ExplicitItemStatFilters"
+                Header="{x:Static resources:Resources.FilterCategory_Explicit}"
+                Items="{Binding AdvancedQuery.ExplicitItemStatFilters}" />
+
+              <localControls:Filters
+                Grid.Row="3"
+                Name="CraftedItemStatFilters"
+                Header="{x:Static resources:Resources.FilterCategory_Crafted}"
+                Items="{Binding AdvancedQuery.CraftedItemStatFilters}" />
+
+              <localControls:Filters
+                Grid.Row="4"
+                Name="MonsterItemStatFilters"
+                Items="{Binding AdvancedQuery.MonsterItemStatFilters}" />
+
+              <localControls:Filters
+                Grid.Row="5"
+                Name="PseudoItemStatFilters"
+                Header="{x:Static resources:Resources.FilterCategory_Pseudo}"
+                Items="{Binding AdvancedQuery.PseudoItemStatFilters}" />
             </Grid>
           </ScrollViewer>
 
