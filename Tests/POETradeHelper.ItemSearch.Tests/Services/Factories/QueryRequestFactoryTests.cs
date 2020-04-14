@@ -18,10 +18,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             this.queryRequestFactory = new QueryRequestFactory();
         }
 
-        [TestCaseSource(nameof(MapShouldEnabledStatFilterToQueryStatFilterTestData))]
-        public void MapShouldEnabledStatFilterToQueryStatFilter(AdvancedQueryViewModel advancedQueryViewModel, MinMaxStatFilterViewModel statFilterViewModel)
+        [TestCaseSource(nameof(CreateShouldEnabledStatFilterToQueryStatFilterTestData))]
+        public void CreateShouldMapEnabledStatFilterToQueryStatFilter(AdvancedQueryViewModel advancedQueryViewModel, MinMaxStatFilterViewModel statFilterViewModel)
         {
-            SearchQueryRequest result = this.queryRequestFactory.Map(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
 
@@ -39,7 +39,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         }
 
         [Test]
-        public void MapShouldMapMultipleFilters()
+        public void CreateShouldCreateMultipleFilters()
         {
             var advancedQueryViewModel = new AdvancedQueryViewModel
             {
@@ -67,7 +67,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 QueryRequest = new SearchQueryRequest()
             };
 
-            SearchQueryRequest result = this.queryRequestFactory.Map(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
 
@@ -82,7 +82,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         }
 
         [Test]
-        public void MapShouldClearStatsOnQueryRequestBeforeAddingNewOnes()
+        public void CreateShouldClearStatsOnQueryRequestBeforeAddingNewOnes()
         {
             var statFilterViewModel = new MinMaxStatFilterViewModel
             {
@@ -117,7 +117,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 }
             };
 
-            SearchQueryRequest result = this.queryRequestFactory.Map(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
             Assert.That(result.Query.Stats, Has.Count.EqualTo(1));
@@ -125,7 +125,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         }
 
         [Test]
-        public void MapShouldMapStatFilters()
+        public void CreateShouldCreateStatFilters()
         {
             var statFilterViewModel = new StatFilterViewModel
             {
@@ -143,7 +143,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 QueryRequest = new SearchQueryRequest()
             };
 
-            SearchQueryRequest result = this.queryRequestFactory.Map(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
 
@@ -157,7 +157,227 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(statFilter.Text, Is.EqualTo(statFilterViewModel.Text));
         }
 
-        private static IEnumerable<TestCaseData> MapShouldEnabledStatFilterToQueryStatFilterTestData
+        [TestCase(10, 20)]
+        [TestCase(105, 117)]
+        [TestCase(105, null)]
+        public void CreateShouldMapAdditionalMinMaxFilterToQuery(int? minValue, int? maxValue)
+        {
+            BindableMinMaxFilterViewModel additionalFilter = new BindableMinMaxFilterViewModel(x => x.Query.Filters.MiscFilters.Quality)
+            {
+                Min = minValue,
+                Max = maxValue,
+                IsEnabled = true
+            };
+
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest(),
+                AdditionalFilters =
+                {
+                    additionalFilter
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.NotNull(result);
+
+            MinMaxFilter qualityFilter = result.Query.Filters.MiscFilters.Quality;
+            Assert.NotNull(qualityFilter);
+            Assert.That(qualityFilter.Min, Is.EqualTo(additionalFilter.Min));
+            Assert.That(qualityFilter.Max, Is.EqualTo(additionalFilter.Max));
+        }
+
+        [Test]
+        public void CreateShouldNotMapDisabledAdditionalFilterToQuery()
+        {
+            BindableMinMaxFilterViewModel additionalFilter = new BindableMinMaxFilterViewModel(x => x.Query.Filters.MiscFilters.Quality)
+            {
+                IsEnabled = false
+            };
+
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest(),
+                AdditionalFilters =
+                {
+                    additionalFilter
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.NotNull(result);
+            Assert.Null(result.Query.Filters.MiscFilters.Quality);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CreateShouldMapAdditionalBoolFilterToQuery(bool value)
+        {
+            BindableFilterViewModel additionalFilter = new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.CrusaderItem)
+            {
+                IsEnabled = value
+            };
+
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest(),
+                AdditionalFilters =
+                {
+                    additionalFilter
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.NotNull(result);
+
+            BoolOptionFilter crusaderItemFilter = result.Query.Filters.MiscFilters.CrusaderItem;
+            Assert.NotNull(crusaderItemFilter);
+            Assert.That(crusaderItemFilter.Option, Is.EqualTo(value));
+        }
+
+        [Test]
+        public void CreateShouldClearFiltersBeforeAddingNewOnes()
+        {
+            BindableFilterViewModel additionalFilter = new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.CrusaderItem)
+            {
+                IsEnabled = true
+            };
+
+            const string categoryOptionValue = "axe";
+            const string rarityOptionValue = "unique";
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest
+                {
+                    Query =
+                    {
+                        Filters =
+                        {
+                            ArmourFilters =
+                            {
+                                Armour = new MinMaxFilter()
+                            },
+                            MapFilters =
+                            {
+                                MapTier = new MinMaxFilter()
+                            },
+                            MiscFilters =
+                            {
+                                Corrupted = new BoolOptionFilter()
+                            },
+                            RequirementsFilters =
+                            {
+                                Level = new MinMaxFilter()
+                            },
+                            SocketFilters =
+                            {
+                                Links = new SocketsFilter()
+                            },
+                            TypeFilters =
+                            {
+                                Category = new OptionFilter{ Option = categoryOptionValue },
+                                Rarity = new OptionFilter { Option = rarityOptionValue}
+                            },
+                            WeaponFilters =
+                            {
+                                Damage = new MinMaxFilter()
+                            }
+                        }
+                    }
+                },
+                AdditionalFilters =
+                {
+                    additionalFilter
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.NotNull(result);
+            Assert.IsNull(result.Query.Filters.ArmourFilters.Filters);
+            Assert.IsNull(result.Query.Filters.MapFilters.Filters);
+            Assert.IsNull(result.Query.Filters.RequirementsFilters.Filters);
+            Assert.IsNull(result.Query.Filters.SocketFilters.Filters);
+            Assert.IsNull(result.Query.Filters.WeaponFilters.Filters);
+
+            Assert.That(result.Query.Filters.MiscFilters.Filters, Has.Count.EqualTo(1));
+            Assert.IsNotNull(result.Query.Filters.MiscFilters.CrusaderItem);
+
+            Assert.That(result.Query.Filters.TypeFilters.Filters, Has.Count.EqualTo(2));
+            Assert.That(result.Query.Filters.TypeFilters.Category.Option, Is.EqualTo(categoryOptionValue));
+            Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(rarityOptionValue));
+        }
+
+        [Test]
+        public void CreateShouldMapName()
+        {
+            const string expected = "expected name";
+
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest
+                {
+                    Query =
+                    {
+                        Name = expected
+                    }
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.IsNotNull(result);
+            Assert.That(result.Query.Name, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void CreateShouldMapTerm()
+        {
+            const string expected = "expected term";
+
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest
+                {
+                    Query =
+                    {
+                        Term = expected
+                    }
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.IsNotNull(result);
+            Assert.That(result.Query.Term, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void CreateShouldMapType()
+        {
+            const string expected = "expected type";
+
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest
+                {
+                    Query =
+                    {
+                        Type = expected
+                    }
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.IsNotNull(result);
+            Assert.That(result.Query.Type, Is.EqualTo(expected));
+        }
+
+        private static IEnumerable<TestCaseData> CreateShouldEnabledStatFilterToQueryStatFilterTestData
         {
             get
             {
