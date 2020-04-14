@@ -1,6 +1,6 @@
 ﻿namespace POETradeHelper.ItemSearch.ViewModels
 {
-    public class FilterViewModel
+    public abstract class FilterViewModelBase
     {
         public string Text { get; set; }
 

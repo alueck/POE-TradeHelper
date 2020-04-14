@@ -10,10 +10,12 @@ namespace POETradeHelper.ItemSearch.Services.Factories
     public class AdvancedQueryViewModelFactory : IAdvancedQueryViewModelFactory
     {
         private readonly IStatFilterViewModelFactory statFilterViewModelFactory;
+        private readonly IEnumerable<IAdditionalFiltersViewModelFactory> additionalFiltersViewModelFactories;
 
-        public AdvancedQueryViewModelFactory(IStatFilterViewModelFactory statFilterViewModelFactory)
+        public AdvancedQueryViewModelFactory(IStatFilterViewModelFactory statFilterViewModelFactory, IEnumerable<IAdditionalFiltersViewModelFactory> additionalFiltersViewModelFactories)
         {
             this.statFilterViewModelFactory = statFilterViewModelFactory;
+            this.additionalFiltersViewModelFactories = additionalFiltersViewModelFactories;
         }
 
         public AdvancedQueryViewModel Create(Item item, IQueryRequest queryRequest)
@@ -35,6 +37,8 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 result.MonsterItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.MonsterStats, searchQueryRequest));
                 result.PseudoItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.PseudoStats, searchQueryRequest));
             }
+
+            result.AdditionalFilters.AddRange(this.additionalFiltersViewModelFactories.SelectMany(x => x.Create(item)));
 
             return result;
         }

@@ -12,9 +12,9 @@ namespace POETradeHelper.ItemSearch.ViewModels
         public IList<StatFilterViewModel> CraftedItemStatFilters { get; } = new List<StatFilterViewModel>();
         public IList<StatFilterViewModel> MonsterItemStatFilters { get; } = new List<StatFilterViewModel>();
         public IList<StatFilterViewModel> PseudoItemStatFilters { get; } = new List<StatFilterViewModel>();
-        public IList<FilterViewModel> AdditionalFilters { get; } = new List<FilterViewModel>();
+        public IList<FilterViewModelBase> AdditionalFilters { get; } = new List<FilterViewModelBase>();
 
-        public IEnumerable<FilterViewModel> AllFilters => this.EnchantedItemStatFilters
+        public IEnumerable<FilterViewModelBase> AllFilters => this.EnchantedItemStatFilters
             .Concat(this.ImplicitItemStatFilters)
             .Concat(this.ExplicitItemStatFilters)
             .Concat(this.CraftedItemStatFilters)

@@ -7,19 +7,25 @@ using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
     public class AdvancedQueryViewModelFactoryTests
     {
         private Mock<IStatFilterViewModelFactory> statFilterViewModelFactoryMock;
+        private List<Mock<IAdditionalFiltersViewModelFactory>> additionalFiltersViewModelFactoryMocks;
         private AdvancedQueryViewModelFactory advancedQueryViewModelFactory;
 
         [SetUp]
         public void Setup()
         {
             this.statFilterViewModelFactoryMock = new Mock<IStatFilterViewModelFactory>();
-            this.advancedQueryViewModelFactory = new AdvancedQueryViewModelFactory(this.statFilterViewModelFactoryMock.Object);
+            this.additionalFiltersViewModelFactoryMocks = new List<Mock<IAdditionalFiltersViewModelFactory>> {
+                new Mock<IAdditionalFiltersViewModelFactory>(),
+                new Mock<IAdditionalFiltersViewModelFactory>()
+            };
+            this.advancedQueryViewModelFactory = new AdvancedQueryViewModelFactory(this.statFilterViewModelFactoryMock.Object, this.additionalFiltersViewModelFactoryMocks.Select(x => x.Object));
         }
 
         [Test]
@@ -107,6 +113,36 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             AdvancedQueryViewModel result = this.advancedQueryViewModelFactory.Create(item, expected);
 
             Assert.That(result.QueryRequest, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void CreateShouldCallCreateOnAdditionalFiltersViewModelFactories()
+        {
+            var item = new EquippableItem(ItemRarity.Magic);
+
+            this.advancedQueryViewModelFactory.Create(item, new SearchQueryRequest());
+
+            this.additionalFiltersViewModelFactoryMocks[0].Verify(x => x.Create(item));
+            this.additionalFiltersViewModelFactoryMocks[1].Verify(x => x.Create(item));
+        }
+
+        [Test]
+        public void CreateShouldAddReturnValuesOfAdditionalFiltersViewModelFactoriesToAdditionalFilters()
+        {
+            var item = new EquippableItem(ItemRarity.Magic);
+            var expected1 = new BindableMinMaxFilterViewModel(x => x.Query.Filters.MiscFilters.Quality);
+            var expected2 = new BindableMinMaxFilterViewModel(x => x.Query.Filters.ArmourFilters.Armour);
+
+            this.additionalFiltersViewModelFactoryMocks[0].Setup(x => x.Create(It.IsAny<Item>()))
+                .Returns(new[] { expected1 });
+            this.additionalFiltersViewModelFactoryMocks[1].Setup(x => x.Create(It.IsAny<Item>()))
+                .Returns(new[] { expected2 });
+
+            AdvancedQueryViewModel result = this.advancedQueryViewModelFactory.Create(item, new SearchQueryRequest());
+
+            Assert.That(result.AdditionalFilters, Has.Count.EqualTo(2));
+            Assert.That(result.AdditionalFilters, Contains.Item(expected1));
+            Assert.That(result.AdditionalFilters, Contains.Item(expected2));
         }
 
         private static ItemWithStats CreateItemWithStats(StatCategory statCategory)
