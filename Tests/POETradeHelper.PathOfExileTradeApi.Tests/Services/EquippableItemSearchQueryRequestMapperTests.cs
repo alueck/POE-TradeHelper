@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using NUnit.Framework;
-using POETradeHelper.ItemSearch;
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -14,14 +14,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class EquippableItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<EquippableItem>
     {
-        private Mock<IOptions<ItemSearchOptions>> itemSearchOptionsMock;
+        private Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
         private EquippableItemSearchQueryRequestMapper equippableItemToQueryRequestMapper;
 
         [SetUp]
         public void Setup()
         {
-            this.itemSearchOptionsMock = new Mock<IOptions<ItemSearchOptions>>();
-            this.itemSearchOptionsMock.Setup(x => x.Value)
+            this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions());
 
             this.ItemSearchQueryRequestMapper = this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.itemSearchOptionsMock.Object);
@@ -163,7 +163,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 ItemLevel = itemLevel
             };
 
-            this.itemSearchOptionsMock.Setup(x => x.Value)
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions
                 {
                     ItemLevelThreshold = itemLevel
@@ -186,7 +186,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 ItemLevel = itemLevel - 1
             };
 
-            this.itemSearchOptionsMock.Setup(x => x.Value)
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions
                 {
                     ItemLevelThreshold = itemLevel

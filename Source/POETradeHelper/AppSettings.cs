@@ -1,4 +1,4 @@
-﻿using POETradeHelper.ItemSearch;
+﻿using POETradeHelper.ItemSearch.Contract.Configuration;
 
 namespace POETradeHelper
 {

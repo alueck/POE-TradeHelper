@@ -10,12 +10,12 @@ namespace POETradeHelper.ItemSearch.Services.Factories
     public class AdvancedQueryViewModelFactory : IAdvancedQueryViewModelFactory
     {
         private readonly IStatFilterViewModelFactory statFilterViewModelFactory;
-        private readonly IEnumerable<IAdditionalFiltersViewModelFactory> additionalFiltersViewModelFactories;
+        private readonly IEnumerable<IAdditionalFilterViewModelsFactory> additionalFilterViewModelsFactories;
 
-        public AdvancedQueryViewModelFactory(IStatFilterViewModelFactory statFilterViewModelFactory, IEnumerable<IAdditionalFiltersViewModelFactory> additionalFiltersViewModelFactories)
+        public AdvancedQueryViewModelFactory(IStatFilterViewModelFactory statFilterViewModelFactory, IEnumerable<IAdditionalFilterViewModelsFactory> additionalFiltersViewModelFactories)
         {
             this.statFilterViewModelFactory = statFilterViewModelFactory;
-            this.additionalFiltersViewModelFactories = additionalFiltersViewModelFactories;
+            this.additionalFilterViewModelsFactories = additionalFiltersViewModelFactories;
         }
 
         public AdvancedQueryViewModel Create(Item item, IQueryRequest queryRequest)
@@ -38,20 +38,14 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 result.PseudoItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.PseudoStats, searchQueryRequest));
             }
 
-            result.AdditionalFilters.AddRange(this.additionalFiltersViewModelFactories.SelectMany(x => x.Create(item)));
+            result.AdditionalFilters.AddRange(this.additionalFilterViewModelsFactories.SelectMany(x => x.Create(item, searchQueryRequest)));
 
             return result;
         }
 
         private IList<StatFilterViewModel> CreateFilterViewModels(IEnumerable<ItemStat> itemStats, SearchQueryRequest queryRequest)
         {
-            var statFilterViewModelFactoryConfiguration = new StatFilterViewModelFactoryConfiguration
-            {
-                MinValuePercentageOffset = -0.1,
-                MaxValuePercentageOffset = 0.1
-            };
-
-            return itemStats.Select(stat => this.statFilterViewModelFactory.Create(stat, queryRequest, statFilterViewModelFactoryConfiguration)).ToList();
+            return itemStats.Select(stat => this.statFilterViewModelFactory.Create(stat, queryRequest)).ToList();
         }
     }
 }

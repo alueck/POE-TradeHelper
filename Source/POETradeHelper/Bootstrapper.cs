@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using POETradeHelper.Common;
 using POETradeHelper.Common.Extensions;
-using POETradeHelper.ItemSearch;
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using Serilog;
 using Serilog.Exceptions;
 using Splat;

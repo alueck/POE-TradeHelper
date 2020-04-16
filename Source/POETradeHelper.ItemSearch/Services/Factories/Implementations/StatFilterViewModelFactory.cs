@@ -1,4 +1,6 @@
-﻿using POETradeHelper.ItemSearch.Contract;
+﻿using Microsoft.Extensions.Options;
+using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -10,7 +12,14 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 {
     public class StatFilterViewModelFactory : IStatFilterViewModelFactory
     {
-        public StatFilterViewModel Create(ItemStat itemStat, SearchQueryRequest queryRequest, StatFilterViewModelFactoryConfiguration configuration)
+        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
+
+        public StatFilterViewModelFactory(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
+        {
+            this.itemSearchOptions = itemSearchOptions;
+        }
+
+        public StatFilterViewModel Create(ItemStat itemStat, SearchQueryRequest queryRequest)
         {
             StatFilterViewModel result;
 
@@ -19,7 +28,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             (int minValue, int maxValue)? minMaxTuple = GetMinMaxTuple(itemStat);
 
             result = minMaxTuple.HasValue
-                ? GetMinMaxStatFilterViewModel(itemStat, configuration, matchingFilter, minMaxTuple.Value)
+                ? GetMinMaxStatFilterViewModel(itemStat, matchingFilter, minMaxTuple.Value)
                 : GetStatFilterViewModel(itemStat, matchingFilter);
 
             return result;
@@ -46,19 +55,23 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return minMaxTuple;
         }
 
-        private static StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilterViewModelFactoryConfiguration configuration, StatFilter matchingFilter, (int minValue, int maxValue) minMaxTuple)
+        private StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilter matchingFilter, (int minValue, int maxValue) minMaxTuple)
         {
+            double minValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MinValuePercentageOffset;
+            double maxValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MaxValuePercentageOffset;
+
             if (itemStat.StatCategory == StatCategory.Monster)
             {
-                configuration = new StatFilterViewModelFactoryConfiguration();
+                minValuePercentageOffset = 0;
+                maxValuePercentageOffset = 0;
             }
 
             return new MinMaxStatFilterViewModel
             {
                 Id = itemStat.Id,
                 IsEnabled = matchingFilter != null,
-                Min = matchingFilter != null ? matchingFilter.Value.Min : GetValueWithOffset(minMaxTuple.minValue, configuration.MinValuePercentageOffset),
-                Max = matchingFilter != null ? matchingFilter.Value.Max : GetValueWithOffset(minMaxTuple.maxValue, configuration.MaxValuePercentageOffset),
+                Min = matchingFilter != null ? matchingFilter.Value.Min : GetValueWithOffset(minMaxTuple.minValue, minValuePercentageOffset),
+                Max = matchingFilter != null ? matchingFilter.Value.Max : GetValueWithOffset(minMaxTuple.maxValue, maxValuePercentageOffset),
                 Current = GetCurrent(minMaxTuple.minValue, minMaxTuple.maxValue),
                 Text = itemStat.TextWithPlaceholders
             };
