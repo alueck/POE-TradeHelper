@@ -2,11 +2,8 @@
 using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract;
-
 using POETradeHelper.ItemSearch.Contract.Configuration;
-
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
@@ -317,6 +314,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
         private void CreateShouldTakeMinValueFromQueryRequest(ItemStat itemStat, int? expected)
         {
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    AdvancedQueryOptions = new AdvancedQueryOptions
+                    {
+                        MinValuePercentageOffset = -0.1
+                    }
+                });
+
             itemStat.Id = "item stat id";
             SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Min = expected });
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest) as MinMaxStatFilterViewModel;
@@ -352,6 +358,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
         private void CreateShouldTakeMaxValueFromQueryRequest(ItemStat itemStat, int? expected)
         {
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    AdvancedQueryOptions = new AdvancedQueryOptions
+                    {
+                        MaxValuePercentageOffset = 0.1
+                    }
+                });
+
             itemStat.Id = "item stat id";
             SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Max = expected });
 
