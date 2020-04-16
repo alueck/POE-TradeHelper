@@ -126,6 +126,9 @@
   <data name="AgeColumn" xml:space="preserve">
     <value>Age</value>
   </data>
+  <data name="Corrupted" xml:space="preserve">
+    <value>Corrupted</value>
+  </data>
   <data name="CouldNotParseRarityExceptionMessage" xml:space="preserve">
     <value>Failed to parse item rarity.</value>
   </data>
@@ -153,11 +156,29 @@
   <data name="GemLevelColumn" xml:space="preserve">
     <value>Level</value>
   </data>
+  <data name="Identified" xml:space="preserve">
+    <value>Identified</value>
+  </data>
   <data name="ItemLevelColumn" xml:space="preserve">
     <value>Item level</value>
   </data>
   <data name="LeagueLabel" xml:space="preserve">
     <value>League:</value>
+  </data>
+  <data name="MapBlighted" xml:space="preserve">
+    <value>Blighted</value>
+  </data>
+  <data name="MapItemQuantity" xml:space="preserve">
+    <value>Increased item quantity</value>
+  </data>
+  <data name="MapItemRarity" xml:space="preserve">
+    <value>Increased item rarity</value>
+  </data>
+  <data name="MapMonsterPacksize" xml:space="preserve">
+    <value>Increased monster packsize</value>
+  </data>
+  <data name="MapTier" xml:space="preserve">
+    <value>Tier</value>
   </data>
   <data name="Max" xml:space="preserve">
     <value>Max</value>
