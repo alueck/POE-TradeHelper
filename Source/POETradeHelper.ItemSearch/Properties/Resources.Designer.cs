@@ -205,6 +205,15 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Links.
+        /// </summary>
+        public static string Links {
+            get {
+                return ResourceManager.GetString("Links", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Blighted.
         /// </summary>
         public static string MapBlighted {
@@ -304,11 +313,11 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stat.
+        ///   Looks up a localized string similar to Sockets.
         /// </summary>
-        public static string Stat {
+        public static string Sockets {
             get {
-                return ResourceManager.GetString("Stat", resourceCulture);
+                return ResourceManager.GetString("Sockets", resourceCulture);
             }
         }
     }

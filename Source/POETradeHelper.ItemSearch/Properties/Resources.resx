@@ -165,6 +165,9 @@
   <data name="LeagueLabel" xml:space="preserve">
     <value>League:</value>
   </data>
+  <data name="Links" xml:space="preserve">
+    <value>Links</value>
+  </data>
   <data name="MapBlighted" xml:space="preserve">
     <value>Blighted</value>
   </data>
@@ -198,7 +201,7 @@
   <data name="Select" xml:space="preserve">
     <value>Select</value>
   </data>
-  <data name="Stat" xml:space="preserve">
-    <value>Stat</value>
+  <data name="Sockets" xml:space="preserve">
+    <value>Sockets</value>
   </data>
 </root>
