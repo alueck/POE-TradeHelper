@@ -5,6 +5,6 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 {
     public interface IQueryRequestFactory
     {
-        IQueryRequest Map(AdvancedQueryViewModel advancedQueryViewModel);
+        IQueryRequest Create(AdvancedQueryViewModel advancedQueryViewModel);
     }
 }

@@ -8,6 +8,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
     public class GemItemListingViewModel : SimpleListingViewModel
     {
         [Display(ShortName = nameof(Resources.GemLevelColumn), ResourceType = typeof(Resources), Order = 3)]
+        [StyleClasses(StyleClass.DataGridCellAlignRight)]
         public string Level { get; set; }
 
         [Display(ShortName = nameof(Resources.GemExperiencePercentColumn), ResourceType = typeof(Resources), Order = 4)]

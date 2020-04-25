@@ -184,7 +184,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
 
             await this.itemSearchOverlayViewModel.ExecuteAdvancedQueryAsync();
 
-            this.queryRequestFactoryMock.Verify(x => x.Map(advancedQueryViewModel));
+            this.queryRequestFactoryMock.Verify(x => x.Create(advancedQueryViewModel));
         }
 
         [Test]
@@ -192,7 +192,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         {
             var queryRequest = new SearchQueryRequest();
 
-            this.queryRequestFactoryMock.Setup(x => x.Map(It.IsAny<AdvancedQueryViewModel>()))
+            this.queryRequestFactoryMock.Setup(x => x.Create(It.IsAny<AdvancedQueryViewModel>()))
                 .Returns(queryRequest);
 
             await this.itemSearchOverlayViewModel.ExecuteAdvancedQueryAsync();
@@ -234,7 +234,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         public async Task ExecuteAdvancedQueryAsyncShouldCallCreateOnAdvancedQueryViewModelFactory()
         {
             var queryRequest = new SearchQueryRequest();
-            this.queryRequestFactoryMock.Setup(x => x.Map(It.IsAny<AdvancedQueryViewModel>()))
+            this.queryRequestFactoryMock.Setup(x => x.Create(It.IsAny<AdvancedQueryViewModel>()))
                 .Returns(queryRequest);
 
             this.itemSearchOverlayViewModel.Item = new EquippableItem(ItemRarity.Unique);

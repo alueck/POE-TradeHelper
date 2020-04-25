@@ -161,6 +161,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
 
               <localControls:Filters
@@ -197,6 +198,11 @@
                 Name="PseudoItemStatFilters"
                 Header="{x:Static resources:Resources.FilterCategory_Pseudo}"
                 Items="{Binding AdvancedQuery.PseudoItemStatFilters}" />
+
+              <localControls:Filters
+                Grid.Row="6"
+                Name="AdditionalFilters"
+                Items="{Binding AdvancedQuery.AdditionalFilters}" />
             </Grid>
           </ScrollViewer>
 

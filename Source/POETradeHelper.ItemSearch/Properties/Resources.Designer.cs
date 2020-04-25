@@ -88,6 +88,15 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Corrupted.
+        /// </summary>
+        public static string Corrupted {
+            get {
+                return ResourceManager.GetString("Corrupted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to parse item rarity..
         /// </summary>
         public static string CouldNotParseRarityExceptionMessage {
@@ -169,6 +178,15 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Identified.
+        /// </summary>
+        public static string Identified {
+            get {
+                return ResourceManager.GetString("Identified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Item level.
         /// </summary>
         public static string ItemLevelColumn {
@@ -183,6 +201,60 @@ namespace POETradeHelper.ItemSearch.Properties {
         public static string LeagueLabel {
             get {
                 return ResourceManager.GetString("LeagueLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Links.
+        /// </summary>
+        public static string Links {
+            get {
+                return ResourceManager.GetString("Links", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blighted.
+        /// </summary>
+        public static string MapBlighted {
+            get {
+                return ResourceManager.GetString("MapBlighted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increased item quantity.
+        /// </summary>
+        public static string MapItemQuantity {
+            get {
+                return ResourceManager.GetString("MapItemQuantity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increased item rarity.
+        /// </summary>
+        public static string MapItemRarity {
+            get {
+                return ResourceManager.GetString("MapItemRarity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increased monster packsize.
+        /// </summary>
+        public static string MapMonsterPacksize {
+            get {
+                return ResourceManager.GetString("MapMonsterPacksize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tier.
+        /// </summary>
+        public static string MapTier {
+            get {
+                return ResourceManager.GetString("MapTier", resourceCulture);
             }
         }
         
@@ -241,11 +313,11 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stat.
+        ///   Looks up a localized string similar to Sockets.
         /// </summary>
-        public static string Stat {
+        public static string Sockets {
             get {
-                return ResourceManager.GetString("Stat", resourceCulture);
+                return ResourceManager.GetString("Sockets", resourceCulture);
             }
         }
     }

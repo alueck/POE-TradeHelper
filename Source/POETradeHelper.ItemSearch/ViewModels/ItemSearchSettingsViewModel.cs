@@ -1,5 +1,6 @@
 ﻿using POETradeHelper.Common;
 using POETradeHelper.Common.UI;
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using ReactiveUI;

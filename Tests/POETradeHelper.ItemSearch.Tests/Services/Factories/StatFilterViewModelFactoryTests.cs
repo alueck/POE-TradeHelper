@@ -1,6 +1,9 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Extensions.Options;
+using Moq;
+using NUnit.Framework;
 using NUnit.Framework.Internal;
 using POETradeHelper.ItemSearch.Contract;
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
@@ -12,12 +15,24 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
     public class StatFilterViewModelFactoryTests
     {
+        private Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
         private StatFilterViewModelFactory statFilterViewModelFactory;
 
         [SetUp]
         public void Setup()
         {
-            this.statFilterViewModelFactory = new StatFilterViewModelFactory();
+            this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    AdvancedQueryOptions = new AdvancedQueryOptions
+                    {
+                        MinValuePercentageOffset = 0,
+                        MaxValuePercentageOffset = 0
+                    }
+                });
+
+            this.statFilterViewModelFactory = new StatFilterViewModelFactory(this.itemSearchOptionsMock.Object);
         }
 
         [Test]
@@ -26,7 +41,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             const string expected = "item stat id";
             var itemStat = GetItemStat(expected);
 
-            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
             Assert.NotNull(result);
             Assert.That(result.Id, Is.EqualTo(expected));
@@ -37,7 +52,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         {
             var itemStat = new SingleValueItemStat(StatCategory.Explicit);
 
-            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
             Assert.IsInstanceOf<MinMaxStatFilterViewModel>(result);
         }
@@ -47,7 +62,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         {
             var itemStat = new MinMaxValueItemStat(StatCategory.Explicit);
 
-            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
             Assert.IsInstanceOf<MinMaxStatFilterViewModel>(result);
         }
@@ -56,7 +71,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         {
             var itemStat = new ItemStat(StatCategory.Explicit);
 
-            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
             Assert.IsNotNull(result);
             Assert.IsNotInstanceOf<MinMaxStatFilterViewModel>(result);
@@ -68,7 +83,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             const string expected = "# to Maximum Life";
             var itemStat = new SingleValueItemStat(GetItemStat(textWithPlaceholders: expected));
 
-            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
             Assert.NotNull(result);
             Assert.That(result.Text, Is.EqualTo(expected));
@@ -83,7 +98,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             string expected = itemStat.Value.ToString();
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Current, Is.EqualTo(expected));
@@ -99,7 +114,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             string expected = $"{itemStat.MinValue} - {itemStat.MaxValue}";
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Current, Is.EqualTo(expected));
@@ -114,7 +129,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Value = expected
             };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Min, Is.EqualTo(expected));
@@ -129,7 +144,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Value = expected
             };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Max, Is.EqualTo(expected));
@@ -144,7 +159,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 MinValue = expected
             };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Min, Is.EqualTo(expected));
@@ -159,7 +174,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 MaxValue = expected
             };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Max, Is.EqualTo(expected));
@@ -193,12 +208,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
         private void CreateShouldConsiderMinValuePercentageOffsetForItemStat(ItemStat itemStat, double percentageOffset, int expected)
         {
-            var configuration = new StatFilterViewModelFactoryConfiguration
-            {
-                MinValuePercentageOffset = percentageOffset
-            };
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    AdvancedQueryOptions = new AdvancedQueryOptions
+                    {
+                        MinValuePercentageOffset = percentageOffset,
+                        MaxValuePercentageOffset = 0
+                    }
+                });
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), configuration) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Min, Is.EqualTo(expected));
@@ -232,12 +252,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
         private void CreateShouldConsiderMaxValuePercentageOffsetForItemStat(ItemStat itemStat, double percentageOffset, int expected)
         {
-            var configuration = new StatFilterViewModelFactoryConfiguration
-            {
-                MaxValuePercentageOffset = percentageOffset
-            };
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    AdvancedQueryOptions = new AdvancedQueryOptions
+                    {
+                        MinValuePercentageOffset = 0,
+                        MaxValuePercentageOffset = percentageOffset
+                    }
+                });
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), configuration) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Max, Is.EqualTo(expected));
@@ -255,7 +280,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 TextWithPlaceholders = textWithPlaceholders
             };
 
-            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration());
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
             Assert.NotNull(result);
             Assert.That(result.Text, Is.EqualTo(statText));
@@ -289,9 +314,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
         private void CreateShouldTakeMinValueFromQueryRequest(ItemStat itemStat, int? expected)
         {
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    AdvancedQueryOptions = new AdvancedQueryOptions
+                    {
+                        MinValuePercentageOffset = -0.1
+                    }
+                });
+
             itemStat.Id = "item stat id";
             SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Min = expected });
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest) as MinMaxStatFilterViewModel;
 
             Assert.That(result.Min, Is.EqualTo(expected));
         }
@@ -324,10 +358,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
         private void CreateShouldTakeMaxValueFromQueryRequest(ItemStat itemStat, int? expected)
         {
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    AdvancedQueryOptions = new AdvancedQueryOptions
+                    {
+                        MaxValuePercentageOffset = 0.1
+                    }
+                });
+
             itemStat.Id = "item stat id";
             SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Max = expected });
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest) as MinMaxStatFilterViewModel;
 
             Assert.That(result.Max, Is.EqualTo(expected));
         }
@@ -337,7 +380,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         {
             SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter());
 
-            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration());
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest);
 
             Assert.That(result.IsEnabled);
         }
@@ -347,7 +390,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         {
             SearchQueryRequest queryRequest = new SearchQueryRequest();
 
-            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest, new StatFilterViewModelFactoryConfiguration());
+            StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest);
 
             Assert.That(result.IsEnabled, Is.False);
         }
@@ -358,7 +401,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             const int expected = 2;
             var itemStat = new SingleValueItemStat(StatCategory.Monster) { Value = expected };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), new StatFilterViewModelFactoryConfiguration()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.That(result.Min, Is.EqualTo(expected));
         }
@@ -379,14 +422,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             const int expected = 3;
             var itemStat = new SingleValueItemStat(StatCategory.Monster) { Id = "monsterItemStat", Value = expected };
 
-            StatFilterViewModelFactoryConfiguration configuration = new StatFilterViewModelFactoryConfiguration
-            {
-                MinValuePercentageOffset = -0.1
-            };
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    AdvancedQueryOptions = new AdvancedQueryOptions
+                    {
+                        MinValuePercentageOffset = -0.1,
+                        MaxValuePercentageOffset = 0.1
+                    }
+                });
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest(), configuration) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.That(result.Min, Is.EqualTo(expected));
+            Assert.That(result.Max, Is.EqualTo(expected));
         }
 
         private static SearchQueryRequest GetQueryRequestWithStatFilter(string statId, MinMaxFilter value)

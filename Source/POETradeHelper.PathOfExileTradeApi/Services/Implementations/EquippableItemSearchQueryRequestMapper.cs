@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using POETradeHelper.ItemSearch;
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
@@ -22,9 +22,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             [InfluenceType.Warlord] = (miscFilters) => miscFilters.WarlordItem = new BoolOptionFilter { Option = true }
         };
 
-        private IOptions<ItemSearchOptions> itemSearchOptions;
+        private IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
 
-        public EquippableItemSearchQueryRequestMapper(IOptions<ItemSearchOptions> itemSearchOptions)
+        public EquippableItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {
             this.itemSearchOptions = itemSearchOptions;
         }
@@ -48,7 +48,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
         private void MapItemLevel(SearchQueryRequest result, EquippableItem equippableItem)
         {
-            if (equippableItem.ItemLevel >= itemSearchOptions.Value.ItemLevelThreshold)
+            if (equippableItem.ItemLevel >= itemSearchOptions.CurrentValue.ItemLevelThreshold)
             {
                 result.Query.Filters.MiscFilters.ItemLevel = new MinMaxFilter
                 {

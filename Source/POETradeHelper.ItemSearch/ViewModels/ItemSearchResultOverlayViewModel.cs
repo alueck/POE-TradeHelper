@@ -139,7 +139,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             {
                 this.Message = null;
 
-                var queryRequest = this.queryRequestFactory.Map(this.AdvancedQuery);
+                var queryRequest = this.queryRequestFactory.Create(this.AdvancedQuery);
 
                 ItemListingsQueryResult itemListingsQueryResult = await this.poeTradeApiClient.GetListingsAsync(queryRequest);
 

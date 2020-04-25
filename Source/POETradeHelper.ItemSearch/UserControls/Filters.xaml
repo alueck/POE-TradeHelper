@@ -53,7 +53,7 @@
           </Grid>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type localVMs:FilterViewModel}">
+        <DataTemplate DataType="{x:Type localVMs:FilterViewModelBase}">
           <Grid>
             <Grid.ColumnDefinitions>
               <ColumnDefinition SharedSizeGroup="StatColumn" />

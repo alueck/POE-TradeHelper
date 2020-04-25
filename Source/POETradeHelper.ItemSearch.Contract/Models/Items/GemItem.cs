@@ -1,6 +1,6 @@
 ﻿namespace POETradeHelper.ItemSearch.Contract.Models
 {
-    public class GemItem : Item, ICorruptableItem
+    public class GemItem : Item, ICorruptableItem, IQualityItem
     {
         public GemItem() : base(ItemRarity.Gem)
         {

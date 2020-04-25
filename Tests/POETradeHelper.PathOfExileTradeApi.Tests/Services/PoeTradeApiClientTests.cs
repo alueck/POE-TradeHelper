@@ -2,7 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Wrappers;
-using POETradeHelper.ItemSearch;
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
