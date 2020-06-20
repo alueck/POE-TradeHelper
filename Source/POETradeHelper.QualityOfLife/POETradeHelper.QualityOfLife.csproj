@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\POETradeHelper.Common.Contract\POETradeHelper.Common.Contract.csproj" />
+    <ProjectReference Include="..\POETradeHelper.Common\POETradeHelper.Common.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,13 +1,11 @@
-﻿using Moq;
+﻿using System.ComponentModel;
+using System.Threading;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Contract;
 using POETradeHelper.ItemSearch.Controllers;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.ItemSearch.Views;
-using POETradeHelper.PathOfExileTradeApi.Models;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading;
 
 namespace POETradeHelper.ItemSearch.Tests.Controllers
 {
@@ -17,7 +15,6 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
         private Mock<IItemSearchResultOverlayViewModel> viewModelMock;
         private Mock<IViewLocator> viewLocatorMock;
         private Mock<IUserInputEventProvider> userInputEventProviderMock;
-        private Mock<IPathOfExileProcessHelper> pathOfExileProcessHelper;
         private ItemSearchResultOverlayController overlayController;
 
         [SetUp]
@@ -30,8 +27,7 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
                 .Returns(this.viewMock.Object);
 
             this.userInputEventProviderMock = new Mock<IUserInputEventProvider>();
-            this.pathOfExileProcessHelper = new Mock<IPathOfExileProcessHelper>();
-            this.overlayController = new ItemSearchResultOverlayController(this.viewModelMock.Object, this.viewLocatorMock.Object, this.userInputEventProviderMock.Object, this.pathOfExileProcessHelper.Object);
+            this.overlayController = new ItemSearchResultOverlayController(this.viewModelMock.Object, this.viewLocatorMock.Object, this.userInputEventProviderMock.Object);
         }
 
         [Test]
@@ -67,9 +63,6 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
         [Test]
         public void SearchItemEventShouldCallSetListingForItemUnderCursorAsyncOnViewModel()
         {
-            this.pathOfExileProcessHelper.Setup(x => x.IsPathOfExileActiveWindow())
-                .Returns(true);
-
             TriggerSearchItemEvent();
 
             this.viewModelMock.Verify(x => x.SetListingForItemUnderCursorAsync(It.Is<CancellationToken>(c => c != CancellationToken.None)));
@@ -78,29 +71,9 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
         [Test]
         public void SearchItemShouldOpenOverlay()
         {
-            this.pathOfExileProcessHelper.Setup(x => x.IsPathOfExileActiveWindow())
-                .Returns(true);
-
             TriggerSearchItemEvent();
 
             this.viewMock.Verify(x => x.Show());
-        }
-
-        [Test]
-        public void SearchItemShouldNotOpenOverlayIfTradeClientReturnsNull()
-        {
-            TriggerSearchItemEvent();
-
-            this.viewMock.Verify(x => x.Show(), Times.Never);
-        }
-
-        [Test]
-        public void SearchItemShouldDoNothingIfPathOfExileIsNotActiveWindow()
-        {
-            TriggerSearchItemEvent();
-
-            this.viewModelMock.Verify(x => x.SetListingForItemUnderCursorAsync(It.IsAny<CancellationToken>()), Times.Never);
-            this.viewMock.Verify(x => x.Show(), Times.Never);
         }
 
         /// <summary>
@@ -109,12 +82,9 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
         /// property on the event args after such a call would have no effect.
         /// </summary>
         [Test]
-        public void SearchItemShouldSetEventHandledBeforeAnyLogicIfPathOfExileIsActiveWindow()
+        public void SearchItemShouldSetEventHandledBeforeAnyLogic()
         {
             var handledEventArgs = new HandledEventArgs();
-
-            this.pathOfExileProcessHelper.Setup(x => x.IsPathOfExileActiveWindow())
-                .Returns(true);
 
             this.viewModelMock.Setup(x => x.SetListingForItemUnderCursorAsync(It.IsAny<CancellationToken>()))
                 .Callback(() => Assert.IsTrue(handledEventArgs.Handled));

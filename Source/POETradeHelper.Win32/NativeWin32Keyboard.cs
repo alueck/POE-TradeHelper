@@ -1,6 +1,6 @@
-﻿using POETradeHelper.Common.Contract;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using POETradeHelper.Common.Contract;
 
 namespace POETradeHelper.Win32
 {
@@ -10,6 +10,11 @@ namespace POETradeHelper.Win32
         public void SendCopyCommand()
         {
             SendKeys.SendWait("^C");
+        }
+
+        public void SendGoToHideoutCommand()
+        {
+            SendKeys.SendWait("{ENTER}/hideout{ENTER}{ENTER}{UP}{UP}{ESC}");
         }
     }
 }

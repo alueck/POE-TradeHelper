@@ -8,5 +8,7 @@ namespace POETradeHelper.Common.Contract
         event EventHandler<HandledEventArgs> SearchItem;
 
         event EventHandler<HandledEventArgs> HideOverlay;
+
+        event EventHandler<HandledEventArgs> GoToHidehout;
     }
 }

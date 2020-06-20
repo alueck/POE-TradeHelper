@@ -3,5 +3,7 @@
     public interface INativeKeyboard
     {
         void SendCopyCommand();
+
+        void SendGoToHideoutCommand();
     }
 }
