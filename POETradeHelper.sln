@@ -44,7 +44,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CodeCoverage.runsettings = CodeCoverage.runsettings
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.Common.UI.Tests", "Tests\POETradeHelper.Common.UI.Tests\POETradeHelper.Common.UI.Tests.csproj", "{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common.UI.Tests", "Tests\POETradeHelper.Common.UI.Tests\POETradeHelper.Common.UI.Tests.csproj", "{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.QualityOfLife", "Source\POETradeHelper.QualityOfLife\POETradeHelper.QualityOfLife.csproj", "{F9FA9438-76E8-4D45-9F7E-C5C57120F87A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.QualityOfLife.Tests", "POETradeHelper.QualityOfLife.Tests\POETradeHelper.QualityOfLife.Tests.csproj", "{602A0B78-2854-487D-9E38-E6D810D9A1B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +108,14 @@ Global
 		{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9FA9438-76E8-4D45-9F7E-C5C57120F87A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9FA9438-76E8-4D45-9F7E-C5C57120F87A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9FA9438-76E8-4D45-9F7E-C5C57120F87A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9FA9438-76E8-4D45-9F7E-C5C57120F87A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{602A0B78-2854-487D-9E38-E6D810D9A1B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{602A0B78-2854-487D-9E38-E6D810D9A1B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{602A0B78-2854-487D-9E38-E6D810D9A1B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{602A0B78-2854-487D-9E38-E6D810D9A1B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +136,8 @@ Global
 		{77CD7DB4-FD9E-4C65-8B0B-64CA7266354C} = {3629C438-DAEB-4944-9DF4-C31F68A8A579}
 		{05DBBAB5-E8B0-4B5C-85F7-53629FF2745A} = {1DCB4EB6-9563-4F4C-B582-3B52D9E81CAD}
 		{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D} = {3629C438-DAEB-4944-9DF4-C31F68A8A579}
+		{F9FA9438-76E8-4D45-9F7E-C5C57120F87A} = {E89A9F8C-C12A-45E8-8F79-42C7FC7A630F}
+		{602A0B78-2854-487D-9E38-E6D810D9A1B3} = {C49FFB24-3897-4032-A2A9-A28377B75228}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BE843AD8-753C-4B98-A7B5-B8B2F7389681}

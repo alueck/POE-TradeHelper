@@ -1,28 +1,26 @@
-﻿using Avalonia.Controls;
-using POETradeHelper.Common.Contract;
-using POETradeHelper.ItemSearch.Contract.Controllers;
-using POETradeHelper.ItemSearch.ViewModels;
-using POETradeHelper.ItemSearch.Views;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Threading;
+using Avalonia.Controls;
+using POETradeHelper.Common;
+using POETradeHelper.Common.Contract;
+using POETradeHelper.ItemSearch.ViewModels;
+using POETradeHelper.ItemSearch.Views;
 
 namespace POETradeHelper.ItemSearch.Controllers
 {
-    public class ItemSearchResultOverlayController : IItemSearchResultOverlayController, IDisposable
+    public class ItemSearchResultOverlayController : IUserInputEventHandler
     {
         private readonly IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel;
         private readonly IUserInputEventProvider userInputEventProvider;
         private readonly IViewLocator viewLocator;
-        private readonly IPathOfExileProcessHelper pathOfExileProcessHelper;
 
         private CancellationTokenSource searchItemCancellationTokenSource = new CancellationTokenSource();
 
         public ItemSearchResultOverlayController(
             IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel,
             IViewLocator viewLocator,
-            IUserInputEventProvider userInputEventProvider,
-            IPathOfExileProcessHelper pathOfExileProcessHelper)
+            IUserInputEventProvider userInputEventProvider)
         {
             this.itemSearchResultOverlayViewModel = itemSearchResultOverlayViewModel;
             this.viewLocator = viewLocator;
@@ -30,7 +28,6 @@ namespace POETradeHelper.ItemSearch.Controllers
 
             this.userInputEventProvider.SearchItem += UserInputEventProvider_SearchItem;
             this.userInputEventProvider.HideOverlay += UserInputEventProvider_HideOverlay;
-            this.pathOfExileProcessHelper = pathOfExileProcessHelper;
         }
 
         private IItemSearchResultOverlayView view;
@@ -54,11 +51,6 @@ namespace POETradeHelper.ItemSearch.Controllers
 
         private async void UserInputEventProvider_SearchItem(object sender, HandledEventArgs e)
         {
-            if (!this.pathOfExileProcessHelper.IsPathOfExileActiveWindow())
-            {
-                return;
-            }
-
             e.Handled = true;
 
             this.CancelSearchItemToken();

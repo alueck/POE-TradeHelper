@@ -1,17 +1,4 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using POETradeHelper.Common;
-using POETradeHelper.Common.Extensions;
-using POETradeHelper.ItemSearch.Contract.Configuration;
-using Serilog;
-using Serilog.Exceptions;
-using Splat;
-using Splat.Autofac;
-using Splat.Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -19,6 +6,20 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using POETradeHelper.Common;
+using POETradeHelper.Common.Contract;
+using POETradeHelper.Common.Extensions;
+using POETradeHelper.ItemSearch.Contract.Configuration;
+using Serilog;
+using Serilog.Exceptions;
+using Splat;
+using Splat.Autofac;
+using Splat.Microsoft.Extensions.Logging;
 using WindowsHook;
 
 namespace POETradeHelper
@@ -47,20 +48,22 @@ namespace POETradeHelper
 
             container.Populate(serviceCollection);
 
+            container.RegisterInstance(Hook.GlobalEvents());
+
             IEnumerable<Assembly> assemblies = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "POETradeHelper*.dll").Select(Assembly.LoadFrom);
+
+            var singletonTypes = new List<Type> { typeof(IInitializable), typeof(IUserInputEventHandler), typeof(IUserInputEventProvider) };
 
             container.RegisterAssemblyTypes(assemblies.ToArray())
                 .PublicOnly()
-                .Where(t => !typeof(IInitializable).IsAssignableFrom(t))
+                .Where(t => !singletonTypes.Any(singletonType => singletonType.IsAssignableFrom(t)))
                 .AsImplementedInterfaces();
 
             container.RegisterAssemblyTypes(assemblies.ToArray())
                     .PublicOnly()
-                    .Where(t => typeof(IInitializable).IsAssignableFrom(t))
+                    .Where(t => singletonTypes.Any(singletonType => singletonType.IsAssignableFrom(t)))
                     .AsImplementedInterfaces()
                     .SingleInstance();
-
-            container.RegisterInstance(Hook.GlobalEvents());
 
             container.UseAutofacDependencyResolver();
 

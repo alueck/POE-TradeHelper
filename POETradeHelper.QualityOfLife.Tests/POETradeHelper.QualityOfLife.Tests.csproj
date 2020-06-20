@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -13,12 +13,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="[16.2.0]" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Source\POETradeHelper.Common\POETradeHelper.Common.csproj" />
-    <ProjectReference Include="..\..\Source\POETradeHelper.ItemSearch\POETradeHelper.ItemSearch.csproj" />
+    <ProjectReference Include="..\Source\POETradeHelper.QualityOfLife\POETradeHelper.QualityOfLife.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,20 +1,20 @@
-﻿using Avalonia;
+﻿using System.Collections.Generic;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.Options;
+using POETradeHelper.Common;
 using POETradeHelper.Common.UI;
-using POETradeHelper.ItemSearch.Contract.Controllers;
 using POETradeHelper.ViewModels;
 using POETradeHelper.Views;
 using Splat;
-using System.Collections.Generic;
 using Application = Avalonia.Application;
 
 namespace POETradeHelper
 {
     public class App : Application
     {
-        private IItemSearchResultOverlayController itemSearchResultOverlayController;
+        private IEnumerable<IUserInputEventHandler> userInputEventHandlers;
 
         public override void Initialize()
         {
@@ -33,7 +33,9 @@ namespace POETradeHelper
             }
 
             base.OnFrameworkInitializationCompleted();
-            itemSearchResultOverlayController = Locator.Current.GetService<IItemSearchResultOverlayController>();
+
+            // global key hook does not work with e.g. auto activation in Bootstrapper, so we instantiate our user input event handlers here
+            this.userInputEventHandlers = Locator.Current.GetServices<IUserInputEventHandler>();
         }
     }
 }
