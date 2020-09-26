@@ -5,11 +5,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public class ItemToExchangeQueryRequestMapper : IItemSearchQueryRequestMapper
     {
-        private IStaticItemDataService staticItemDataService;
+        private IStaticDataService staticItemDataService;
 
-        public ItemToExchangeQueryRequestMapper(IStaticItemDataService staticItemDataService)
+        public ItemToExchangeQueryRequestMapper(IStaticDataService staticDataService)
         {
-            this.staticItemDataService = staticItemDataService;
+            this.staticItemDataService = staticDataService;
         }
 
         public bool CanMap(Item item)

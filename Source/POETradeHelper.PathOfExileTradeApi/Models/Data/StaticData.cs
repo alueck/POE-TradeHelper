@@ -1,6 +1,6 @@
 ﻿namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    internal class StaticData
+    public class StaticData
     {
         public string Id { get; set; }
 

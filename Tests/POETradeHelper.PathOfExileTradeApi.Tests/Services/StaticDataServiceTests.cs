@@ -1,4 +1,10 @@
-﻿using Moq;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -6,19 +12,13 @@ using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
-    public class StaticItemDataServiceTests
+    public class StaticDataServiceTests
     {
         private Mock<IPoeTradeApiJsonSerializer> poeTradeApiJsonSerializerMock;
-        private StaticItemDataService staticItemDataService;
+        private StaticDataService staticDataService;
         private Mock<IHttpClientWrapper> httpClientWrapperMock;
 
         [SetUp]
@@ -37,13 +37,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.poeTradeApiJsonSerializerMock = new Mock<IPoeTradeApiJsonSerializer>();
 
-            this.staticItemDataService = new StaticItemDataService(httpClientFactoryWrapperMock.Object, this.poeTradeApiJsonSerializerMock.Object);
+            this.staticDataService = new StaticDataService(httpClientFactoryWrapperMock.Object, this.poeTradeApiJsonSerializerMock.Object);
         }
 
         [Test]
         public async Task OnInitShouldCallGetAsyncOnHttpClientWrapper()
         {
-            await this.staticItemDataService.OnInitAsync();
+            await this.staticDataService.OnInitAsync();
 
             this.httpClientWrapperMock.Verify(x => x.GetAsync(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiStaticDataEndpoint, It.IsAny<CancellationToken>()));
         }
@@ -59,7 +59,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     Content = new StringContent(content)
                 });
 
-            await this.staticItemDataService.OnInitAsync();
+            await this.staticDataService.OnInitAsync();
 
             this.poeTradeApiJsonSerializerMock.Verify(x => x.Deserialize<QueryResult<Data<StaticData>>>(content));
         }
@@ -73,7 +73,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     StatusCode = HttpStatusCode.BadRequest
                 });
 
-            AsyncTestDelegate testDelegate = async () => await this.staticItemDataService.OnInitAsync();
+            AsyncTestDelegate testDelegate = async () => await this.staticDataService.OnInitAsync();
 
             var exception = Assert.CatchAsync<PoeTradeApiCommunicationException>(testDelegate);
             Assert.That(exception.Message, Contains.Substring(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiStaticDataEndpoint));
@@ -105,9 +105,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     }
                 });
 
-            await this.staticItemDataService.OnInitAsync();
+            await this.staticDataService.OnInitAsync();
 
-            string result = this.staticItemDataService.GetId(item);
+            string result = this.staticDataService.GetId(item);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -115,7 +115,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [TestCaseSource(nameof(UnsupportedItems))]
         public void GetIdShouldThrowNotSupportedExceptionIfItemIsNotSupported(Item unsupportedItem)
         {
-            TestDelegate testDelegate = () => this.staticItemDataService.GetId(unsupportedItem);
+            TestDelegate testDelegate = () => this.staticDataService.GetId(unsupportedItem);
 
             var exception = Assert.Catch<NotSupportedException>(testDelegate);
 
@@ -145,9 +145,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     }
                 });
 
-            await this.staticItemDataService.OnInitAsync();
+            await this.staticDataService.OnInitAsync();
 
-            string result = this.staticItemDataService.GetText(id);
+            string result = this.staticDataService.GetText(id);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -161,9 +161,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     Result = new List<Data<StaticData>>()
                 });
 
-            await this.staticItemDataService.OnInitAsync();
+            await this.staticDataService.OnInitAsync();
 
-            TestDelegate testDelegate = () => this.staticItemDataService.GetText("abc");
+            TestDelegate testDelegate = () => this.staticDataService.GetText("abc");
 
             Assert.Throws<KeyNotFoundException>(testDelegate);
         }
@@ -192,9 +192,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     }
                 });
 
-            await this.staticItemDataService.OnInitAsync();
+            await this.staticDataService.OnInitAsync();
 
-            Uri result = this.staticItemDataService.GetImageUrl(id);
+            Uri result = this.staticDataService.GetImageUrl(id);
 
             Assert.That(result.ToString(), Is.EqualTo(expected));
         }
@@ -208,9 +208,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     Result = new List<Data<StaticData>>()
                 });
 
-            await this.staticItemDataService.OnInitAsync();
+            await this.staticDataService.OnInitAsync();
 
-            TestDelegate testDelegate = () => this.staticItemDataService.GetImageUrl("abc");
+            TestDelegate testDelegate = () => this.staticDataService.GetImageUrl("abc");
 
             Assert.Throws<KeyNotFoundException>(testDelegate);
         }

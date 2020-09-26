@@ -106,6 +106,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /data/items.
+        /// </summary>
+        public static string PoeTradeApiItemDataEndpoint {
+            get {
+                return ResourceManager.GetString("PoeTradeApiItemDataEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /data/leagues.
         /// </summary>
         public static string PoeTradeApiLeaguesEndpoint {
@@ -147,6 +156,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         public static string PoeTradeBaseUrl {
             get {
                 return ResourceManager.GetString("PoeTradeBaseUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
     }

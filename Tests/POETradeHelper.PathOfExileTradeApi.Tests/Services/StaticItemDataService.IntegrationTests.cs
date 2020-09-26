@@ -1,11 +1,11 @@
-﻿using Moq;
+﻿using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PathOfExileTradeApi.Tests.Properties;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
@@ -15,7 +15,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
     [Category("Integration")]
     public class StaticItemDataServiceIntegrationTests
     {
-        private StaticItemDataService staticItemDataService;
+        private StaticDataService staticDataService;
         private Mock<IHttpClientWrapper> httpClientWrapperMock;
 
         [SetUp]
@@ -26,7 +26,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             httpClientFactoryWrapperMock.Setup(x => x.CreateClient())
                 .Returns(this.httpClientWrapperMock.Object);
 
-            this.staticItemDataService = new StaticItemDataService(httpClientFactoryWrapperMock.Object, new PoeTradeApiJsonSerializer(new JsonSerializerWrapper()));
+            this.staticDataService = new StaticDataService(httpClientFactoryWrapperMock.Object, new PoeTradeApiJsonSerializer(new JsonSerializerWrapper()));
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     Content = new StringContent(Resources.StaticDataJson)
                 });
 
-            await this.staticItemDataService.OnInitAsync();
+            await this.staticDataService.OnInitAsync();
         }
     }
 }

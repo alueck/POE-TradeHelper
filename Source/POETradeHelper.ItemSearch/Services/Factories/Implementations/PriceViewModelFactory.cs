@@ -1,19 +1,19 @@
-﻿using POETradeHelper.Common.UI.Services;
+﻿using System.Threading.Tasks;
+using POETradeHelper.Common.UI.Services;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
     public class PriceViewModelFactory : IPriceViewModelFactory
     {
-        private readonly IStaticItemDataService staticItemDataService;
+        private readonly IStaticDataService staticDataService;
         private readonly IImageService imageService;
 
-        public PriceViewModelFactory(IStaticItemDataService staticItemDataService, IImageService imageService)
+        public PriceViewModelFactory(IStaticDataService staticItemDataService, IImageService imageService)
         {
-            this.staticItemDataService = staticItemDataService;
+            this.staticDataService = staticItemDataService;
             this.imageService = imageService;
         }
 
@@ -23,8 +23,8 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 ? new PriceViewModel
                 {
                     Amount = price.Amount.ToString("0.##").PadLeft(6),
-                    Currency = this.staticItemDataService.GetText(price.Currency),
-                    Image = await this.imageService.GetImageAsync(this.staticItemDataService.GetImageUrl(price.Currency))
+                    Currency = this.staticDataService.GetText(price.Currency),
+                    Image = await this.imageService.GetImageAsync(this.staticDataService.GetImageUrl(price.Currency))
                 }
                 : null;
         }

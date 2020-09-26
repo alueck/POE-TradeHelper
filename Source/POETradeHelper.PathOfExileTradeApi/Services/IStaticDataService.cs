@@ -3,7 +3,7 @@ using System;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
-    public interface IStaticItemDataService
+    public interface IStaticDataService
     {
         /// <summary>
         /// Returns the id for the given <paramref name="item"/>.

@@ -1,8 +1,9 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using System.Linq;
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System.Linq;
+using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
@@ -10,10 +11,12 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
     {
         private const int NameLineIndex = 1;
         private ISocketsParser socketsParser;
+        private readonly IItemDataService itemDataService;
 
-        public EquippableItemParser(ISocketsParser socketsParser, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
+        public EquippableItemParser(ISocketsParser socketsParser, IItemDataService itemDataService, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
         {
             this.socketsParser = socketsParser;
+            this.itemDataService = itemDataService;
         }
 
         public override bool CanParse(string[] itemStringLines)
@@ -54,7 +57,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 Sockets = this.GetSockets(itemStringLines)
             };
 
-            SetNameAndType(equippableItem, itemStringLines);
+            this.SetNameAndType(equippableItem, itemStringLines);
 
             return equippableItem;
         }
@@ -76,25 +79,34 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return influenceType ?? InfluenceType.None;
         }
 
-        private static void SetNameAndType(EquippableItem equippableItem, string[] itemStringLines)
+        private void SetNameAndType(EquippableItem equippableItem, string[] itemStringLines)
         {
             int typeLineIndex = HasName(equippableItem) ? NameLineIndex + 1 : NameLineIndex;
 
             equippableItem.Name = itemStringLines[NameLineIndex];
-            equippableItem.Type = GetTypeWithoutPrefixes(itemStringLines[typeLineIndex]);
+            equippableItem.Type = this.GetTypeWithoutPrefixes(equippableItem, itemStringLines[typeLineIndex]);
         }
 
         private static bool HasName(EquippableItem equippableItem)
         {
-            return equippableItem.IsIdentified && equippableItem.Rarity != ItemRarity.Normal;
+            return equippableItem.IsIdentified && equippableItem.Rarity > ItemRarity.Magic;
         }
 
-        private static string GetTypeWithoutPrefixes(string type)
+        private string GetTypeWithoutPrefixes(EquippableItem item, string type)
         {
-            return type
-                .Replace(Contract.Properties.Resources.SuperiorPrefix, "")
-                .Replace(Contract.Properties.Resources.SynthesisedKeyword, "")
-                .Trim();
+            if (item.IsIdentified && item.Rarity == ItemRarity.Magic)
+            {
+                type = this.itemDataService.GetType(type);
+            }
+            else
+            {
+                type = type
+                        .Replace(Contract.Properties.Resources.SuperiorPrefix, "")
+                        .Replace(Contract.Properties.Resources.SynthesisedKeyword, "")
+                        .Trim();
+            }
+
+            return type;
         }
     }
 }
