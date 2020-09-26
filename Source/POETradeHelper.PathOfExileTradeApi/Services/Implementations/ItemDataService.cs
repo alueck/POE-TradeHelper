@@ -5,7 +5,7 @@ using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
-    public class ItemDataService : DataServiceBase<ItemData>
+    public class ItemDataService : DataServiceBase<ItemData>, IItemDataService
     {
         public ItemDataService(IHttpClientFactoryWrapper httpClientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer)
             : base(Resources.PoeTradeApiItemDataEndpoint, httpClientFactory, poeTradeApiJsonSerializer)

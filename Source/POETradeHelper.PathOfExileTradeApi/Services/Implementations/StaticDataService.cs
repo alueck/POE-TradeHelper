@@ -10,7 +10,7 @@ using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
-    public class StaticDataService : DataServiceBase<StaticData>
+    public class StaticDataService : DataServiceBase<StaticData>, IStaticDataService
     {
         private IDictionary<string, StaticData> idToStaticDataMappings;
 
