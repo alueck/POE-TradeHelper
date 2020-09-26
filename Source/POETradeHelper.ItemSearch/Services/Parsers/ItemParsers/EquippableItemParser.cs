@@ -94,14 +94,16 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private string GetTypeWithoutPrefixes(EquippableItem item, string type)
         {
-            type = type
-                .Replace(Contract.Properties.Resources.SuperiorPrefix, "")
-                .Replace(Contract.Properties.Resources.SynthesisedKeyword, "")
-                .Trim();
-
             if (item.IsIdentified && item.Rarity == ItemRarity.Magic)
             {
-                type = this.itemDataService.GetType(item.Name);
+                type = this.itemDataService.GetType(item.Type);
+            }
+            else
+            {
+                type = type
+                        .Replace(Contract.Properties.Resources.SuperiorPrefix, "")
+                        .Replace(Contract.Properties.Resources.SynthesisedKeyword, "")
+                        .Trim();
             }
 
             return type;
