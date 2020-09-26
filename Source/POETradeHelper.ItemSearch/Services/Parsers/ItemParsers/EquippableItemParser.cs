@@ -96,7 +96,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         {
             if (item.IsIdentified && item.Rarity == ItemRarity.Magic)
             {
-                type = this.itemDataService.GetType(item.Type);
+                type = this.itemDataService.GetType(type);
             }
             else
             {
