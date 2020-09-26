@@ -132,6 +132,9 @@
   <data name="PoeTradeApiFetchEndpoint" xml:space="preserve">
     <value>/fetch</value>
   </data>
+  <data name="PoeTradeApiItemDataEndpoint" xml:space="preserve">
+    <value>/data/items</value>
+  </data>
   <data name="PoeTradeApiLeaguesEndpoint" xml:space="preserve">
     <value>/data/leagues</value>
   </data>
@@ -146,5 +149,8 @@
   </data>
   <data name="PoeTradeBaseUrl" xml:space="preserve">
     <value>https://www.pathofexile.com/trade</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
 </root>

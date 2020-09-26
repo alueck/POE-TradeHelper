@@ -1,4 +1,7 @@
-﻿using Avalonia;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Utilities;
@@ -9,24 +12,21 @@ using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
     public class PriceViewModelFactoryTests
     {
-        private Mock<IStaticItemDataService> staticItemDataServiceMock;
+        private Mock<IStaticDataService> staticDataServiceMock;
         private Mock<IImageService> imageServiceMock;
         private PriceViewModelFactory priceViewModelFactory;
 
         [SetUp]
         public void Setup()
         {
-            this.staticItemDataServiceMock = new Mock<IStaticItemDataService>();
+            this.staticDataServiceMock = new Mock<IStaticDataService>();
             this.imageServiceMock = new Mock<IImageService>();
-            this.priceViewModelFactory = new PriceViewModelFactory(this.staticItemDataServiceMock.Object, this.imageServiceMock.Object);
+            this.priceViewModelFactory = new PriceViewModelFactory(this.staticDataServiceMock.Object, this.imageServiceMock.Object);
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
             await this.priceViewModelFactory.CreateAsync(price);
 
-            this.staticItemDataServiceMock.Verify(x => x.GetText(price.Currency));
+            this.staticDataServiceMock.Verify(x => x.GetText(price.Currency));
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             const string expected = "Orb of Alchemy";
             var price = new Price();
 
-            this.staticItemDataServiceMock.Setup(x => x.GetText(It.IsAny<string>()))
+            this.staticDataServiceMock.Setup(x => x.GetText(It.IsAny<string>()))
                 .Returns(expected);
 
             PriceViewModel result = await this.priceViewModelFactory.CreateAsync(price);
@@ -90,7 +90,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
             await this.priceViewModelFactory.CreateAsync(price);
 
-            this.staticItemDataServiceMock.Verify(x => x.GetImageUrl(price.Currency));
+            this.staticDataServiceMock.Verify(x => x.GetImageUrl(price.Currency));
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Uri expected = new Uri("http://www.google.de");
             var price = new Price();
 
-            this.staticItemDataServiceMock.Setup(x => x.GetImageUrl(It.IsAny<string>()))
+            this.staticDataServiceMock.Setup(x => x.GetImageUrl(It.IsAny<string>()))
                 .Returns(expected);
 
             await this.priceViewModelFactory.CreateAsync(price);

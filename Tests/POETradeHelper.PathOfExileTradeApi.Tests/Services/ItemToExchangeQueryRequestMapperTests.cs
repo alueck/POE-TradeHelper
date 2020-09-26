@@ -1,22 +1,22 @@
-﻿using Moq;
+﻿using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System.Collections.Generic;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class ItemToExchangeQueryRequestMapperTests
     {
-        private Mock<IStaticItemDataService> staticItemDataServiceMock;
+        private Mock<IStaticDataService> staticDataServiceMock;
         private ItemToExchangeQueryRequestMapper itemToExchangeQueryRequestMapper;
 
         [SetUp]
         public void Setup()
         {
-            this.staticItemDataServiceMock = new Mock<IStaticItemDataService>();
-            this.itemToExchangeQueryRequestMapper = new ItemToExchangeQueryRequestMapper(this.staticItemDataServiceMock.Object);
+            this.staticDataServiceMock = new Mock<IStaticDataService>();
+            this.itemToExchangeQueryRequestMapper = new ItemToExchangeQueryRequestMapper(this.staticDataServiceMock.Object);
         }
 
         [TestCaseSource(nameof(SupportedItems))]
@@ -42,7 +42,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
-            this.staticItemDataServiceMock.Verify(x => x.GetId(item));
+            this.staticDataServiceMock.Verify(x => x.GetId(item));
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             const string expected = "item-id";
             var item = new CurrencyItem();
 
-            this.staticItemDataServiceMock.Setup(x => x.GetId(It.IsAny<Item>()))
+            this.staticDataServiceMock.Setup(x => x.GetId(It.IsAny<Item>()))
                 .Returns(expected);
 
             var result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item) as ExchangeQueryRequest;
