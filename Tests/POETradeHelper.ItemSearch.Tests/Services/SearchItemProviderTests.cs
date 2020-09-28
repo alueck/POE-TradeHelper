@@ -1,11 +1,11 @@
-﻿using Moq;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Tests.Services
 {
@@ -34,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         }
 
         [Test]
-        public async Task GetItemFromUnderCursorAsyncShouldCallCanParseOnItemParser()
+        public async Task GetItemFromUnderCursorAsyncShouldCallIsParseableOnItemParser()
         {
             string stringToParse = "item string to parse";
             this.copyCommandMock.Setup(x => x.ExecuteAsync(It.IsAny<CancellationToken>()))
@@ -42,17 +42,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services
 
             await this.searchItemProvider.GetItemFromUnderCursorAsync();
 
-            this.itemParserAggregatorMock.Verify(x => x.CanParse(stringToParse));
+            this.itemParserAggregatorMock.Verify(x => x.IsParseable(stringToParse));
         }
 
         [Test]
-        public async Task GetItemFromUnderCursorAsyncShouldCallParseOnItemParserIfCanParseReturnsTrue()
+        public async Task GetItemFromUnderCursorAsyncShouldCallParseOnItemParserIfIsParseableReturnsTrue()
 
         {
             string stringToParse = "item string to parse";
             this.copyCommandMock.Setup(x => x.ExecuteAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(stringToParse);
-            this.itemParserAggregatorMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.itemParserAggregatorMock.Setup(x => x.IsParseable(It.IsAny<string>()))
                 .Returns(true);
 
             await searchItemProvider.GetItemFromUnderCursorAsync();
@@ -61,7 +61,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         }
 
         [Test]
-        public async Task GetItemFromUnderCursorAsyncShouldNotCallParseOnItemParserIfCanParseReturnsFalse()
+        public async Task GetItemFromUnderCursorAsyncShouldNotCallParseOnItemParserIfIsParseableReturnsFalse()
 
         {
             await searchItemProvider.GetItemFromUnderCursorAsync();
@@ -73,7 +73,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services
         public async Task GetItemFromUnderCursorAsyncShouldReturnParseResult()
         {
             var expected = new EquippableItem(ItemRarity.Normal) { Name = "TestItem" };
-            this.itemParserAggregatorMock.Setup(x => x.CanParse(It.IsAny<string>()))
+            this.itemParserAggregatorMock.Setup(x => x.IsParseable(It.IsAny<string>()))
                 .Returns(true);
             this.itemParserAggregatorMock.Setup(x => x.Parse(It.IsAny<string>()))
                 .Returns(expected);

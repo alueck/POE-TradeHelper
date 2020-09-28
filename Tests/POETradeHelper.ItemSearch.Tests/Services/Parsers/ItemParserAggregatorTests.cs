@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Exceptions;
 using POETradeHelper.ItemSearch.Services.Parsers;
@@ -27,46 +26,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
-        [Test]
-        public void CanParseShouldReturnFalseIfNoMatchingParserIsFound()
-        {
-            bool result = this.itemParserAggregator.CanParse("");
-
-            Assert.IsFalse(result);
-        }
-
-        [Test]
-        public void CanParseShouldReturnTrueIfMatchingParserIsFound()
-        {
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
-                .Returns(true);
-
-            bool result = this.itemParserAggregator.CanParse(Resources.RarityDescriptor);
-
-            Assert.IsTrue(result);
-        }
-
-        [Test]
-        public void CanParseShouldReturnFalseIfMoreThanOneMatchingParserIsFound()
-        {
-            this.gemItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
-                .Returns(true);
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
-                .Returns(true);
-
-            bool result = this.itemParserAggregator.CanParse("");
-
-            Assert.IsFalse(result);
-        }
-
         [TestCase("incorrect item string", false)]
         [TestCase("Rarity: Magic", true)]
-        public void CanParseShouldReturnResultBasedOnRarityLineExistence(string itemString, bool expected)
+        public void IsParseableShouldReturnResultBasedOnRarityLineExistence(string itemString, bool expected)
         {
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
-                .Returns(true);
-
-            bool result = this.itemParserAggregator.CanParse(itemString);
+            bool result = this.itemParserAggregator.IsParseable(itemString);
 
             Assert.That(result, Is.EqualTo(expected));
         }
