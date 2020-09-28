@@ -99,6 +99,21 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.IsFalse(result);
         }
 
+        [TestCase("Kitava's Teachings")]
+        [TestCase(null)]
+        public void CanParseShouldReturnFalseForJewelItem(string name)
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                                .WithItemLevel(1)
+                                .WithName(name)
+                                .WithType(Resources.JewelKeyword)
+                                .BuildLines();
+
+            bool result = this.equippableItemParser.CanParse(itemStringLines);
+
+            Assert.IsFalse(result);
+        }
+
         [TestCase(ItemRarity.Normal)]
         [TestCase(ItemRarity.Magic)]
         [TestCase(ItemRarity.Rare)]

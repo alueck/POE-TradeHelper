@@ -6,6 +6,6 @@ namespace POETradeHelper.ItemSearch.Contract.Services.Parsers
     {
         Item Parse(string itemString);
 
-        bool CanParse(string itemString);
+        bool IsParseable(string itemString);
     }
 }

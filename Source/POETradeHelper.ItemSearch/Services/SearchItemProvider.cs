@@ -21,7 +21,7 @@ namespace POETradeHelper.ItemSearch.Services
             Item item = null;
             string itemString = await this.copyCommand.ExecuteAsync(cancellationToken);
 
-            if (!cancellationToken.IsCancellationRequested && this.itemParserAggregator.CanParse(itemString))
+            if (!cancellationToken.IsCancellationRequested && this.itemParserAggregator.IsParseable(itemString))
             {
                 item = this.itemParserAggregator.Parse(itemString);
             }
