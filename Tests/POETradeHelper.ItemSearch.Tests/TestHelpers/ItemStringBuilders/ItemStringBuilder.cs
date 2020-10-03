@@ -1,12 +1,12 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 {
@@ -80,8 +80,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             this.PrintItemStats(stringBuilder, StatCategory.Enchant);
             this.PrintItemStats(stringBuilder, StatCategory.Implicit);
             this.PrintItemStats(stringBuilder, StatCategory.Monster);
-            this.PrintItemStats(stringBuilder, StatCategory.Explicit);
-            this.PrintItemStats(stringBuilder, StatCategory.Crafted, false);
+            this.PrintItemStats(stringBuilder, StatCategory.Fractured, StatCategory.Explicit, StatCategory.Crafted);
 
             foreach (var description in this.Descriptions)
             {
@@ -99,13 +98,26 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             return stringBuilder.ToString();
         }
 
-        private void PrintItemStats(StringBuilder stringBuilder, StatCategory statCategory, bool printPropertyGroupSeparator = true)
+        private void PrintItemStats(StringBuilder stringBuilder, params StatCategory[] statCategories)
         {
-            var implicitItemStats = this.ItemStats.Where(x => x.StatCategory == statCategory);
-            if (implicitItemStats.Any())
+            var groupedItemStats = this.ItemStats.GroupBy(x => x.StatCategory);
+
+            var sb = new StringBuilder();
+
+            foreach (var statCategory in statCategories)
+            {
+                var itemStats = groupedItemStats.FirstOrDefault(x => x.Key == statCategory);
+
+                if (itemStats != null)
+                {
+                    sb.AppendLine(string.Join(Environment.NewLine, itemStats.Select(x => x.Text)));
+                }
+            }
+
+            if (sb.Length > 0)
             {
                 stringBuilder.AppendLine(ParserConstants.PropertyGroupSeparator)
-                             .AppendLine(string.Join(Environment.NewLine, implicitItemStats.Select(x => x.Text)));
+                             .AppendLine(sb.ToString());
             }
         }
     }

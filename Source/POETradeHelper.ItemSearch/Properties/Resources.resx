@@ -144,6 +144,9 @@
   <data name="FilterCategory_Explicit" xml:space="preserve">
     <value>Explicit</value>
   </data>
+  <data name="FilterCategory_Fractured" xml:space="preserve">
+    <value>Fractured</value>
+  </data>
   <data name="FilterCategory_Implicit" xml:space="preserve">
     <value>Implicit</value>
   </data>

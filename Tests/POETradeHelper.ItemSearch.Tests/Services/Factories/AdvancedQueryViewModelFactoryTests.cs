@@ -1,13 +1,13 @@
-﻿using Moq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
@@ -63,6 +63,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         }
 
         [TestCase(StatCategory.Enchant)]
+        [TestCase(StatCategory.Fractured)]
         [TestCase(StatCategory.Implicit)]
         [TestCase(StatCategory.Explicit)]
         [TestCase(StatCategory.Crafted)]
@@ -168,6 +169,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             get
             {
                 yield return new TestCaseData(StatCategory.Enchant, (GetFilterViewModels)(x => x.EnchantedItemStatFilters));
+                yield return new TestCaseData(StatCategory.Fractured, (GetFilterViewModels)(x => x.FracturedItemStatFilters));
                 yield return new TestCaseData(StatCategory.Implicit, (GetFilterViewModels)(x => x.ImplicitItemStatFilters));
                 yield return new TestCaseData(StatCategory.Explicit, (GetFilterViewModels)(x => x.ExplicitItemStatFilters));
                 yield return new TestCaseData(StatCategory.Crafted, (GetFilterViewModels)(x => x.CraftedItemStatFilters));

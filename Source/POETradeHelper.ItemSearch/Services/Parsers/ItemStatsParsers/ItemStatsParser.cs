@@ -1,11 +1,11 @@
-﻿using DynamicData;
+﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using DynamicData;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
@@ -42,7 +42,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
             if (!TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out result)
                 && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
-                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result))
+                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result)
+                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Fractured, out result))
             {
                 result = new ItemStat(StatCategory.Unknown)
                 {

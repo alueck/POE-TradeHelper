@@ -1,12 +1,13 @@
-﻿using POETradeHelper.PathOfExileTradeApi.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using POETradeHelper.PathOfExileTradeApi.Models;
 
 namespace POETradeHelper.ItemSearch.ViewModels
 {
     public class AdvancedQueryViewModel
     {
         public IList<StatFilterViewModel> EnchantedItemStatFilters { get; } = new List<StatFilterViewModel>();
+        public IList<StatFilterViewModel> FracturedItemStatFilters { get; } = new List<StatFilterViewModel>();
         public IList<StatFilterViewModel> ImplicitItemStatFilters { get; } = new List<StatFilterViewModel>();
         public IList<StatFilterViewModel> ExplicitItemStatFilters { get; } = new List<StatFilterViewModel>();
         public IList<StatFilterViewModel> CraftedItemStatFilters { get; } = new List<StatFilterViewModel>();
@@ -15,6 +16,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
         public IList<FilterViewModelBase> AdditionalFilters { get; } = new List<FilterViewModelBase>();
 
         public IEnumerable<FilterViewModelBase> AllFilters => this.EnchantedItemStatFilters
+            .Concat(this.FracturedItemStatFilters)
             .Concat(this.ImplicitItemStatFilters)
             .Concat(this.ExplicitItemStatFilters)
             .Concat(this.CraftedItemStatFilters)

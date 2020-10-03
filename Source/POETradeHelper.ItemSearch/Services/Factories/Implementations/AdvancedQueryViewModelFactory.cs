@@ -1,9 +1,9 @@
-﻿using DynamicData;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DynamicData;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -31,6 +31,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             if (result.IsEnabled && item is ItemWithStats itemWithStats && itemWithStats.Stats != null)
             {
                 result.EnchantedItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.EnchantedStats, searchQueryRequest));
+                result.FracturedItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.FracturedStats, searchQueryRequest));
                 result.ImplicitItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.ImplicitStats, searchQueryRequest));
                 result.ExplicitItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.ExplicitStats, searchQueryRequest));
                 result.CraftedItemStatFilters.AddRange(this.CreateFilterViewModels(itemWithStats.Stats.CraftedStats, searchQueryRequest));

@@ -171,6 +171,12 @@
                 Items="{Binding AdvancedQuery.EnchantedItemStatFilters}" />
 
               <localControls:Filters
+                Grid.Row="0"
+                Name="FracturedItemStatFilters"
+                Header="{x:Static resources:Resources.FilterCategory_Fractured}"
+                Items="{Binding AdvancedQuery.FracturedItemStatFilters}" />
+
+              <localControls:Filters
                 Grid.Row="1"
                 Name="ImplicitItemStatFilters"
                 Header="{x:Static resources:Resources.FilterCategory_Implicit}"

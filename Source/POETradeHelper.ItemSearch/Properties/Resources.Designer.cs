@@ -142,6 +142,15 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fractured.
+        /// </summary>
+        public static string FilterCategory_Fractured {
+            get {
+                return ResourceManager.GetString("FilterCategory_Fractured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Implicit.
         /// </summary>
         public static string FilterCategory_Implicit {
