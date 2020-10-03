@@ -15,6 +15,8 @@ namespace POETradeHelper.ItemSearch.Contract.Models
 
         public IReadOnlyList<ItemStat> EnchantedStats => this.AllStats.Where(s => s.StatCategory == StatCategory.Enchant).ToList();
 
+        public IReadOnlyList<ItemStat> FracturedStats => this.AllStats.Where(s => s.StatCategory == StatCategory.Fractured).ToList();
+
         public IReadOnlyList<ItemStat> MonsterStats => this.AllStats.Where(s => s.StatCategory == StatCategory.Monster).ToList();
 
         public IReadOnlyList<ItemStat> PseudoStats => this.AllStats.Where(s => s.StatCategory == StatCategory.Pseudo).ToList();

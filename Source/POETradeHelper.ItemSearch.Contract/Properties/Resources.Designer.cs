@@ -376,6 +376,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fractured.
+        /// </summary>
+        public static string StatCategoryFractured {
+            get {
+                return ResourceManager.GetString("StatCategoryFractured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Implicit.
         /// </summary>
         public static string StatCategoryImplicit {

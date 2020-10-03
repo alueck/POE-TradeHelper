@@ -1,5 +1,5 @@
-﻿using POETradeHelper.ItemSearch.Contract.Properties;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using POETradeHelper.ItemSearch.Contract.Properties;
 
 namespace POETradeHelper.ItemSearch.Contract
 {
@@ -21,6 +21,9 @@ namespace POETradeHelper.ItemSearch.Contract
 
         [Display(Name = nameof(Resources.StatCategoryCrafted), ResourceType = typeof(Resources))]
         Crafted,
+
+        [Display(Name = nameof(Resources.StatCategoryFractured), ResourceType = typeof(Resources))]
+        Fractured,
 
         [Display(Name = nameof(Resources.StatCategoryMonster), ResourceType = typeof(Resources))]
         Monster

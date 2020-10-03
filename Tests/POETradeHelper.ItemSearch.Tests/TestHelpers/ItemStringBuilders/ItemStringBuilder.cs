@@ -1,12 +1,12 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 {
@@ -79,6 +79,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 
             this.PrintItemStats(stringBuilder, StatCategory.Enchant);
             this.PrintItemStats(stringBuilder, StatCategory.Implicit);
+            this.PrintItemStats(stringBuilder, StatCategory.Fractured);
             this.PrintItemStats(stringBuilder, StatCategory.Monster);
             this.PrintItemStats(stringBuilder, StatCategory.Explicit);
             this.PrintItemStats(stringBuilder, StatCategory.Crafted, false);
@@ -104,7 +105,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             var implicitItemStats = this.ItemStats.Where(x => x.StatCategory == statCategory);
             if (implicitItemStats.Any())
             {
-                stringBuilder.AppendLine(ParserConstants.PropertyGroupSeparator)
+                stringBuilder.AppendLine(ParserConstants.PropertyGroupSeparator, () => printPropertyGroupSeparator)
                              .AppendLine(string.Join(Environment.NewLine, implicitItemStats.Select(x => x.Text)));
             }
         }

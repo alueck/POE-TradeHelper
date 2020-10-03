@@ -246,4 +246,7 @@
   <data name="JewelKeyword" xml:space="preserve">
     <value>Jewel</value>
   </data>
+  <data name="StatCategoryFractured" xml:space="preserve">
+    <value>Fractured</value>
+  </data>
 </root>
