@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Options;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
@@ -64,14 +64,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
                 return;
             }
 
-            decimal? maxLinks = equippableItem.Sockets?.SocketGroups.Max(socketGroup => socketGroup.Links);
+            int? maxLinks = equippableItem.Sockets?.SocketGroups.Max(socketGroup => socketGroup.Links);
 
             if (maxLinks >= 5)
             {
                 result.Query.Filters.SocketFilters.Links = new SocketsFilter
                 {
-                    Min = equippableItem.Sockets.Count,
-                    Max = equippableItem.Sockets.Count
+                    Min = maxLinks,
+                    Max = maxLinks
                 };
             }
         }
