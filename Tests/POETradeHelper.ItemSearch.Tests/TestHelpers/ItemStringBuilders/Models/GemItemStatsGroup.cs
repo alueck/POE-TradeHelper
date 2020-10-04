@@ -1,5 +1,5 @@
-﻿using POETradeHelper.ItemSearch.Contract.Properties;
-using System.Text;
+﻿using System.Text;
+using POETradeHelper.ItemSearch.Contract.Properties;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 {
@@ -7,7 +7,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
     {
         public int GemLevel { get; set; }
         public string Tags { get; set; } = "Tag, Tag1, Tag2";
-        public string Experience { get; set; } = "1/100.000";
+        public string Experience { get; set; }
 
         public override string ToString()
         {

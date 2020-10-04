@@ -1,7 +1,7 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Properties;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
@@ -37,16 +37,20 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private static int GetExperiencePercent(string[] itemStringLines)
         {
-            string experienceLine = itemStringLines.First(l => l.Contains(Resources.ExperienceDescriptor));
+            int experiencePercent = 0;
+            string experienceLine = itemStringLines.FirstOrDefault(l => l.Contains(Resources.ExperienceDescriptor));
 
-            IEnumerable<decimal> experienceNumbers = experienceLine
-                .Replace(Resources.ExperienceDescriptor, "")
-                .Replace(".", "")
-                .Trim()
-                .Split('/')
-                .Select(s => decimal.Parse(s));
+            if (experienceLine != null)
+            {
+                IEnumerable<decimal> experienceNumbers = experienceLine
+                    .Replace(Resources.ExperienceDescriptor, "")
+                    .Replace(".", "")
+                    .Trim()
+                    .Split('/')
+                    .Select(s => decimal.Parse(s));
 
-            int experiencePercent = GetIntegralPercent(experienceNumbers.First(), experienceNumbers.Last());
+                experiencePercent = GetIntegralPercent(experienceNumbers.First(), experienceNumbers.Last());
+            }
 
             return experiencePercent;
         }
