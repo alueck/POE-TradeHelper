@@ -1,11 +1,11 @@
-﻿using POETradeHelper.ItemSearch.ViewModels;
-using POETradeHelper.PathOfExileTradeApi.Models;
-using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using ReactiveUI;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using POETradeHelper.ItemSearch.ViewModels;
+using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Models.Filters;
+using ReactiveUI;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -85,16 +85,30 @@ namespace POETradeHelper.ItemSearch.Services.Factories
         {
             foreach (var filterViewModel in advancedQueryViewModel.AdditionalFilters.OfType<BindableFilterViewModel>())
             {
-                IFilter filter = GetFilter(filterViewModel);
-
-                if (filter != null)
-                {
-                    SetValueByExpression(filterViewModel.BindingExpression, searchQueryRequest, filter);
-                }
+                SetValueByExpression(filterViewModel.BindingExpression, searchQueryRequest, filterViewModel);
             }
         }
 
-        private static IFilter GetFilter(BindableFilterViewModel filterViewModel)
+        private static void SetValueByExpression(Expression<Func<SearchQueryRequest, IFilter>> bindingExpression, SearchQueryRequest searchQueryRequest, BindableFilterViewModel bindableFilterViewModel)
+        {
+            var expressions = bindingExpression.Body.GetExpressionChain().ToList();
+            object parent = searchQueryRequest;
+
+            foreach (MemberExpression expression in expressions)
+            {
+                PropertyInfo property = ((PropertyInfo)expression.Member);
+                if (expression == expressions.Last())
+                {
+                    IFilter filter = GetFilter(bindableFilterViewModel, property.PropertyType);
+                    property.SetValue(parent, filter);
+                    break;
+                }
+
+                parent = property.GetValue(parent);
+            }
+        }
+
+        private static IFilter GetFilter(BindableFilterViewModel filterViewModel, Type filterType)
         {
             IFilter filter = null;
 
@@ -102,11 +116,24 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             {
                 if (minMaxFilterViewModel.IsEnabled)
                 {
-                    filter = new MinMaxFilter
+                    int? maxValue = minMaxFilterViewModel.Max.HasValue ? Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.Value) : (int?)null;
+
+                    if (filterType == typeof(SocketsFilter))
                     {
-                        Min = minMaxFilterViewModel.Min,
-                        Max = minMaxFilterViewModel.Max
-                    };
+                        filter = new SocketsFilter
+                        {
+                            Min = minMaxFilterViewModel.Min,
+                            Max = maxValue
+                        };
+                    }
+                    else
+                    {
+                        filter = new MinMaxFilter
+                        {
+                            Min = minMaxFilterViewModel.Min,
+                            Max = maxValue
+                        };
+                    }
                 }
             }
             else
@@ -118,23 +145,6 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             }
 
             return filter;
-        }
-
-        private static void SetValueByExpression(Expression<Func<SearchQueryRequest, IFilter>> bindingExpression, SearchQueryRequest searchQueryRequest, IFilter value)
-        {
-            var expressions = bindingExpression.Body.GetExpressionChain().ToList();
-            object parent = searchQueryRequest;
-
-            foreach (MemberExpression expression in expressions)
-            {
-                if (expression == expressions.Last())
-                {
-                    ((PropertyInfo)expression.Member).SetValue(parent, value);
-                    break;
-                }
-
-                parent = ((PropertyInfo)expression.Member).GetValue(parent);
-            }
         }
     }
 }

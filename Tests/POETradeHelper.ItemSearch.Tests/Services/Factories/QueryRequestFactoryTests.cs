@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using NUnit.Framework;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
@@ -157,10 +157,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(statFilter.Text, Is.EqualTo(statFilterViewModel.Text));
         }
 
-        [TestCase(10, 20)]
-        [TestCase(105, 117)]
-        [TestCase(105, null)]
-        public void CreateShouldMapAdditionalMinMaxFilterToQuery(int? minValue, int? maxValue)
+        [TestCase(10, 20, 10, 20)]
+        [TestCase(105, 117, 105, 117)]
+        [TestCase(105, null, 105, null)]
+        [TestCase(105, 95, 105, 105)]
+        public void CreateShouldMapAdditionalMinMaxFilterToQuery(int? minValue, int? maxValue, int? expectedMinValue, int? expectedMaxValue)
         {
             BindableMinMaxFilterViewModel additionalFilter = new BindableMinMaxFilterViewModel(x => x.Query.Filters.MiscFilters.Quality)
             {
@@ -184,8 +185,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
             MinMaxFilter qualityFilter = result.Query.Filters.MiscFilters.Quality;
             Assert.NotNull(qualityFilter);
-            Assert.That(qualityFilter.Min, Is.EqualTo(additionalFilter.Min));
-            Assert.That(qualityFilter.Max, Is.EqualTo(additionalFilter.Max));
+            Assert.That(qualityFilter.Min, Is.EqualTo(expectedMinValue));
+            Assert.That(qualityFilter.Max, Is.EqualTo(expectedMaxValue));
         }
 
         [Test]
@@ -375,6 +376,36 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
             Assert.IsNotNull(result);
             Assert.That(result.Query.Type, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void CreateShouldMapSocketsFilter()
+        {
+            const int minValue = 5;
+            const int maxValue = 6;
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest(),
+                AdditionalFilters =
+                {
+                    new BindableMinMaxFilterViewModel(x => x.Query.Filters.SocketFilters.Sockets)
+                    {
+                        Min = minValue,
+                        Max = maxValue,
+                        IsEnabled = true
+                    }
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Query.Filters.SocketFilters);
+
+            SocketsFilter socketsFilter = result.Query.Filters.SocketFilters.Sockets;
+            Assert.IsNotNull(socketsFilter);
+            Assert.That(socketsFilter.Min, Is.EqualTo(minValue));
+            Assert.That(socketsFilter.Max, Is.EqualTo(maxValue));
         }
 
         private static IEnumerable<TestCaseData> CreateShouldEnabledStatFilterToQueryStatFilterTestData

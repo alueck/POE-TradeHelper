@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Collections;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using NUnit.Framework;
@@ -8,7 +9,6 @@ using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System.Collections;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
@@ -228,7 +228,26 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 result.SocketGroups.Add(socketGroup);
             }
 
+            AddSocketsTillMaxSocketCount(linkCount, result);
+
             return result;
+        }
+
+        private static void AddSocketsTillMaxSocketCount(int linkCount, ItemSockets result)
+        {
+            if (linkCount < 6)
+            {
+                for (int i = 6 - linkCount; i > 0; i--)
+                {
+                    result.SocketGroups.Add(new SocketGroup
+                    {
+                        Sockets =
+                        {
+                            new Socket()
+                        }
+                    });
+                }
+            }
         }
     }
 }

@@ -46,9 +46,9 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Text="{Binding Text}" Margin="5" VerticalAlignment="Center" TextWrapping="Wrap" />
-            <TextBox Grid.Column="1" Text="{Binding Min}" HorizontalAlignment="Stretch" Margin="5" TextAlignment="Right" />
+            <TextBox Grid.Column="1" Text="{Binding Min}" HorizontalAlignment="Stretch" Margin="5" TextAlignment="Right" GotFocus="TextBox_GotFocus" />
             <TextBlock Grid.Column="2" Text="{Binding Current}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5" />
-            <TextBox Grid.Column="3" Text="{Binding Max}" HorizontalAlignment="Stretch" Margin="5" TextAlignment="Right" />
+            <TextBox Grid.Column="3" Text="{Binding Max}" HorizontalAlignment="Stretch" Margin="5" TextAlignment="Right" GotFocus="TextBox_GotFocus" />
             <CheckBox Grid.Column="4" IsChecked="{Binding IsEnabled}" Margin="5" HorizontalAlignment="Center" />
           </Grid>
         </DataTemplate>

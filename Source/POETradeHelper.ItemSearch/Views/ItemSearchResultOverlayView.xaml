@@ -77,7 +77,7 @@
         <Grid IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
 
           <Grid.ColumnDefinitions>
-            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
           </Grid.ColumnDefinitions>
           <Grid.RowDefinitions>
@@ -89,7 +89,7 @@
           <TextBlock Text="{Binding ItemListings.ItemDescription}"
            FontWeight="Bold"
            Foreground="{Binding ItemListings.ItemRarity, Converter={StaticResource itemRarityToBrushConverter}}"
-           Margin ="0,0,0,5" />
+           Margin ="0,0,25,5" />
 
           <Button Grid.Column="1"
             Content="{x:Static resources:Resources.OpenInBrowser}"
