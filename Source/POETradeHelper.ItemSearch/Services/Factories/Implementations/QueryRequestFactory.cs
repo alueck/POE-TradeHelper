@@ -116,12 +116,14 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             {
                 if (minMaxFilterViewModel.IsEnabled)
                 {
+                    int? maxValue = minMaxFilterViewModel.Max.HasValue ? Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.Value) : (int?)null;
+
                     if (filterType == typeof(SocketsFilter))
                     {
                         filter = new SocketsFilter
                         {
                             Min = minMaxFilterViewModel.Min,
-                            Max = Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.GetValueOrDefault())
+                            Max = maxValue
                         };
                     }
                     else
@@ -129,7 +131,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                         filter = new MinMaxFilter
                         {
                             Min = minMaxFilterViewModel.Min,
-                            Max = Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.GetValueOrDefault())
+                            Max = maxValue
                         };
                     }
                 }
