@@ -74,7 +74,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 statFilter.Value = new MinMaxFilter
                 {
                     Min = minMaxStatFilterViewModel.Min,
-                    Max = minMaxStatFilterViewModel.Max
+                    Max = GetMaxValue(minMaxStatFilterViewModel)
                 };
             }
 
@@ -108,15 +108,15 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             }
         }
 
-        private static IFilter GetFilter(BindableFilterViewModel filterViewModel, Type filterType)
+        private static IFilter GetFilter(FilterViewModelBase filterViewModel, Type filterType)
         {
             IFilter filter = null;
 
-            if (filterViewModel is BindableMinMaxFilterViewModel minMaxFilterViewModel)
+            if (filterViewModel is IMinMaxFilterViewModel minMaxFilterViewModel)
             {
                 if (minMaxFilterViewModel.IsEnabled)
                 {
-                    int? maxValue = minMaxFilterViewModel.Max.HasValue ? Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.Value) : (int?)null;
+                    int? maxValue = GetMaxValue(minMaxFilterViewModel);
 
                     if (filterType == typeof(SocketsFilter))
                     {
@@ -145,6 +145,13 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             }
 
             return filter;
+        }
+
+        private static int? GetMaxValue(IMinMaxFilterViewModel minMaxFilterViewModel)
+        {
+            return minMaxFilterViewModel.Max.HasValue
+                ? Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.Value)
+                : (int?)null;
         }
     }
 }
