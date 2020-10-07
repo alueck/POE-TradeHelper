@@ -1,4 +1,9 @@
-﻿using POETradeHelper.Common.UI;
+﻿using System;
+using System.Diagnostics;
+using System.Reactive;
+using System.Threading;
+using System.Threading.Tasks;
+using POETradeHelper.Common.UI;
 using POETradeHelper.Common.UI.Models;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
@@ -7,11 +12,6 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using ReactiveUI;
 using Splat;
-using System;
-using System.Diagnostics;
-using System.Reactive;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.ViewModels
 {

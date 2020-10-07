@@ -1,17 +1,14 @@
-﻿using POETradeHelper.ItemSearch.Attributes;
-using POETradeHelper.ItemSearch.ViewModels;
-using Avalonia.Controls;
-using Avalonia;
-using Avalonia.Markup.Xaml;
-using System.Reactive;
-using ReactiveUI;
-using Avalonia.Layout;
-using System;
-using System.Reflection;
-using Avalonia.Input;
-using System.Linq;
-using Avalonia.Markup.Xaml.Templates;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.Templates;
+using POETradeHelper.ItemSearch.Attributes;
+using POETradeHelper.ItemSearch.ViewModels;
 
 namespace POETradeHelper.ItemSearch.Views
 {
@@ -33,33 +30,9 @@ namespace POETradeHelper.ItemSearch.Views
 
             dataGrid.AutoGeneratingColumn += OnDataGridAutoGeneratingColumn;
 
-            var expander = this.Get<Expander>("expander");
-            expander.ContentTransition = null;
+            var advancedQueryGrid = this.Get<Grid>("AdvancedQueryGrid");
 
-            expander.ObservableForProperty(x => x.IsExpanded).Subscribe(new AnonymousObserver<IObservedChange<Expander, bool>>(x => OnExpandedChanged(x.Value)));
-        }
-
-        private void OnExpandedChanged(bool isExpanded)
-        {
-            var expander = this.Get<Expander>("expander");
-
-            if (isExpanded)
-            {
-                if (expander.Content is ILayoutable layoutable)
-                {
-                    layoutable.Measure(Size.Infinity);
-
-                    expander.Measure(Size.Infinity);
-                    this.Height = this.Height + Math.Max(layoutable.DesiredSize.Height, expander.DesiredSize.Height);
-                    this.Width = Math.Max(this.Width, Math.Max(layoutable.DesiredSize.Width, expander.DesiredSize.Width));
-                }
-            }
-            else
-            {
-                this.Height = 220;
-                this.Width = 400;
-            }
-            this.SizeToContent = SizeToContent.Width;
+            advancedQueryGrid.IsVisible = false;
         }
 
         private void OnDataGridAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
