@@ -74,7 +74,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 statFilter.Value = new MinMaxFilter
                 {
                     Min = minMaxStatFilterViewModel.Min,
-                    Max = minMaxStatFilterViewModel.Max
+                    Max = GetMaxValue(minMaxStatFilterViewModel)
                 };
             }
 
@@ -99,7 +99,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 PropertyInfo property = ((PropertyInfo)expression.Member);
                 if (expression == expressions.Last())
                 {
-                    IFilter filter = GetFilter(bindableFilterViewModel, property.PropertyType);
+                    IFilter filter = GetFilter(bindableFilterViewModel);
                     property.SetValue(parent, filter);
                     break;
                 }
@@ -108,32 +108,34 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             }
         }
 
-        private static IFilter GetFilter(BindableFilterViewModel filterViewModel, Type filterType)
+        private static IFilter GetFilter(FilterViewModelBase filterViewModel)
         {
             IFilter filter = null;
 
-            if (filterViewModel is BindableMinMaxFilterViewModel minMaxFilterViewModel)
+            if (filterViewModel is BindableSocketsFilterViewModel socketsFilterViewModel)
+            {
+                if (socketsFilterViewModel.IsEnabled)
+                {
+                    filter = new SocketsFilter
+                    {
+                        Min = socketsFilterViewModel.Min,
+                        Max = GetMaxValue(socketsFilterViewModel),
+                        Red = socketsFilterViewModel.Red,
+                        Green = socketsFilterViewModel.Green,
+                        Blue = socketsFilterViewModel.Blue,
+                        White = socketsFilterViewModel.White
+                    };
+                }
+            }
+            else if (filterViewModel is IMinMaxFilterViewModel minMaxFilterViewModel)
             {
                 if (minMaxFilterViewModel.IsEnabled)
                 {
-                    int? maxValue = minMaxFilterViewModel.Max.HasValue ? Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.Value) : (int?)null;
-
-                    if (filterType == typeof(SocketsFilter))
+                    filter = new MinMaxFilter
                     {
-                        filter = new SocketsFilter
-                        {
-                            Min = minMaxFilterViewModel.Min,
-                            Max = maxValue
-                        };
-                    }
-                    else
-                    {
-                        filter = new MinMaxFilter
-                        {
-                            Min = minMaxFilterViewModel.Min,
-                            Max = maxValue
-                        };
-                    }
+                        Min = minMaxFilterViewModel.Min,
+                        Max = GetMaxValue(minMaxFilterViewModel)
+                    };
                 }
             }
             else
@@ -145,6 +147,13 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             }
 
             return filter;
+        }
+
+        private static int? GetMaxValue(IMinMaxFilterViewModel minMaxFilterViewModel)
+        {
+            return minMaxFilterViewModel.Max.HasValue
+                ? Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.Value)
+                : (int?)null;
         }
     }
 }

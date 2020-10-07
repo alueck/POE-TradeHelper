@@ -1,4 +1,8 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using NUnit.Framework;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Properties;
@@ -6,10 +10,6 @@ using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
@@ -181,7 +181,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.Sockets.Count, Resources.Sockets);
+            this.CreateShouldReturnBindableSocketsFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.Sockets.Count, Resources.Sockets);
         }
 
         [Test]
@@ -209,11 +209,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             var queryRequestFilter = new SocketsFilter
             {
                 Min = 1,
-                Max = 3
+                Max = 3,
+                Red = 1,
+                Green = 2,
+                Blue = 1,
+                White = 2
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.Sockets.Count, Resources.Sockets, queryRequestFilter);
+            this.CreateShouldReturnBindableSocketsFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.Sockets.Count, Resources.Sockets, queryRequestFilter);
         }
 
         [Test]

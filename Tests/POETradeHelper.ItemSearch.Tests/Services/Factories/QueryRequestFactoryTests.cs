@@ -18,7 +18,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             this.queryRequestFactory = new QueryRequestFactory();
         }
 
-        [TestCaseSource(nameof(CreateShouldEnabledStatFilterToQueryStatFilterTestData))]
+        [TestCaseSource(nameof(CreateShouldMapEnabledStatFilterToQueryStatFilterTestData))]
         public void CreateShouldMapEnabledStatFilterToQueryStatFilter(AdvancedQueryViewModel advancedQueryViewModel, MinMaxStatFilterViewModel statFilterViewModel)
         {
             SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
@@ -36,6 +36,40 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.NotNull(statFilter.Value);
             Assert.That(statFilter.Value.Min, Is.EqualTo(statFilterViewModel.Min));
             Assert.That(statFilter.Value.Max, Is.EqualTo(statFilterViewModel.Max));
+        }
+
+        [Test]
+        public void CreateShouldSetGreaterValueAsMaxValueForStatFilter()
+        {
+            const int expectedValue = 65;
+            var statFilterViewModel = new MinMaxStatFilterViewModel
+            {
+                Min = expectedValue,
+                Max = 40,
+                IsEnabled = true
+            };
+
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                ExplicitItemStatFilters =
+                {
+                    statFilterViewModel
+                },
+                QueryRequest = new SearchQueryRequest()
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.NotNull(result);
+
+            Assert.That(result.Query.Stats, Has.Count.EqualTo(1));
+            StatFilters statFilters = result.Query.Stats.First();
+
+            Assert.That(statFilters.Filters, Has.Count.EqualTo(1));
+            StatFilter statFilter = statFilters.Filters.First();
+
+            Assert.That(statFilter.Value.Min, Is.EqualTo(expectedValue));
+            Assert.That(statFilter.Value.Max, Is.EqualTo(expectedValue));
         }
 
         [Test]
@@ -381,19 +415,22 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [Test]
         public void CreateShouldMapSocketsFilter()
         {
-            const int minValue = 5;
-            const int maxValue = 6;
+            BindableSocketsFilterViewModel bindableSocketsFilterViewModel = new BindableSocketsFilterViewModel(x => x.Query.Filters.SocketFilters.Sockets)
+            {
+                Min = 5,
+                Max = 6,
+                Red = 1,
+                Green = 1,
+                Blue = 2,
+                White = 2,
+                IsEnabled = true
+            };
             var advancedQueryViewModel = new AdvancedQueryViewModel
             {
                 QueryRequest = new SearchQueryRequest(),
                 AdditionalFilters =
                 {
-                    new BindableMinMaxFilterViewModel(x => x.Query.Filters.SocketFilters.Sockets)
-                    {
-                        Min = minValue,
-                        Max = maxValue,
-                        IsEnabled = true
-                    }
+                    bindableSocketsFilterViewModel
                 }
             };
 
@@ -404,11 +441,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
             SocketsFilter socketsFilter = result.Query.Filters.SocketFilters.Sockets;
             Assert.IsNotNull(socketsFilter);
-            Assert.That(socketsFilter.Min, Is.EqualTo(minValue));
-            Assert.That(socketsFilter.Max, Is.EqualTo(maxValue));
+            Assert.That(socketsFilter.Min, Is.EqualTo(bindableSocketsFilterViewModel.Min));
+            Assert.That(socketsFilter.Max, Is.EqualTo(bindableSocketsFilterViewModel.Max));
+            Assert.That(socketsFilter.Red, Is.EqualTo(bindableSocketsFilterViewModel.Red));
+            Assert.That(socketsFilter.Green, Is.EqualTo(bindableSocketsFilterViewModel.Green));
+            Assert.That(socketsFilter.Blue, Is.EqualTo(bindableSocketsFilterViewModel.Blue));
+            Assert.That(socketsFilter.White, Is.EqualTo(bindableSocketsFilterViewModel.White));
         }
 
-        private static IEnumerable<TestCaseData> CreateShouldEnabledStatFilterToQueryStatFilterTestData
+        private static IEnumerable<TestCaseData> CreateShouldMapEnabledStatFilterToQueryStatFilterTestData
         {
             get
             {

@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using Avalonia.Threading;
 
 namespace POETradeHelper.ItemSearch.UserControls
 {
@@ -34,19 +32,5 @@ namespace POETradeHelper.ItemSearch.UserControls
         }
 
         public static AvaloniaProperty<string> HeaderProperty = AvaloniaProperty.Register<Filters, string>(nameof(Header));
-
-        private void TextBox_GotFocus(object sender, GotFocusEventArgs eventArgs)
-        {
-            var textBox = (TextBox)sender;
-
-            if (textBox != null)
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    textBox.SelectionStart = 0;
-                    textBox.SelectionEnd = textBox.Text.Length;
-                });
-            }
-        }
     }
 }

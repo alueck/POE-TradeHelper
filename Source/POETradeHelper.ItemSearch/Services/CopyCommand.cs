@@ -1,6 +1,6 @@
-﻿using POETradeHelper.Common.Contract;
+﻿using System.Threading.Tasks;
+using POETradeHelper.Common.Contract;
 using POETradeHelper.ItemSearch.Contract.Services;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Services
 {
@@ -22,7 +22,7 @@ namespace POETradeHelper.ItemSearch.Services
             this.nativeKeyboard.SendCopyCommand();
 
             //small delay, because the text is not always directly available after the copy key command
-            await Task.Delay(100, cancellationToken);
+            await Task.Delay(200, cancellationToken);
 
             string itemString = await this.clipboardHelper.GetTextAsync();
 
