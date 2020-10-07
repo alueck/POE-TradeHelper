@@ -126,6 +126,9 @@
   <data name="AgeColumn" xml:space="preserve">
     <value>Age</value>
   </data>
+  <data name="Blue" xml:space="preserve">
+    <value>B</value>
+  </data>
   <data name="Corrupted" xml:space="preserve">
     <value>Corrupted</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="GemLevelColumn" xml:space="preserve">
     <value>Level</value>
+  </data>
+  <data name="Green" xml:space="preserve">
+    <value>G</value>
   </data>
   <data name="Identified" xml:space="preserve">
     <value>Identified</value>
@@ -201,10 +207,16 @@
   <data name="QualityColumn" xml:space="preserve">
     <value>Quality</value>
   </data>
+  <data name="Red" xml:space="preserve">
+    <value>R</value>
+  </data>
   <data name="Select" xml:space="preserve">
     <value>Select</value>
   </data>
   <data name="Sockets" xml:space="preserve">
     <value>Sockets</value>
+  </data>
+  <data name="White" xml:space="preserve">
+    <value>W</value>
   </data>
 </root>

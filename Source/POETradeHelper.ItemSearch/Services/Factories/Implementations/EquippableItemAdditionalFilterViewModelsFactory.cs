@@ -1,13 +1,13 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Properties;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -96,7 +96,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 
         private FilterViewModelBase GetSocketsFilterViewModel(EquippableItem equippableItem, SearchQueryRequest searchQueryRequest)
         {
-            return this.CreateBindableMinMaxFilterViewModel(
+            return this.CreateBindableSocketsFilterViewModel(
                 x => x.Query.Filters.SocketFilters.Sockets,
                 Resources.Sockets,
                 equippableItem.Sockets.Count,
@@ -105,11 +105,38 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 
         private FilterViewModelBase GetLinksFilterViewModel(EquippableItem equippableItem, SearchQueryRequest searchQueryRequest)
         {
-            return this.CreateBindableMinMaxFilterViewModel(
+            return this.CreateBindableSocketsFilterViewModel(
                 x => x.Query.Filters.SocketFilters.Links,
                 Resources.Links,
                 equippableItem.Sockets.SocketGroups.Max(x => x.Links),
                 searchQueryRequest.Query.Filters.SocketFilters.Links);
+        }
+
+        private FilterViewModelBase CreateBindableSocketsFilterViewModel(Expression<Func<SearchQueryRequest, IFilter>> bindingExpression, string text, int currentValue, SocketsFilter queryRequestFilter)
+        {
+            var result = new BindableSocketsFilterViewModel(bindingExpression)
+            {
+                Current = currentValue.ToString(),
+                Text = text
+            };
+
+            if (queryRequestFilter != null)
+            {
+                result.Min = queryRequestFilter.Min;
+                result.Max = queryRequestFilter.Max;
+                result.Red = queryRequestFilter.Red;
+                result.Green = queryRequestFilter.Green;
+                result.Blue = queryRequestFilter.Blue;
+                result.White = queryRequestFilter.White;
+                result.IsEnabled = true;
+            }
+            else
+            {
+                result.Min = currentValue;
+                result.Max = currentValue;
+            }
+
+            return result;
         }
     }
 }

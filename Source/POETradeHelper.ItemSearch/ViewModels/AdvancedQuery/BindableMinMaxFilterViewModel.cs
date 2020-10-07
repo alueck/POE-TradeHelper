@@ -1,7 +1,7 @@
-﻿using POETradeHelper.PathOfExileTradeApi.Models;
-using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System;
+﻿using System;
 using System.Linq.Expressions;
+using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
 namespace POETradeHelper.ItemSearch.ViewModels
 {

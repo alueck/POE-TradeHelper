@@ -39,7 +39,7 @@ namespace POETradeHelper.ItemSearch.UserControls
         {
             var textBox = (TextBox)sender;
 
-            if (textBox != null)
+            if (textBox?.Text != null)
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {

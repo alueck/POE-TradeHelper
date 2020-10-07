@@ -3,8 +3,149 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:localVMs="clr-namespace:POETradeHelper.ItemSearch.ViewModels;assembly=POETradeHelper.ItemSearch"
+             xmlns:localControls="clr-namespace:POETradeHelper.ItemSearch.UserControls;assembly=POETradeHelper.ItemSearch"
+             xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="POETradeHelper.ItemSearch.UserControls.Filters">
+
+  <UserControl.Styles>
+    <Style Selector="localControls|FilterTextBox.green > TextBox">
+      <Setter Property="BorderBrush" Value="Green" />
+    </Style>
+    <Style Selector="localControls|FilterTextBox.red > TextBox">
+      <Setter Property="BorderBrush" Value="Red" />
+    </Style>
+    <Style Selector="localControls|FilterTextBox.blue > TextBox">
+      <Setter Property="BorderBrush" Value="Blue" />
+    </Style>
+    <Style Selector="localControls|FilterTextBox.white > TextBox">
+      <Setter Property="BorderBrush" Value="White" />
+    </Style>
+  </UserControl.Styles>
+
+  <UserControl.DataTemplates>
+    <DataTemplate DataType="{x:Type localVMs:BindableSocketsFilterViewModel}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="325" MaxWidth="325" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition />
+          <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <localControls:SelectableFilter Grid.Column="0" Filter="{Binding .}" />
+
+        <Grid Grid.Row="1" Margin="25,0,0,0" IsVisible="{Binding IsEnabled}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+          </Grid.ColumnDefinitions>
+
+          <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+          </Grid.RowDefinitions>
+
+          <localControls:FilterTextBox
+            Grid.Column="0"
+            Value="{Binding Min}"
+            Watermark="{x:Static resources:Resources.Min}" />
+
+          <TextBlock
+            Grid.Column="1"
+            Text="{Binding Current}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Margin="5" />
+
+          <localControls:FilterTextBox
+            Grid.Column="2"
+            Value="{Binding Max}"
+            Watermark="{x:Static resources:Resources.Max}" />
+
+          <localControls:FilterTextBox
+            Grid.Column="0"
+            Grid.Row="1"
+            Value="{Binding Red}"
+            Watermark="{x:Static resources:Resources.Red}"
+            Classes="red" />
+
+          <localControls:FilterTextBox
+            Grid.Column="1"
+            Grid.Row="1"
+            Value="{Binding Green}"
+            Watermark="{x:Static resources:Resources.Green}"
+            Classes="green" />
+
+          <localControls:FilterTextBox
+            Grid.Column="2"
+            Grid.Row="1"
+            Value="{Binding Blue}"
+            Watermark="{x:Static resources:Resources.Blue}"
+            Classes="blue" />
+
+          <localControls:FilterTextBox
+            Grid.Column="3"
+            Grid.Row="1"
+            Value="{Binding White}"
+            Watermark="{x:Static resources:Resources.White}"
+            Classes="white" />
+        </Grid>
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type localVMs:IMinMaxFilterViewModel}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="325" MaxWidth="325" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition />
+          <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <localControls:SelectableFilter Grid.Column="0" Filter="{Binding .}" />
+
+        <Grid Grid.Row="1" Margin="25,0,0,0" IsVisible="{Binding IsEnabled}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="40" />
+          </Grid.ColumnDefinitions>
+
+          <localControls:FilterTextBox
+            Grid.Column="0"
+            Value="{Binding Min}"
+            Watermark="{x:Static resources:Resources.Min}" />
+
+          <TextBlock
+            Grid.Column="1"
+            Text="{Binding Current}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Margin="5" />
+
+          <localControls:FilterTextBox
+            Grid.Column="2"
+            Value="{Binding Max}"
+            Watermark="{x:Static resources:Resources.Max}" />
+        </Grid>
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type localVMs:FilterViewModelBase}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="325" MaxWidth="325" />
+        </Grid.ColumnDefinitions>
+
+        <localControls:SelectableFilter Grid.Column="0" Filter="{Binding .}" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.DataTemplates>
 
   <Grid DataContext="{Binding $parent[UserControl]}">
     <Grid.RowDefinitions>
@@ -33,64 +174,6 @@
       <Separator Margin="0,2,0,0" IsVisible="{Binding Header, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
     </Grid>
 
-    <ItemsControl Grid.Row="1" Items="{Binding Items}">
-      <ItemsControl.DataTemplates>
-        <DataTemplate DataType="{x:Type localVMs:IMinMaxFilterViewModel}">
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="325" MaxWidth="325" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-              <RowDefinition />
-              <RowDefinition />
-            </Grid.RowDefinitions>
-
-            <CheckBox Grid.Column="0" IsChecked="{Binding IsEnabled}" HorizontalAlignment="Left">
-              <TextBlock Text="{Binding Text}" Margin="5" VerticalAlignment="Center" TextWrapping="Wrap" />
-            </CheckBox>
-
-            <Grid Grid.Row="1" Margin="25,0,0,0" IsVisible="{Binding IsEnabled}">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="40" />
-                <ColumnDefinition Width="40" />
-                <ColumnDefinition Width="40" />
-              </Grid.ColumnDefinitions>
-
-              <TextBox Grid.Column="0"
-                       Text="{Binding Min}"
-                       HorizontalAlignment="Stretch"
-                       Margin="5"
-                       TextAlignment="Right"
-                       GotFocus="TextBox_GotFocus"
-                       Watermark="Min" />
-              <TextBlock Grid.Column="1"
-                         Text="{Binding Current}"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Center"
-                         Margin="5" />
-              <TextBox Grid.Column="2"
-                       Text="{Binding Max}"
-                       HorizontalAlignment="Stretch"
-                       Margin="5"
-                       TextAlignment="Right"
-                       GotFocus="TextBox_GotFocus"
-                       Watermark="Max" />
-            </Grid>
-          </Grid>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type localVMs:FilterViewModelBase}">
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="325" MaxWidth="325" />
-            </Grid.ColumnDefinitions>
-
-            <CheckBox Grid.Column="0" IsChecked="{Binding IsEnabled}" HorizontalAlignment="Left">
-              <TextBlock Text="{Binding Text}" Margin="5" VerticalAlignment="Center" TextWrapping="Wrap" />
-            </CheckBox>
-          </Grid>
-        </DataTemplate>
-      </ItemsControl.DataTemplates>
-    </ItemsControl>
+    <ItemsControl Grid.Row="1" Items="{Binding Items}" />
   </Grid>
 </UserControl>
