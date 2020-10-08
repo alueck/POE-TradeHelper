@@ -4,11 +4,11 @@ Path of Exile trade helper like [POE-TradeMacro](https://github.com/PoE-TradeMac
 
 This program has been developed with cross-platform compatiblity in mind, but currently only supports Windows, because native implementations for Linux and MacOS for parts of the software are missing. Contributions are welcome.
 
-# Functionality
+# Features
 
 Currently you can price check items by hovering over them ingame and pressing **CTRL + D**. An overlay with the query result shows up and stays open until you press **ESC**. You can move the overlay by dragging it with your mouse.
 
-At the moment some filters are preset under certain conditions (e.g. five or more links), but you can not yet see or edit them via the user interface. But you can already select modifiers and adjust their values for a more advanced query. You can also open a query in your web browser.
+You can set filters to adjust the price query to your needs. Some filters are already preset under certain conditions (e.g. five or more links), but can be modified. You can also open queries in your web browser.
 
 ![POETradeHelper](https://user-images.githubusercontent.com/9286842/95361360-eb5ca500-08cc-11eb-96a1-81901aa268fd.png))
 
