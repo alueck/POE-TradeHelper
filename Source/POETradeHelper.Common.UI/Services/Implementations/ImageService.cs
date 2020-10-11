@@ -1,9 +1,9 @@
-﻿using Avalonia.Media.Imaging;
-using Microsoft.Extensions.Caching.Memory;
-using POETradeHelper.Common.Wrappers;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using Microsoft.Extensions.Caching.Memory;
+using POETradeHelper.Common.Wrappers;
 
 namespace POETradeHelper.Common.UI.Services
 {
@@ -32,9 +32,11 @@ namespace POETradeHelper.Common.UI.Services
 
                     image = this.bitmapFactory.Create(responseStream);
 
-                    ICacheEntry cacheEntry = this.memoryCache.CreateEntry(uri);
-                    cacheEntry.SetValue(image);
-                    cacheEntry.SetSize(responseStream.Length);
+                    using (ICacheEntry cacheEntry = this.memoryCache.CreateEntry(uri))
+                    {
+                        cacheEntry.SetValue(image);
+                        cacheEntry.SetSize(responseStream.Length);
+                    }
                 }
             }
 
