@@ -23,7 +23,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return this.HasRarity(itemStringLines, ItemRarity.Gem);
         }
 
-        public override Item Parse(string[] itemStringLines)
+        protected override Item ParseItem(string[] itemStringLines)
         {
             var gemItem = new GemItem
             {

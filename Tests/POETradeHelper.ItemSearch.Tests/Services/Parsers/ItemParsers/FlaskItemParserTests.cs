@@ -7,11 +7,10 @@ using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
-    public class FlaskItemParserTests
+    public class FlaskItemParserTests : ItemParserTestsBase
     {
         private Mock<IItemTypeParser> itemTypeParserMock;
         private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
-        private FlaskItemParser flaskItemParser;
         private ItemStringBuilder itemStringBuilder;
 
         [SetUp]
@@ -19,7 +18,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             this.itemTypeParserMock = new Mock<IItemTypeParser>();
             this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
-            this.flaskItemParser = new FlaskItemParser(this.itemTypeParserMock.Object, this.itemStatsParserMock.Object);
+            this.ItemParser = new FlaskItemParser(this.itemTypeParserMock.Object, this.itemStatsParserMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -31,7 +30,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                         .WithName(name)
                                         .BuildLines();
 
-            bool result = this.flaskItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsTrue(result);
         }
@@ -45,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                         .WithType("Silver Flask")
                                         .BuildLines();
 
-            bool result = this.flaskItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsTrue(result);
         }
@@ -57,7 +56,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                         .WithName("Scroll of Wisdom")
                                         .BuildLines();
 
-            bool result = this.flaskItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsFalse(result);
         }
@@ -70,7 +69,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithRarity(expected)
                 .BuildLines();
 
-            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
 
             Assert.That(result.Rarity, Is.EqualTo(expected));
         }
@@ -83,7 +82,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                             .WithName(expected)
                             .BuildLines();
 
-            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
 
             Assert.That(result.Name, Is.EqualTo(expected));
         }
@@ -107,7 +106,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
                 .Returns(expected);
 
-            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
 
             Assert.That(result.Type, Is.EqualTo(expected));
         }
@@ -121,7 +120,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                             .WithQuality(expected)
                             .BuildLines();
 
-            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
 
             Assert.That(result.Quality, Is.EqualTo(expected));
         }
@@ -133,7 +132,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithName("Bubbling Divine Life Flask of Staunching")
                 .BuildLines();
 
-            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
 
             Assert.IsTrue(result.IsIdentified);
         }
@@ -146,7 +145,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithUnidentified()
                 .BuildLines();
 
-            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
 
             Assert.IsFalse(result.IsIdentified);
         }
@@ -158,7 +157,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                         .WithName("Divine Life Flask")
                                         .BuildLines();
 
-            this.flaskItemParser.Parse(itemStringLines);
+            this.ItemParser.Parse(itemStringLines);
 
             this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false));
         }
@@ -171,7 +170,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                         .WithUnidentified()
                                         .BuildLines();
 
-            this.flaskItemParser.Parse(itemStringLines);
+            this.ItemParser.Parse(itemStringLines);
 
             this.itemStatsParserMock.Verify(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()), Times.Never);
         }
@@ -187,9 +186,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), false))
                 .Returns(expected);
 
-            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
 
             Assert.That(result.Stats, Is.SameAs(expected));
+        }
+
+        protected override string[] GetValidItemStringLines()
+        {
+            return this.itemStringBuilder
+                                        .WithRarity(ItemRarity.Unique)
+                                        .WithName("Cinderswallow Urn")
+                                        .WithType("Silver Flask")
+                                        .BuildLines();
         }
     }
 }

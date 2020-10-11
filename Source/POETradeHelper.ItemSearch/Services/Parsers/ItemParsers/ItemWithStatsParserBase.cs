@@ -12,7 +12,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             this.itemStatsParser = itemStatsParser;
         }
 
-        public override Item Parse(string[] itemStringLines)
+        protected override Item ParseItem(string[] itemStringLines)
         {
             ItemWithStats item = this.ParseItemWithoutStats(itemStringLines);
             item.Stats = this.ParseStats(item, itemStringLines);

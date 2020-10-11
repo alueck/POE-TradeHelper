@@ -6,15 +6,15 @@ using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
-    public class ProphecyItemParserTests
+    public class ProphecyItemParserTests : ItemParserTestsBase
     {
-        private ProphecyItemParser prophecyItemParser;
+        private const string Prophecy = "The Unbreathing Queen I";
         private ItemStringBuilder itemStringBuilder;
 
         [SetUp]
         public void Setup()
         {
-            this.prophecyItemParser = new ProphecyItemParser();
+            this.ItemParser = new ProphecyItemParser();
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -25,7 +25,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithDescription($"Right-click to add this {Resources.ProphecyKeyword} to your character.")
                                             .BuildLines();
 
-            bool result = this.prophecyItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsTrue(result);
         }
@@ -37,7 +37,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithDescription("Random description")
                                             .BuildLines();
 
-            bool result = this.prophecyItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsFalse(result);
         }
@@ -45,27 +45,29 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldParseName()
         {
-            const string expected = "The Unbreathing Queen I";
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithName(expected)
-                                            .BuildLines();
+            string[] itemStringLines = this.GetValidItemStringLines();
 
-            ProphecyItem result = this.prophecyItemParser.Parse(itemStringLines) as ProphecyItem;
+            ProphecyItem result = this.ItemParser.Parse(itemStringLines) as ProphecyItem;
 
-            Assert.That(result.Name, Is.EqualTo(expected));
+            Assert.That(result.Name, Is.EqualTo(Prophecy));
         }
 
         [Test]
         public void ParseShouldParseType()
         {
-            const string expected = "The Unbreathing Queen I";
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithName(expected)
-                                            .BuildLines();
+            string[] itemStringLines = this.GetValidItemStringLines();
 
-            ProphecyItem result = this.prophecyItemParser.Parse(itemStringLines) as ProphecyItem;
+            ProphecyItem result = this.ItemParser.Parse(itemStringLines) as ProphecyItem;
 
-            Assert.That(result.Type, Is.EqualTo(expected));
+            Assert.That(result.Type, Is.EqualTo(Prophecy));
+        }
+
+        protected override string[] GetValidItemStringLines()
+        {
+            return this.itemStringBuilder
+                        .WithName(Prophecy)
+                        .WithDescription("Random description")
+                        .BuildLines();
         }
     }
 }

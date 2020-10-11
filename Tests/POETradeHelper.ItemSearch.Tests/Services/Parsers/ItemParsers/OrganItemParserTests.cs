@@ -8,17 +8,16 @@ using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
-    public class OrganItemParserTests
+    public class OrganItemParserTests : ItemParserTestsBase
     {
         private Mock<IItemStatsParser<OrganItem>> itemStatsParserMock;
-        private OrganItemParser organItemParser;
         private ItemStringBuilder itemStringBuilder;
 
         [SetUp]
         public void Setup()
         {
             this.itemStatsParserMock = new Mock<IItemStatsParser<OrganItem>>();
-            this.organItemParser = new OrganItemParser(this.itemStatsParserMock.Object);
+            this.ItemParser = new OrganItemParser(this.itemStatsParserMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -29,7 +28,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithDescription(Resources.OrganItemDescriptor)
                                             .BuildLines();
 
-            bool result = this.organItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsTrue(result);
         }
@@ -40,7 +39,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string[] itemStringLines = this.itemStringBuilder
                                             .BuildLines();
 
-            bool result = this.organItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsFalse(result);
         }
@@ -53,7 +52,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithType(expected)
                                             .BuildLines();
 
-            ItemWithStats result = this.organItemParser.Parse(itemStringLines) as ItemWithStats;
+            ItemWithStats result = this.ItemParser.Parse(itemStringLines) as ItemWithStats;
 
             Assert.That(result.Name, Is.EqualTo(expected));
         }
@@ -66,7 +65,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithType(expected)
                                             .BuildLines();
 
-            ItemWithStats result = this.organItemParser.Parse(itemStringLines) as ItemWithStats;
+            ItemWithStats result = this.ItemParser.Parse(itemStringLines) as ItemWithStats;
 
             Assert.That(result.Type, Is.EqualTo(expected));
         }
@@ -81,7 +80,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithItemStat(expected, StatCategory.Monster)
                                 .BuildLines();
 
-            ItemWithStats result = this.organItemParser.Parse(itemStringLines) as ItemWithStats;
+            ItemWithStats result = this.ItemParser.Parse(itemStringLines) as ItemWithStats;
 
             this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false));
         }
@@ -98,9 +97,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()))
                 .Returns(expectedOrganItemStats);
 
-            ItemWithStats result = this.organItemParser.Parse(itemStringLines) as ItemWithStats;
+            ItemWithStats result = this.ItemParser.Parse(itemStringLines) as ItemWithStats;
 
             Assert.That(result.Stats, Is.SameAs(expectedOrganItemStats));
+        }
+
+        protected override string[] GetValidItemStringLines()
+        {
+            return this.itemStringBuilder
+                        .WithType("Oriath's Virtue's Eye")
+                        .WithItemLevel(73)
+                        .WithItemStat("Drops additional currency", StatCategory.Monster)
+                        .BuildLines();
         }
     }
 }
