@@ -59,30 +59,23 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         {
             StatData result = null;
 
-            IList<StatDataTextMatchResult> statDataMatches = GetStatDataMatches(statDataListsToSearch, itemStat);
+            StatDataTextMatchResult statDataMatch = GetStatDataMatch(statDataListsToSearch, itemStat);
 
-            result = statDataMatches.FirstOrDefault(match => match.IsExactMatch)?.StatData;
-
-            if (result == null)
+            if (statDataMatch == null)
             {
-                if (statDataMatches.Count == 1)
-                {
-                    result = statDataMatches[0].StatData;
-                }
-                else
-                {
-                    this.logger.LogWarning("Failed to find matching stat data for {@itemStat}. Found: {@statDataMatches}", itemStat, statDataMatches);
-                }
+                this.logger.LogWarning("Failed to find matching stat data for {@itemStat}.", itemStat);
+            }
+            else
+            {
+                result = statDataMatch.StatData;
             }
 
             return result;
         }
 
-        private static IList<StatDataTextMatchResult> GetStatDataMatches(IEnumerable<Data<StatData>> statDataListsToSearch, ItemStat itemStat)
+        private static StatDataTextMatchResult GetStatDataMatch(IEnumerable<Data<StatData>> statDataListsToSearch, ItemStat itemStat)
         {
             var statDataTextMatcher = new StatDataTextMatcher(itemStat.Text);
-
-            var statDataMatches = new List<StatDataTextMatchResult>();
 
             foreach (var statData in statDataListsToSearch.SelectMany(x => x.Entries))
             {
@@ -90,16 +83,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
                 if (matchResult.IsMatch)
                 {
-                    statDataMatches.Add(matchResult);
-
-                    if (matchResult.IsExactMatch)
-                    {
-                        break;
-                    }
+                    return matchResult;
                 }
             }
 
-            return statDataMatches;
+            return null;
         }
 
         public StatData GetStatData(string itemStatId)
@@ -111,8 +99,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         private class StatDataTextMatcher
         {
-            private const string ExactMatchGroupName = "exactMatchGroup";
-
             private readonly Regex regex;
 
             public StatDataTextMatcher(string statText)
@@ -124,7 +110,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             {
                 var match = this.regex.Match(statData.Text);
 
-                return new StatDataTextMatchResult(statData, match.Success, match.Groups[ExactMatchGroupName].Success);
+                return new StatDataTextMatchResult(statData, match.Success);
             }
 
             /// <summary>
@@ -139,24 +125,23 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             private static Regex GetStatDataTextRegex(string statText)
             {
                 string regexString = NumberRegex.Replace(statText, match => $"({Regex.Escape(match.Value)}|{Regex.Escape(Placeholder)})");
+                const string monsterItemStatSuffix = @" \(×#\)";
 
-                return new Regex($"(?<{ExactMatchGroupName}>^{regexString}$)|({regexString})");
+                return new Regex($@"^[\+\-]?{regexString}({monsterItemStatSuffix})?$");
             }
         }
 
         private class StatDataTextMatchResult
         {
-            public StatDataTextMatchResult(StatData statData, bool isMatch, bool isExactMatch)
+            public StatDataTextMatchResult(StatData statData, bool isMatch)
             {
                 this.IsMatch = isMatch;
-                this.IsExactMatch = isExactMatch;
                 StatData = statData;
             }
 
             public StatData StatData { get; }
-            public bool IsMatch { get; }
 
-            public bool IsExactMatch { get; }
+            public bool IsMatch { get; }
         }
     }
 }

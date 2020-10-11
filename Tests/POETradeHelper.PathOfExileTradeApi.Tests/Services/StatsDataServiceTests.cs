@@ -1,4 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Extensions;
@@ -10,11 +15,6 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
@@ -361,6 +361,40 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             StatData result = this.statsDataService.GetStatData(expected.Id);
 
             Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public async Task GetStatDataShouldReturnNullForNonExactMatch()
+        {
+            // arrange
+            ItemStat itemStat = new ItemStat(StatCategory.Explicit)
+            {
+                Text = "+15% reduced Cast Speed"
+            };
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result = new List<Data<StatData>>
+                    {
+                                                new Data<StatData>
+                                                {
+                                                    Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                                                    Entries = new List<StatData>
+                                                    {
+                                                        new StatData { Id = "random id", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower(), Text = "Enemies you Shock have #% reduced Cast Speed" }
+                                                    }
+                                                }
+                    }
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            // act
+            StatData result = this.statsDataService.GetStatData(itemStat);
+
+            // assert
+            Assert.IsNull(result);
         }
     }
 }
