@@ -1,4 +1,10 @@
-﻿using Avalonia;
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Utilities;
@@ -7,12 +13,6 @@ using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.UI.Services;
 using POETradeHelper.Common.Wrappers;
-using System;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.Common.UI.Tests.Services
 {
@@ -22,6 +22,8 @@ namespace POETradeHelper.Common.UI.Tests.Services
         private Mock<IHttpClientWrapper> httpClientWrapperMock;
         private Mock<IBitmapFactory> bitmapFactoryMock;
         private ImageService imageService;
+
+        private static readonly Uri uri = new Uri("http://www.google.de");
 
         [SetUp]
         public void Setup()
@@ -40,36 +42,32 @@ namespace POETradeHelper.Common.UI.Tests.Services
         [Test]
         public async Task GetImageAsyncShouldCallGetAsyncOnHttpClientIfImageIsNotCached()
         {
-            Uri uri = new Uri("http://www.google.de");
-
+            // arrange
             this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new System.Net.Http.HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.BadRequest
                 });
 
+            // act
             await this.imageService.GetImageAsync(uri);
 
+            // assert
             this.httpClientWrapperMock.Verify(x => x.GetAsync(uri, It.IsAny<CancellationToken>()));
         }
 
         [Test]
         public async Task GetImageAsyncShouldReturnCachedImage()
         {
-            Uri uri = new Uri("http://www.google.de");
-
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new System.Net.Http.HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.BadRequest
-                });
-
+            // arrange
             object obj = new TestBitmap();
             this.memoryCacheMock.Setup(x => x.TryGetValue(It.IsAny<object>(), out obj))
                 .Returns(true);
 
+            // act
             IBitmap result = await this.imageService.GetImageAsync(uri);
 
+            // assert
             Assert.That(result, Is.EqualTo(obj));
             this.httpClientWrapperMock.Verify(x => x.GetAsync(uri, It.IsAny<CancellationToken>()), Times.Never);
         }
@@ -77,24 +75,16 @@ namespace POETradeHelper.Common.UI.Tests.Services
         [Test]
         public async Task GetImageAsyncShouldCallCreateOnBitmapFactoryIfHttpResponseIndicatesSuccess()
         {
-            Uri uri = new Uri("http://www.google.de");
-
-            var memoryStream = new MemoryStream();
-
-            HttpResponseMessage httpResponse = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StreamContent(memoryStream)
-            };
-
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(httpResponse);
+            // arrange
+            HttpResponseMessage httpResponse = this.MockHttpClientGetAsyncSuccessResponse();
 
             this.memoryCacheMock.Setup(x => x.CreateEntry(It.IsAny<object>()))
                 .Returns(Mock.Of<ICacheEntry>());
 
+            // act
             await this.imageService.GetImageAsync(uri);
 
+            // assert
             var stream = await httpResponse.Content.ReadAsStreamAsync();
             this.bitmapFactoryMock.Verify(x => x.Create(stream));
         }
@@ -102,43 +92,26 @@ namespace POETradeHelper.Common.UI.Tests.Services
         [Test]
         public async Task GetImageAsyncShouldCallCreateEntryOnMemoryCache()
         {
-            Uri uri = new Uri("http://www.google.de");
-
-            var memoryStream = new MemoryStream();
-
-            HttpResponseMessage httpResponse = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StreamContent(memoryStream)
-            };
-
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(httpResponse);
+            // arrange
+            this.MockHttpClientGetAsyncSuccessResponse();
 
             this.memoryCacheMock.Setup(x => x.CreateEntry(It.IsAny<object>()))
                 .Returns(Mock.Of<ICacheEntry>());
 
+            // act
             await this.imageService.GetImageAsync(uri);
 
+            // assert
             this.memoryCacheMock.Verify(x => x.CreateEntry(uri));
         }
 
         [Test]
         public async Task GetImageAsyncShouldSetValueOnCacheEntry()
         {
-            Uri uri = new Uri("http://www.google.de");
+            // arrange
             var expectedValue = new TestBitmap();
 
-            var memoryStream = new MemoryStream();
-
-            HttpResponseMessage httpResponse = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StreamContent(memoryStream)
-            };
-
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(httpResponse);
+            this.MockHttpClientGetAsyncSuccessResponse();
 
             var cacheEntryMock = new Mock<ICacheEntry>();
 
@@ -148,55 +121,60 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.bitmapFactoryMock.Setup(x => x.Create(It.IsAny<Stream>()))
                 .Returns(expectedValue);
 
+            // act
             await this.imageService.GetImageAsync(uri);
 
+            // assert
             cacheEntryMock.VerifySet(x => x.Value = expectedValue);
         }
 
         [Test]
         public async Task GetImageAsyncShouldSetSizeOnCacheEntry()
         {
-            Uri uri = new Uri("http://www.google.de");
+            // arrange
             var expectedValue = 123;
 
             var memoryStream = new MemoryStream();
             memoryStream.SetLength(expectedValue);
 
-            HttpResponseMessage httpResponse = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StreamContent(memoryStream)
-            };
-
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(httpResponse);
+            this.MockHttpClientGetAsyncSuccessResponse(memoryStream);
 
             var cacheEntryMock = new Mock<ICacheEntry>();
 
             this.memoryCacheMock.Setup(x => x.CreateEntry(It.IsAny<object>()))
                 .Returns(cacheEntryMock.Object);
 
+            // act
             await this.imageService.GetImageAsync(uri);
 
+            // assert
             cacheEntryMock.VerifySet(x => x.Size = expectedValue);
+        }
+
+        [Test]
+        public async Task GetImageAsyncShouldCallDisposeOnCacheEntryToWriteEntryToCache()
+        {
+            // arrange
+            this.MockHttpClientGetAsyncSuccessResponse();
+
+            var cacheEntryMock = new Mock<ICacheEntry>();
+
+            this.memoryCacheMock.Setup(x => x.CreateEntry(It.IsAny<object>()))
+                .Returns(cacheEntryMock.Object);
+
+            // act
+            await this.imageService.GetImageAsync(uri);
+
+            // assert
+            cacheEntryMock.Verify(x => x.Dispose());
         }
 
         [Test]
         public async Task GetImageAsyncShouldReturnImageIfHttpResponseIndicatesSuccess()
         {
+            // arrange
             IBitmap expected = new TestBitmap();
-            Uri uri = new Uri("http://www.google.de");
-
-            var memoryStream = new MemoryStream();
-
-            HttpResponseMessage httpResponse = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StreamContent(memoryStream)
-            };
-
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(httpResponse);
+            this.MockHttpClientGetAsyncSuccessResponse();
 
             this.memoryCacheMock.Setup(x => x.CreateEntry(It.IsAny<object>()))
                 .Returns(Mock.Of<ICacheEntry>());
@@ -204,16 +182,16 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.bitmapFactoryMock.Setup(x => x.Create(It.IsAny<Stream>()))
                 .Returns(expected);
 
+            // act
             IBitmap result = await this.imageService.GetImageAsync(uri);
 
+            // assert
             Assert.That(result, Is.EqualTo(expected));
         }
 
         [Test]
         public async Task GetImageAsyncShouldReturnNullIfHttpResponseDoesNotIndicatesSuccess()
         {
-            Uri uri = new Uri("http://www.google.de");
-
             HttpResponseMessage httpResponse = new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.BadRequest
@@ -225,6 +203,19 @@ namespace POETradeHelper.Common.UI.Tests.Services
             IBitmap result = await this.imageService.GetImageAsync(uri);
 
             Assert.IsNull(result);
+        }
+
+        private HttpResponseMessage MockHttpClientGetAsyncSuccessResponse(Stream stream = null)
+        {
+            HttpResponseMessage httpResponse = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StreamContent(stream ?? new MemoryStream())
+            };
+
+            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(httpResponse);
+            return httpResponse;
         }
 
         private class TestBitmap : IBitmap
