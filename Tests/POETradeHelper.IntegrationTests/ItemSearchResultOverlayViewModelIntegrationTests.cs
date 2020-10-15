@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -42,7 +43,7 @@ namespace POETradeHelper.IntegrationTests
         {
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(default);
 
-            TestContext.WriteLine(JsonSerializer.Serialize(this.itemSearchOverlayViewModel.ItemListings, new JsonSerializerOptions { WriteIndented = true }));
+            TestContext.WriteLine(JsonSerializer.Serialize(this.itemSearchOverlayViewModel, new JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } }));
         }
     }
 }
