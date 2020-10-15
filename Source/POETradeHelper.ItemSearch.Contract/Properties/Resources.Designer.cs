@@ -124,6 +124,33 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Anomalous.
+        /// </summary>
+        public static string GemQualityType_Anomalous {
+            get {
+                return ResourceManager.GetString("GemQualityType_Anomalous", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Divergent.
+        /// </summary>
+        public static string GemQualityType_Divergent {
+            get {
+                return ResourceManager.GetString("GemQualityType_Divergent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phantasmal.
+        /// </summary>
+        public static string GemQualityType_Phantasmal {
+            get {
+                return ResourceManager.GetString("GemQualityType_Phantasmal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hunter Item.
         /// </summary>
         public static string HunterItem {

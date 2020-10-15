@@ -15,5 +15,7 @@
         public bool IsCorrupted { get; set; }
 
         public bool IsVaalVersion { get; set; }
+
+        public GemQualityType QualityType { get; set; }
     }
 }
