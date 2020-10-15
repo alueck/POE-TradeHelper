@@ -2,18 +2,17 @@
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class JewelItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 1;
-        private readonly IItemDataService itemDataService;
+        private readonly IItemTypeParser itemTypeParser;
 
-        public JewelItemParser(IItemDataService itemDataService, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
+        public JewelItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
         {
-            this.itemDataService = itemDataService;
+            this.itemTypeParser = itemTypeParser;
         }
 
         public override bool CanParse(string[] itemStringLines)
@@ -24,36 +23,16 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
             ItemRarity? rarity = this.GetRarity(itemStringLines);
-            var item = new JewelItem(rarity.Value)
+            var jewelItem = new JewelItem(rarity.Value)
             {
                 Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
                 IsCorrupted = this.IsCorrupted(itemStringLines)
             };
 
-            item.Type = GetType(itemStringLines, item.Rarity, item.IsIdentified);
+            jewelItem.Type = this.itemTypeParser.ParseType(itemStringLines, jewelItem.Rarity, jewelItem.IsIdentified);
 
-            return item;
-        }
-
-        private string GetType(string[] itemStringLines, ItemRarity itemRarity, bool isIdentified)
-        {
-            string type;
-
-            if (!isIdentified)
-            {
-                type = itemStringLines[NameLineIndex];
-            }
-            else if (itemRarity == ItemRarity.Magic)
-            {
-                type = this.itemDataService.GetType(itemStringLines[NameLineIndex]);
-            }
-            else
-            {
-                type = itemStringLines[2];
-            }
-
-            return type;
+            return jewelItem;
         }
     }
 }

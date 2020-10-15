@@ -1,6 +1,6 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using System;
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
-using System;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 {
@@ -45,6 +45,12 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
         public T WithUnidentified()
         {
             this.IsIdentified = false;
+            return (T)this;
+        }
+
+        public T WithIdentified(bool isIdentified)
+        {
+            this.IsIdentified = isIdentified;
             return (T)this;
         }
 

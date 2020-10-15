@@ -5,14 +5,13 @@ using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
-using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class EquippableItemParserTests
     {
         private Mock<ISocketsParser> socketsParserMock;
-        private Mock<IItemDataService> itemDataServiceMock;
+        private Mock<IItemTypeParser> itemTypeParserMock;
         private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
         private EquippableItemParser equippableItemParser;
         private ItemStringBuilder itemStringBuilder;
@@ -21,9 +20,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         public void Setup()
         {
             this.socketsParserMock = new Mock<ISocketsParser>();
-            this.itemDataServiceMock = new Mock<IItemDataService>();
+            this.itemTypeParserMock = new Mock<IItemTypeParser>();
             this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
-            this.equippableItemParser = new EquippableItemParser(this.socketsParserMock.Object, this.itemDataServiceMock.Object, this.itemStatsParserMock.Object);
+            this.equippableItemParser = new EquippableItemParser(this.socketsParserMock.Object, this.itemTypeParserMock.Object, this.itemStatsParserMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -183,146 +182,26 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.Name, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void ParseShouldParseTypeOfIdentifiedRareItem()
+        [TestCase(ItemRarity.Magic, true)]
+        [TestCase(ItemRarity.Rare, true)]
+        [TestCase(ItemRarity.Unique, true)]
+        [TestCase(ItemRarity.Normal, false)]
+        [TestCase(ItemRarity.Magic, false)]
+        [TestCase(ItemRarity.Rare, false)]
+        [TestCase(ItemRarity.Unique, false)]
+        public void ParseShouldSetTypeFromItemTypeParser(ItemRarity itemRarity, bool isIdentified)
         {
-            const string expected = "Cutthroat's Garb";
-
+            const string expected = "Result from ItemTypeParser";
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Rare)
-                                            .WithName("Wrath Salvation")
-                                            .WithType(expected)
-                                            .BuildLines();
+                                .WithRarity(itemRarity)
+                                .WithIdentified(isIdentified)
+                                .WithName("Cutthroat's Garb")
+                                .BuildLines();
 
-            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
-
-            Assert.That(result.Type, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ParseShouldCallGetTypeOnItemDataServiceForIdentifiedMagicItem()
-        {
-            const string expected = "Cutthroat's Garb";
-            string name = $"Sanguine {expected} of the Whelpling";
-
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Magic)
-                                            .WithName(name)
-                                            .BuildLines();
-
-            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
-
-            this.itemDataServiceMock.Verify(x => x.GetType(name));
-        }
-
-        [Test]
-        public void ParseShouldNotCallGetTypeOnItemDataServiceForUnidentifiedMagicItem()
-        {
-            const string expected = "Cutthroat's Garb";
-            string name = $"Sanguine {expected} of the Whelpling";
-
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Magic)
-                                            .WithName(name)
-                                            .WithUnidentified()
-                                            .BuildLines();
-
-            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
-
-            this.itemDataServiceMock.Verify(x => x.GetType(name), Times.Never);
-        }
-
-        [Test]
-        public void ParseShouldSetTypeForIdentifiedMagicItemFromItemDataService()
-        {
-            const string expected = "Cutthroat's Garb";
-            string name = $"Sanguine {expected} of the Whelpling";
-
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Magic)
-                                            .WithName(name)
-                                            .BuildLines();
-
-            this.itemDataServiceMock.Setup(x => x.GetType(It.IsAny<string>()))
+            this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
                 .Returns(expected);
 
-            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
-
-            Assert.That(result.Type, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ParseShouldParseTypeOfUnidentifiedItem()
-        {
-            const string expected = "Cutthroat's Garb";
-
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Magic)
-                                            .WithUnidentified()
-                                            .WithName(expected)
-                                            .BuildLines();
-
-            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
-
-            Assert.That(result.Type, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ParseShouldParseTypeOfUnidentifiedSuperiorItem()
-        {
-            const string expected = "Cutthroat's Garb";
-
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Magic)
-                                            .WithUnidentified()
-                                            .WithName($"{Resources.SuperiorPrefix} {expected}")
-                                            .BuildLines();
-
-            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
-
-            Assert.That(result.Type, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ParseShouldParseTypeOfNormalRarityItem()
-        {
-            const string expected = "Cutthroat's Garb";
-
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Normal)
-                                            .WithType(expected)
-                                            .BuildLines();
-
-            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
-
-            Assert.That(result.Type, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ParseShouldParseTypeOfNormalRaritySuperiorItem()
-        {
-            const string expected = "Cutthroat's Garb";
-
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Normal)
-                                            .WithType($"{Resources.SuperiorPrefix} {expected}")
-                                            .BuildLines();
-
-            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
-
-            Assert.That(result.Type, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ParseShouldParseTypeOfSynthesisedItem()
-        {
-            const string expected = "Cutthroat's Garb";
-
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithType($"{Resources.SynthesisedKeyword} {expected}")
-                                            .BuildLines();
-
-            EquippableItem result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
+            var result = this.equippableItemParser.Parse(itemStringLines) as EquippableItem;
 
             Assert.That(result.Type, Is.EqualTo(expected));
         }

@@ -1,16 +1,18 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System.Linq;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class MapItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 1;
+        private readonly IItemTypeParser itemTypeParser;
 
-        public MapItemParser(IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
+        public MapItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
         {
+            this.itemTypeParser = itemTypeParser;
         }
 
         public override bool CanParse(string[] itemStringLines)
@@ -23,6 +25,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             ItemRarity? rarity = this.GetRarity(itemStringLines);
             var mapItem = new MapItem(rarity.Value)
             {
+                Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
                 Tier = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.MapTierDescriptor),
                 ItemQuantity = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemQuantityDescriptor),
@@ -32,29 +35,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 IsCorrupted = this.IsCorrupted(itemStringLines)
             };
 
-            SetNameAndType(mapItem, itemStringLines);
-
+            mapItem.Type = this.itemTypeParser.ParseType(itemStringLines, mapItem.Rarity, mapItem.IsIdentified);
             mapItem.IsBlighted = mapItem.Name.Contains(Resources.BlightedPrefix);
 
             return mapItem;
-        }
-
-        private static void SetNameAndType(MapItem mapItem, string[] itemStringLines)
-        {
-            int typeLineIndex = HasName(mapItem) ? NameLineIndex + 1 : NameLineIndex;
-
-            mapItem.Name = itemStringLines[NameLineIndex];
-            mapItem.Type = GetTypeWithoutPrefixes(itemStringLines[typeLineIndex]);
-        }
-
-        private static bool HasName(MapItem mapItem)
-        {
-            return mapItem.IsIdentified && mapItem.Rarity != ItemRarity.Normal;
-        }
-
-        private static string GetTypeWithoutPrefixes(string type)
-        {
-            return type.Replace(Resources.SuperiorPrefix, "").Replace(Resources.BlightedPrefix, "").Trim();
         }
     }
 }

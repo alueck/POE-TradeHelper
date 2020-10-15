@@ -1,16 +1,19 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System.Text.RegularExpressions;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System.Text.RegularExpressions;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class FlaskItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 1;
+        private readonly IItemTypeParser itemTypeParser;
 
-        public FlaskItemParser(IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
+        public FlaskItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser) :
+            base(itemStatsParser)
         {
+            this.itemTypeParser = itemTypeParser;
         }
 
         public override bool CanParse(string[] itemStringLines)
@@ -25,10 +28,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             var flaskItem = new FlaskItem(rarity.Value)
             {
                 Name = itemStringLines[NameLineIndex],
-                Type = this.GetFlaskType(itemStringLines),
                 Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 IsIdentified = this.IsIdentified(itemStringLines),
             };
+
+            flaskItem.Type = this.itemTypeParser.ParseType(itemStringLines, flaskItem.Rarity, flaskItem.IsIdentified);
 
             return flaskItem;
         }
