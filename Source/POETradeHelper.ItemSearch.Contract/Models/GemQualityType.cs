@@ -5,15 +5,15 @@ namespace POETradeHelper.ItemSearch.Contract.Models
 {
     public enum GemQualityType
     {
-        Default,
+        Default = 0,
 
         [Display(Name = nameof(Resources.GemQualityType_Anomalous), ResourceType = typeof(Resources))]
-        Anomalous,
+        Anomalous = 1,
 
         [Display(Name = nameof(Resources.GemQualityType_Divergent), ResourceType = typeof(Resources))]
-        Divergent,
+        Divergent = 2,
 
         [Display(Name = nameof(Resources.GemQualityType_Phantasmal), ResourceType = typeof(Resources))]
-        Phantasmal
+        Phantasmal = 3
     }
 }

@@ -87,5 +87,24 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             Assert.That(qualityFilter.Min, Is.EqualTo(expected));
             Assert.IsNull(qualityFilter.Max);
         }
+
+        [TestCase(GemQualityType.Default)]
+        [TestCase(GemQualityType.Anomalous)]
+        [TestCase(GemQualityType.Divergent)]
+        [TestCase(GemQualityType.Phantasmal)]
+        public void MapToQueryRequestShouldMapGemQualityType(GemQualityType gemQualityType)
+        {
+            string expected = ((int)gemQualityType).ToString();
+            var item = new GemItem
+            {
+                QualityType = gemQualityType
+            };
+
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+
+            OptionFilter gemQualityTypeFilter = result.Query.Filters.MiscFilters.GemAlternateQuality;
+            Assert.IsNotNull(gemQualityTypeFilter);
+            Assert.That(gemQualityTypeFilter.Option, Is.EqualTo(expected));
+        }
     }
 }
