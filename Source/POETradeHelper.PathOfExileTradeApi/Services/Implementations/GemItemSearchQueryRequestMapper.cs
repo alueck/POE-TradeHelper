@@ -19,6 +19,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
             MapGemLevel(result, gemItem);
             MapQuality(result, gemItem);
+            MapGemQualityType(result, gemItem);
 
             return result;
         }
@@ -40,6 +41,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             result.Query.Filters.MiscFilters.Quality = new MinMaxFilter
             {
                 Min = gemItem.Quality
+            };
+        }
+
+        private void MapGemQualityType(SearchQueryRequest result, GemItem gemItem)
+        {
+            result.Query.Filters.MiscFilters.GemAlternateQuality = new OptionFilter
+            {
+                Option = ((int)gemItem.QualityType).ToString()
             };
         }
     }

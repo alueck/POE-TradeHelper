@@ -35,6 +35,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
         }
 
         [JsonIgnore]
+        public OptionFilter GemAlternateQuality
+        {
+            get => this.GetFilter<OptionFilter>();
+            set => this.SetFilter(value);
+        }
+
+        [JsonIgnore]
         public BoolOptionFilter ShaperItem
         {
             get => this.GetFilter<BoolOptionFilter>();

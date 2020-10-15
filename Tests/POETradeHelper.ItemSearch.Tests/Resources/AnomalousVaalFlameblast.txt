@@ -1,0 +1,48 @@
+﻿Rarity: Gem
+Flameblast
+--------
+Vaal, Spell, AoE, Fire, Channelling
+Level: 20 (Max)
+Mana Cost: 7
+Cast Time: 0.20 sec
+Critical Strike Chance: 5.00%
+Effectiveness of Added Damage: 60%
+Quality: +20% (augmented)
+Alternate Quality
+--------
+Requirements:
+Level: 70
+Int: 155
+--------
+Channels to build up a large explosion, which is released when you stop using the skill. The longer you channel, the larger the area of effect and damage of the explosion, up to 10 stages.
+--------
+Deals 280 to 419 Fire Damage
+40% of Fire Damage Converted to Chaos Damage
+110% more Spell Damage for each stage
+90% more Damage with Ailments for each stage
+20% chance to Poison on Hit
++5% chance to Ignite for each Stage
+10 maximum Stages
++3 to Radius for each Stage
+--------
+Anomalous Vaal Flameblast
+--------
+Souls Per Use: 30
+Can Store 1 Use
+Soul Gain Prevention: 6 sec
+Cast Time: 0.50 sec
+Critical Strike Chance: 5.00%
+Effectiveness of Added Damage: 60%
+--------
+Targets an area and builds up stages in that area based on cast speed. It explodes every 3 stages, until it reaches a maximum of 15. As it gains more stages, the area gets smaller but the damage gets higher.
+--------
+Deals 280 to 419 Fire Damage
+110% more Spell Damage for each stage
+90% more Damage with Ailments for each stage
+20% increased Damage
++5% chance to Ignite for each Stage
+-1 to Radius for each Stage
+--------
+Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.
+--------
+Corrupted
