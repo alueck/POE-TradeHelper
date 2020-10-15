@@ -10,6 +10,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class MapItemParserTests
     {
+        private Mock<IItemTypeParser> itemTypeParserMock;
         private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
         private MapItemParser mapItemParser;
         private MapItemStringBuilder mapItemStringBuilder;
@@ -17,8 +18,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [SetUp]
         public void Setup()
         {
+            this.itemTypeParserMock = new Mock<IItemTypeParser>();
             this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
-            this.mapItemParser = new MapItemParser(this.itemStatsParserMock.Object);
+            this.mapItemParser = new MapItemParser(this.itemTypeParserMock.Object, this.itemStatsParserMock.Object);
             this.mapItemStringBuilder = new MapItemStringBuilder();
         }
 
@@ -124,68 +126,51 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.IsTrue(result.IsIdentified);
         }
 
-        [Test]
-        public void ParseShouldParseUnidentifiedMap()
+        [TestCase(ItemRarity.Magic, true)]
+        [TestCase(ItemRarity.Rare, true)]
+        [TestCase(ItemRarity.Unique, true)]
+        [TestCase(ItemRarity.Normal, false)]
+        [TestCase(ItemRarity.Magic, false)]
+        [TestCase(ItemRarity.Rare, false)]
+        [TestCase(ItemRarity.Unique, false)]
+        public void ParseShouldSetTypeFromItemTypeParser(ItemRarity itemRarity, bool isIdentified)
         {
-            const string expectedType = "Dig Map";
-
+            const string expected = "Result from ItemTypeParser";
             string[] itemStringLines = this.mapItemStringBuilder
-                .WithType(expectedType)
-                .WithUnidentified()
+                .WithRarity(itemRarity)
+                .WithIdentified(isIdentified)
+                .WithName("Dig Map")
                 .BuildLines();
+
+            this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
+                .Returns(expected);
 
             MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.That(result.Type, Is.EqualTo(expectedType));
-            Assert.IsFalse(result.IsIdentified);
-        }
-
-        [Test]
-        public void ParseShouldParseUnidentifiedSuperiorMap()
-        {
-            const string expectedType = "Dig Map";
-            string expectedName = $"{Resources.SuperiorPrefix} {expectedType}";
-
-            string[] itemStringLines = this.mapItemStringBuilder
-                .WithName(expectedName)
-                .WithUnidentified()
-                .WithQuality(20)
-                .BuildLines();
-
-            MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;
-
-            Assert.That(result.Name, Is.EqualTo(expectedName));
-            Assert.That(result.Type, Is.EqualTo(expectedType));
-            Assert.IsFalse(result.IsIdentified);
+            Assert.That(result.Type, Is.EqualTo(expected));
         }
 
         [Test]
         public void ParseShouldParseBlightedMap()
         {
-            const string expectedType = "Dig Map";
-
             string[] itemStringLines = this.mapItemStringBuilder
-                .WithType($"{Resources.BlightedPrefix} {expectedType}")
+                .WithType($"{Resources.BlightedPrefix} Dig Map")
                 .BuildLines();
 
             MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.That(result.Type, Is.EqualTo(expectedType));
             Assert.IsTrue(result.IsBlighted);
         }
 
         [Test]
         public void ParseShouldParseSuperiorBlightedMap()
         {
-            const string expectedType = "Dig Map";
-
             string[] itemStringLines = this.mapItemStringBuilder
-                .WithType($"{Resources.SuperiorPrefix} {Resources.BlightedPrefix} {expectedType}")
+                .WithType($"{Resources.SuperiorPrefix} {Resources.BlightedPrefix} Dig Map")
                 .BuildLines();
 
             MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.That(result.Type, Is.EqualTo(expectedType));
             Assert.IsTrue(result.IsBlighted);
         }
 
@@ -204,8 +189,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldParseNormalRarityMap()
         {
-            const string expectedType = "Dig Map";
-            string expectedName = $"{Resources.SuperiorPrefix} {Resources.BlightedPrefix} {expectedType}";
+            string expectedName = $"{Resources.SuperiorPrefix} {Resources.BlightedPrefix} Dig Map";
 
             string[] itemStringLines = this.mapItemStringBuilder
                 .WithRarity(ItemRarity.Normal)
@@ -214,7 +198,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.That(result.Type, Is.EqualTo(expectedType));
             Assert.That(result.Name, Is.EqualTo(expectedName));
         }
 

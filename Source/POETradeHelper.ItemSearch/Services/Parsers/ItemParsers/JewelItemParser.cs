@@ -1,16 +1,18 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System.Linq;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class JewelItemParser : ItemWithStatsParserBase
     {
-        public JewelItemParser(IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
+        private const int NameLineIndex = 1;
+        private readonly IItemTypeParser itemTypeParser;
+
+        public JewelItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
         {
+            this.itemTypeParser = itemTypeParser;
         }
 
         public override bool CanParse(string[] itemStringLines)
@@ -21,22 +23,16 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
             ItemRarity? rarity = this.GetRarity(itemStringLines);
-            var item = new JewelItem(rarity.Value)
+            var jewelItem = new JewelItem(rarity.Value)
             {
-                Name = itemStringLines[1],
-                Type = GetType(itemStringLines, rarity.Value),
+                Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
                 IsCorrupted = this.IsCorrupted(itemStringLines)
             };
 
-            return item;
-        }
+            jewelItem.Type = this.itemTypeParser.ParseType(itemStringLines, jewelItem.Rarity, jewelItem.IsIdentified);
 
-        private string GetType(string[] itemStringLines, ItemRarity itemRarity)
-        {
-            int typeLineIndex = itemRarity >= ItemRarity.Rare ? 2 : 1;
-
-            return Regex.Match(itemStringLines[typeLineIndex], $@"\w+\s{Resources.JewelKeyword}").Value;
+            return jewelItem;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class FlaskItemParserTests
     {
+        private Mock<IItemTypeParser> itemTypeParserMock;
         private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
         private FlaskItemParser flaskItemParser;
         private ItemStringBuilder itemStringBuilder;
@@ -16,8 +17,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [SetUp]
         public void Setup()
         {
+            this.itemTypeParserMock = new Mock<IItemTypeParser>();
             this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
-            this.flaskItemParser = new FlaskItemParser(this.itemStatsParserMock.Object);
+            this.flaskItemParser = new FlaskItemParser(this.itemTypeParserMock.Object, this.itemStatsParserMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -86,30 +88,24 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.Name, Is.EqualTo(expected));
         }
 
-        [TestCase("Divine Life Flask")]
-        [TestCase("Divine Mana Flask")]
-        [TestCase("Quicksilver Flask")]
-        public void ParseShouldParseFlaskType(string expected)
+        [TestCase(ItemRarity.Magic, true)]
+        [TestCase(ItemRarity.Rare, true)]
+        [TestCase(ItemRarity.Unique, true)]
+        [TestCase(ItemRarity.Normal, false)]
+        [TestCase(ItemRarity.Magic, false)]
+        [TestCase(ItemRarity.Rare, false)]
+        [TestCase(ItemRarity.Unique, false)]
+        public void ParseShouldSetTypeFromItemTypeParser(ItemRarity itemRarity, bool isIdentified)
         {
-            string name = $"Bubbling {expected} of Staunching";
+            const string expected = "Result from ItemTypeParser";
             string[] itemStringLines = this.itemStringBuilder
-                            .WithName(name)
-                            .BuildLines();
-
-            FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
-
-            Assert.That(result.Type, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void ParseShouldParseFlaskTypeOfUniqueFlask()
-        {
-            const string expected = "Silver Flask";
-            string[] itemStringLines = this.itemStringBuilder
-                            .WithRarity(ItemRarity.Unique)
+                            .WithRarity(itemRarity)
+                            .WithIdentified(isIdentified)
                             .WithName("Cinderswallow Urn")
-                            .WithType(expected)
                             .BuildLines();
+
+            this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
+                .Returns(expected);
 
             FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;
 

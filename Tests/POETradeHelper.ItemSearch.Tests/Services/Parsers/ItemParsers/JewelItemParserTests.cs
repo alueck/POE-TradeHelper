@@ -9,6 +9,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class JewelItemParserTests
     {
+        private Mock<IItemTypeParser> itemTypeParserMock;
         private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
         private JewelItemParser jewelItemParser;
         private ItemStringBuilder itemStringBuilder;
@@ -16,8 +17,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [SetUp]
         public void Setup()
         {
+            this.itemTypeParserMock = new Mock<IItemTypeParser>();
             this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
-            this.jewelItemParser = new JewelItemParser(this.itemStatsParserMock.Object);
+            this.jewelItemParser = new JewelItemParser(this.itemTypeParserMock.Object, this.itemStatsParserMock.Object);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -114,14 +116,24 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.Name, Is.EqualTo(expected));
         }
 
-        [TestCase("Pyromantic Cobalt Jewel", "Cobalt Jewel")]
-        [TestCase("Pyromantic Cobalt Jewel of Archery", "Cobalt Jewel")]
-        public void ParseShouldParseTypeOfMagicJewel(string name, string expected)
+        [TestCase(ItemRarity.Magic, true)]
+        [TestCase(ItemRarity.Rare, true)]
+        [TestCase(ItemRarity.Unique, true)]
+        [TestCase(ItemRarity.Normal, false)]
+        [TestCase(ItemRarity.Magic, false)]
+        [TestCase(ItemRarity.Rare, false)]
+        [TestCase(ItemRarity.Unique, false)]
+        public void ParseShouldSetTypeFromItemTypeParser(ItemRarity itemRarity, bool isIdentified)
         {
+            const string expected = "Result from ItemTypeParser";
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Magic)
-                                            .WithName(name)
-                                            .BuildLines();
+                                .WithRarity(itemRarity)
+                                .WithIdentified(isIdentified)
+                                .WithName("Cobalt Jewel")
+                                .BuildLines();
+
+            this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
+                .Returns(expected);
 
             JewelItem result = this.jewelItemParser.Parse(itemStringLines) as JewelItem;
 
@@ -143,23 +155,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             JewelItem result = this.jewelItemParser.Parse(itemStringLines) as JewelItem;
 
             Assert.That(result.Name, Is.EqualTo(expected));
-        }
-
-        [TestCase(ItemRarity.Rare)]
-        [TestCase(ItemRarity.Unique)]
-        public void ParseShouldParseTypeOfRareIIdentifiedItem(ItemRarity itemRarity)
-        {
-            const string expected = "Cobalt Jewel";
-
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(itemRarity)
-                                            .WithName("Armageddon Joy")
-                                            .WithType(expected)
-                                            .BuildLines();
-
-            JewelItem result = this.jewelItemParser.Parse(itemStringLines) as JewelItem;
-
-            Assert.That(result.Type, Is.EqualTo(expected));
         }
 
         [Test]

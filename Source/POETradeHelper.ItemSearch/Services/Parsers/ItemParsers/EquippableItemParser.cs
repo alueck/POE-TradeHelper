@@ -3,7 +3,6 @@ using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
@@ -11,12 +10,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
     {
         private const int NameLineIndex = 1;
         private ISocketsParser socketsParser;
-        private readonly IItemDataService itemDataService;
+        private readonly IItemTypeParser itemTypeParser;
 
-        public EquippableItemParser(ISocketsParser socketsParser, IItemDataService itemDataService, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
+        public EquippableItemParser(ISocketsParser socketsParser, IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser)
+            : base(itemStatsParser)
         {
             this.socketsParser = socketsParser;
-            this.itemDataService = itemDataService;
+            this.itemTypeParser = itemTypeParser;
         }
 
         public override bool CanParse(string[] itemStringLines)
@@ -49,6 +49,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             ItemRarity? itemRarity = this.GetRarity(itemStringLines);
             var equippableItem = new EquippableItem(itemRarity.Value)
             {
+                Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
                 IsCorrupted = this.IsCorrupted(itemStringLines),
                 ItemLevel = this.GetIntegerFromFirstStringContaining(itemStringLines, Contract.Properties.Resources.ItemLevelDescriptor),
@@ -57,7 +58,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 Sockets = this.GetSockets(itemStringLines)
             };
 
-            this.SetNameAndType(equippableItem, itemStringLines);
+            equippableItem.Type = this.itemTypeParser.ParseType(itemStringLines, equippableItem.Rarity, equippableItem.IsIdentified);
 
             return equippableItem;
         }
@@ -77,36 +78,6 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             InfluenceType? influenceType = itemStringLines.Last().ParseToEnumByDisplayName<InfluenceType>();
 
             return influenceType ?? InfluenceType.None;
-        }
-
-        private void SetNameAndType(EquippableItem equippableItem, string[] itemStringLines)
-        {
-            int typeLineIndex = HasName(equippableItem) ? NameLineIndex + 1 : NameLineIndex;
-
-            equippableItem.Name = itemStringLines[NameLineIndex];
-            equippableItem.Type = this.GetTypeWithoutPrefixes(equippableItem, itemStringLines[typeLineIndex]);
-        }
-
-        private static bool HasName(EquippableItem equippableItem)
-        {
-            return equippableItem.IsIdentified && equippableItem.Rarity > ItemRarity.Magic;
-        }
-
-        private string GetTypeWithoutPrefixes(EquippableItem item, string type)
-        {
-            if (item.IsIdentified && item.Rarity == ItemRarity.Magic)
-            {
-                type = this.itemDataService.GetType(type);
-            }
-            else
-            {
-                type = type
-                        .Replace(Contract.Properties.Resources.SuperiorPrefix, "")
-                        .Replace(Contract.Properties.Resources.SynthesisedKeyword, "")
-                        .Trim();
-            }
-
-            return type;
         }
     }
 }
