@@ -5,6 +5,7 @@
         Red,
         Blue,
         Green,
-        White
+        White,
+        Abyssal
     }
 }

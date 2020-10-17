@@ -1,7 +1,7 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System;
+﻿using System;
 using System.Linq;
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
@@ -70,6 +70,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
                 case "W":
                     return SocketType.White;
+
+                case "A":
+                    return SocketType.Abyssal;
 
                 default:
                     throw new ArgumentException($"Unknown socket type '{socketString}'.", nameof(socketString));
