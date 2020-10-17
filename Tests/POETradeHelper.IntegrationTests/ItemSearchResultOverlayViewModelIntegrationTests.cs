@@ -9,10 +9,8 @@ using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common;
 using POETradeHelper.Common.Contract;
-using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.ItemSearch.ViewModels;
-using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 using Splat;
 
 namespace POETradeHelper.IntegrationTests
@@ -46,6 +44,7 @@ namespace POETradeHelper.IntegrationTests
         }
 
         [Test]
+        [Category("Integration")]
         public async Task Test()
         {
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(default);
