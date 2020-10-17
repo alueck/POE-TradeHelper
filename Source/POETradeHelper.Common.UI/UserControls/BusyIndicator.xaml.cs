@@ -1,8 +1,8 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using System;
 
 namespace POETradeHelper.Common.UI.UserControls
 {
@@ -70,6 +70,14 @@ namespace POETradeHelper.Common.UI.UserControls
         }
 
         public static AvaloniaProperty<bool> IsBusyProperty = AvaloniaProperty.Register<BusyIndicator, bool>(nameof(IsBusy));
+
+        public string Text
+        {
+            get => this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+
+        public static AvaloniaProperty<string> TextProperty = AvaloniaProperty.Register<BusyIndicator, string>(nameof(Text));
 
         protected bool IsBusyIndicatorVisible
         {

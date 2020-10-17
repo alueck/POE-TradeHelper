@@ -70,11 +70,20 @@ namespace POETradeHelper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initializing....
+        ///   Looks up a localized string similar to There was a problem communicating with the Path of Exile API. The API might be currently down..
         /// </summary>
-        public static string Initializing {
+        public static string ProblemCommunicatingWithPoeApi {
             get {
-                return ResourceManager.GetString("Initializing", resourceCulture);
+                return ResourceManager.GetString("ProblemCommunicatingWithPoeApi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieving data from Path of Exile API....
+        /// </summary>
+        public static string RetrievingDataText {
+            get {
+                return ResourceManager.GetString("RetrievingDataText", resourceCulture);
             }
         }
         

@@ -2,7 +2,6 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Microsoft.Extensions.Options;
 using POETradeHelper.Common;
 using POETradeHelper.Common.UI;
 using POETradeHelper.ViewModels;
@@ -25,7 +24,7 @@ namespace POETradeHelper
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var viewModel = new MainWindowViewModel(Locator.Current.GetService<IEnumerable<ISettingsViewModel>>(), Locator.Current.GetService<IOptions<AppSettings>>());
+                var viewModel = new MainWindowViewModel(Locator.Current.GetService<IEnumerable<ISettingsViewModel>>(), Locator.Current.GetServices<IInitializable>());
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = viewModel

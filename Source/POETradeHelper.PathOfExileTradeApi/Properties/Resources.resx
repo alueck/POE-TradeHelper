@@ -124,28 +124,28 @@
     <value>https://web.poecdn.com</value>
   </data>
   <data name="PoeTradeApiBaseUrl" xml:space="preserve">
-    <value>https://www.pathofexile.com/api/trade</value>
+    <value>https://www.pathofexile.com/api/trade/</value>
   </data>
   <data name="PoeTradeApiExchangeEndpoint" xml:space="preserve">
-    <value>/exchange</value>
+    <value>exchange</value>
   </data>
   <data name="PoeTradeApiFetchEndpoint" xml:space="preserve">
-    <value>/fetch</value>
+    <value>fetch</value>
   </data>
   <data name="PoeTradeApiItemDataEndpoint" xml:space="preserve">
-    <value>/data/items</value>
+    <value>data/items</value>
   </data>
   <data name="PoeTradeApiLeaguesEndpoint" xml:space="preserve">
-    <value>/data/leagues</value>
+    <value>data/leagues</value>
   </data>
   <data name="PoeTradeApiSearchEndpoint" xml:space="preserve">
-    <value>/search</value>
+    <value>search</value>
   </data>
   <data name="PoeTradeApiStaticDataEndpoint" xml:space="preserve">
-    <value>/data/static</value>
+    <value>data/static</value>
   </data>
   <data name="PoeTradeApiStatsDataEndpoint" xml:space="preserve">
-    <value>/data/stats</value>
+    <value>data/stats</value>
   </data>
   <data name="PoeTradeBaseUrl" xml:space="preserve">
     <value>https://www.pathofexile.com/trade</value>

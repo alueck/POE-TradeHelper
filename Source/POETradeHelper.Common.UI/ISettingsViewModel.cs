@@ -1,4 +1,6 @@
-﻿namespace POETradeHelper.Common.UI
+﻿using System.Threading.Tasks;
+
+namespace POETradeHelper.Common.UI
 {
     public interface ISettingsViewModel
     {
@@ -6,5 +8,7 @@
         bool IsBusy { get; set; }
 
         void SaveSettings();
+
+        Task InitializeAsync();
     }
 }

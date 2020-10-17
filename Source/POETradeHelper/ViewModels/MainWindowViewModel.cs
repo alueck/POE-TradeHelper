@@ -1,41 +1,93 @@
-﻿using DynamicData;
-using Microsoft.Extensions.Options;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Threading.Tasks;
+using DynamicData;
+using POETradeHelper.Common;
 using POETradeHelper.Common.UI;
 using POETradeHelper.Common.UI.Models;
 using POETradeHelper.Properties;
 using ReactiveUI;
 using Splat;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Text.Json;
 
 namespace POETradeHelper.ViewModels
 {
     public class MainWindowViewModel : ReactiveObject
     {
         private bool isBusy;
-        private readonly IOptions<AppSettings> appSettings;
+        private string isBusyText;
+        private Message errorMessage;
         private IEnumerable<ISettingsViewModel> settingsViewModels;
         private ObservableAsPropertyHelper<Message> saveSettingsMessage;
+        private IDisposable settingsViewModelsInitializationSubscription;
 
-        public MainWindowViewModel(IEnumerable<ISettingsViewModel> settingsViewModels, IOptions<AppSettings> appSettings)
+        public MainWindowViewModel(IEnumerable<ISettingsViewModel> settingsViewModels, IEnumerable<IInitializable> initializables)
         {
             this.settingsViewModels = settingsViewModels;
-            this.appSettings = appSettings;
+
+            ConfigureIsBusySubscription(initializables);
 
             this.SaveSettingsCommand = ReactiveCommand.Create(SaveSettings);
-
-            this.settingsViewModels
-                .AsObservableChangeSet()
-                .AutoRefreshOnObservable(x => x.ObservableForProperty(x => x.IsBusy))
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(new AnonymousObserver<IChangeSet<ISettingsViewModel>>(changeSet => this.IsBusy = changeSet.Any(settingsViewModelChange => settingsViewModelChange.Item.Current.IsBusy)));
-
             ConfigureSaveSettingsCommand();
+        }
+
+        private void ConfigureIsBusySubscription(IEnumerable<IInitializable> initializables)
+        {
+            IObservable<bool> settingsViewModelsBusyObservable = this.settingsViewModels
+                                                                        .AsObservableChangeSet()
+                                                                        .AutoRefreshOnObservable(x => x.ObservableForProperty(x => x.IsBusy))
+                                                                        .ObserveOn(RxApp.MainThreadScheduler)
+                                                                        .Select(changeSet => changeSet.Any(settingsViewModelChange => settingsViewModelChange.Item.Current.IsBusy));
+
+            IObservable<bool> initializablesBusyObservable = Observable.Return(true).Concat(initializables
+                .Select(x => x.OnInitAsync().ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        this.Log().Error(t.Exception);
+                        this.ErrorMessage = new Message
+                        {
+                            Text = Resources.ProblemCommunicatingWithPoeApi,
+                            Type = MessageType.Error
+                        };
+                    }
+                    return Observable.Empty<Unit>();
+                }))
+                .ToObservable()
+                .Switch()
+
+                .IsEmpty());
+
+            this.settingsViewModelsInitializationSubscription = initializablesBusyObservable
+                .Subscribe(async initializing =>
+                {
+                    if (initializing)
+                    {
+                        this.IsBusyText = Resources.RetrievingDataText;
+                    }
+                    else
+                    {
+                        this.IsBusyText = null;
+                        await this.InitializeSettingsViewModelsAsync();
+                    }
+                });
+
+            settingsViewModelsBusyObservable
+                .CombineLatest(initializablesBusyObservable, (settingsViewModelBusy, initializableBusy) => settingsViewModelBusy || initializableBusy)
+                .Subscribe(busy => this.IsBusy = busy);
+        }
+
+        private async Task InitializeSettingsViewModelsAsync()
+        {
+            foreach (var settingsViewModel in this.settingsViewModels)
+            {
+                await settingsViewModel.InitializeAsync();
+            }
+
+            this.settingsViewModelsInitializationSubscription.Dispose();
         }
 
         private void ConfigureSaveSettingsCommand()
@@ -78,8 +130,14 @@ namespace POETradeHelper.ViewModels
 
         public bool IsBusy
         {
-            get => isBusy;
-            set => this.RaiseAndSetIfChanged(ref isBusy, value);
+            get => this.isBusy;
+            set => this.RaiseAndSetIfChanged(ref this.isBusy, value);
+        }
+
+        public string IsBusyText
+        {
+            get => this.isBusyText;
+            set => this.RaiseAndSetIfChanged(ref this.isBusyText, value);
         }
 
         public Message SaveSettingsMessage
@@ -94,5 +152,11 @@ namespace POETradeHelper.ViewModels
         }
 
         public ReactiveCommand<Unit, bool> SaveSettingsCommand { get; }
+
+        public Message ErrorMessage
+        {
+            get => this.errorMessage;
+            set => this.RaiseAndSetIfChanged(ref this.errorMessage, value);
+        }
     }
 }
