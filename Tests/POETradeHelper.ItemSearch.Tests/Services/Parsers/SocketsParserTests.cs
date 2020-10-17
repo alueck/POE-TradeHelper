@@ -1,9 +1,8 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
@@ -21,6 +20,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [TestCase("B", SocketType.Blue)]
         [TestCase("G", SocketType.Green)]
         [TestCase("W", SocketType.White)]
+        [TestCase("A", SocketType.Abyssal)]
         public void ParseShouldParseSingleSocket(string socketsString, SocketType expected)
         {
             ItemSockets result = this.socketsParser.Parse(socketsString);
