@@ -13,7 +13,7 @@ using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
-    public class StatsDataService : DataServiceBase<StatData>, IStatsDataService
+    public class StatsDataService : DataServiceBase<Data<StatData>>, IStatsDataService
     {
         private const string Placeholder = "#";
 

@@ -35,7 +35,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 });
 
             var httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
-            httpClientFactoryWrapperMock.Setup(x => x.CreateClient())
+            httpClientFactoryWrapperMock.Setup(x => x.CreateClient(Constants.HttpClientNames.PoeTradeApiDataClient))
                 .Returns(this.httpClientWrapperMock.Object);
 
             this.poeTradeApiJsonSerializerMock = new Mock<IPoeTradeApiJsonSerializer>();
@@ -48,7 +48,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             await this.statsDataService.OnInitAsync();
 
-            this.httpClientWrapperMock.Verify(x => x.GetAsync(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiStatsDataEndpoint, It.IsAny<CancellationToken>()));
+            this.httpClientWrapperMock.Verify(x => x.GetAsync(Resources.PoeTradeApiStatsDataEndpoint, It.IsAny<CancellationToken>()));
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             AsyncTestDelegate testDelegate = async () => await this.statsDataService.OnInitAsync();
 
             var exception = Assert.CatchAsync<PoeTradeApiCommunicationException>(testDelegate);
-            Assert.That(exception.Message, Contains.Substring(Resources.PoeTradeApiBaseUrl + Resources.PoeTradeApiStatsDataEndpoint));
+            Assert.That(exception.Message, Contains.Substring(Resources.PoeTradeApiStatsDataEndpoint));
         }
 
         [TestCase("+39 to maximum life", "# to maximum life")]

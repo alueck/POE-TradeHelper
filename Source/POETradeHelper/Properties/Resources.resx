@@ -120,8 +120,11 @@
   <data name="FailedToSaveSettingsMessageText" xml:space="preserve">
     <value>Failed to save settings. Please try again.</value>
   </data>
-  <data name="Initializing" xml:space="preserve">
-    <value>Initializing...</value>
+  <data name="ProblemCommunicatingWithPoeApi" xml:space="preserve">
+    <value>There was a problem communicating with the Path of Exile API. The API might be currently down.</value>
+  </data>
+  <data name="RetrievingDataText" xml:space="preserve">
+    <value>Retrieving data from Path of Exile API...</value>
   </data>
   <data name="SavedMessageText" xml:space="preserve">
     <value>Saved!</value>

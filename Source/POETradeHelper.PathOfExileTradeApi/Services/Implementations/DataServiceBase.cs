@@ -5,7 +5,6 @@ using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
@@ -18,25 +17,23 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         protected DataServiceBase(string endpoint, IHttpClientFactoryWrapper httpClientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer)
         {
             this.endpoint = endpoint;
-            this.httpClient = httpClientFactory.CreateClient();
+            this.httpClient = httpClientFactory.CreateClient(Constants.HttpClientNames.PoeTradeApiDataClient);
             this.poeTradeApiJsonSerializer = poeTradeApiJsonSerializer;
         }
 
-        protected IList<Data<TDataType>> Data { get; private set; } = new List<Data<TDataType>>();
+        protected IList<TDataType> Data { get; private set; } = new List<TDataType>();
 
         public virtual async Task OnInitAsync()
         {
-            string requestUri = Resources.PoeTradeApiBaseUrl + this.endpoint;
-
-            HttpResponseMessage httpResponse = await this.httpClient.GetAsync(requestUri);
+            HttpResponseMessage httpResponse = await this.httpClient.GetAsync(this.endpoint);
 
             if (!httpResponse.IsSuccessStatusCode)
             {
-                throw new PoeTradeApiCommunicationException(requestUri, httpResponse.StatusCode);
+                throw new PoeTradeApiCommunicationException(this.endpoint, httpResponse.StatusCode);
             }
 
             string content = await httpResponse.Content.ReadAsStringAsync();
-            var queryResult = this.poeTradeApiJsonSerializer.Deserialize<QueryResult<Data<TDataType>>>(content);
+            var queryResult = this.poeTradeApiJsonSerializer.Deserialize<QueryResult<TDataType>>(content);
 
             if (queryResult != null)
             {

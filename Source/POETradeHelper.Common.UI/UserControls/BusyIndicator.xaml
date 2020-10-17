@@ -20,7 +20,10 @@
             <SolidColorBrush Color="{DynamicResource ThemeBackgroundColor}" Opacity="0.6" />
           </Border.Background>
 
-          <ProgressBar IsIndeterminate="True" Height="20" Margin="8" />
+          <Grid>
+            <ProgressBar IsIndeterminate="True" Height="20" Margin="8" />
+            <TextBlock Text="{Binding $parent[UserControl].Text}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+          </Grid>
         </Border>
       </Grid>
     </ControlTemplate>

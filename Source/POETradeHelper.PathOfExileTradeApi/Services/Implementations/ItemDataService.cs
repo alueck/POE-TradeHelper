@@ -1,11 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
-    public class ItemDataService : DataServiceBase<ItemData>, IItemDataService
+    public class ItemDataService : DataServiceBase<Data<ItemData>>, IItemDataService
     {
         public ItemDataService(IHttpClientFactoryWrapper httpClientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer)
             : base(Resources.PoeTradeApiItemDataEndpoint, httpClientFactory, poeTradeApiJsonSerializer)
@@ -17,6 +18,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             ItemData matchingItemData = this.Data
                 .SelectMany(x => x.Entries)
                 .Where(x => x.Type != null && name.Contains(x.Type))
+                .TakeWhile(x => !string.Equals(x.Type, name, StringComparison.Ordinal))
                 .OrderBy(x => x.Type.Length)
                 .FirstOrDefault();
 

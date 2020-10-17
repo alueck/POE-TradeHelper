@@ -1,13 +1,14 @@
-﻿using POETradeHelper.Common;
-using POETradeHelper.Common.UI;
-using POETradeHelper.ItemSearch.Contract.Configuration;
-using POETradeHelper.ItemSearch.Contract;
-using POETradeHelper.PathOfExileTradeApi.Services;
-using ReactiveUI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using POETradeHelper.Common;
+using POETradeHelper.Common.UI;
+using POETradeHelper.ItemSearch.Contract;
+using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.PathOfExileTradeApi.Services;
+using ReactiveUI;
 
 namespace POETradeHelper.ItemSearch.ViewModels
 {
@@ -16,15 +17,13 @@ namespace POETradeHelper.ItemSearch.ViewModels
         private bool isBusy;
         private IList<League> leagues;
         private League selectedLeague;
-        private readonly IPoeTradeApiClient poeTradeApiClient;
+        private readonly ILeagueDataService leagueDataService;
         private readonly IWritableOptions<ItemSearchOptions> itemSearchOptions;
 
-        public ItemSearchSettingsViewModel(IPoeTradeApiClient poeTradeApiClient, IWritableOptions<ItemSearchOptions> itemSearchOptions)
+        public ItemSearchSettingsViewModel(ILeagueDataService leagueDataService, IWritableOptions<ItemSearchOptions> itemSearchOptions)
         {
-            this.poeTradeApiClient = poeTradeApiClient;
+            this.leagueDataService = leagueDataService;
             this.itemSearchOptions = itemSearchOptions;
-
-            Initialize();
         }
 
         public bool IsBusy
@@ -47,13 +46,20 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         public string Title => "Item search settings";
 
-        private async Task Initialize()
+        public Task InitializeAsync()
         {
             this.IsBusy = true;
-            this.Leagues = await this.poeTradeApiClient.GetLeaguesAsync();
-            this.SelectedLeague = this.Leagues.FirstOrDefault(league => string.Equals(this.itemSearchOptions.Value.League?.Id, league.Id, StringComparison.Ordinal)) ?? this.Leagues.First();
-            this.SaveSettingsPrivate(false);
+            this.Leagues = this.leagueDataService.GetLeaguesData().Select(l => new League { Id = l.Id, Text = l.Text }).ToList();
+            this.SelectedLeague = this.Leagues.FirstOrDefault(league => string.Equals(this.itemSearchOptions.Value.League?.Id, league.Id, StringComparison.Ordinal)) ?? this.Leagues.FirstOrDefault();
+
+            if (this.SelectedLeague != default)
+            {
+                this.SaveSettingsPrivate(false);
+            }
+
             this.IsBusy = false;
+
+            return Task.CompletedTask;
         }
 
         public void SaveSettings()

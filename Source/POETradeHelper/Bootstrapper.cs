@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using POETradeHelper.Common;
-using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
+using Polly;
 using Serilog;
 using Serilog.Exceptions;
 using Splat;
@@ -27,20 +26,12 @@ namespace POETradeHelper
     [ExcludeFromCodeCoverage]
     public class Bootstrapper : IEnableLogger
     {
-        public async Task BuildAsync()
+        public static void Configure()
         {
             RegisterDependencies();
-            await InitializeAsync();
         }
 
-        private Task InitializeAsync()
-        {
-            var initializables = Locator.Current.GetServices<IInitializable>();
-
-            return Task.WhenAll(initializables.Select(i => i.OnInitAsync()));
-        }
-
-        private void RegisterDependencies()
+        private static void RegisterDependencies()
         {
             ServiceCollection serviceCollection = ConfigureServiceCollection();
 
@@ -52,16 +43,14 @@ namespace POETradeHelper
 
             IEnumerable<Assembly> assemblies = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "POETradeHelper*.dll").Select(Assembly.LoadFrom);
 
-            var singletonTypes = new List<Type> { typeof(IInitializable), typeof(IUserInputEventHandler), typeof(IUserInputEventProvider) };
-
             container.RegisterAssemblyTypes(assemblies.ToArray())
                 .PublicOnly()
-                .Where(t => !singletonTypes.Any(singletonType => singletonType.IsAssignableFrom(t)))
+                .Where(t => !t.HasSingletonAttribute())
                 .AsImplementedInterfaces();
 
             container.RegisterAssemblyTypes(assemblies.ToArray())
                     .PublicOnly()
-                    .Where(t => singletonTypes.Any(singletonType => singletonType.IsAssignableFrom(t)))
+                    .Where(t => t.HasSingletonAttribute())
                     .AsImplementedInterfaces()
                     .SingleInstance();
 
@@ -73,7 +62,11 @@ namespace POETradeHelper
         private static ServiceCollection ConfigureServiceCollection()
         {
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddHttpClient();
+            serviceCollection
+                .AddHttpClient(PathOfExileTradeApi.Constants.HttpClientNames.PoeTradeApiDataClient, ConfigurePoeTradeApiHttpClient)
+                .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(4, retryAttempt => TimeSpan.FromSeconds(retryAttempt * 15)));
+
+            serviceCollection.AddHttpClient(PathOfExileTradeApi.Constants.HttpClientNames.PoeTradeApiItemSearchClient, ConfigurePoeTradeApiHttpClient);
 
             Serilog.Log.Logger = new LoggerConfiguration()
                             .MinimumLevel.Is(Serilog.Events.LogEventLevel.Warning)
@@ -87,6 +80,12 @@ namespace POETradeHelper
             ConfigureOptions(serviceCollection);
 
             return serviceCollection;
+        }
+
+        private static void ConfigurePoeTradeApiHttpClient(HttpClient client)
+        {
+            client.BaseAddress = new Uri(PathOfExileTradeApi.Properties.Resources.PoeTradeApiBaseUrl);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("POETradeHelper");
         }
 
         private static void ConfigureOptions(ServiceCollection serviceCollection)

@@ -7,6 +7,7 @@ using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
 using Moq;
 using NUnit.Framework;
+using POETradeHelper.Common;
 using POETradeHelper.Common.Contract;
 using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.ItemSearch.ViewModels;
@@ -23,11 +24,15 @@ namespace POETradeHelper.IntegrationTests
         [SetUp]
         public async Task SetUp()
         {
-            var b = new Bootstrapper();
-            await b.BuildAsync();
+            Bootstrapper.Configure();
 
             Locator.CurrentMutable.Register(() => Mock.Of<ICopyCommand>(x => x.ExecuteAsync(It.IsAny<CancellationToken>()) == Task.FromResult(itemString)));
             Locator.CurrentMutable.Register(() => Mock.Of<IPathOfExileProcessHelper>(x => x.IsPathOfExileActiveWindow() == true));
+
+            foreach (var initializable in Locator.Current.GetServices<IInitializable>())
+            {
+                await initializable.OnInitAsync();
+            }
 
             this.itemSearchOverlayViewModel = Locator.Current.GetService<IItemSearchResultOverlayViewModel>();
 
@@ -39,6 +44,7 @@ namespace POETradeHelper.IntegrationTests
         }
 
         [Test]
+        [Category("Integration")]
         public async Task Test()
         {
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(default);

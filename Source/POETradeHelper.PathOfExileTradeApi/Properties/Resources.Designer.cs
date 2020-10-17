@@ -79,7 +79,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://www.pathofexile.com/api/trade.
+        ///   Looks up a localized string similar to https://www.pathofexile.com/api/trade/.
         /// </summary>
         public static string PoeTradeApiBaseUrl {
             get {
@@ -88,7 +88,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /exchange.
+        ///   Looks up a localized string similar to exchange.
         /// </summary>
         public static string PoeTradeApiExchangeEndpoint {
             get {
@@ -97,7 +97,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /fetch.
+        ///   Looks up a localized string similar to fetch.
         /// </summary>
         public static string PoeTradeApiFetchEndpoint {
             get {
@@ -106,7 +106,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /data/items.
+        ///   Looks up a localized string similar to data/items.
         /// </summary>
         public static string PoeTradeApiItemDataEndpoint {
             get {
@@ -115,7 +115,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /data/leagues.
+        ///   Looks up a localized string similar to data/leagues.
         /// </summary>
         public static string PoeTradeApiLeaguesEndpoint {
             get {
@@ -124,7 +124,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /search.
+        ///   Looks up a localized string similar to search.
         /// </summary>
         public static string PoeTradeApiSearchEndpoint {
             get {
@@ -133,7 +133,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /data/static.
+        ///   Looks up a localized string similar to data/static.
         /// </summary>
         public static string PoeTradeApiStaticDataEndpoint {
             get {
@@ -142,7 +142,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /data/stats.
+        ///   Looks up a localized string similar to data/stats.
         /// </summary>
         public static string PoeTradeApiStatsDataEndpoint {
             get {
