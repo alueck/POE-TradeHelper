@@ -1,5 +1,4 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
-using System;
+﻿using System;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {

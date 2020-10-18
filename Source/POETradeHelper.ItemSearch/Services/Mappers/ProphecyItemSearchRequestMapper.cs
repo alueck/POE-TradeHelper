@@ -1,11 +1,17 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using Microsoft.Extensions.Options;
+using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 
-namespace POETradeHelper.PathOfExileTradeApi.Services
+namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class ProphecyItemSearchRequestMapper : ItemSearchRequestMapperBase
     {
+        public ProphecyItemSearchRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions) : base(itemSearchOptions)
+        {
+        }
+
         public override bool CanMap(Item item)
         {
             return item is ProphecyItem;

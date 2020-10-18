@@ -1,12 +1,13 @@
-﻿using Moq;
+﻿using System.Linq;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Extensions;
-using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
-using System.Linq;
+using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
@@ -20,11 +21,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         public void Setup()
         {
             this.statsDataServiceMock = new Mock<IStatsDataService>();
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>(), StatCategory.Monster))
-                .Returns((ItemStat itemStat, StatCategory[] _) => new StatData
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), StatCategory.Monster.GetDisplayName()))
+                .Returns((string itemStatText, string[] _) => new StatData
                 {
-                    Type = itemStat.StatCategory.GetDisplayName().ToLower(),
-                    Text = itemStat.TextWithPlaceholders
+                    Type = StatCategory.Monster.GetDisplayName().ToLower(),
+                    Text = itemStatText
                 });
 
             this.organItemStatsParser = new OrganItemStatsParser(this.statsDataServiceMock.Object);
@@ -91,7 +92,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             foreach (ItemStat stat in result.MonsterStats)
             {
-                this.statsDataServiceMock.Verify(x => x.GetStatData(stat, StatCategory.Monster));
+                this.statsDataServiceMock.Verify(x => x.GetStatData(stat.Text, StatCategory.Monster.GetDisplayName()));
             }
         }
 
@@ -106,7 +107,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .WithDescription(Resources.OrganItemDescriptor)
                     .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>(), StatCategory.Monster))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), StatCategory.Monster.GetDisplayName()))
                 .Returns(new StatData
                 {
                     Id = expected,
@@ -133,7 +134,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .WithDescription(Resources.OrganItemDescriptor)
                     .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<ItemStat>(), StatCategory.Monster))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), StatCategory.Monster.GetDisplayName()))
                 .Returns(new StatData
                 {
                     Text = expected,

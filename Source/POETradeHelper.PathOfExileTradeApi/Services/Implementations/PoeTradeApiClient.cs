@@ -4,10 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using POETradeHelper.Common.Wrappers;
-using POETradeHelper.ItemSearch.Contract.Configuration;
-using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
@@ -18,29 +15,21 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
     {
         private readonly IHttpClientWrapper httpClient;
         private readonly IPoeTradeApiJsonSerializer jsonSerializer;
-        private readonly IItemSearchQueryRequestMapperAggregator itemToQueryRequestMapperAggregator;
-        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
 
         public PoeTradeApiClient(IHttpClientFactoryWrapper httpClientFactory,
-            IPoeTradeApiJsonSerializer jsonSerializer,
-            IItemSearchQueryRequestMapperAggregator itemSearchQueryRequestMapperAggregator,
-            IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
+            IPoeTradeApiJsonSerializer jsonSerializer)
         {
             this.httpClient = httpClientFactory.CreateClient(Constants.HttpClientNames.PoeTradeApiItemSearchClient);
             this.jsonSerializer = jsonSerializer;
-            this.itemToQueryRequestMapperAggregator = itemSearchQueryRequestMapperAggregator;
-            this.itemSearchOptions = itemSearchOptions;
-        }
-
-        public async Task<ItemListingsQueryResult> GetListingsAsync(Item item, CancellationToken cancellationToken = default)
-        {
-            IQueryRequest queryRequest = this.itemToQueryRequestMapperAggregator.MapToQueryRequest(item);
-
-            return await this.GetItemListingsQueryResult(queryRequest, cancellationToken);
         }
 
         public Task<ItemListingsQueryResult> GetListingsAsync(IQueryRequest queryRequest, CancellationToken cancellationToken = default)
         {
+            if (queryRequest == null)
+            {
+                throw new ArgumentNullException(nameof(queryRequest));
+            }
+
             return this.GetItemListingsQueryResult(queryRequest, cancellationToken);
         }
 
@@ -66,7 +55,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
             StringContent content = this.GetJsonStringContent(queryRequest);
 
-            string endpoint = $"{queryRequest.Endpoint}/{this.itemSearchOptions.CurrentValue.League.Id}";
+            string endpoint = $"{queryRequest.Endpoint}/{queryRequest.League}";
             HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, content, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
@@ -97,7 +86,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             }
 
             itemListingsQueryResult = itemListingsQueryResult ?? new ItemListingsQueryResult();
-            itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{this.itemSearchOptions.CurrentValue.League.Id}/{searchQueryResult.Id}");
+            itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{searchQueryResult.Request.League}/{searchQueryResult.Id}");
             itemListingsQueryResult.TotalCount = searchQueryResult.Total;
             itemListingsQueryResult.SearchQueryRequest = searchQueryResult.Request;
 

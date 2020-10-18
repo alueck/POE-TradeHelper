@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
@@ -11,6 +14,20 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 {
     public class QueryRequestFactory : IQueryRequestFactory
     {
+        private readonly IEnumerable<IItemSearchQueryRequestMapper> itemToQueryRequestMappers;
+
+        public QueryRequestFactory(IEnumerable<IItemSearchQueryRequestMapper> itemToQueryRequestMappers)
+        {
+            this.itemToQueryRequestMappers = itemToQueryRequestMappers;
+        }
+
+        public IQueryRequest Create(Item item)
+        {
+            IItemSearchQueryRequestMapper mapper = this.itemToQueryRequestMappers.FirstOrDefault(m => m.CanMap(item));
+
+            return mapper?.MapToQueryRequest(item);
+        }
+
         public IQueryRequest Create(AdvancedQueryViewModel advancedQueryViewModel)
         {
             IQueryRequest result = advancedQueryViewModel.QueryRequest;
@@ -19,6 +36,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             {
                 var searchQueryRequest = new SearchQueryRequest
                 {
+                    League = sourceSearchQueryRequest.League,
                     Query =
                     {
                         Name = sourceSearchQueryRequest.Query.Name,
@@ -46,7 +64,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 
         private static void SetStatFilters(AdvancedQueryViewModel advancedQueryViewModel, SearchQueryRequest searchQueryRequest)
         {
-            var enabledStatFilterViewModels = advancedQueryViewModel.AllFilters.Where(f => f.IsEnabled).OfType<StatFilterViewModel>();
+            var enabledStatFilterViewModels = advancedQueryViewModel.AllFilters.Where(f => f.IsEnabled == true).OfType<StatFilterViewModel>();
 
             var statFilters = new StatFilters();
 
@@ -114,7 +132,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 
             if (filterViewModel is BindableSocketsFilterViewModel socketsFilterViewModel)
             {
-                if (socketsFilterViewModel.IsEnabled)
+                if (socketsFilterViewModel.IsEnabled == true)
                 {
                     filter = new SocketsFilter
                     {
@@ -129,7 +147,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             }
             else if (filterViewModel is IMinMaxFilterViewModel minMaxFilterViewModel)
             {
-                if (minMaxFilterViewModel.IsEnabled)
+                if (minMaxFilterViewModel.IsEnabled == true)
                 {
                     filter = new MinMaxFilter
                     {

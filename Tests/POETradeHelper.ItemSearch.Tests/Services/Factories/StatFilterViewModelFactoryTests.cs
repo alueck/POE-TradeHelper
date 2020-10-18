@@ -1,15 +1,14 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System.Collections.Generic;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
@@ -382,7 +381,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest);
 
-            Assert.That(result.IsEnabled);
+            Assert.That(result.IsEnabled, Is.True);
         }
 
         [TestCaseSource(nameof(ItemStatsWithIds))]

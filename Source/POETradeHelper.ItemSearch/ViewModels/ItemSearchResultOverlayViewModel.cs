@@ -88,9 +88,9 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
                 this.Message = null;
 
-                Item = await searchItemProvider.GetItemFromUnderCursorAsync(cancellationToken);
-
-                ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(Item, cancellationToken);
+                this.Item = await searchItemProvider.GetItemFromUnderCursorAsync(cancellationToken);
+                IQueryRequest queryRequest = this.queryRequestFactory.Create(this.Item);
+                ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(queryRequest, cancellationToken);
 
                 if (itemListing != null && !cancellationToken.IsCancellationRequested)
                 {

@@ -1,9 +1,9 @@
-﻿using DynamicData;
-using POETradeHelper.ItemSearch.Contract;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DynamicData;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System.Collections.Generic;
-using System.Linq;
+using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {

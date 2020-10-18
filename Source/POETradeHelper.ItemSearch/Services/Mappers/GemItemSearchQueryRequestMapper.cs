@@ -1,11 +1,17 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using Microsoft.Extensions.Options;
+using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
-namespace POETradeHelper.PathOfExileTradeApi.Services
+namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class GemItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
+        public GemItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions) : base(itemSearchOptions)
+        {
+        }
+
         public override bool CanMap(Item item)
         {
             return item is GemItem;

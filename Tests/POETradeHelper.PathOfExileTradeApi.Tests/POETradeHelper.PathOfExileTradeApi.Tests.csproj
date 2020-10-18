@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\POETradeHelper.Common\POETradeHelper.Common.csproj" />
+    <ProjectReference Include="..\..\Source\POETradeHelper.ItemSearch.Contract\POETradeHelper.ItemSearch.Contract.csproj" />
     <ProjectReference Include="..\..\Source\POETradeHelper.PathOfExileTradeApi\POETradeHelper.PathOfExileTradeApi.csproj" />
   </ItemGroup>
 

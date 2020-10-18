@@ -1,19 +1,20 @@
 ﻿using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Services.Mappers.Implementations;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
 
-namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
+namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class JewelItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<JewelItem>
     {
         private JewelItemSearchQueryRequestMapper jewelItemSearchQueryRequestMapper;
 
         [SetUp]
-        public void Setup()
+        public override void Setup()
         {
-            this.ItemSearchQueryRequestMapper = this.jewelItemSearchQueryRequestMapper = new JewelItemSearchQueryRequestMapper();
+            base.Setup();
+            this.ItemSearchQueryRequestMapper = this.jewelItemSearchQueryRequestMapper = new JewelItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
         [Test]

@@ -1,19 +1,20 @@
 ﻿using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
+namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class GemItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<GemItem>
     {
         private GemItemSearchQueryRequestMapper gemItemSearchQueryRequestMapper;
 
         [SetUp]
-        public void Setup()
+        public override void Setup()
         {
-            this.ItemSearchQueryRequestMapper = this.gemItemSearchQueryRequestMapper = new GemItemSearchQueryRequestMapper();
+            base.Setup();
+            this.ItemSearchQueryRequestMapper = this.gemItemSearchQueryRequestMapper = new GemItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
         [TestCase("Vaal Flameblast")]

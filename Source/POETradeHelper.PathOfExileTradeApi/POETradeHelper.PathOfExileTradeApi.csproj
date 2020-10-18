@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\POETradeHelper.Common\POETradeHelper.Common.csproj" />
-    <ProjectReference Include="..\POETradeHelper.ItemSearch.Contract\POETradeHelper.ItemSearch.Contract.csproj" />
   </ItemGroup>
 
   <ItemGroup>

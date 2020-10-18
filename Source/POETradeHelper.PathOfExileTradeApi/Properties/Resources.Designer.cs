@@ -151,7 +151,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://www.pathofexile.com/trade.
+        ///   Looks up a localized string similar to https://www.pathofexile.com/trade/.
         /// </summary>
         public static string PoeTradeBaseUrl {
             get {

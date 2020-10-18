@@ -8,7 +8,6 @@ using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.Common.Wrappers;
-using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -86,10 +85,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [TestCase("60% chance for Poisons inflicted with this Weapon to deal 100% more Damage", "#% chance for Poisons inflicted with this Weapon to deal 100% more Damage")]
         public async Task GetStatDataShouldReturnCorrectStatDataForExplicitStat(string statText, string statDataText)
         {
-            StatCategory statCategory = StatCategory.Explicit;
-            var explicitItemStat = new ItemStat(statCategory) { Text = statText };
+            string statCategory = StatCategory.Explicit.GetDisplayName();
 
-            var expected = new StatData { Id = "explicit.stat_3299347043", Text = statDataText, Type = statCategory.GetDisplayName().ToLower() };
+            var expected = new StatData { Id = "explicit.stat_3299347043", Text = statDataText, Type = statCategory.ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
                 .Returns(new QueryResult<Data<StatData>>
@@ -98,10 +96,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                                     new Data<StatData>
                                     {
-                                        Id = statCategory.GetDisplayName(),
+                                        Id = statCategory,
                                         Entries = new List<StatData>
                                         {
-                                            new StatData { Id = "explicit.stat_4220027924", Text = "#% to Cold Resistance", Type = statCategory.GetDisplayName().ToLower() },
+                                            new StatData { Id = "explicit.stat_4220027924", Text = "#% to Cold Resistance", Type = statCategory.ToLower() },
                                             expected
                                         }
                                     }
@@ -110,7 +108,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(explicitItemStat);
+            StatData result = this.statsDataService.GetStatData(statText, statCategory);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -118,10 +116,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetStatDataShouldReturnCorrectStatData()
         {
-            StatCategory statCategory = StatCategory.Explicit;
-            var explicitItemStat = new ItemStat(statCategory) { Text = "Adds 10 to 20 Chaos Damage" };
+            string statCategory = StatCategory.Explicit.GetDisplayName();
+            const string itemStatText = "Adds 10 to 20 Chaos Damage";
 
-            var expected = new StatData { Id = "explicit.stat_3299347043", Text = "Adds # to # Chaos Damage", Type = statCategory.GetDisplayName().ToLower() };
+            var expected = new StatData { Id = "explicit.stat_3299347043", Text = "Adds # to # Chaos Damage", Type = statCategory.ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
                 .Returns(new QueryResult<Data<StatData>>
@@ -130,10 +128,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                                     new Data<StatData>
                                     {
-                                        Id = statCategory.GetDisplayName(),
+                                        Id = statCategory,
                                         Entries = new List<StatData>
                                         {
-                                            new StatData { Id = "explicit.stat_4220027924", Text = "Adds # to # Chaos Damage to Attacks", Type = statCategory.GetDisplayName().ToLower() },
+                                            new StatData { Id = "explicit.stat_4220027924", Text = "Adds # to # Chaos Damage to Attacks", Type = statCategory.ToLower() },
                                             expected
                                         }
                                     }
@@ -142,7 +140,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(explicitItemStat);
+            StatData result = this.statsDataService.GetStatData(itemStatText, statCategory);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -150,10 +148,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetStatDataShouldReturnCorrectStatDataForExplicitStatWithFixedValues()
         {
-            StatCategory statCategory = StatCategory.Explicit;
-            var explicitItemStat = new ItemStat(statCategory) { Text = "60% chance for Poisons inflicted with this Weapon to deal 100% more Damage" };
+            string statCategory = StatCategory.Explicit.GetDisplayName();
+            const string itemStatText = "60% chance for Poisons inflicted with this Weapon to deal 100% more Damage";
 
-            var expected = new StatData { Id = "explicit.stat_3299347043", Text = "#% chance for Poisons inflicted with this Weapon to deal 100% more Damage", Type = statCategory.GetDisplayName().ToLower() };
+            var expected = new StatData { Id = "explicit.stat_3299347043", Text = "#% chance for Poisons inflicted with this Weapon to deal 100% more Damage", Type = statCategory.ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
                 .Returns(new QueryResult<Data<StatData>>
@@ -162,10 +160,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                                     new Data<StatData>
                                     {
-                                        Id = statCategory.GetDisplayName(),
+                                        Id = statCategory,
                                         Entries = new List<StatData>
                                         {
-                                            new StatData { Id = "explicit.stat_4220027924", Text = "#% chance for Poisons inflicted with this Weapon to deal 300% more Damage", Type = statCategory.GetDisplayName().ToLower() },
+                                            new StatData { Id = "explicit.stat_4220027924", Text = "#% chance for Poisons inflicted with this Weapon to deal 300% more Damage", Type = statCategory.ToLower() },
                                             expected
                                         }
                                     }
@@ -174,7 +172,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(explicitItemStat);
+            StatData result = this.statsDataService.GetStatData(itemStatText, statCategory);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -263,7 +261,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStat, itemStat.StatCategory);
+            StatData result = this.statsDataService.GetStatData(itemStat.Text, itemStat.StatCategory.GetDisplayName());
 
             Assert.That(result, Is.EqualTo(expectedStatData));
         }
@@ -271,9 +269,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetStatDataShouldReturnOnlyMatchingStatDataFromGivenCategories()
         {
-            const StatCategory statCategoryToSearch = StatCategory.Implicit;
-            var itemStat = new ItemStat(StatCategory.Unknown) { Text = "3% increased Movement Speed" };
-            var expectedStatData = new StatData { Id = "expectedId", Text = "#% increased Movement Speed", Type = statCategoryToSearch.GetDisplayName().ToLower() };
+            string statCategoryToSearch = StatCategory.Implicit.GetDisplayName();
+            const string itemStatText = "3% increased Movement Speed";
+            var expectedStatData = new StatData { Id = "expectedId", Text = "#% increased Movement Speed", Type = statCategoryToSearch.ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
                 .Returns(new QueryResult<Data<StatData>>
@@ -285,12 +283,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                                     Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
                                                     Entries = new List<StatData>
                                                     {
-                                                        new StatData { Id = "random id", Text = itemStat.TextWithPlaceholders, Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() }
+                                                        new StatData { Id = "random id", Text = expectedStatData.Text, Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() }
                                                     }
                                                 },
                                                 new Data<StatData>
                                                 {
-                                                    Id = statCategoryToSearch.GetDisplayName(),
+                                                    Id = statCategoryToSearch,
                                                     Entries = new List<StatData>
                                                     {
                                                         expectedStatData
@@ -301,7 +299,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStat, statCategoryToSearch);
+            StatData result = this.statsDataService.GetStatData(itemStatText, statCategoryToSearch);
 
             Assert.That(result, Is.EqualTo(expectedStatData));
         }
@@ -367,10 +365,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         public async Task GetStatDataShouldReturnNullForNonExactMatch()
         {
             // arrange
-            ItemStat itemStat = new ItemStat(StatCategory.Explicit)
-            {
-                Text = "+15% reduced Cast Speed"
-            };
+            const string itemStatText = "+15% reduced Cast Speed";
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
                 .Returns(new QueryResult<Data<StatData>>
@@ -391,7 +386,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             await this.statsDataService.OnInitAsync();
 
             // act
-            StatData result = this.statsDataService.GetStatData(itemStat);
+            StatData result = this.statsDataService.GetStatData(itemStatText);
 
             // assert
             Assert.IsNull(result);
