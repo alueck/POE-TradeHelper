@@ -1,44 +1,25 @@
 ﻿using System.Collections;
-using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Moq;
 using NUnit.Framework;
+using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
+namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class EquippableItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<EquippableItem>
     {
-        private Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
         private EquippableItemSearchQueryRequestMapper equippableItemToQueryRequestMapper;
 
         [SetUp]
-        public void Setup()
+        public override void Setup()
         {
-            this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
-                .Returns(new ItemSearchOptions());
-
-            this.ItemSearchQueryRequestMapper = this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.itemSearchOptionsMock.Object);
-        }
-
-        [Test]
-        public void MapToQueryItemShouldMapItemType()
-        {
-            const string expectedType = "Thicket Bow";
-            var item = new EquippableItem(ItemRarity.Normal)
-            {
-                Type = expectedType
-            };
-
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
-
-            Assert.That(result.Query.Type, Is.EqualTo(expectedType));
+            base.Setup();
+            this.ItemSearchQueryRequestMapper = this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
         [Test]
@@ -150,8 +131,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
 
-            Assert.That(result.Query.Filters.MiscFilters.Filters.Count, Is.EqualTo(1));
-            Assert.IsTrue(filterOptionAccessor(result).Option);
+            BoolOptionFilter filter = filterOptionAccessor(result);
+
+            Assert.That(filter, Is.Not.Null);
+            Assert.That(filter.Option, Is.True);
         }
 
         [Test]
@@ -163,10 +146,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 ItemLevel = itemLevel
             };
 
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.ItemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions
                 {
-                    ItemLevelThreshold = itemLevel
+                    ItemLevelThreshold = itemLevel,
+                    League = new League()
                 });
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
@@ -186,10 +170,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 ItemLevel = itemLevel - 1
             };
 
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.ItemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions
                 {
-                    ItemLevelThreshold = itemLevel
+                    ItemLevelThreshold = itemLevel,
+                    League = new League()
                 });
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;

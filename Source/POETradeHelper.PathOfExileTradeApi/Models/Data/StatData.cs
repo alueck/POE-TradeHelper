@@ -1,8 +1,11 @@
 ﻿namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public class LeagueData
+    public class StatData
     {
         public string Id { get; set; }
+
         public string Text { get; set; }
+
+        public string Type { get; set; }
     }
 }

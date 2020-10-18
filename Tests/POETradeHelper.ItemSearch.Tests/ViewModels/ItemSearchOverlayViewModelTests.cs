@@ -1,16 +1,15 @@
-﻿using Moq;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.UI.Models;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
-using POETradeHelper.ItemSearch.Services;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Tests.ViewModels
 {
@@ -50,16 +49,32 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         }
 
         [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldCallGetListingsAsyncOnTradeClient()
+        public async Task SetListingForItemUnderCursorAsyncShouldCallCreateOnQueryRequestFactoryWithItem()
         {
             var item = new EquippableItem(ItemRarity.Normal) { Name = "TestItem" };
-            var cancellationToken = new CancellationToken();
             this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
+            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+
+            this.queryRequestFactoryMock.Verify(x => x.Create(item));
+        }
+
+        [Test]
+        public async Task SetListingForItemUnderCursorAsyncShouldCallGetListingsAsyncOnTradeClient()
+        {
+            var queryRequest = new SearchQueryRequest
+            {
+                League = "Heist"
+            };
+            var cancellationToken = new CancellationToken();
+
+            this.queryRequestFactoryMock.Setup(x => x.Create(It.IsAny<Item>()))
+                .Returns(queryRequest);
+
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(cancellationToken);
 
-            this.poeTradeApiClientMock.Verify(x => x.GetListingsAsync(item, cancellationToken));
+            this.poeTradeApiClientMock.Verify(x => x.GetListingsAsync(queryRequest, cancellationToken));
         }
 
         [Test]
@@ -79,7 +94,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         public async Task SetListingForItemUnderCursorAsyncShouldCallCreateOnItemListingsViewModelFactoryIfTradeClientDoesNotReturnNull()
         {
             var itemListing = new ItemListingsQueryResult();
-            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<Item>(), It.IsAny<CancellationToken>()))
+            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<IQueryRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(itemListing);
 
             this.itemSearchOverlayViewModel.Item = new EquippableItem(ItemRarity.Unique);
@@ -102,7 +117,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         {
             ItemListingsViewModel expected = new ItemListingsViewModel();
 
-            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<Item>(), It.IsAny<CancellationToken>()))
+            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<IQueryRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ItemListingsQueryResult());
 
             this.itemListingsViewModelFactoryMock.Setup(x => x.CreateAsync(It.IsAny<Item>(), It.IsAny<ItemListingsQueryResult>()))
@@ -152,7 +167,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
-            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<Item>(), It.IsAny<CancellationToken>()))
+            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<IQueryRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(itemListingsResult);
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
@@ -168,7 +183,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             this.advancedQueryViewModelFactoryMock.Setup(x => x.Create(It.IsAny<Item>(), It.IsAny<IQueryRequest>()))
                 .Returns(expected);
 
-            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<Item>(), It.IsAny<CancellationToken>()))
+            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<IQueryRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ItemListingsQueryResult());
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();

@@ -1,9 +1,8 @@
-﻿using POETradeHelper.ItemSearch.Contract;
+﻿using System;
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
@@ -18,34 +17,22 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         protected virtual ItemStat GetCompleteItemStat(ItemStat itemStat)
         {
-            var statData = this.statsDataService.GetStatData(itemStat, this.GetStatCategoriesToSearch(itemStat));
+            string statCategoryToSearch = itemStat.StatCategory != StatCategory.Unknown
+                ? itemStat.StatCategory.GetDisplayName()
+                : StatCategory.Explicit.GetDisplayName();
+
+            var statData = this.statsDataService.GetStatData(itemStat.Text, statCategoryToSearch);
 
             if (statData != null)
             {
                 itemStat.Id = statData.Id;
-                itemStat.StatCategory = statData.StatCategory;
+                itemStat.StatCategory = statData.Type.ParseToEnumByDisplayName<StatCategory>(StringComparison.OrdinalIgnoreCase) ?? StatCategory.Unknown;
                 itemStat.TextWithPlaceholders = statData.Text;
 
                 return itemStat;
             }
 
             return null;
-        }
-
-        protected StatCategory[] GetStatCategoriesToSearch(ItemStat itemStat)
-        {
-            IList<StatCategory> statCategoriesToSearch = new List<StatCategory>();
-
-            if (itemStat.StatCategory != StatCategory.Unknown)
-            {
-                statCategoriesToSearch.Add(itemStat.StatCategory);
-            }
-            else
-            {
-                statCategoriesToSearch.Add(StatCategory.Explicit);
-            }
-
-            return statCategoriesToSearch.ToArray();
         }
 
         protected static int GetStatsStartIndex(string[] itemStringLines)

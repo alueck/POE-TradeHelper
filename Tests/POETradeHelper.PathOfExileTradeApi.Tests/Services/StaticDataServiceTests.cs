@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Wrappers;
-using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
@@ -80,13 +79,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
-        public async Task GetIdShouldReturnCorrectIdForItem()
+        public async Task GetIdShouldReturnCorrectIdForItemName()
         {
             const string expected = "wis";
-            var item = new CurrencyItem
-            {
-                Name = "Scroll of Wisdom"
-            };
+            const string itemName = "Scroll of Wisdom";
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
                 .Returns(new QueryResult<Data<StaticData>>
@@ -99,7 +95,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Entries = new List<StaticData>
                             {
                                 new StaticData { Id = "alt", Text = "Orb of Alteration" },
-                                new StaticData { Id = expected, Text = item.Name }
+                                new StaticData { Id = expected, Text = itemName }
                             }
                         }
                     }
@@ -107,19 +103,17 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.staticDataService.OnInitAsync();
 
-            string result = this.staticDataService.GetId(item);
+            string result = this.staticDataService.GetId(itemName);
 
             Assert.That(result, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(nameof(UnsupportedItems))]
-        public void GetIdShouldThrowNotSupportedExceptionIfItemIsNotSupported(Item unsupportedItem)
+        [Test]
+        public void GetIdShouldReturnNullIfItemIdIsNotFound()
         {
-            TestDelegate testDelegate = () => this.staticDataService.GetId(unsupportedItem);
+            string result = this.staticDataService.GetId("random name");
 
-            var exception = Assert.Catch<NotSupportedException>(testDelegate);
-
-            Assert.That(exception.Message, Contains.Substring(unsupportedItem.GetType().Name));
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -213,19 +207,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             TestDelegate testDelegate = () => this.staticDataService.GetImageUrl("abc");
 
             Assert.Throws<KeyNotFoundException>(testDelegate);
-        }
-
-        private static IEnumerable<Item> UnsupportedItems
-        {
-            get
-            {
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new MapItem(ItemRarity.Normal);
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-                yield return new EquippableItem(ItemRarity.Normal);
-                yield return new GemItem();
-            }
         }
     }
 }

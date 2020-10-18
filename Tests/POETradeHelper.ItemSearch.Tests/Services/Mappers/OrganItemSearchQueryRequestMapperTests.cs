@@ -1,18 +1,19 @@
 ﻿using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
+namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class OrganItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<OrganItem>
     {
         private OrganItemSearchQueryRequestMapper organItemSearchQueryRequestMapper;
 
         [SetUp]
-        public void Setup()
+        public override void Setup()
         {
-            this.ItemSearchQueryRequestMapper = this.organItemSearchQueryRequestMapper = new OrganItemSearchQueryRequestMapper();
+            base.Setup();
+            this.ItemSearchQueryRequestMapper = this.organItemSearchQueryRequestMapper = new OrganItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
         [Test]

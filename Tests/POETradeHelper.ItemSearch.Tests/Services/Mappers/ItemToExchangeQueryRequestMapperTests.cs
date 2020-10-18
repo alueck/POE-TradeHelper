@@ -1,22 +1,34 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
+using POETradeHelper.ItemSearch.Contract;
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
+namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class ItemToExchangeQueryRequestMapperTests
     {
         private Mock<IStaticDataService> staticDataServiceMock;
+        private Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
         private ItemToExchangeQueryRequestMapper itemToExchangeQueryRequestMapper;
 
         [SetUp]
         public void Setup()
         {
             this.staticDataServiceMock = new Mock<IStaticDataService>();
-            this.itemToExchangeQueryRequestMapper = new ItemToExchangeQueryRequestMapper(this.staticDataServiceMock.Object);
+            this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    League = new League()
+                });
+
+            this.itemToExchangeQueryRequestMapper = new ItemToExchangeQueryRequestMapper(this.staticDataServiceMock.Object, this.itemSearchOptionsMock.Object);
         }
 
         [TestCaseSource(nameof(SupportedItems))]
@@ -36,13 +48,36 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
+        public void MapToQueryRequestShouldMapLeague()
+        {
+            const string expected = "TestLeague";
+            var item = new CurrencyItem();
+
+            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+                .Returns(new ItemSearchOptions
+                {
+                    League = new League
+                    {
+                        Id = expected
+                    }
+                });
+
+            IQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
+
+            Assert.That(result.League, Is.EqualTo(expected));
+        }
+
+        [Test]
         public void MapToQueryRequestShouldCallGetIdOnStaticItemDataService()
         {
-            var item = new CurrencyItem();
+            var item = new CurrencyItem
+            {
+                Name = "Scroll of Wisdom"
+            };
 
             this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
-            this.staticDataServiceMock.Verify(x => x.GetId(item));
+            this.staticDataServiceMock.Verify(x => x.GetId(item.Name));
         }
 
         [Test]
@@ -51,7 +86,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             const string expected = "item-id";
             var item = new CurrencyItem();
 
-            this.staticDataServiceMock.Setup(x => x.GetId(It.IsAny<Item>()))
+            this.staticDataServiceMock.Setup(x => x.GetId(It.IsAny<string>()))
                 .Returns(expected);
 
             var result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item) as ExchangeQueryRequest;

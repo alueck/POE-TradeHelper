@@ -148,7 +148,7 @@
     <value>data/stats</value>
   </data>
   <data name="PoeTradeBaseUrl" xml:space="preserve">
-    <value>https://www.pathofexile.com/trade</value>
+    <value>https://www.pathofexile.com/trade/</value>
   </data>
   <data name="String1" xml:space="preserve">
     <value />

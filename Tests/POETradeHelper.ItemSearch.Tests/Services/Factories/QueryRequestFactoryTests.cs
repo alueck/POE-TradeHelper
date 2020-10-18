@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Moq;
 using NUnit.Framework;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
+using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
@@ -10,12 +13,65 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
     public class QueryRequestFactoryTests
     {
+        private List<Mock<IItemSearchQueryRequestMapper>> itemSearchQueryRequestMapperMocks;
         private QueryRequestFactory queryRequestFactory;
 
         [SetUp]
         public void Setup()
         {
-            this.queryRequestFactory = new QueryRequestFactory();
+            this.itemSearchQueryRequestMapperMocks = new List<Mock<IItemSearchQueryRequestMapper>>
+            {
+                new Mock<IItemSearchQueryRequestMapper>(),
+                new Mock<IItemSearchQueryRequestMapper>()
+            };
+
+            this.queryRequestFactory = new QueryRequestFactory(this.itemSearchQueryRequestMapperMocks.Select(x => x.Object));
+        }
+
+        [Test]
+        public void CreateShouldCallCanMapOnAllItemSearchQueryRequestMappers()
+        {
+            var item = new EquippableItem(ItemRarity.Rare) { Name = "TestItem" };
+
+            this.queryRequestFactory.Create(item);
+
+            this.itemSearchQueryRequestMapperMocks[0].Verify(x => x.CanMap(item));
+            this.itemSearchQueryRequestMapperMocks[1].Verify(x => x.CanMap(item));
+        }
+
+        [Test]
+        public void CreateShouldCallMapToQueryRequestOnFirstItemSearchQueryRequestMapper()
+        {
+            var item = new EquippableItem(ItemRarity.Rare) { Name = "TestItem" };
+
+            this.itemSearchQueryRequestMapperMocks[0].Setup(x => x.CanMap(item))
+                .Returns(true);
+            this.itemSearchQueryRequestMapperMocks[1].Setup(x => x.CanMap(item))
+                .Returns(true);
+
+            this.queryRequestFactory.Create(item);
+
+            this.itemSearchQueryRequestMapperMocks[0].Verify(x => x.MapToQueryRequest(item));
+            this.itemSearchQueryRequestMapperMocks[1].Verify(x => x.MapToQueryRequest(item), Times.Never);
+        }
+
+        [Test]
+        public void CreateShouldReturnResultFromItemSearchQueryRequestMapper()
+        {
+            var item = new EquippableItem(ItemRarity.Rare) { Name = "TestItem" };
+            var expected = new SearchQueryRequest
+            {
+                League = "Heist"
+            };
+
+            this.itemSearchQueryRequestMapperMocks[0].Setup(x => x.CanMap(item))
+                .Returns(true);
+            this.itemSearchQueryRequestMapperMocks[0].Setup(x => x.MapToQueryRequest(item))
+                .Returns(expected);
+
+            IQueryRequest result = this.queryRequestFactory.Create(item);
+
+            Assert.That(result, Is.EqualTo(expected));
         }
 
         [TestCaseSource(nameof(CreateShouldMapEnabledStatFilterToQueryStatFilterTestData))]
@@ -410,6 +466,25 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
             Assert.IsNotNull(result);
             Assert.That(result.Query.Type, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void CreateShouldMapLeague()
+        {
+            const string expected = "expected league";
+
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest
+                {
+                    League = expected
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.IsNotNull(result);
+            Assert.That(result.League, Is.EqualTo(expected));
         }
 
         [Test]

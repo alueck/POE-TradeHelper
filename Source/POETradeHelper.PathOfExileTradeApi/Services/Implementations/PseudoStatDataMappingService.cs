@@ -1,9 +1,8 @@
-﻿using POETradeHelper.ItemSearch.Contract;
-using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.PathOfExileTradeApi.Constants;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using POETradeHelper.PathOfExileTradeApi.Constants;
+using POETradeHelper.PathOfExileTradeApi.Models;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {

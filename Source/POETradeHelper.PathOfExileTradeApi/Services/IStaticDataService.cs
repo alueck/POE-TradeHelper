@@ -1,17 +1,14 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
-using System;
+﻿using System;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public interface IStaticDataService
     {
         /// <summary>
-        /// Returns the id for the given <paramref name="item"/>.
-        /// Throws <see cref="NotSupportedException"/> if <paramref name="item"/>
-        /// is not <see cref="CurrencyItem"/>, <see cref="DivinationCardItem"/> or <see cref="FragmentItem"/>.
+        /// Returns the id for the given <paramref name="itemName"/> or null if no match was found.
         /// </summary>
-        /// <param name="item">an item of type <see cref="CurrencyItem"/>, <see cref="DivinationCardItem"/> or <see cref="FragmentItem"/> for which to retrieve the id</param>
-        string GetId(Item item);
+        /// <param name="itemName">name of the item for which to retrieve the id</param>
+        string GetId(string itemName);
 
         Uri GetImageUrl(string id);
 

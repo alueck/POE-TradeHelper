@@ -1,10 +1,19 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using Microsoft.Extensions.Options;
+using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 
-namespace POETradeHelper.PathOfExileTradeApi.Services
+namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class OrganItemSearchQueryRequestMapper : IItemSearchQueryRequestMapper
     {
+        private IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
+
+        public OrganItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
+        {
+            this.itemSearchOptions = itemSearchOptions;
+        }
+
         public bool CanMap(Item item)
         {
             return item is OrganItem;
@@ -14,7 +23,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
             var organItem = (OrganItem)item;
 
-            var result = new SearchQueryRequest();
+            var result = new SearchQueryRequest
+            {
+                League = this.itemSearchOptions.CurrentValue.League.Id
+            };
             MapItemName(result, organItem);
 
             return result;

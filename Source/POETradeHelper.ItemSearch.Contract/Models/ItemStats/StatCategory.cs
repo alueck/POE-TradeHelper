@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using POETradeHelper.ItemSearch.Contract.Properties;
 
-namespace POETradeHelper.ItemSearch.Contract
+namespace POETradeHelper.ItemSearch.Contract.Models
 {
     public enum StatCategory
     {

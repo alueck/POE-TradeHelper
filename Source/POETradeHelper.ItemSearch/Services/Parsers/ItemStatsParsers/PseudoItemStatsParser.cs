@@ -1,11 +1,11 @@
-﻿using POETradeHelper.ItemSearch.Contract;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
+using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {

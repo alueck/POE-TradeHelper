@@ -7,7 +7,7 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
-namespace POETradeHelper.PathOfExileTradeApi.Services
+namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class EquippableItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
@@ -22,11 +22,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             [InfluenceType.Warlord] = (miscFilters) => miscFilters.WarlordItem = new BoolOptionFilter { Option = true }
         };
 
-        private IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
-
         public EquippableItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
+            : base(itemSearchOptions)
         {
-            this.itemSearchOptions = itemSearchOptions;
         }
 
         public override bool CanMap(Item item)
@@ -48,7 +46,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
         private void MapItemLevel(SearchQueryRequest result, EquippableItem equippableItem)
         {
-            if (equippableItem.ItemLevel >= itemSearchOptions.CurrentValue.ItemLevelThreshold)
+            if (equippableItem.ItemLevel >= this.ItemSearchOptions.CurrentValue.ItemLevelThreshold)
             {
                 result.Query.Filters.MiscFilters.ItemLevel = new MinMaxFilter
                 {

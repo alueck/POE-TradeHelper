@@ -4,10 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using POETradeHelper.Common.Extensions;
 using POETradeHelper.Common.Wrappers;
-using POETradeHelper.ItemSearch.Contract;
-using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
 
@@ -35,35 +32,35 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             this.statsDataDictionary = this.Data.SelectMany(x => x.Entries).ToDictionary(statData => statData.Id);
         }
 
-        public StatData GetStatData(ItemStat itemStat, params StatCategory[] statCategoriesToSearch)
+        public StatData GetStatData(string itemStatText, params string[] statCategoriesToSearch)
         {
             IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(statCategoriesToSearch);
-            StatData result = this.GetStataDataPrivate(statDataListsToSearch, itemStat);
+            StatData result = this.GetStataDataPrivate(statDataListsToSearch, itemStatText);
 
             return result;
         }
 
-        private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params StatCategory[] statCategoriesToSearch)
+        private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params string[] statCategoriesToSearch)
         {
             IEnumerable<Data<StatData>> result = null;
 
-            if (statCategoriesToSearch.Length != 0 && !statCategoriesToSearch.Any(x => x == StatCategory.Unknown))
+            if (statCategoriesToSearch.Length != 0)
             {
-                result = this.Data.Where(x => statCategoriesToSearch.Any(statCategory => string.Equals(x.Id, statCategory.GetDisplayName(), StringComparison.OrdinalIgnoreCase)));
+                result = this.Data.Where(x => statCategoriesToSearch.Any(statCategory => string.Equals(x.Id, statCategory, StringComparison.OrdinalIgnoreCase)));
             }
 
             return result ?? this.Data;
         }
 
-        private StatData GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, ItemStat itemStat)
+        private StatData GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText)
         {
             StatData result = null;
 
-            StatDataTextMatchResult statDataMatch = GetStatDataMatch(statDataListsToSearch, itemStat);
+            StatDataTextMatchResult statDataMatch = GetStatDataMatch(statDataListsToSearch, itemStatText);
 
             if (statDataMatch == null)
             {
-                this.logger.LogWarning("Failed to find matching stat data for {@itemStat}.", itemStat);
+                this.logger.LogWarning("Failed to find matching stat data for {@itemStatText}.", itemStatText);
             }
             else
             {
@@ -73,9 +70,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result;
         }
 
-        private static StatDataTextMatchResult GetStatDataMatch(IEnumerable<Data<StatData>> statDataListsToSearch, ItemStat itemStat)
+        private static StatDataTextMatchResult GetStatDataMatch(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText)
         {
-            var statDataTextMatcher = new StatDataTextMatcher(itemStat.Text);
+            var statDataTextMatcher = new StatDataTextMatcher(itemStatText);
 
             foreach (var statData in statDataListsToSearch.SelectMany(x => x.Entries))
             {
