@@ -142,7 +142,7 @@
           <ColumnDefinition Width="325" MaxWidth="325" />
         </Grid.ColumnDefinitions>
 
-        <localControls:SelectableFilter Grid.Column="0" Filter="{Binding .}" />
+        <localControls:SelectableFilter Grid.Column="0" Filter="{Binding .}" IsThreeState="True" />
       </Grid>
     </DataTemplate>
   </UserControl.DataTemplates>

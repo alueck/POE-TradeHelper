@@ -1,11 +1,11 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Properties;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -22,21 +22,21 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 searchQueryRequest.Query.Filters.MiscFilters.Quality);
         }
 
-        protected BindableFilterViewModel GetIdentifiedFilterViewModel(IIdentifiableItem identifiableItem, SearchQueryRequest searchQueryRequest)
+        protected BindableFilterViewModel GetIdentifiedFilterViewModel(SearchQueryRequest searchQueryRequest)
         {
             return new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.Identified)
             {
                 Text = Resources.Identified,
-                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.Identified?.Option ?? identifiableItem.IsIdentified
+                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.Identified?.Option
             };
         }
 
-        protected FilterViewModelBase GetCorruptedFilterViewModel(ICorruptableItem corruptableItem, SearchQueryRequest searchQueryRequest)
+        protected FilterViewModelBase GetCorruptedFilterViewModel(SearchQueryRequest searchQueryRequest)
         {
             return new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.Corrupted)
             {
                 Text = Resources.Corrupted,
-                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.Corrupted?.Option ?? corruptableItem.IsCorrupted
+                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.Corrupted?.Option
             };
         }
 

@@ -1,7 +1,7 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System.Collections.Generic;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System.Collections.Generic;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -14,7 +14,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             if (item is FlaskItem flaskItem)
             {
                 result.Add(this.GetQualityFilterViewModel(flaskItem, searchQueryRequest));
-                result.Add(this.GetIdentifiedFilterViewModel(flaskItem, searchQueryRequest));
+                result.Add(this.GetIdentifiedFilterViewModel(searchQueryRequest));
             }
 
             return result;

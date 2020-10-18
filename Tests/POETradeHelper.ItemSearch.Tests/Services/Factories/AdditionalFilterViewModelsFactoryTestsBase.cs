@@ -125,7 +125,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableSocketsFilterViewModel(x, expected)));
         }
 
-        protected void CreateShouldReturnBindableFilterViewModel(Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression, Item item, bool isEnabled, string text)
+        protected void CreateShouldReturnBindableFilterViewModel(Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression, Item item, bool? isEnabled, string text)
         {
             // arrange
             var expected = new BindableFilterViewModel(expectedBindingExpression)

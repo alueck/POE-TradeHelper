@@ -1,8 +1,8 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System.Collections.Generic;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Properties;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System.Collections.Generic;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -19,9 +19,9 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 result.Add(this.GetItemRarityFilterViewModel(mapItem, searchQueryRequest));
                 result.Add(this.GetMonsterPacksizeFilterViewModel(mapItem, searchQueryRequest));
                 result.Add(this.GetMapTierFilterViewModel(mapItem, searchQueryRequest));
-                result.Add(this.GetMapBlightedFilterViewModel(mapItem, searchQueryRequest));
-                result.Add(this.GetCorruptedFilterViewModel(mapItem, searchQueryRequest));
-                result.Add(this.GetIdentifiedFilterViewModel(mapItem, searchQueryRequest));
+                result.Add(this.GetMapBlightedFilterViewModel(searchQueryRequest));
+                result.Add(this.GetCorruptedFilterViewModel(searchQueryRequest));
+                result.Add(this.GetIdentifiedFilterViewModel(searchQueryRequest));
             }
 
             return result;
@@ -63,12 +63,12 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 searchQueryRequest.Query.Filters.MapFilters.MapTier);
         }
 
-        private FilterViewModelBase GetMapBlightedFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest)
+        private FilterViewModelBase GetMapBlightedFilterViewModel(SearchQueryRequest searchQueryRequest)
         {
             return new BindableFilterViewModel(x => x.Query.Filters.MapFilters.MapBlighted)
             {
                 Text = Resources.MapBlighted,
-                IsEnabled = searchQueryRequest.Query.Filters.MapFilters.MapBlighted?.Option ?? mapItem.IsBlighted
+                IsEnabled = searchQueryRequest.Query.Filters.MapFilters.MapBlighted?.Option
             };
         }
     }

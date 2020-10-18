@@ -23,5 +23,13 @@ namespace POETradeHelper.ItemSearch.UserControls
         }
 
         public static AvaloniaProperty<object> FilterProperty = AvaloniaProperty.Register<SelectableFilter, object>(nameof(Filter));
+
+        public bool IsThreeState
+        {
+            get => GetValue(IsThreeStateProperty);
+            set => SetValue(IsThreeStateProperty, value);
+        }
+
+        public static AvaloniaProperty<bool> IsThreeStateProperty = AvaloniaProperty.Register<SelectableFilter, bool>(nameof(IsThreeState));
     }
 }

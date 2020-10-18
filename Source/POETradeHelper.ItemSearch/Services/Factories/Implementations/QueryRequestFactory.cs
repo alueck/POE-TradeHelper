@@ -158,10 +158,13 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             }
             else
             {
-                filter = new BoolOptionFilter
+                if (filterViewModel.IsEnabled.HasValue)
                 {
-                    Option = filterViewModel.IsEnabled
-                };
+                    filter = new BoolOptionFilter
+                    {
+                        Option = filterViewModel.IsEnabled.Value
+                    };
+                }
             }
 
             return filter;

@@ -1,13 +1,13 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Properties;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
@@ -70,7 +70,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 IsIdentified = value
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, flaskItem, flaskItem.IsIdentified, Resources.Identified);
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, flaskItem, null, Resources.Identified);
         }
 
         [Test]

@@ -9,6 +9,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
     {
         public BindableMinMaxFilterViewModel(Expression<Func<SearchQueryRequest, IFilter>> bindingExpression) : base(bindingExpression)
         {
+            this.IsEnabled = false;
         }
 
         public int? Min { get; set; }

@@ -124,7 +124,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, false, equippableItem.Influence.GetDisplayName());
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, null, equippableItem.Influence.GetDisplayName());
         }
 
         [TestCaseSource(nameof(InfluenceFilterViewModelTestData))]
@@ -355,7 +355,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 IsIdentified = value
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.IsIdentified, Resources.Identified);
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, null, Resources.Identified);
         }
 
         [Test]
@@ -385,7 +385,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 IsCorrupted = value
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.IsCorrupted, Resources.Corrupted);
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, null, Resources.Corrupted);
         }
 
         [Test]
