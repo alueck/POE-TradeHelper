@@ -24,8 +24,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
             .Concat(this.PseudoItemStatFilters)
             .Concat(this.AdditionalFilters);
 
-        public bool IsVisible => this.AllFilters.Any(f => f.IsEnabled);
-
         public bool IsEnabled { get; set; }
 
         public IQueryRequest QueryRequest { get; set; }

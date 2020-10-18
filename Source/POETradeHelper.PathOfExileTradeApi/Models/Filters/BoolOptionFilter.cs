@@ -1,5 +1,5 @@
-﻿using POETradeHelper.PathOfExileTradeApi.JsonConverters;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using POETradeHelper.PathOfExileTradeApi.JsonConverters;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {

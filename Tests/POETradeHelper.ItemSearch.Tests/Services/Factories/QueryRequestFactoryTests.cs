@@ -330,6 +330,26 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         }
 
         [Test]
+        public void CreateShouldNotMapAdditionalBoolFilterWithoutEnabledValueToQuery()
+        {
+            BindableFilterViewModel additionalFilter = new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.CrusaderItem);
+
+            var advancedQueryViewModel = new AdvancedQueryViewModel
+            {
+                QueryRequest = new SearchQueryRequest(),
+                AdditionalFilters =
+                {
+                    additionalFilter
+                }
+            };
+
+            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+
+            Assert.NotNull(result);
+            Assert.IsNull(result.Query.Filters.MiscFilters.CrusaderItem);
+        }
+
+        [Test]
         public void CreateShouldClearFiltersBeforeAddingNewOnes()
         {
             BindableFilterViewModel additionalFilter = new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.CrusaderItem)

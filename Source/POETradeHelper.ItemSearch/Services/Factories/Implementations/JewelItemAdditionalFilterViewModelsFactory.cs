@@ -1,7 +1,7 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System.Collections.Generic;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System.Collections.Generic;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -11,10 +11,10 @@ namespace POETradeHelper.ItemSearch.Services.Factories
         {
             var result = new List<FilterViewModelBase>();
 
-            if (item is JewelItem jewelItem)
+            if (item is JewelItem)
             {
-                result.Add(this.GetIdentifiedFilterViewModel(jewelItem, searchQueryRequest));
-                result.Add(this.GetCorruptedFilterViewModel(jewelItem, searchQueryRequest));
+                result.Add(this.GetIdentifiedFilterViewModel(searchQueryRequest));
+                result.Add(this.GetCorruptedFilterViewModel(searchQueryRequest));
             }
 
             return result;

@@ -33,8 +33,8 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                     result.Add(this.GetInfluenceFilterViewModel(equippableItem, searchQueryRequest));
                 }
 
-                result.Add(this.GetIdentifiedFilterViewModel(equippableItem, searchQueryRequest));
-                result.Add(this.GetCorruptedFilterViewModel(equippableItem, searchQueryRequest));
+                result.Add(this.GetIdentifiedFilterViewModel(searchQueryRequest));
+                result.Add(this.GetCorruptedFilterViewModel(searchQueryRequest));
             }
 
             return result;
@@ -56,7 +56,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return new BindableFilterViewModel(bindingExpression)
             {
                 Text = equippableItem.Influence.GetDisplayName(),
-                IsEnabled = bindingExpression.Compile().Invoke(searchQueryRequest) is BoolOptionFilter boolOptionFilter && boolOptionFilter.Option
+                IsEnabled = bindingExpression.Compile().Invoke(searchQueryRequest) is BoolOptionFilter boolOptionFilter ? boolOptionFilter.Option : (bool?)null
             };
         }
 
