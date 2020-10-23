@@ -78,8 +78,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             Assert.That(exception.Message, Contains.Substring(Resources.PoeTradeApiItemDataEndpoint));
         }
 
-        [Test]
-        public async Task GetTypeShouldReturnCorrectTypeForItemName()
+        [TestCase("Sanguine Leather Belt of the Whelpling")]
+        [TestCase("Leather Belt")]
+        public async Task GetTypeShouldReturnCorrectTypeForItemName(string name)
         {
             const string expectedType = "Leather Belt";
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
@@ -102,7 +103,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.itemDataService.OnInitAsync();
 
-            string result = this.itemDataService.GetType("Sanguine Leather Belt of the Whelpling");
+            string result = this.itemDataService.GetType(name);
 
             Assert.That(result, Is.EqualTo(expectedType));
         }
