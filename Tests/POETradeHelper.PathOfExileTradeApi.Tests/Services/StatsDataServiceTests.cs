@@ -108,7 +108,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(statText, statCategory);
+            StatData result = this.statsDataService.GetStatData(statText, false, statCategory);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -140,7 +140,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStatText, statCategory);
+            StatData result = this.statsDataService.GetStatData(itemStatText, false, statCategory);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -172,7 +172,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStatText, statCategory);
+            StatData result = this.statsDataService.GetStatData(itemStatText, false, statCategory);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -261,7 +261,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStat.Text, itemStat.StatCategory.GetDisplayName());
+            StatData result = this.statsDataService.GetStatData(itemStat.Text, false, itemStat.StatCategory.GetDisplayName());
 
             Assert.That(result, Is.EqualTo(expectedStatData));
         }
@@ -299,7 +299,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStatText, statCategoryToSearch);
+            StatData result = this.statsDataService.GetStatData(itemStatText, false, statCategoryToSearch);
 
             Assert.That(result, Is.EqualTo(expectedStatData));
         }
@@ -327,7 +327,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStatId);
+            StatData result = this.statsDataService.GetStatDataById(itemStatId);
 
             Assert.IsNull(result);
         }
@@ -356,7 +356,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(expected.Id);
+            StatData result = this.statsDataService.GetStatDataById(expected.Id);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -386,10 +386,48 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             await this.statsDataService.OnInitAsync();
 
             // act
-            StatData result = this.statsDataService.GetStatData(itemStatText);
+            StatData result = this.statsDataService.GetStatData(itemStatText, false);
 
             // assert
             Assert.IsNull(result);
+        }
+
+        [Test]
+        public async Task GetStatDataShouldPreferLocalStat()
+        {
+            // arrange
+            const string itemStatText = "+15 % attack speed";
+            var expectedStatData = new StatData
+            {
+                Id = "expected id",
+                Text = $"{itemStatText} ({Resources.LocalKeyword})",
+                Type = StatCategory.Explicit.GetDisplayName().ToLower()
+            };
+
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result = new List<Data<StatData>>
+                    {
+                                                            new Data<StatData>
+                                                            {
+                                                                Id = StatCategory.Explicit.GetDisplayName(),
+                                                                Entries = new List<StatData>
+                                                                {
+                                                                    new StatData { Id = "random id", Type = expectedStatData.Type, Text = itemStatText },
+                                                                    expectedStatData
+                                                                }
+                                                            }
+                    }
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            // act
+            StatData result = this.statsDataService.GetStatData(itemStatText, true);
+
+            // assert
+            Assert.That(result, Is.EqualTo(expectedStatData));
         }
     }
 }

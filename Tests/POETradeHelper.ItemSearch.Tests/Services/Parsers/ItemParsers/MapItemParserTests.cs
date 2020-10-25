@@ -211,7 +211,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.mapItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines));
+            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false));
         }
 
         [Test]
@@ -225,7 +225,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.mapItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines), Times.Never);
+            this.itemStatsParserMock.Verify(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()), Times.Never);
         }
 
         [Test]
@@ -237,7 +237,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                             .WithType("Thicket Map")
                             .BuildLines();
 
-            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
+            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()))
                 .Returns(expected);
 
             MapItem result = this.mapItemParser.Parse(itemStringLines) as MapItem;

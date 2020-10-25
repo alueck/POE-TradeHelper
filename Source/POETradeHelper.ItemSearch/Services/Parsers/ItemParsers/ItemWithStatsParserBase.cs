@@ -29,7 +29,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 return null;
             }
 
-            return this.itemStatsParser.Parse(itemStringLines);
+            bool shouldPreferLocalStats = item is EquippableItem equippableItem
+                                            && (equippableItem.Category == EquippableItemCategory.Armour
+                                                || equippableItem.Category == EquippableItemCategory.Weapons);
+
+            return this.itemStatsParser.Parse(itemStringLines, shouldPreferLocalStats);
         }
     }
 }

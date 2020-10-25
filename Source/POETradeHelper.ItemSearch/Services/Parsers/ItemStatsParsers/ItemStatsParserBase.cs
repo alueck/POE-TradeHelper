@@ -15,13 +15,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             this.statsDataService = statsDataService;
         }
 
-        protected virtual ItemStat GetCompleteItemStat(ItemStat itemStat)
+        protected virtual ItemStat GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
         {
             string statCategoryToSearch = itemStat.StatCategory != StatCategory.Unknown
                 ? itemStat.StatCategory.GetDisplayName()
                 : StatCategory.Explicit.GetDisplayName();
 
-            var statData = this.statsDataService.GetStatData(itemStat.Text, statCategoryToSearch);
+            var statData = this.statsDataService.GetStatData(itemStat.Text, preferLocalStatData, statCategoryToSearch);
 
             if (statData != null)
             {

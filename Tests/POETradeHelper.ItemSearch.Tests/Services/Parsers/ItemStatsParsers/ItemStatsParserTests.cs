@@ -41,10 +41,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                            .WithItemStat(statText, statCategory)
                                            .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData());
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
 
@@ -65,10 +65,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                            .WithItemStat(statText, statCategory)
                                            .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData { Text = expected });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
 
@@ -89,10 +89,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                .WithItemStat(statText, expected)
                                .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData { Type = expected.GetDisplayName() });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
 
@@ -110,7 +110,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                    .WithDescription("These boots are made for walkin'")
                    .BuildLines();
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Is.Empty);
         }
@@ -124,9 +124,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                    .WithItemStat("Stat text with unknown category", statCategory)
                    .BuildLines();
 
-            this.itemStatsParser.Parse(itemStringLines);
+            this.itemStatsParser.Parse(itemStringLines, false);
 
-            this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<string>(), StatCategory.Explicit.GetDisplayName()));
+            this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), StatCategory.Explicit.GetDisplayName()));
         }
 
         [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)")]
@@ -141,9 +141,24 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                    .WithItemStat(statText, statCategory)
                    .BuildLines();
 
-            this.itemStatsParser.Parse(itemStringLines);
+            this.itemStatsParser.Parse(itemStringLines, false);
 
-            this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<string>(), statCategory.GetDisplayName()));
+            this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), statCategory.GetDisplayName()));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ParseShouldCallGetStatDataWithPreferLocalStats(bool preferLocalStats)
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                   .WithName("Titan Greaves")
+                   .WithItemLevel(75)
+                   .WithItemStat("+25% to Cold Resistance (implicit)", StatCategory.Implicit)
+                   .BuildLines();
+
+            this.itemStatsParser.Parse(itemStringLines, preferLocalStats);
+
+            this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<string>(), preferLocalStats, It.IsAny<string[]>()));
         }
 
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage")]
@@ -160,10 +175,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                    .WithItemStat(statText, statCategory)
                    .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData { Id = expected });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
 
@@ -181,13 +196,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                    .WithItemStat(statText, statCategory)
                    .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData
                 {
                     Text = textWithPlaceholders
                 });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
 
@@ -204,13 +219,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .WithItemStat("+25% to Cold Resistance", StatCategory.Explicit)
                     .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData
                 {
                     Text = "#% to Cold Resistance"
                 });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
 
@@ -227,13 +242,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .WithItemStat("Minions deal 1 to 15 additional Physical Damage", StatCategory.Explicit)
                     .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData
                 {
                     Text = "Minions deal # to # additional Physical Damage"
                 });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
 
@@ -252,13 +267,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData
                 {
                     Text = textWithPlaceholders
                 });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             SingleValueItemStat itemStat = result.AllStats.First() as SingleValueItemStat;
@@ -275,13 +290,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData
                 {
                     Text = textWithPlaceholders
                 });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             MinMaxValueItemStat itemStat = result.AllStats.First() as MinMaxValueItemStat;
@@ -298,13 +313,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData
                 {
                     Text = textWithPlaceholders
                 });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             MinMaxValueItemStat itemStat = result.AllStats.First() as MinMaxValueItemStat;
@@ -320,13 +335,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithItemStat("statText", StatCategory.Explicit)
                 .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData());
 
             this.pseudoItemStatsParserMock.Setup(x => x.Parse(It.IsAny<IEnumerable<ItemStat>>()))
-                .Callback(() => this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>())));
+                .Callback(() => this.statsDataServiceMock.Verify(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>())));
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             this.pseudoItemStatsParserMock.Verify(x => x.Parse(It.Is<IEnumerable<ItemStat>>(enumerable => enumerable.SequenceEqual(result.AllStats))));
         }
@@ -342,13 +357,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithItemStat("statText", StatCategory.Explicit)
                 .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<string[]>()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Returns(new StatData());
 
             this.pseudoItemStatsParserMock.Setup(x => x.Parse(It.IsAny<IEnumerable<ItemStat>>()))
                 .Returns(new List<ItemStat> { expected });
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Contains.Item(expected));
         }
@@ -393,7 +408,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             foreach (var itemStat in itemStats)
             {
-                this.statsDataServiceMock.Setup(x => x.GetStatData(It.Is<string>(x => x == itemStat.Text), It.IsAny<string[]>()))
+                this.statsDataServiceMock.Setup(x => x.GetStatData(It.Is<string>(x => x == itemStat.Text), It.IsAny<bool>(), It.IsAny<string[]>()))
                     .Returns(new StatData { Id = itemStat.Id, Text = itemStat.TextWithPlaceholders, Type = itemStat.StatCategory.GetDisplayName() });
             }
 
@@ -406,7 +421,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                    .WithItemStat($"{expectedEnchantedItemStat.Text} ({StatCategory.Enchant.GetDisplayName().ToLower()})", expectedEnchantedItemStat.StatCategory)
                    .BuildLines();
 
-            ItemStats result = this.itemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(4));
 

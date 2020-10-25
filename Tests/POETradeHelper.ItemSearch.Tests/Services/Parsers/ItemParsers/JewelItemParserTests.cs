@@ -188,7 +188,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.jewelItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines));
+            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false));
         }
 
         [Test]
@@ -200,7 +200,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.jewelItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines), Times.Never);
+            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false), Times.Never);
         }
     }
 }

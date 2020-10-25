@@ -28,7 +28,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
                 if (this.mappings.TryGetValue(key, out IReadOnlyCollection<string> pseudoStatIds))
                 {
-                    result = pseudoStatIds.Select(this.statsDataService.GetStatData);
+                    result = pseudoStatIds.Select(this.statsDataService.GetStatDataById);
                 }
             }
 

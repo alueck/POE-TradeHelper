@@ -32,10 +32,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             this.statsDataDictionary = this.Data.SelectMany(x => x.Entries).ToDictionary(statData => statData.Id);
         }
 
-        public StatData GetStatData(string itemStatText, params string[] statCategoriesToSearch)
+        public StatData GetStatData(string itemStatText, bool preferLocalStat, params string[] statCategoriesToSearch)
         {
             IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(statCategoriesToSearch);
-            StatData result = this.GetStataDataPrivate(statDataListsToSearch, itemStatText);
+            StatData result = this.GetStataDataPrivate(statDataListsToSearch, itemStatText, preferLocalStat);
 
             return result;
         }
@@ -52,11 +52,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result ?? this.Data;
         }
 
-        private StatData GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText)
+        private StatData GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText, bool preferLocalStat)
         {
             StatData result = null;
 
-            StatDataTextMatchResult statDataMatch = GetStatDataMatch(statDataListsToSearch, itemStatText);
+            StatDataTextMatchResult statDataMatch = GetStatDataMatch(statDataListsToSearch, itemStatText, preferLocalStat);
 
             if (statDataMatch == null)
             {
@@ -70,8 +70,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result;
         }
 
-        private static StatDataTextMatchResult GetStatDataMatch(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText)
+        private static StatDataTextMatchResult GetStatDataMatch(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText, bool preferLocalStat)
         {
+            StatDataTextMatchResult result = null;
             var statDataTextMatcher = new StatDataTextMatcher(itemStatText);
 
             foreach (var statData in statDataListsToSearch.SelectMany(x => x.Entries))
@@ -80,14 +81,20 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
                 if (matchResult.IsMatch)
                 {
-                    return matchResult;
+                    if ((preferLocalStat && matchResult.IsLocalStat) || (!preferLocalStat && !matchResult.IsLocalStat))
+                    {
+                        result = matchResult;
+                        break;
+                    }
+
+                    result = matchResult;
                 }
             }
 
-            return null;
+            return result;
         }
 
-        public StatData GetStatData(string itemStatId)
+        public StatData GetStatDataById(string itemStatId)
         {
             return !string.IsNullOrEmpty(itemStatId) && this.statsDataDictionary.TryGetValue(itemStatId, out StatData statData)
                 ? statData
@@ -96,6 +103,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         private class StatDataTextMatcher
         {
+            private const string localStatMatchGroupName = "localStat";
             private readonly Regex regex;
 
             public StatDataTextMatcher(string statText)
@@ -107,7 +115,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             {
                 var match = this.regex.Match(statData.Text);
 
-                return new StatDataTextMatchResult(statData, match.Success);
+                return new StatDataTextMatchResult(statData, match.Success, match.Groups[localStatMatchGroupName].Success);
             }
 
             /// <summary>
@@ -123,22 +131,26 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             {
                 string regexString = NumberRegex.Replace(statText, match => $"({Regex.Escape(match.Value)}|{Regex.Escape(Placeholder)})");
                 const string monsterItemStatSuffix = @" \(×#\)";
+                string localSuffix = $@" \({Resources.LocalKeyword}\)";
 
-                return new Regex($@"^[\+\-]?{regexString}({monsterItemStatSuffix})?$");
+                return new Regex($@"^([\+\-]?{regexString}({monsterItemStatSuffix}|(?<{localStatMatchGroupName}>{localSuffix}))?)$");
             }
         }
 
         private class StatDataTextMatchResult
         {
-            public StatDataTextMatchResult(StatData statData, bool isMatch)
+            public StatDataTextMatchResult(StatData statData, bool isMatch, bool isLocalStat)
             {
+                this.StatData = statData;
                 this.IsMatch = isMatch;
-                StatData = statData;
+                this.IsLocalStat = isLocalStat;
             }
 
             public StatData StatData { get; }
 
             public bool IsMatch { get; }
+
+            public bool IsLocalStat { get; }
         }
     }
 }

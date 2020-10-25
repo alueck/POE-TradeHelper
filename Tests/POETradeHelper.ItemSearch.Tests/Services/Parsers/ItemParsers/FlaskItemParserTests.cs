@@ -160,7 +160,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.flaskItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines));
+            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false));
         }
 
         [Test]
@@ -173,7 +173,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.flaskItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines), Times.Never);
+            this.itemStatsParserMock.Verify(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()), Times.Never);
         }
 
         [Test]
@@ -184,7 +184,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                         .WithName("Divine Life Flask")
                                         .BuildLines();
 
-            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
+            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), false))
                 .Returns(expected);
 
             FlaskItem result = this.flaskItemParser.Parse(itemStringLines) as FlaskItem;

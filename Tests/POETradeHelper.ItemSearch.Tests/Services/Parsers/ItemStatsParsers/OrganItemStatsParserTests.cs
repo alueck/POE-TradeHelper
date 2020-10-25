@@ -21,8 +21,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         public void Setup()
         {
             this.statsDataServiceMock = new Mock<IStatsDataService>();
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), StatCategory.Monster.GetDisplayName()))
-                .Returns((string itemStatText, string[] _) => new StatData
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), StatCategory.Monster.GetDisplayName()))
+                .Returns((string itemStatText, bool preferLocal, string[] _) => new StatData
                 {
                     Type = StatCategory.Monster.GetDisplayName().ToLower(),
                     Text = itemStatText
@@ -43,7 +43,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
-            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
@@ -65,7 +65,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
-            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
@@ -85,14 +85,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithDescription(Resources.OrganItemDescriptor)
                                 .BuildLines();
 
-            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
 
             foreach (ItemStat stat in result.MonsterStats)
             {
-                this.statsDataServiceMock.Verify(x => x.GetStatData(stat.Text, StatCategory.Monster.GetDisplayName()));
+                this.statsDataServiceMock.Verify(x => x.GetStatData(stat.Text, false, StatCategory.Monster.GetDisplayName()));
             }
         }
 
@@ -107,14 +107,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .WithDescription(Resources.OrganItemDescriptor)
                     .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), StatCategory.Monster.GetDisplayName()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), StatCategory.Monster.GetDisplayName()))
                 .Returns(new StatData
                 {
                     Id = expected,
                     Type = StatCategory.Monster.GetDisplayName()
                 });
 
-            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
@@ -134,14 +134,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                     .WithDescription(Resources.OrganItemDescriptor)
                     .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), StatCategory.Monster.GetDisplayName()))
+            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), StatCategory.Monster.GetDisplayName()))
                 .Returns(new StatData
                 {
                     Text = expected,
                     Type = StatCategory.Monster.GetDisplayName()
                 });
 
-            ItemStats result = this.organItemStatsParser.Parse(itemStringLines);
+            ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));

@@ -3,20 +3,23 @@ using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
+using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class EquippableItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 1;
-        private ISocketsParser socketsParser;
+        private readonly ISocketsParser socketsParser;
         private readonly IItemTypeParser itemTypeParser;
+        private readonly IItemDataService itemDataService;
 
-        public EquippableItemParser(ISocketsParser socketsParser, IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser)
+        public EquippableItemParser(ISocketsParser socketsParser, IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser, IItemDataService itemDataService)
             : base(itemStatsParser)
         {
             this.socketsParser = socketsParser;
             this.itemTypeParser = itemTypeParser;
+            this.itemDataService = itemDataService;
         }
 
         public override bool CanParse(string[] itemStringLines)
@@ -59,6 +62,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             };
 
             equippableItem.Type = this.itemTypeParser.ParseType(itemStringLines, equippableItem.Rarity, equippableItem.IsIdentified);
+            equippableItem.Category = this.itemDataService.GetCategory(equippableItem.Type).ParseToEnumByDisplayName<EquippableItemCategory>() ?? EquippableItemCategory.Unknown;
 
             return equippableItem;
         }
