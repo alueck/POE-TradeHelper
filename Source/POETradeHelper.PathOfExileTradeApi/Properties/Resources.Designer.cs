@@ -61,6 +61,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Local.
+        /// </summary>
+        public static string LocalKeyword {
+            get {
+                return ResourceManager.GetString("LocalKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Drops.
         /// </summary>
         public static string MetamorphStatDescriptor {
@@ -156,15 +165,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Properties {
         public static string PoeTradeBaseUrl {
             get {
                 return ResourceManager.GetString("PoeTradeBaseUrl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
     }

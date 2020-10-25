@@ -13,7 +13,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         {
         }
 
-        public ItemStats Parse(string[] itemStringLines)
+        public ItemStats Parse(string[] itemStringLines, bool preferLocalStats)
         {
             var result = new ItemStats();
 
@@ -36,7 +36,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 Text = group.Key,
                 Value = group.Count()
             })
-            .Select(this.GetCompleteItemStat)
+            .Select(s => this.GetCompleteItemStat(s, false))
             .ToList();
 
             return itemStats;

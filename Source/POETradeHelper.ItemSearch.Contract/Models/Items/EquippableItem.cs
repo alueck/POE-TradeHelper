@@ -12,5 +12,6 @@
         public ItemSockets Sockets { get; set; }
         public bool IsCorrupted { get; set; }
         public bool IsIdentified { get; set; }
+        public EquippableItemCategory Category { get; set; }
     }
 }

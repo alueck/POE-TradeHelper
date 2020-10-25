@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
@@ -21,6 +22,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
                 .FirstOrDefault();
 
             return matchingItemData?.Type;
+        }
+
+        public string GetCategory(string type)
+        {
+            return this.Data
+                        .FirstOrDefault(x => x.Entries.Any(itemEntry => string.Equals(itemEntry.Type, type, StringComparison.Ordinal)))
+                        ?.Id;
         }
     }
 }

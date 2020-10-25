@@ -258,4 +258,13 @@
   <data name="GemQualityType_Phantasmal" xml:space="preserve">
     <value>Phantasmal</value>
   </data>
+  <data name="EquippableItemCategory_Accessories" xml:space="preserve">
+    <value>Accessories</value>
+  </data>
+  <data name="EquippableItemCategory_Armour" xml:space="preserve">
+    <value>Armour</value>
+  </data>
+  <data name="EquippableItemCategory_Weapons" xml:space="preserve">
+    <value>Weapons</value>
+  </data>
 </root>

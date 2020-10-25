@@ -1,6 +1,5 @@
 ﻿using Moq;
 using NUnit.Framework;
-using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
@@ -84,7 +83,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             ItemWithStats result = this.organItemParser.Parse(itemStringLines) as ItemWithStats;
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines));
+            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false));
         }
 
         [Test]
@@ -96,7 +95,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             var expectedOrganItemStats = new ItemStats();
 
-            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
+            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()))
                 .Returns(expectedOrganItemStats);
 
             ItemWithStats result = this.organItemParser.Parse(itemStringLines) as ItemWithStats;

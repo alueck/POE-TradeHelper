@@ -106,6 +106,33 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accessories.
+        /// </summary>
+        public static string EquippableItemCategory_Accessories {
+            get {
+                return ResourceManager.GetString("EquippableItemCategory_Accessories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Armour.
+        /// </summary>
+        public static string EquippableItemCategory_Armour {
+            get {
+                return ResourceManager.GetString("EquippableItemCategory_Armour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weapons.
+        /// </summary>
+        public static string EquippableItemCategory_Weapons {
+            get {
+                return ResourceManager.GetString("EquippableItemCategory_Weapons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Experience:.
         /// </summary>
         public static string ExperienceDescriptor {

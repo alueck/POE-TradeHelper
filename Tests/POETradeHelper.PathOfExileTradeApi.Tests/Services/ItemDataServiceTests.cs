@@ -135,5 +135,68 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             Assert.That(result, Is.Null);
         }
+
+        [Test]
+        public async Task GetCategoryShouldReturnCorrectCategory()
+        {
+            const string expectedCategory = "Weapons";
+            const string itemType = "Elegant Sword";
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
+               .Returns(new QueryResult<Data<ItemData>>
+               {
+                   Result = new List<Data<ItemData>>
+                   {
+                                    new Data<ItemData>
+                                    {
+                                        Id = "Accessories",
+                                        Entries = new List<ItemData>
+                                        {
+                                            new ItemData { Name = "Wurm's Molt", Type = "Leather Belt" }
+                                        }
+                                    },
+                                    new Data<ItemData>
+                                    {
+                                        Id = expectedCategory,
+                                        Entries = new List<ItemData>
+                                        {
+                                            new ItemData { Name = "Broken Sword", Type = "Broken Sword" },
+                                            new ItemData { Name = "Sword", Type = itemType },
+                                        }
+                                    }
+                   }
+               });
+
+            await this.itemDataService.OnInitAsync();
+
+            string result = this.itemDataService.GetCategory(itemType);
+
+            Assert.That(result, Is.EqualTo(expectedCategory));
+        }
+
+        [Test]
+        public async Task GetCategoryShouldReturnNullIfNoMatchFound()
+        {
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
+               .Returns(new QueryResult<Data<ItemData>>
+               {
+                   Result = new List<Data<ItemData>>
+                   {
+                                    new Data<ItemData>
+                                    {
+                                        Id = "Accessories",
+                                        Entries = new List<ItemData>
+                                        {
+                                            new ItemData { Name = "Wurm's Molt", Type = "Leather Belt" }
+                                        }
+                                    }
+                   }
+               });
+
+            await this.itemDataService.OnInitAsync();
+
+            string result = this.itemDataService.GetCategory("abc");
+
+            Assert.That(result, Is.Null);
+        }
     }
 }

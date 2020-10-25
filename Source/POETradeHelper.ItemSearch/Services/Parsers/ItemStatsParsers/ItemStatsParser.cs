@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             this.pseudoItemStatsParser = pseudoItemStatsParser;
         }
 
-        public ItemStats Parse(string[] itemStringLines)
+        public ItemStats Parse(string[] itemStringLines, bool preferLocalStats)
         {
             var result = new ItemStats();
 
@@ -27,7 +27,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
             var statTexts = itemStringLines.Skip(statsStartIndex).Where(s => s != ParserConstants.PropertyGroupSeparator);
 
-            var itemStats = statTexts.Select(ParseStatText).Where(x => x != null).ToList();
+            var itemStats = statTexts.Select(s => ParseStatText(s, preferLocalStats)).Where(x => x != null).ToList();
             var pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
             result.AllStats.AddRange(itemStats);
@@ -36,7 +36,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return result;
         }
 
-        private ItemStat ParseStatText(string statText)
+        private ItemStat ParseStatText(string statText, bool preferLocalStats)
         {
             ItemStat result;
 
@@ -51,7 +51,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 };
             }
 
-            result = this.GetCompleteItemStat(result);
+            result = this.GetCompleteItemStat(result, preferLocalStats);
 
             return result;
         }
@@ -76,9 +76,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return false;
         }
 
-        protected override ItemStat GetCompleteItemStat(ItemStat itemStat)
+        protected override ItemStat GetCompleteItemStat(ItemStat itemStat, bool preferLocalStats)
         {
-            ItemStat result = base.GetCompleteItemStat(itemStat);
+            ItemStat result = base.GetCompleteItemStat(itemStat, preferLocalStats);
 
             var placeholderCount = result?.TextWithPlaceholders?.Count(c => c == Placeholder);
             if (placeholderCount == 1)

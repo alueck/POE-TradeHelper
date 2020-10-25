@@ -1,6 +1,6 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System.Linq;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
@@ -22,7 +22,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         {
             OrganItem organItem = base.Parse(itemStringLines) as OrganItem;
 
-            organItem.Stats = this.organItemStatsParser.Parse(itemStringLines);
+            organItem.Stats = this.organItemStatsParser.Parse(itemStringLines, false);
 
             return organItem;
         }

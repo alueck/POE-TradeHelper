@@ -3,5 +3,7 @@
     public interface IItemDataService
     {
         string GetType(string name);
+
+        string GetCategory(string type);
     }
 }
