@@ -1,10 +1,13 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="POETradeHelper.ItemSearch.Views.ItemSearchSettingsView">
+﻿<UserControl
+    x:Class="POETradeHelper.ItemSearch.Views.ItemSearchSettingsView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
   <Grid>
     <Grid.ColumnDefinitions>
@@ -15,16 +18,30 @@
 
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" MinHeight="25" />
+      <RowDefinition Height="5" />
       <RowDefinition Height="Auto" MinHeight="25" />
     </Grid.RowDefinitions>
 
     <TextBlock VerticalAlignment="Center" Text="{x:Static resources:Resources.LeagueLabel}" />
-    <ComboBox Name="LeaguesDropDown" Grid.Column="2" Items="{Binding Leagues}" SelectedItem="{Binding SelectedLeague}">
+    <ComboBox
+        Name="LeaguesDropDown"
+        Grid.Column="2"
+        Items="{Binding Leagues}"
+        SelectedItem="{Binding SelectedLeague}">
       <ComboBox.ItemTemplate>
         <DataTemplate>
           <TextBlock Text="{Binding Text}" />
         </DataTemplate>
       </ComboBox.ItemTemplate>
     </ComboBox>
+
+    <TextBlock
+        Grid.Row="2"
+        VerticalAlignment="Center"
+        Text="{x:Static resources:Resources.PricePredictionSettingLabel}" />
+    <CheckBox
+        Grid.Row="2"
+        Grid.Column="2"
+        IsChecked="{Binding PricePredictionEnabled}" />
   </Grid>
 </UserControl>

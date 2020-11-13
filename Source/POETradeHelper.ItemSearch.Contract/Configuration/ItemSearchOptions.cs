@@ -6,6 +6,8 @@
 
         public int ItemLevelThreshold { get; set; } = 86;
 
+        public bool PricePredictionEnabled { get; set; } = true;
+
         public AdvancedQueryOptions AdvancedQueryOptions { get; set; } = new AdvancedQueryOptions();
     }
 }

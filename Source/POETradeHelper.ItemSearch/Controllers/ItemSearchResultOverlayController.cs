@@ -60,7 +60,7 @@ namespace POETradeHelper.ItemSearch.Controllers
                 this.View.Show();
             }
 
-            await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token);
+            await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token).ConfigureAwait(true);
         }
 
         private void UserInputEventProvider_HideOverlay(object sender, HandledEventArgs e)

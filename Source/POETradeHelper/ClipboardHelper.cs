@@ -1,10 +1,12 @@
-﻿using Avalonia;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Input.Platform;
 using POETradeHelper.Common.Contract;
-using System.Threading.Tasks;
 
 namespace POETradeHelper
 {
+    [ExcludeFromCodeCoverage]
     public class ClipboardHelper : IClipboardHelper
     {
         private readonly IClipboard clipboard;

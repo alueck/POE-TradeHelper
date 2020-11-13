@@ -1,9 +1,10 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -19,7 +20,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             this.priceViewModelFactory = priceViewModelFactory;
         }
 
-        public async Task<SimpleListingViewModel> CreateAsync(ListingResult listingResult, Item item)
+        public async Task<SimpleListingViewModel> CreateAsync(ListingResult listingResult, Item item, CancellationToken cancellationToken = default)
         {
             SimpleListingViewModel result = new SimpleListingViewModel();
 
@@ -36,15 +37,15 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 result = this.CreateFlaskItemViewModel(listingResult);
             }
 
-            await this.SetSimpleListingViewModelProperties(result, listingResult);
+            await this.SetSimpleListingViewModelProperties(result, listingResult, cancellationToken).ConfigureAwait(false);
 
             return result;
         }
 
-        private async Task SetSimpleListingViewModelProperties(SimpleListingViewModel result, ListingResult listingResult)
+        private async Task SetSimpleListingViewModelProperties(SimpleListingViewModel result, ListingResult listingResult, CancellationToken cancellationToken)
         {
             result.AccountName = listingResult.Listing.Account?.Name;
-            result.Price = await this.priceViewModelFactory.CreateAsync(listingResult.Listing.Price);
+            result.Price = await this.priceViewModelFactory.CreateAsync(listingResult.Listing.Price, cancellationToken).ConfigureAwait(false);
             result.Age = listingResult.Listing.AgeText;
         }
 

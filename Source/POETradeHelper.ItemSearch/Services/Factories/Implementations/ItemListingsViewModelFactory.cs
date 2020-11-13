@@ -1,7 +1,8 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -14,7 +15,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             this.listingViewModelFactory = listingViewModelFactory;
         }
 
-        public async Task<ItemListingsViewModel> CreateAsync(Item item, ItemListingsQueryResult itemListingsQueryResult)
+        public async Task<ItemListingsViewModel> CreateAsync(Item item, ItemListingsQueryResult itemListingsQueryResult, CancellationToken cancellationToken = default)
         {
             var result = new ItemListingsViewModel
             {
@@ -25,7 +26,12 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 
             foreach (var listingResult in itemListingsQueryResult.Result)
             {
-                SimpleListingViewModel itemListingViewModel = await this.listingViewModelFactory.CreateAsync(listingResult, item);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                SimpleListingViewModel itemListingViewModel = await this.listingViewModelFactory.CreateAsync(listingResult, item, cancellationToken);
                 result.Listings.Add(itemListingViewModel);
             }
 

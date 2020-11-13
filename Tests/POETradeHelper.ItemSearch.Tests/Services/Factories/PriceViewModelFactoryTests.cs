@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media.Imaging;
@@ -96,15 +97,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [Test]
         public async Task CreateAsyncShouldCallGetImageOnImageService()
         {
+            // arrange
             Uri expected = new Uri("http://www.google.de");
             var price = new Price();
 
             this.staticDataServiceMock.Setup(x => x.GetImageUrl(It.IsAny<string>()))
                 .Returns(expected);
 
-            await this.priceViewModelFactory.CreateAsync(price);
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
 
-            this.imageServiceMock.Verify(x => x.GetImageAsync(expected));
+            // act
+            await this.priceViewModelFactory.CreateAsync(price, cancellationToken);
+
+            this.imageServiceMock.Verify(x => x.GetImageAsync(expected, cancellationToken));
         }
 
         [Test]
@@ -113,7 +119,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             IBitmap expected = new TestBitmap();
             var price = new Price();
 
-            this.imageServiceMock.Setup(x => x.GetImageAsync(It.IsAny<Uri>()))
+            this.imageServiceMock.Setup(x => x.GetImageAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expected);
 
             PriceViewModel result = await this.priceViewModelFactory.CreateAsync(price);

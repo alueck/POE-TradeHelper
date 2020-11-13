@@ -17,8 +17,9 @@ namespace POETradeHelper.ItemSearch.ViewModels
         private bool isBusy;
         private IList<League> leagues;
         private League selectedLeague;
+        private bool pricePredictionEnabled;
         private readonly ILeagueDataService leagueDataService;
-        private readonly IWritableOptions<ItemSearchOptions> itemSearchOptions;
+        public IWritableOptions<ItemSearchOptions> itemSearchOptions;
 
         public ItemSearchSettingsViewModel(ILeagueDataService leagueDataService, IWritableOptions<ItemSearchOptions> itemSearchOptions)
         {
@@ -28,20 +29,26 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         public bool IsBusy
         {
-            get { return isBusy; }
-            set { this.RaiseAndSetIfChanged(ref this.isBusy, value); }
+            get => isBusy;
+            set => this.RaiseAndSetIfChanged(ref this.isBusy, value);
         }
 
         public IList<League> Leagues
         {
-            get { return leagues; }
-            set { this.RaiseAndSetIfChanged(ref this.leagues, value); }
+            get => leagues;
+            set => this.RaiseAndSetIfChanged(ref this.leagues, value);
         }
 
         public League SelectedLeague
         {
-            get { return selectedLeague; }
-            set { this.RaiseAndSetIfChanged(ref this.selectedLeague, value); }
+            get => selectedLeague;
+            set => this.RaiseAndSetIfChanged(ref this.selectedLeague, value);
+        }
+
+        public bool PricePredictionEnabled
+        {
+            get => pricePredictionEnabled;
+            set => this.RaiseAndSetIfChanged(ref pricePredictionEnabled, value);
         }
 
         public string Title => "Item search settings";
@@ -51,6 +58,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             this.IsBusy = true;
             this.Leagues = this.leagueDataService.GetLeaguesData().Select(l => new League { Id = l.Id, Text = l.Text }).ToList();
             this.SelectedLeague = this.Leagues.FirstOrDefault(league => string.Equals(this.itemSearchOptions.Value.League?.Id, league.Id, StringComparison.Ordinal)) ?? this.Leagues.FirstOrDefault();
+            this.PricePredictionEnabled = this.itemSearchOptions.Value.PricePredictionEnabled;
 
             if (this.SelectedLeague != default)
             {
@@ -76,6 +84,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
                 this.itemSearchOptions.Update(o =>
                 {
                     o.League = this.SelectedLeague;
+                    o.PricePredictionEnabled = this.PricePredictionEnabled;
                 });
             }
             finally

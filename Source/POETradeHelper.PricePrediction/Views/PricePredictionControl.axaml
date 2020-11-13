@@ -1,0 +1,30 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:POETradeHelper.PricePrediction.Properties;assembly=POETradeHelper.PricePrediction"
+             xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="POETradeHelper.PricePrediction.Views.PricePredictionControl">
+
+  <StackPanel Orientation="Horizontal" IsVisible="{Binding HasValue}">
+    <TextBlock Text="{x:Static resources:Resources.PricePredictionLabel}" VerticalAlignment="Center" />
+    <TextBlock Text="{Binding Prediction}" VerticalAlignment="Center" />
+    <TextBlock Text=" " />
+    <Image Source="{Binding CurrencyImage}"
+           Height="20"
+           VerticalAlignment="Center"
+           ToolTip.Tip="{Binding Currency}"
+           IsVisible="{Binding CurrencyImage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    <TextBlock Text="{Binding Currency}" VerticalAlignment="Center" IsVisible="{Binding CurrencyImage, Converter={x:Static ObjectConverters.IsNull}}" />
+    <TextBlock Text=" " />
+    <TextBlock Text="{x:Static resources:Resources.ConfidenceScoreLabel}" VerticalAlignment="Center" />
+    <TextBlock Text="{Binding ConfidenceScore}" VerticalAlignment="Center" />
+    <TextBlock Text=" (from " VerticalAlignment="Center" />
+    <commonUiControls:HyperlinkButton
+      VerticalAlignment="Center"
+      Content="poeprices.info"
+      Uri="https://poeprices.info/" />
+    <TextBlock Text=")" VerticalAlignment="Center" />
+  </StackPanel>
+</UserControl>

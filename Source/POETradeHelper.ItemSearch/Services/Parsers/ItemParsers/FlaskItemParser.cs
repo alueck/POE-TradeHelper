@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using POETradeHelper.ItemSearch.Contract.Models;
+﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 
@@ -35,25 +34,6 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             flaskItem.Type = this.itemTypeParser.ParseType(itemStringLines, flaskItem.Rarity, flaskItem.IsIdentified);
 
             return flaskItem;
-        }
-
-        private string GetFlaskType(string[] itemStringLines)
-        {
-            int typeLineIndex = this.GetTypeLineIndex(itemStringLines);
-
-            string type = itemStringLines[typeLineIndex];
-
-            Match match;
-            if (type.Contains(Resources.LifeFlaskKeyword) || type.Contains(Resources.ManaFlaskKeyword))
-            {
-                match = Regex.Match(type, $@"\w+\s{{1}}\w+\s{{1}}{Resources.FlaskKeyword}");
-            }
-            else
-            {
-                match = Regex.Match(type, $@"\w+\s{{1}}{Resources.FlaskKeyword}");
-            }
-
-            return match.Value;
         }
 
         private int GetTypeLineIndex(string[] itemStringLines)

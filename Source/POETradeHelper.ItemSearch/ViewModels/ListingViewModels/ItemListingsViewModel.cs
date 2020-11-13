@@ -1,6 +1,7 @@
-﻿using POETradeHelper.ItemSearch.Contract.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using POETradeHelper.ItemSearch.Contract.Models;
 
 namespace POETradeHelper.ItemSearch.ViewModels
 {
@@ -12,6 +13,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         public Uri ListingsUri { get; set; }
 
-        public IList<object> Listings { get; } = new List<object>();
+        public ICollection<object> Listings { get; } = new ObservableCollection<object>();
     }
 }

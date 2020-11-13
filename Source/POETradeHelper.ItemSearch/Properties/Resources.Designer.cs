@@ -304,6 +304,15 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No items found..
+        /// </summary>
+        public static string NoItemsFoundText {
+            get {
+                return ResourceManager.GetString("NoItemsFoundText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open in browser.
         /// </summary>
         public static string OpenInBrowser {
@@ -318,6 +327,15 @@ namespace POETradeHelper.ItemSearch.Properties {
         public static string PriceColumn {
             get {
                 return ResourceManager.GetString("PriceColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable price prediction:.
+        /// </summary>
+        public static string PricePredictionSettingLabel {
+            get {
+                return ResourceManager.GetString("PricePredictionSettingLabel", resourceCulture);
             }
         }
         

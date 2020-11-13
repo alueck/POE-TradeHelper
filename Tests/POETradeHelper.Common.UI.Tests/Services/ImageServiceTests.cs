@@ -49,11 +49,14 @@ namespace POETradeHelper.Common.UI.Tests.Services
                     StatusCode = HttpStatusCode.BadRequest
                 });
 
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
             // act
-            await this.imageService.GetImageAsync(uri);
+            await this.imageService.GetImageAsync(uri, cancellationToken);
 
             // assert
-            this.httpClientWrapperMock.Verify(x => x.GetAsync(uri, It.IsAny<CancellationToken>()));
+            this.httpClientWrapperMock.Verify(x => x.GetAsync(uri, cancellationToken));
         }
 
         [Test]
@@ -203,6 +206,59 @@ namespace POETradeHelper.Common.UI.Tests.Services
             IBitmap result = await this.imageService.GetImageAsync(uri);
 
             Assert.IsNull(result);
+        }
+
+        [Test]
+        public async Task GetImageAsyncShouldReturnNullIfCancellationIsRequested()
+        {
+            // arrange
+            this.MockHttpClientGetAsyncSuccessResponse();
+
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+            cancellationTokenSource.Cancel();
+
+            // act
+            IBitmap result = await this.imageService.GetImageAsync(uri, cancellationToken);
+
+            // assert
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public async Task GetImageAsyncShouldNotCallBitmapFactoryIfCancellationIsRequested()
+        {
+            // arrange
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new HttpResponseMessage())
+                .Callback(() => cancellationTokenSource.Cancel());
+
+            // act
+            await this.imageService.GetImageAsync(uri, cancellationToken);
+
+            // assert
+            this.bitmapFactoryMock.Verify(x => x.Create(It.IsAny<Stream>()), Times.Never);
+        }
+
+        [Test]
+        public async Task GetImageAsyncShouldNotCreateCacheItemIfCancellationIsRequested()
+        {
+            // arrange
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new HttpResponseMessage())
+                .Callback(() => cancellationTokenSource.Cancel());
+
+            // act
+            await this.imageService.GetImageAsync(uri, cancellationToken);
+
+            // assert
+            this.memoryCacheMock.Verify(x => x.CreateEntry(It.IsAny<object>()), Times.Never);
         }
 
         private HttpResponseMessage MockHttpClientGetAsyncSuccessResponse(Stream stream = null)
