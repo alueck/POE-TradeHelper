@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
 using Autofac;
@@ -11,15 +9,14 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
-using Polly;
 using Serilog;
 using Serilog.Exceptions;
 using Splat;
 using Splat.Autofac;
 using Splat.Microsoft.Extensions.Logging;
-using WindowsHook;
 
 namespace POETradeHelper
 {
@@ -33,40 +30,32 @@ namespace POETradeHelper
 
         private static void RegisterDependencies()
         {
-            ServiceCollection serviceCollection = ConfigureServiceCollection();
+            Assembly[] assemblies = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "POETradeHelper*.dll").Select(Assembly.LoadFrom).ToArray();
+
+            ServiceCollection serviceCollection = ConfigureServiceCollection(assemblies);
 
             var container = new ContainerBuilder();
 
-            container.Populate(serviceCollection);
-
-            container.RegisterInstance(Hook.GlobalEvents());
-
-            IEnumerable<Assembly> assemblies = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "POETradeHelper*.dll").Select(Assembly.LoadFrom);
-
-            container.RegisterAssemblyTypes(assemblies.ToArray())
+            container.RegisterAssemblyTypes(assemblies)
                 .PublicOnly()
                 .Where(t => !t.HasSingletonAttribute())
                 .AsImplementedInterfaces();
 
-            container.RegisterAssemblyTypes(assemblies.ToArray())
+            container.RegisterAssemblyTypes(assemblies)
                     .PublicOnly()
                     .Where(t => t.HasSingletonAttribute())
                     .AsImplementedInterfaces()
                     .SingleInstance();
 
+            container.Populate(serviceCollection);
             container.UseAutofacDependencyResolver();
 
             Locator.CurrentMutable.UseMicrosoftExtensionsLoggingWithWrappingFullLogger(Locator.Current.GetService<ILoggerFactory>());
         }
 
-        private static ServiceCollection ConfigureServiceCollection()
+        private static ServiceCollection ConfigureServiceCollection(params Assembly[] applicationAssemblies)
         {
             var serviceCollection = new ServiceCollection();
-            serviceCollection
-                .AddHttpClient(PathOfExileTradeApi.Constants.HttpClientNames.PoeTradeApiDataClient, ConfigurePoeTradeApiHttpClient)
-                .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(4, retryAttempt => TimeSpan.FromSeconds(retryAttempt * 15)));
-
-            serviceCollection.AddHttpClient(PathOfExileTradeApi.Constants.HttpClientNames.PoeTradeApiItemSearchClient, ConfigurePoeTradeApiHttpClient);
 
             Serilog.Log.Logger = new LoggerConfiguration()
                             .MinimumLevel.Is(Serilog.Events.LogEventLevel.Warning)
@@ -78,14 +67,23 @@ namespace POETradeHelper
             serviceCollection.AddMemoryCache(builder => builder.SizeLimit = 20971520);
 
             ConfigureOptions(serviceCollection);
+            RegisterModules(serviceCollection, applicationAssemblies);
 
             return serviceCollection;
         }
 
-        private static void ConfigurePoeTradeApiHttpClient(HttpClient client)
+        private static void RegisterModules(ServiceCollection serviceCollection, params Assembly[] applicationAssemblies)
         {
-            client.BaseAddress = new Uri(PathOfExileTradeApi.Properties.Resources.PoeTradeApiBaseUrl);
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("POETradeHelper");
+            var modules = applicationAssemblies
+                            .SelectMany(x => x.GetTypes())
+                            .Where(t => t.GetInterfaces().Any(i => i == typeof(IModule)))
+                            .Select(Activator.CreateInstance)
+                            .Cast<IModule>();
+
+            foreach (var module in modules)
+            {
+                module.RegisterServices(serviceCollection);
+            }
         }
 
         private static void ConfigureOptions(ServiceCollection serviceCollection)
