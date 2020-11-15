@@ -120,6 +120,9 @@
   <data name="ConfidenceScoreLabel" xml:space="preserve">
     <value>Confidence: </value>
   </data>
+  <data name="From" xml:space="preserve">
+    <value>from</value>
+  </data>
   <data name="PricePredictionLabel" xml:space="preserve">
     <value>Price prediction: </value>
   </data>

@@ -20,7 +20,9 @@
     <TextBlock Text=" " />
     <TextBlock Text="{x:Static resources:Resources.ConfidenceScoreLabel}" VerticalAlignment="Center" />
     <TextBlock Text="{Binding ConfidenceScore}" VerticalAlignment="Center" />
-    <TextBlock Text=" (from " VerticalAlignment="Center" />
+    <TextBlock Text=" (" VerticalAlignment="Center" />
+    <TextBlock Text="{x:Static resources:Resources.From}" VerticalAlignment="Center" />
+    <TextBlock Text=" " VerticalAlignment="Center" />
     <commonUiControls:HyperlinkButton
       VerticalAlignment="Center"
       Content="poeprices.info"

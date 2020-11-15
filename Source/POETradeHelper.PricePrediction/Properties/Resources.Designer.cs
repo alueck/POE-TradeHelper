@@ -70,6 +70,15 @@ namespace POETradeHelper.PricePrediction.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to from.
+        /// </summary>
+        public static string From {
+            get {
+                return ResourceManager.GetString("From", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Price prediction: .
         /// </summary>
         public static string PricePredictionLabel {
