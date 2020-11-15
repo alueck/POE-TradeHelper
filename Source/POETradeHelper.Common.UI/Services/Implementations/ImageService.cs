@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using Microsoft.Extensions.Caching.Memory;
@@ -20,24 +21,34 @@ namespace POETradeHelper.Common.UI.Services
             this.bitmapFactory = bitmapFactory;
         }
 
-        public async Task<IBitmap> GetImageAsync(Uri uri)
+        public async Task<IBitmap> GetImageAsync(Uri uri, CancellationToken cancellationToken = default)
         {
-            if (!this.memoryCache.TryGetValue(uri, out IBitmap image))
+            IBitmap image = null;
+            try
             {
-                HttpResponseMessage response = await this.httpClient.GetAsync(uri);
-
-                if (response.IsSuccessStatusCode)
+                if (!this.memoryCache.TryGetValue(uri, out image))
                 {
-                    var responseStream = await response.Content.ReadAsStreamAsync();
+                    HttpResponseMessage response = await this.httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false);
 
-                    image = this.bitmapFactory.Create(responseStream);
-
-                    using (ICacheEntry cacheEntry = this.memoryCache.CreateEntry(uri))
+                    if (response.IsSuccessStatusCode)
                     {
-                        cacheEntry.SetValue(image);
-                        cacheEntry.SetSize(responseStream.Length);
+                        var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+                        if (!cancellationToken.IsCancellationRequested)
+                        {
+                            image = this.bitmapFactory.Create(responseStream);
+
+                            using (ICacheEntry cacheEntry = this.memoryCache.CreateEntry(uri))
+                            {
+                                cacheEntry.SetValue(image);
+                                cacheEntry.SetSize(responseStream.Length);
+                            }
+                        }
                     }
                 }
+            }
+            catch (OperationCanceledException)
+            {
             }
 
             return image;

@@ -12,10 +12,12 @@
               <Exclude>
                 <ModulePath>.*TestAdapter.*</ModulePath>
                 <ModulePath>.*moq.dll$</ModulePath>
-                <ModulePath>.*splat.dll$</ModulePath>
+                <ModulePath>.*splat*.dll$</ModulePath>
+                <ModulePath>.*splat.autofac.dll$</ModulePath>
+                <ModulePath>.*splat.microsoft.extensions.logging.dll$</ModulePath>
                 <ModulePath>.*reactiveui.dll$</ModulePath>
                 <ModulePath>.*system.reactive.dll$</ModulePath>
-                <ModulePath>.*\.tests.dll$</ModulePath>
+                <ModulePath>.*tests.dll$</ModulePath>
                 <ModulePath>.*dynamicdata.dll$</ModulePath>
               </Exclude>
             </ModulePaths>

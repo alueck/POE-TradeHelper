@@ -9,7 +9,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         public override abstract bool CanParse(string[] itemStringLines);
 
-        public override Item Parse(string[] itemStringLines)
+        protected override Item ParseItem(string[] itemStringLines)
         {
             return new TItemType
             {

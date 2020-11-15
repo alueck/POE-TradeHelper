@@ -37,9 +37,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
             try
             {
-                SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(queryRequest, cancellationToken);
+                SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(queryRequest, cancellationToken).ConfigureAwait(false);
 
-                return await this.GetListingsQueryResult(searchQueryResult, cancellationToken);
+                return await this.GetListingsQueryResult(searchQueryResult, cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -56,14 +56,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             StringContent content = this.GetJsonStringContent(queryRequest);
 
             string endpoint = $"{queryRequest.Endpoint}/{queryRequest.League}";
-            HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, content, cancellationToken);
+            HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, content, cancellationToken).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new PoeTradeApiCommunicationException(endpoint, await content.ReadAsStringAsync(), response.StatusCode);
+                throw new PoeTradeApiCommunicationException(endpoint, await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false), response.StatusCode);
             }
 
-            var searchQueryResult = await this.ReadAsJsonAsync<SearchQueryResult>(response.Content);
+            var searchQueryResult = await this.ReadAsJsonAsync<SearchQueryResult>(response.Content).ConfigureAwait(false);
             searchQueryResult.Request = queryRequest;
 
             return searchQueryResult;
@@ -82,10 +82,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
             if (searchQueryResult.Total > 0)
             {
-                itemListingsQueryResult = await this.GetAsync<ItemListingsQueryResult>($"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(",", searchQueryResult.Result.Take(10))}", cancellationToken);
+                string url = $"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(",", searchQueryResult.Result.Take(10))}";
+                itemListingsQueryResult = await this.GetAsync<ItemListingsQueryResult>(url, cancellationToken).ConfigureAwait(false);
             }
 
-            itemListingsQueryResult = itemListingsQueryResult ?? new ItemListingsQueryResult();
+            itemListingsQueryResult ??= new ItemListingsQueryResult();
             itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{searchQueryResult.Request.League}/{searchQueryResult.Id}");
             itemListingsQueryResult.TotalCount = searchQueryResult.Total;
             itemListingsQueryResult.SearchQueryRequest = searchQueryResult.Request;
@@ -97,14 +98,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
             try
             {
-                var response = await this.httpClient.GetAsync(endpoint, cancellationToken);
+                var response = await this.httpClient.GetAsync(endpoint, cancellationToken).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new PoeTradeApiCommunicationException(endpoint, response.StatusCode);
                 }
 
-                return await this.ReadAsJsonAsync<TResult>(response.Content);
+                return await this.ReadAsJsonAsync<TResult>(response.Content).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -118,7 +119,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
         private async Task<TResult> ReadAsJsonAsync<TResult>(HttpContent httpContent)
         {
-            string json = await httpContent.ReadAsStringAsync();
+            string json = await httpContent.ReadAsStringAsync().ConfigureAwait(false);
 
             return this.jsonSerializer.Deserialize<TResult>(json);
         }

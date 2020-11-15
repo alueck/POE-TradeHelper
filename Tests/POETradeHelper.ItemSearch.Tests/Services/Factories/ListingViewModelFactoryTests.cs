@@ -1,13 +1,14 @@
-﻿using Moq;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
@@ -26,11 +27,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCaseSource(nameof(Items))]
         public async Task CreateShouldCallCreateOnPriceViewModelFactory(Item item)
         {
+            // arrange
             ListingResult listingResult = GetListingResult();
 
-            await this.listingViewModelFactory.CreateAsync(listingResult, item);
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
 
-            this.priceViewModelFactoryMock.Verify(x => x.CreateAsync(listingResult.Listing.Price));
+            // act
+            await this.listingViewModelFactory.CreateAsync(listingResult, item, cancellationToken);
+
+            // assert
+            this.priceViewModelFactoryMock.Verify(x => x.CreateAsync(listingResult.Listing.Price, cancellationToken));
         }
 
         [TestCaseSource(nameof(Items))]
@@ -39,7 +46,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             var expected = new PriceViewModel { Amount = "2", Currency = "Chaos Orb" };
             ListingResult listingResult = GetListingResult();
 
-            this.priceViewModelFactoryMock.Setup(x => x.CreateAsync(It.IsAny<Price>()))
+            this.priceViewModelFactoryMock.Setup(x => x.CreateAsync(It.IsAny<Price>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expected);
 
             SimpleListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item);

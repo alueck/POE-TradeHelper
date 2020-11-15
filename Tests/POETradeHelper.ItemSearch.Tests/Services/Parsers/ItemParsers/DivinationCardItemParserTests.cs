@@ -5,15 +5,15 @@ using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
-    public class DivinationCardItemParserTests
+    public class DivinationCardItemParserTests : ItemParserTestsBase
     {
-        private DivinationCardItemParser divinationCardItemParser;
+        private const string DivinationCard = "The Fox";
         private ItemStringBuilder itemStringBuilder;
 
         [SetUp]
         public void Setup()
         {
-            this.divinationCardItemParser = new DivinationCardItemParser();
+            this.ItemParser = new DivinationCardItemParser();
             this.itemStringBuilder = new ItemStringBuilder().WithRarity(ItemRarity.DivinationCard);
         }
 
@@ -30,7 +30,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithRarity(rarity)
                 .BuildLines();
 
-            bool result = this.divinationCardItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -38,27 +38,28 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldParseName()
         {
-            const string expected = "The Fox";
-            string[] itemStringLines = this.itemStringBuilder
-                .WithName(expected)
-                .BuildLines();
+            string[] itemStringLines = this.GetValidItemStringLines();
 
-            DivinationCardItem result = this.divinationCardItemParser.Parse(itemStringLines) as DivinationCardItem;
+            DivinationCardItem result = this.ItemParser.Parse(itemStringLines) as DivinationCardItem;
 
-            Assert.That(result.Name, Is.EqualTo(expected));
+            Assert.That(result.Name, Is.EqualTo(DivinationCard));
         }
 
         [Test]
         public void ParseShouldParseType()
         {
-            const string expected = "The Fox";
-            string[] itemStringLines = this.itemStringBuilder
-                .WithName(expected)
-                .BuildLines();
+            string[] itemStringLines = this.GetValidItemStringLines();
 
-            DivinationCardItem result = this.divinationCardItemParser.Parse(itemStringLines) as DivinationCardItem;
+            DivinationCardItem result = this.ItemParser.Parse(itemStringLines) as DivinationCardItem;
 
-            Assert.That(result.Type, Is.EqualTo(expected));
+            Assert.That(result.Type, Is.EqualTo(DivinationCard));
+        }
+
+        protected override string[] GetValidItemStringLines()
+        {
+            return this.itemStringBuilder
+                        .WithName(DivinationCard)
+                        .BuildLines();
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using POETradeHelper.Common.Extensions;
-using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Services.Parsers;
+﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using POETradeHelper.Common.Extensions;
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
 {
@@ -51,7 +52,15 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return !itemStringLines.Any(l => l.Contains(POETradeHelper.ItemSearch.Contract.Properties.Resources.UnidentifiedKeyword));
         }
 
-        public abstract Item Parse(string[] itemStringLines);
+        public Item Parse(string[] itemStringLines)
+        {
+            Item item = this.ParseItem(itemStringLines);
+            item.ItemText = string.Join(Environment.NewLine, itemStringLines);
+
+            return item;
+        }
+
+        protected abstract Item ParseItem(string[] itemStringLines);
 
         public abstract bool CanParse(string[] itemStringLines);
     }

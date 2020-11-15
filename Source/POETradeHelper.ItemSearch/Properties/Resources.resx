@@ -198,11 +198,17 @@
   <data name="Min" xml:space="preserve">
     <value>Min</value>
   </data>
+  <data name="NoItemsFoundText" xml:space="preserve">
+    <value>No items found.</value>
+  </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>Open in browser</value>
   </data>
   <data name="PriceColumn" xml:space="preserve">
     <value>Price</value>
+  </data>
+  <data name="PricePredictionSettingLabel" xml:space="preserve">
+    <value>Enable price prediction:</value>
   </data>
   <data name="QualityColumn" xml:space="preserve">
     <value>Quality</value>

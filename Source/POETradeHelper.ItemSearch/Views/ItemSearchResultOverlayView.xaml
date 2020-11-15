@@ -1,23 +1,27 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
-        xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
-        xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.Converters;assembly=POETradeHelper.ItemSearch"
-        xmlns:local="clr-namespace:POETradeHelper.ItemSearch;assembly=POETradeHelper.ItemSearch"
-        xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.ViewModels;assembly=POETradeHelper.ItemSearch"
-        xmlns:localControls="clr-namespace:POETradeHelper.ItemSearch.UserControls;assembly=POETradeHelper.ItemSearch"
-        xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="400"
-        x:Class="POETradeHelper.ItemSearch.Views.ItemSearchResultOverlayView"
-        Topmost="True"
-        MinWidth="400"
-        MinHeight="200"
-        MaxWidth="800"
-        MaxHeight="380"
-        HasSystemDecorations="False"
-        Title="Overlay">
+﻿<Window
+    x:Class="POETradeHelper.ItemSearch.Views.ItemSearchResultOverlayView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
+    xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:POETradeHelper.ItemSearch;assembly=POETradeHelper.ItemSearch"
+    xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.Converters;assembly=POETradeHelper.ItemSearch"
+    xmlns:localViews="clr-namespace:POETradeHelper.ItemSearch.Views;assembly=POETradeHelper.ItemSearch"
+    xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.ViewModels;assembly=POETradeHelper.ItemSearch"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pricePrediction="clr-namespace:POETradeHelper.PricePrediction.Views;assembly=POETradeHelper.PricePrediction"
+    xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
+    Title="Overlay"
+    MinWidth="400"
+    MinHeight="200"
+    MaxWidth="800"
+    MaxHeight="380"
+    d:DesignHeight="400"
+    d:DesignWidth="800"
+    HasSystemDecorations="False"
+    Topmost="True"
+    mc:Ignorable="d">
 
   <Window.Resources>
     <commonUiConverters:MessageTypeToBrushConverter x:Key="messageTypeToBrushConverter" />
@@ -30,7 +34,7 @@
       <Setter Property="HorizontalContentAlignment" Value="Right" />
     </Style>
 
-    <!-- override DataGridRow selection and mouse over style -->
+    <!--  override DataGridRow selection and mouse over style  -->
 
     <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
       <Setter Property="IsVisible" Value="False" />
@@ -40,10 +44,9 @@
       <Setter Property="IsVisible" Value="False" />
     </Style>
 
-    <Style Selector="DataGridRow:selected">
-    </Style>
+    <Style Selector="DataGridRow:selected" />
 
-    <!-- end - override DataGridRow selection and mouse over style -->
+    <!--  end - override DataGridRow selection and mouse over style  -->
 
     <Style Selector="DataGridColumnHeader">
       <Setter Property="FontWeight" Value="Bold" />
@@ -61,14 +64,14 @@
     </Style>
   </Window.Styles>
 
-  <commonUiControls:BusyIndicator IsBusy="{Binding IsBusy}" DisplayAfter="0:0:0.500">
+  <commonUiControls:BusyIndicator DisplayAfter="0:0:0.500" IsBusy="{Binding IsBusy}">
 
-    <Grid Margin="10"
-          MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
-          MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}">
+    <Grid
+        MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
+        MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
+        Margin="10">
 
-      <commonUiControls:MessageTextBlock Message="{Binding Message}"
-                                 VerticalAlignment="Center" />
+      <commonUiControls:MessageTextBlock VerticalAlignment="Center" Message="{Binding Message}" />
 
       <Grid IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
 
@@ -80,38 +83,49 @@
         <Grid.RowDefinitions>
           <RowDefinition Height="20" />
           <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Column="1" Text="{Binding ItemListings.ItemDescription}"
-         FontWeight="Bold"
-         Foreground="{Binding ItemListings.ItemRarity, Converter={StaticResource itemRarityToBrushConverter}}"
-         Margin ="0,0,25,5" />
+        <TextBlock
+            Grid.Column="1"
+            Margin="0,0,25,5"
+            FontWeight="Bold"
+            Foreground="{Binding ItemListings.ItemRarity, Converter={StaticResource itemRarityToBrushConverter}}"
+            Text="{Binding ItemListings.ItemDescription}" />
 
-        <Button Grid.Column="2"
-          Content="{x:Static resources:Resources.OpenInBrowser}"
-          Command="{Binding OpenQueryInBrowserCommand}"
-          CommandParameter="{Binding $parent[Window]}"
-          Background="Transparent"
-          BorderThickness="0"
-          Padding="0"
-          Margin="0,0,0,5"
-          HorizontalAlignment="Right"
-          Foreground="{DynamicResource ThemeAccentBrush}"
-          Cursor="Hand" />
+        <commonUiControls:HyperlinkButton
+            Grid.Column="2"
+            Margin="0,0,0,5"
+            HorizontalAlignment="Right"
+            Content="{x:Static resources:Resources.OpenInBrowser}"
+            HideableWindow="{Binding $parent[Window]}"
+            Uri="{Binding ItemListings.ListingsUri}" />
 
-        <Grid Name="AdvancedQueryGrid" IsVisible="{Binding AdvancedQuery.IsEnabled}" Grid.IsSharedSizeScope="True" Margin="8" Grid.Row="1" MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}">
+        <Grid
+            Name="AdvancedQueryGrid"
+            Grid.Row="1"
+            MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
+            Margin="8"
+            Grid.IsSharedSizeScope="True"
+            IsVisible="{Binding AdvancedQuery.IsEnabled}">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition MaxHeight="{Binding $parent[Grid].MaxHeight}" />
           </Grid.RowDefinitions>
 
-          <Grid Grid.Row="1" Width="350" MaxWidth="350">
+          <Grid
+              Grid.Row="1"
+              Width="350"
+              MaxWidth="350">
             <Grid.RowDefinitions>
               <RowDefinition MaxHeight="{Binding $parent.MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-75}" />
               <RowDefinition MaxHeight="25" />
             </Grid.RowDefinitions>
 
-            <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer
+                Grid.Row="0"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
               <Grid Grid.IsSharedSizeScope="True">
                 <Grid.RowDefinitions>
                   <RowDefinition Height="Auto" />
@@ -127,79 +141,112 @@
 
                 <Grid Grid.Row="0">
                   <Grid.ColumnDefinitions>
-                    <ColumnDefinition SharedSizeGroup="SelectColumn" MaxWidth="25" />
-                    <ColumnDefinition SharedSizeGroup="StatColumn" MaxWidth="325" />
+                    <ColumnDefinition MaxWidth="25" SharedSizeGroup="SelectColumn" />
+                    <ColumnDefinition MaxWidth="325" SharedSizeGroup="StatColumn" />
                   </Grid.ColumnDefinitions>
                 </Grid>
 
-                <localControls:Filters
-                  Grid.Row="1"
-                  Name="EnchantedItemStatFilters"
-                  Header="{x:Static resources:Resources.FilterCategory_Enchant}"
-                  Items="{Binding AdvancedQuery.EnchantedItemStatFilters}" />
+                <localViews:FiltersControl
+                    Name="EnchantedItemStatFilters"
+                    Grid.Row="1"
+                    Header="{x:Static resources:Resources.FilterCategory_Enchant}"
+                    Items="{Binding AdvancedQuery.EnchantedItemStatFilters}" />
 
-                <localControls:Filters
-                  Grid.Row="2"
-                  Name="FracturedItemStatFilters"
-                  Header="{x:Static resources:Resources.FilterCategory_Fractured}"
-                  Items="{Binding AdvancedQuery.FracturedItemStatFilters}" />
+                <localViews:FiltersControl
+                    Name="FracturedItemStatFilters"
+                    Grid.Row="2"
+                    Header="{x:Static resources:Resources.FilterCategory_Fractured}"
+                    Items="{Binding AdvancedQuery.FracturedItemStatFilters}" />
 
-                <localControls:Filters
-                  Grid.Row="3"
-                  Name="ImplicitItemStatFilters"
-                  Header="{x:Static resources:Resources.FilterCategory_Implicit}"
-                  Items="{Binding AdvancedQuery.ImplicitItemStatFilters}" />
+                <localViews:FiltersControl
+                    Name="ImplicitItemStatFilters"
+                    Grid.Row="3"
+                    Header="{x:Static resources:Resources.FilterCategory_Implicit}"
+                    Items="{Binding AdvancedQuery.ImplicitItemStatFilters}" />
 
-                <localControls:Filters
-                  Grid.Row="4"
-                  Name="ExplicitItemStatFilters"
-                  Header="{x:Static resources:Resources.FilterCategory_Explicit}"
-                  Items="{Binding AdvancedQuery.ExplicitItemStatFilters}" />
+                <localViews:FiltersControl
+                    Name="ExplicitItemStatFilters"
+                    Grid.Row="4"
+                    Header="{x:Static resources:Resources.FilterCategory_Explicit}"
+                    Items="{Binding AdvancedQuery.ExplicitItemStatFilters}" />
 
-                <localControls:Filters
-                  Grid.Row="5"
-                  Name="CraftedItemStatFilters"
-                  Header="{x:Static resources:Resources.FilterCategory_Crafted}"
-                  Items="{Binding AdvancedQuery.CraftedItemStatFilters}" />
+                <localViews:FiltersControl
+                    Name="CraftedItemStatFilters"
+                    Grid.Row="5"
+                    Header="{x:Static resources:Resources.FilterCategory_Crafted}"
+                    Items="{Binding AdvancedQuery.CraftedItemStatFilters}" />
 
-                <localControls:Filters
-                  Grid.Row="6"
-                  Name="MonsterItemStatFilters"
-                  Items="{Binding AdvancedQuery.MonsterItemStatFilters}" />
+                <localViews:FiltersControl
+                    Name="MonsterItemStatFilters"
+                    Grid.Row="6"
+                    Items="{Binding AdvancedQuery.MonsterItemStatFilters}" />
 
-                <localControls:Filters
-                  Grid.Row="7"
-                  Name="PseudoItemStatFilters"
-                  Header="{x:Static resources:Resources.FilterCategory_Pseudo}"
-                  Items="{Binding AdvancedQuery.PseudoItemStatFilters}" />
+                <localViews:FiltersControl
+                    Name="PseudoItemStatFilters"
+                    Grid.Row="7"
+                    Header="{x:Static resources:Resources.FilterCategory_Pseudo}"
+                    Items="{Binding AdvancedQuery.PseudoItemStatFilters}" />
 
-                <localControls:Filters
-                  Grid.Row="8"
-                  Name="AdditionalFilters"
-                  Items="{Binding AdvancedQuery.AdditionalFilters}" />
+                <localViews:FiltersControl
+                    Name="AdditionalFilters"
+                    Grid.Row="8"
+                    Items="{Binding AdvancedQuery.AdditionalFilters}" />
               </Grid>
             </ScrollViewer>
 
-            <Button Grid.Row="1" Content="Query" MaxWidth="150" Command="{Binding ExecuteAdvancedQueryCommand}" />
+            <Button
+                Grid.Row="1"
+                MaxWidth="150"
+                Command="{Binding ExecuteAdvancedQueryCommand}"
+                Content="Query" />
           </Grid>
         </Grid>
 
-        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
-          <DataGrid Name="ListingsGrid" Items="{Binding ItemListings.Listings}"
-            IsReadOnly="True"
-            ColumnWidth="Auto"
-            ScrollViewer.VerticalScrollBarVisibility="Visible"
-            AutoGenerateColumns="True">
+        <Grid
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="2">
+          <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+          </Grid.RowDefinitions>
+
+          <DataGrid
+              Name="ListingsGrid"
+              AutoGenerateColumns="True"
+              ColumnWidth="Auto"
+              IsReadOnly="True"
+              Items="{Binding ItemListings.Listings}"
+              ScrollViewer.VerticalScrollBarVisibility="Visible">
             <DataGrid.DataTemplates>
               <DataTemplate DataType="{x:Type localVms:PriceViewModel}">
-                <StackPanel Orientation="Horizontal" DataContext="{Binding Price}">
-                  <TextBlock Text="{Binding Amount}" VerticalAlignment="Center" />
+                <StackPanel DataContext="{Binding Price}" Orientation="Horizontal">
+                  <TextBlock VerticalAlignment="Center" Text="{Binding Amount}" />
                   <TextBlock Text=" " />
-                  <Image Source="{Binding Image}" Height="30" VerticalAlignment="Center" ToolTip.Tip="{Binding Currency}" />
+                  <Image
+                      Height="30"
+                      VerticalAlignment="Center"
+                      IsVisible="{Binding Image, Converter={x:Static ObjectConverters.IsNotNull}}"
+                      Source="{Binding Image}"
+                      ToolTip.Tip="{Binding Currency}" />
+                  <TextBlock
+                      VerticalAlignment="Center"
+                      IsVisible="{Binding Image, Converter={x:Static ObjectConverters.IsNull}}"
+                      Text="{Binding Currency}" />
                 </StackPanel>
               </DataTemplate>
             </DataGrid.DataTemplates>
           </DataGrid>
+
+          <TextBlock
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              IsVisible="{Binding !ItemListings.Listings.Count}"
+              Text="{x:Static resources:Resources.NoItemsFoundText}" />
+          <pricePrediction:PricePredictionControl
+              Grid.Row="1"
+              HorizontalAlignment="Left"
+              DataContext="{Binding PricePrediction}" />
         </Grid>
       </Grid>
     </Grid>

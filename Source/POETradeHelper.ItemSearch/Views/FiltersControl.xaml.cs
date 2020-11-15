@@ -3,11 +3,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace POETradeHelper.ItemSearch.UserControls
+namespace POETradeHelper.ItemSearch.Views
 {
-    public class Filters : UserControl
+    public class FiltersControl : UserControl
     {
-        public Filters()
+        public FiltersControl()
         {
             this.InitializeComponent();
         }
@@ -23,7 +23,7 @@ namespace POETradeHelper.ItemSearch.UserControls
             set => SetValue(ItemsProperty, value);
         }
 
-        public static AvaloniaProperty<ICollection> ItemsProperty = AvaloniaProperty.Register<Filters, ICollection>(nameof(Items));
+        public static AvaloniaProperty<ICollection> ItemsProperty = AvaloniaProperty.Register<FiltersControl, ICollection>(nameof(Items));
 
         public string Header
         {
@@ -31,6 +31,6 @@ namespace POETradeHelper.ItemSearch.UserControls
             set => SetValue(HeaderProperty, value);
         }
 
-        public static AvaloniaProperty<string> HeaderProperty = AvaloniaProperty.Register<Filters, string>(nameof(Header));
+        public static AvaloniaProperty<string> HeaderProperty = AvaloniaProperty.Register<FiltersControl, string>(nameof(Header));
     }
 }

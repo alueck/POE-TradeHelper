@@ -18,9 +18,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return itemStringLines.Last().Contains(Contract.Properties.Resources.OrganItemDescriptor);
         }
 
-        public override Item Parse(string[] itemStringLines)
+        protected override Item ParseItem(string[] itemStringLines)
         {
-            OrganItem organItem = base.Parse(itemStringLines) as OrganItem;
+            OrganItem organItem = base.ParseItem(itemStringLines) as OrganItem;
 
             organItem.Stats = this.organItemStatsParser.Parse(itemStringLines, false);
 

@@ -1,12 +1,13 @@
-﻿using Moq;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 {
@@ -64,6 +65,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [Test]
         public async Task CreateAsyncShouldCallCreateOnListingViewModelFactory()
         {
+            // arrange
             var itemListingsQueryResult = new ItemListingsQueryResult
             {
                 Result = new List<ListingResult>
@@ -74,10 +76,42 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             var item = new CurrencyItem();
 
-            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult);
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
 
-            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[0], item));
-            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[1], item));
+            // act
+            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult, cancellationToken);
+
+            // assert
+            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[0], item, cancellationToken));
+            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[1], item, cancellationToken));
+        }
+
+        [Test]
+        public async Task CreateAsyncShouldNotCallCreateOnListingViewModelFactoryIfCancellationRequested()
+        {
+            // arrange
+            var itemListingsQueryResult = new ItemListingsQueryResult
+            {
+                Result = new List<ListingResult>
+                {
+                    new ListingResult(),
+                    new ListingResult()
+                },
+            };
+            var item = new CurrencyItem();
+
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            this.listingViewModelFactoryMock.Setup(x => x.CreateAsync(itemListingsQueryResult.Result[0], It.IsAny<Item>(), It.IsAny<CancellationToken>()))
+                .Callback(() => cancellationTokenSource.Cancel());
+
+            // act
+            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult, cancellationToken);
+
+            // assert
+            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(It.IsAny<ListingResult>(), It.IsAny<Item>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

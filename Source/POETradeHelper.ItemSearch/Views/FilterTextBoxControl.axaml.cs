@@ -5,11 +5,11 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 
-namespace POETradeHelper.ItemSearch.UserControls
+namespace POETradeHelper.ItemSearch.Views
 {
-    public class FilterTextBox : UserControl
+    public class FilterTextBoxControl : UserControl
     {
-        public FilterTextBox()
+        public FilterTextBoxControl()
         {
             this.InitializeComponent();
         }
@@ -25,7 +25,7 @@ namespace POETradeHelper.ItemSearch.UserControls
             set => SetValue(ValueProperty, value);
         }
 
-        public static AvaloniaProperty<int?> ValueProperty = AvaloniaProperty.Register<FilterTextBox, int?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
+        public static AvaloniaProperty<int?> ValueProperty = AvaloniaProperty.Register<FilterTextBoxControl, int?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
 
         public string Watermark
         {
@@ -33,7 +33,7 @@ namespace POETradeHelper.ItemSearch.UserControls
             set => SetValue(WatermarkProperty, value);
         }
 
-        public static AvaloniaProperty<string> WatermarkProperty = AvaloniaProperty.Register<FilterTextBox, string>(nameof(Watermark));
+        public static AvaloniaProperty<string> WatermarkProperty = AvaloniaProperty.Register<FilterTextBoxControl, string>(nameof(Watermark));
 
         public void TextBox_GotFocus(object sender, GotFocusEventArgs eventArgs)
         {

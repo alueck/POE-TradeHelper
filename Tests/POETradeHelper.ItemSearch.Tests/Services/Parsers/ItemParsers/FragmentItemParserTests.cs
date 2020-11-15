@@ -6,15 +6,15 @@ using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
-    public class FragmentItemParserTests
+    public class FragmentItemParserTests : ItemParserTestsBase
     {
-        private FragmentItemParser prophecyItemParser;
+        private const string Fragment = "Offering to the Goddess";
         private ItemStringBuilder itemStringBuilder;
 
         [SetUp]
         public void Setup()
         {
-            this.prophecyItemParser = new FragmentItemParser();
+            this.ItemParser = new FragmentItemParser();
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -25,7 +25,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithRarity(ItemRarity.Normal)
                                             .BuildLines();
 
-            bool result = this.prophecyItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsTrue(result);
         }
@@ -38,7 +38,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithItemLevel(10)
                                             .BuildLines();
 
-            bool result = this.prophecyItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsFalse(result);
         }
@@ -51,7 +51,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithDescription($"Right-click to add this {Resources.ProphecyKeyword} to your character.")
                                             .BuildLines();
 
-            bool result = this.prophecyItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.IsFalse(result);
         }
@@ -59,27 +59,28 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldParseName()
         {
-            const string expected = "Offering to the Goddess";
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithName(expected)
-                                            .BuildLines();
+            string[] itemStringLines = this.GetValidItemStringLines();
 
-            FragmentItem result = this.prophecyItemParser.Parse(itemStringLines) as FragmentItem;
+            FragmentItem result = this.ItemParser.Parse(itemStringLines) as FragmentItem;
 
-            Assert.That(result.Name, Is.EqualTo(expected));
+            Assert.That(result.Name, Is.EqualTo(Fragment));
         }
 
         [Test]
         public void ParseShouldParseType()
         {
-            const string expected = "Offering to the Goddess";
-            string[] itemStringLines = this.itemStringBuilder
-                                            .WithName(expected)
-                                            .BuildLines();
+            string[] itemStringLines = this.GetValidItemStringLines();
 
-            FragmentItem result = this.prophecyItemParser.Parse(itemStringLines) as FragmentItem;
+            FragmentItem result = this.ItemParser.Parse(itemStringLines) as FragmentItem;
 
-            Assert.That(result.Type, Is.EqualTo(expected));
+            Assert.That(result.Type, Is.EqualTo(Fragment));
+        }
+
+        protected override string[] GetValidItemStringLines()
+        {
+            return this.itemStringBuilder
+                        .WithName(Fragment)
+                        .BuildLines();
         }
     }
 }

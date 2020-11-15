@@ -1,15 +1,18 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using POETradeHelper.Common.UI;
 using POETradeHelper.Common.UI.Models;
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
+using POETradeHelper.PricePrediction.Services;
+using POETradeHelper.PricePrediction.ViewModels;
 using ReactiveUI;
 using Splat;
 
@@ -22,25 +25,37 @@ namespace POETradeHelper.ItemSearch.ViewModels
         private readonly IItemListingsViewModelFactory itemListingsViewModelFactory;
         private readonly IAdvancedQueryViewModelFactory advancedQueryViewModelFactory;
         private readonly IQueryRequestFactory queryRequestFactory;
+        private readonly IPricePredictionService pricePredictionService;
+        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
 
         public ItemSearchResultOverlayViewModel(
             ISearchItemProvider searchItemProvider,
             IPoeTradeApiClient tradeClient,
             IItemListingsViewModelFactory itemListingsViewModelFactory,
             IAdvancedQueryViewModelFactory advancedQueryViewModelFactory,
-            IQueryRequestFactory queryRequestFactory)
+            IQueryRequestFactory queryRequestFactory,
+            IPricePredictionService pricePredictionService,
+            IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {
             this.searchItemProvider = searchItemProvider;
             this.poeTradeApiClient = tradeClient;
             this.itemListingsViewModelFactory = itemListingsViewModelFactory;
             this.advancedQueryViewModelFactory = advancedQueryViewModelFactory;
 
-            var canExecuteOpenQueryInBrowser = this.WhenAnyValue(x => x.ItemListings, (ItemListingsViewModel itemListings) => itemListings != null);
-            this.OpenQueryInBrowserCommand = ReactiveCommand.Create((IHideable hideableWindow) => this.OpenUrl(this.ItemListings.ListingsUri.ToString(), hideableWindow), canExecuteOpenQueryInBrowser);
-
             this.ExecuteAdvancedQueryCommand = ReactiveCommand.CreateFromTask(() => this.ExecuteAdvancedQueryAsync());
             this.ExecuteAdvancedQueryCommand.IsExecuting.ToProperty(this, x => x.IsBusy);
             this.queryRequestFactory = queryRequestFactory;
+            this.pricePredictionService = pricePredictionService;
+            this.itemSearchOptions = itemSearchOptions;
+            this.itemSearchOptions.OnChange(newValue =>
+            {
+                if (!newValue.PricePredictionEnabled)
+                {
+                    this.PricePrediction = new PricePredictionViewModel();
+                }
+            });
+
+            this.PricePrediction = new PricePredictionViewModel();
         }
 
         private ItemListingsViewModel itemListing;
@@ -74,6 +89,14 @@ namespace POETradeHelper.ItemSearch.ViewModels
             set { this.RaiseAndSetIfChanged(ref this.isBusy, value); }
         }
 
+        private PricePredictionViewModel pricePredicition;
+
+        public PricePredictionViewModel PricePrediction
+        {
+            get => this.pricePredicition;
+            set => this.RaiseAndSetIfChanged(ref pricePredicition, value);
+        }
+
         public ReactiveCommand<IHideable, Unit> OpenQueryInBrowserCommand { get; }
 
         public ReactiveCommand<Unit, Unit> ExecuteAdvancedQueryCommand { get; }
@@ -82,19 +105,20 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         public async Task SetListingForItemUnderCursorAsync(CancellationToken cancellationToken = default)
         {
+            var oldItem = this.Item;
             try
             {
                 this.IsBusy = true;
 
                 this.Message = null;
 
-                this.Item = await searchItemProvider.GetItemFromUnderCursorAsync(cancellationToken);
+                this.Item = await searchItemProvider.GetItemFromUnderCursorAsync(cancellationToken).ConfigureAwait(true);
                 IQueryRequest queryRequest = this.queryRequestFactory.Create(this.Item);
-                ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(queryRequest, cancellationToken);
+                ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(queryRequest, cancellationToken).ConfigureAwait(true);
 
                 if (itemListing != null && !cancellationToken.IsCancellationRequested)
                 {
-                    this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(Item, itemListing);
+                    this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(Item, itemListing, cancellationToken).ConfigureAwait(true);
                     this.AdvancedQuery = this.advancedQueryViewModelFactory.Create(Item, itemListing.SearchQueryRequest);
                 }
             }
@@ -109,6 +133,24 @@ namespace POETradeHelper.ItemSearch.ViewModels
                     this.IsBusy = false;
                 }
             }
+
+            if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled && !string.Equals(oldItem?.ItemText, this.Item?.ItemText, StringComparison.Ordinal))
+            {
+                await GetPricePrediction(cancellationToken).ConfigureAwait(true);
+            }
+        }
+
+        private async Task GetPricePrediction(CancellationToken cancellationToken)
+        {
+            try
+            {
+                this.PricePrediction = new PricePredictionViewModel();
+                this.PricePrediction = await this.pricePredictionService.GetPricePredictionAsync(this.Item, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                this.Log().Error(exception);
+            }
         }
 
         private void HandleException(Exception exception)
@@ -122,17 +164,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
             this.Log().Error(exception);
         }
 
-        private void OpenUrl(string url, IHideable hideableWindow)
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = url,
-                UseShellExecute = true
-            });
-
-            hideableWindow.Hide();
-        }
-
         internal async Task ExecuteAdvancedQueryAsync()
         {
             try
@@ -140,11 +171,10 @@ namespace POETradeHelper.ItemSearch.ViewModels
                 this.Message = null;
 
                 var queryRequest = this.queryRequestFactory.Create(this.AdvancedQuery);
-
-                ItemListingsQueryResult itemListingsQueryResult = await this.poeTradeApiClient.GetListingsAsync(queryRequest);
-
-                this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item, itemListingsQueryResult);
                 this.AdvancedQuery = this.advancedQueryViewModelFactory.Create(this.Item, queryRequest);
+
+                ItemListingsQueryResult itemListingsQueryResult = await this.poeTradeApiClient.GetListingsAsync(queryRequest).ConfigureAwait(true);
+                this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item, itemListingsQueryResult).ConfigureAwait(true);
             }
             catch (Exception exception)
             {

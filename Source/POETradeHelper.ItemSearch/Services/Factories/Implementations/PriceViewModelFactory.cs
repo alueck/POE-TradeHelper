@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using POETradeHelper.Common.UI.Services;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -17,14 +18,14 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             this.imageService = imageService;
         }
 
-        public async Task<PriceViewModel> CreateAsync(Price price)
+        public async Task<PriceViewModel> CreateAsync(Price price, CancellationToken cancellationToken = default)
         {
             return price != null
                 ? new PriceViewModel
                 {
                     Amount = price.Amount.ToString("0.##").PadLeft(6),
                     Currency = this.staticDataService.GetText(price.Currency),
-                    Image = await this.imageService.GetImageAsync(this.staticDataService.GetImageUrl(price.Currency))
+                    Image = await this.imageService.GetImageAsync(this.staticDataService.GetImageUrl(price.Currency), cancellationToken).ConfigureAwait(false)
                 }
                 : null;
         }

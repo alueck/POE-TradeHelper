@@ -5,15 +5,15 @@ using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
-    internal class CurrencyItemParserTests
+    internal class CurrencyItemParserTests : ItemParserTestsBase
     {
-        private CurrencyItemParser currencyItemParser;
+        private const string Currency = "Scroll of Wisdom";
         private ItemStringBuilder itemStringBuilder;
 
         [SetUp]
         public void Setup()
         {
-            this.currencyItemParser = new CurrencyItemParser();
+            this.ItemParser = new CurrencyItemParser();
             this.itemStringBuilder = new ItemStringBuilder().WithRarity(ItemRarity.Currency);
         }
 
@@ -30,7 +30,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithRarity(rarity)
                 .BuildLines();
 
-            bool result = this.currencyItemParser.CanParse(itemStringLines);
+            bool result = this.ItemParser.CanParse(itemStringLines);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -40,7 +40,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             string[] itemStringLines = this.itemStringBuilder.BuildLines();
 
-            Item item = this.currencyItemParser.Parse(itemStringLines);
+            Item item = this.ItemParser.Parse(itemStringLines);
 
             Assert.That(item, Is.InstanceOf<CurrencyItem>());
         }
@@ -48,27 +48,28 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldParseCurrencyName()
         {
-            string expected = "Scroll of Wisdom";
-            string[] itemStringLines = this.itemStringBuilder
-                .WithName(expected)
-                .BuildLines();
+            string[] itemStringLines = this.GetValidItemStringLines();
 
-            Item item = this.currencyItemParser.Parse(itemStringLines);
+            Item item = this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(item.Name, Is.EqualTo(expected));
+            Assert.That(item.Name, Is.EqualTo(Currency));
         }
 
         [Test]
         public void ParseShouldParseCurrencyType()
         {
-            string expected = "Scroll of Wisdom";
-            string[] itemStringLines = this.itemStringBuilder
-                .WithName(expected)
+            string[] itemStringLines = this.GetValidItemStringLines();
+
+            Item item = this.ItemParser.Parse(itemStringLines);
+
+            Assert.That(item.Type, Is.EqualTo(Currency));
+        }
+
+        protected override string[] GetValidItemStringLines()
+        {
+            return this.itemStringBuilder
+                .WithName(Currency)
                 .BuildLines();
-
-            Item item = this.currencyItemParser.Parse(itemStringLines);
-
-            Assert.That(item.Type, Is.EqualTo(expected));
         }
     }
 }
