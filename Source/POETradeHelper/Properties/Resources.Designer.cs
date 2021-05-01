@@ -70,6 +70,24 @@ namespace POETradeHelper.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There was an initialization error. Please try again. If the error persists, take a look at the logs (located at &quot;{0}&quot;)..
+        /// </summary>
+        public static string InitializationError {
+            get {
+                return ResourceManager.GetString("InitializationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializing application....
+        /// </summary>
+        public static string InitializingApplicationText {
+            get {
+                return ResourceManager.GetString("InitializingApplicationText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There was a problem communicating with the Path of Exile API. The API might be currently down..
         /// </summary>
         public static string ProblemCommunicatingWithPoeApi {

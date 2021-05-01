@@ -112,13 +112,19 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FailedToSaveSettingsMessageText" xml:space="preserve">
     <value>Failed to save settings. Please try again.</value>
+  </data>
+  <data name="InitializationError" xml:space="preserve">
+    <value>There was an initialization error. Please try again. If the error persists, take a look at the logs (located at "{0}").</value>
+  </data>
+  <data name="InitializingApplicationText" xml:space="preserve">
+    <value>Initializing application...</value>
   </data>
   <data name="ProblemCommunicatingWithPoeApi" xml:space="preserve">
     <value>There was a problem communicating with the Path of Exile API. The API might be currently down.</value>

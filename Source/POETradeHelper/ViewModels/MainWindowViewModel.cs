@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using DynamicData;
 using POETradeHelper.Common;
@@ -22,72 +21,81 @@ namespace POETradeHelper.ViewModels
         private Message errorMessage;
         private IEnumerable<ISettingsViewModel> settingsViewModels;
         private ObservableAsPropertyHelper<Message> saveSettingsMessage;
-        private IDisposable settingsViewModelsInitializationSubscription;
 
         public MainWindowViewModel(IEnumerable<ISettingsViewModel> settingsViewModels, IEnumerable<IInitializable> initializables)
         {
             this.settingsViewModels = settingsViewModels;
 
-            ConfigureIsBusySubscription(initializables);
+            InitializeAsync(initializables);
 
             this.SaveSettingsCommand = ReactiveCommand.Create(SaveSettings);
             ConfigureSaveSettingsCommand();
         }
 
-        private void ConfigureIsBusySubscription(IEnumerable<IInitializable> initializables)
+        private async void InitializeAsync(IEnumerable<IInitializable> initializables)
         {
-            IObservable<bool> settingsViewModelsBusyObservable = this.settingsViewModels
-                                                                        .AsObservableChangeSet()
-                                                                        .AutoRefreshOnObservable(x => x.ObservableForProperty(x => x.IsBusy))
-                                                                        .ObserveOn(RxApp.MainThreadScheduler)
-                                                                        .Select(changeSet => changeSet.Any(settingsViewModelChange => settingsViewModelChange.Item.Current.IsBusy));
+            bool success = await this.InitializeAsync(
+                async () => await this.InitializeInitializablesAsync(initializables).ConfigureAwait(true),
+                Resources.RetrievingDataText,
+                Resources.ProblemCommunicatingWithPoeApi,
+                resetBusyTextOnly: true).ConfigureAwait(true);
 
-            IObservable<bool> initializablesBusyObservable = Observable.Return(true).Concat(initializables
-                .Select(x => x.OnInitAsync().ContinueWith(t =>
-                {
-                    if (t.IsFaulted)
-                    {
-                        this.Log().Error(t.Exception);
-                        this.ErrorMessage = new Message
-                        {
-                            Text = Resources.ProblemCommunicatingWithPoeApi,
-                            Type = MessageType.Error
-                        };
-                    }
-                    return Observable.Empty<Unit>();
-                }))
-                .ToObservable()
-                .Switch()
-
-                .IsEmpty());
-
-            this.settingsViewModelsInitializationSubscription = initializablesBusyObservable
-                .Subscribe(async initializing =>
-                {
-                    if (initializing)
-                    {
-                        this.IsBusyText = Resources.RetrievingDataText;
-                    }
-                    else
-                    {
-                        this.IsBusyText = null;
-                        await this.InitializeSettingsViewModelsAsync();
-                    }
-                });
-
-            settingsViewModelsBusyObservable
-                .CombineLatest(initializablesBusyObservable, (settingsViewModelBusy, initializableBusy) => settingsViewModelBusy || initializableBusy)
-                .Subscribe(busy => this.IsBusy = busy);
+            if (success)
+            {
+                await this.InitializeAsync(
+                    this.InitializeSettingViewModelsAsync,
+                    Resources.InitializingApplicationText,
+                    string.Format(Resources.InitializationError, FileConfiguration.PoeTradeHelperAppDataFolder),
+                    resetBusyTextOnly: false).ConfigureAwait(true);
+            }
         }
 
-        private async Task InitializeSettingsViewModelsAsync()
+        private async Task InitializeInitializablesAsync(IEnumerable<IInitializable> initializables)
+        {
+            foreach (var initializable in initializables)
+            {
+                await initializable.OnInitAsync().ConfigureAwait(true);
+            }
+        }
+
+        private async Task InitializeSettingViewModelsAsync()
         {
             foreach (var settingsViewModel in this.settingsViewModels)
             {
-                await settingsViewModel.InitializeAsync();
+                await settingsViewModel.InitializeAsync().ConfigureAwait(true);
+            }
+        }
+
+        private async Task<bool> InitializeAsync(Func<Task> initializationFunc, string isBusyText, string errorText, bool resetBusyTextOnly)
+        {
+            this.IsBusy = true;
+            this.IsBusyText = isBusyText;
+
+            try
+            {
+                await initializationFunc().ConfigureAwait(true);
+            }
+            catch (Exception exception)
+            {
+                this.Log().Error(exception);
+                this.ErrorMessage = new Message
+                {
+                    Text = errorText,
+                    Type = MessageType.Error
+                };
+
+                this.ResetIsBusy(resetBusyTextOnly);
+                return false;
             }
 
-            this.settingsViewModelsInitializationSubscription.Dispose();
+            this.ResetIsBusy(resetBusyTextOnly);
+            return true;
+        }
+
+        private void ResetIsBusy(bool resetTextOnly)
+        {
+            this.IsBusy = resetTextOnly;
+            this.IsBusyText = null;
         }
 
         private void ConfigureSaveSettingsCommand()
