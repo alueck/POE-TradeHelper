@@ -401,7 +401,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string[] itemStringLines = this.itemStringBuilder.BuildLines();
 
             this.itemDataServiceMock.Setup(x => x.GetCategory(It.IsAny<string>()))
-                .Returns(itemCategory?.GetDisplayName());
+                .Returns(itemCategory?.GetDisplayName().ToLower());
 
             // act
             EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
