@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
 using Moq;
 using NUnit.Framework;
@@ -38,7 +37,7 @@ namespace POETradeHelper.IntegrationTests
 
             AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .LogToDebug()
+                .LogToTrace()
                 .UseReactiveUI()
                 .SetupWithoutStarting();
         }

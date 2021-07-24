@@ -21,7 +21,7 @@ namespace POETradeHelper.ItemSearch.Views
 
         public int? Value
         {
-            get => GetValue(ValueProperty);
+            get => (int?)GetValue(ValueProperty);
             set => SetValue(ValueProperty, value);
         }
 
@@ -29,7 +29,7 @@ namespace POETradeHelper.ItemSearch.Views
 
         public string Watermark
         {
-            get => GetValue(WatermarkProperty);
+            get => (string)GetValue(WatermarkProperty);
             set => SetValue(WatermarkProperty, value);
         }
 

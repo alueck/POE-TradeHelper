@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.Views
 
         public ICollection Items
         {
-            get => GetValue(ItemsProperty);
+            get => (ICollection)GetValue(ItemsProperty);
             set => SetValue(ItemsProperty, value);
         }
 
@@ -27,7 +27,7 @@ namespace POETradeHelper.ItemSearch.Views
 
         public string Header
         {
-            get => GetValue(HeaderProperty);
+            get => (string)GetValue(HeaderProperty);
             set => SetValue(HeaderProperty, value);
         }
 

@@ -26,7 +26,7 @@ namespace POETradeHelper.ItemSearch.Views
 
         public bool IsThreeState
         {
-            get => GetValue(IsThreeStateProperty);
+            get => (bool)GetValue(IsThreeStateProperty);
             set => SetValue(IsThreeStateProperty, value);
         }
 
