@@ -267,4 +267,7 @@
   <data name="EquippableItemCategory_Weapons" xml:space="preserve">
     <value>Weapons</value>
   </data>
+  <data name="ItemClassDescriptor" xml:space="preserve">
+    <value>Item Class:</value>
+  </data>
 </root>

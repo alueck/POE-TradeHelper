@@ -5,7 +5,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
     public abstract class SimpleItemParserBase<TItemType> : ItemParserBase
         where TItemType : Item, new()
     {
-        private const int NameLineIndex = 1;
+        private const int NameLineIndex = 2;
 
         public override abstract bool CanParse(string[] itemStringLines);
 

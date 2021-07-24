@@ -7,7 +7,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class JewelItemParser : ItemWithStatsParserBase
     {
-        private const int NameLineIndex = 1;
+        private const int NameLineIndex = 2;
         private readonly IItemTypeParser itemTypeParser;
 
         public JewelItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
@@ -17,7 +17,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         public override bool CanParse(string[] itemStringLines)
         {
-            return itemStringLines.Skip(1).Take(2).Any(line => line.Contains(Resources.JewelKeyword));
+            return itemStringLines.Skip(2).Take(2).Any(line => line.Contains(Resources.JewelKeyword));
         }
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)

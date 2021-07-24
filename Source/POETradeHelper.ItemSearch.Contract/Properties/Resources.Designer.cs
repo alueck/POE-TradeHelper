@@ -187,6 +187,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Item Class:.
+        /// </summary>
+        public static string ItemClassDescriptor {
+            get {
+                return ResourceManager.GetString("ItemClassDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Item Level:.
         /// </summary>
         public static string ItemLevelDescriptor {
