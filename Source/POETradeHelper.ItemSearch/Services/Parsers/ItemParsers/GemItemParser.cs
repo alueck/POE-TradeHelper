@@ -10,7 +10,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class GemItemParser : ItemParserBase
     {
-        private const int NameLineIndex = 1;
+        private const int NameLineIndex = 2;
         private readonly IItemDataService itemDataService;
 
         public GemItemParser(IItemDataService itemDataService)

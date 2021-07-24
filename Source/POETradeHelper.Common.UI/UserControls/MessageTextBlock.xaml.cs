@@ -19,7 +19,7 @@ namespace POETradeHelper.Common.UI.UserControls
 
         public Message Message
         {
-            get => GetValue(MessageProperty);
+            get => (Message)GetValue(MessageProperty);
             set => SetValue(MessageProperty, value);
         }
 

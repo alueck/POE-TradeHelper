@@ -1,4 +1,5 @@
-﻿Rarity: Gem
+﻿Item Class: Active Skill Gems
+Rarity: Gem
 Flameblast
 --------
 Vaal, Spell, AoE, Fire, Channelling

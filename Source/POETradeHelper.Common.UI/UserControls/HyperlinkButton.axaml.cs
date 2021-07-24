@@ -23,7 +23,7 @@ namespace POETradeHelper.Common.UI.UserControls
         /// </summary>
         public IHideable HideableWindow
         {
-            get => GetValue(HideableWindowProperty);
+            get => (IHideable)GetValue(HideableWindowProperty);
             set => SetValue(HideableWindowProperty, value);
         }
 
@@ -31,7 +31,7 @@ namespace POETradeHelper.Common.UI.UserControls
 
         public Uri Uri
         {
-            get => GetValue(UriProperty);
+            get => (Uri)GetValue(UriProperty);
             set => SetValue(UriProperty, value);
         }
 

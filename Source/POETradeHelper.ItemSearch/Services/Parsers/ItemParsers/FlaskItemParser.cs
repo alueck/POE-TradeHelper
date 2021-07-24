@@ -6,7 +6,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class FlaskItemParser : ItemWithStatsParserBase
     {
-        private const int NameLineIndex = 1;
+        private const int NameLineIndex = 2;
         private readonly IItemTypeParser itemTypeParser;
 
         public FlaskItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser) :

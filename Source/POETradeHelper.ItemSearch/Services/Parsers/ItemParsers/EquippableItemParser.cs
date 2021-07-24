@@ -9,7 +9,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class EquippableItemParser : ItemWithStatsParserBase
     {
-        private const int NameLineIndex = 1;
+        private const int NameLineIndex = 2;
         private readonly ISocketsParser socketsParser;
         private readonly IItemTypeParser itemTypeParser;
         private readonly IItemDataService itemDataService;
@@ -44,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private bool TypeOrNameContains(string[] itemStringLines, params string[] keywords)
         {
-            return itemStringLines.Skip(1).Take(2).Any(line => keywords.Any(line.Contains));
+            return itemStringLines.Skip(2).Take(2).Any(line => keywords.Any(line.Contains));
         }
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)

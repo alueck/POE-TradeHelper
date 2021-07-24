@@ -5,9 +5,11 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Utilities;
+using Avalonia.Visuals.Media.Imaging;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using NUnit.Framework;
@@ -285,6 +287,11 @@ namespace POETradeHelper.Common.UI.Tests.Services
             public Size Size => throw new NotImplementedException();
 
             public void Dispose()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode)
             {
                 throw new NotImplementedException();
             }

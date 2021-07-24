@@ -57,7 +57,7 @@ namespace POETradeHelper.Common.UI.UserControls
 
         public TimeSpan DisplayAfter
         {
-            get => this.GetValue(DisplayAfterProperty);
+            get => (TimeSpan)this.GetValue(DisplayAfterProperty);
             set => this.SetValue(DisplayAfterProperty, value);
         }
 
@@ -65,7 +65,7 @@ namespace POETradeHelper.Common.UI.UserControls
 
         public bool IsBusy
         {
-            get => this.GetValue(IsBusyProperty);
+            get => (bool)this.GetValue(IsBusyProperty);
             set => this.SetValue(IsBusyProperty, value);
         }
 
@@ -73,7 +73,7 @@ namespace POETradeHelper.Common.UI.UserControls
 
         public string Text
         {
-            get => this.GetValue(TextProperty);
+            get => (string)this.GetValue(TextProperty);
             set => this.SetValue(TextProperty, value);
         }
 
@@ -81,7 +81,7 @@ namespace POETradeHelper.Common.UI.UserControls
 
         protected bool IsBusyIndicatorVisible
         {
-            get => this.GetValue(IsBusyIndicatorVisibleProperty);
+            get => (bool)this.GetValue(IsBusyIndicatorVisibleProperty);
             set => this.SetValue(IsBusyIndicatorVisibleProperty, value);
         }
 

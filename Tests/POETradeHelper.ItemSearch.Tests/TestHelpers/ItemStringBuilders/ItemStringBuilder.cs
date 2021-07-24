@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using POETradeHelper.Common.Extensions;
-using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
@@ -19,7 +18,9 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
         public ICollection<string> Descriptions { get; private set; } = new List<string>();
 
         public int ItemLevel { get; private set; }
+
         public InfluenceType InfluenceType { get; private set; }
+
         public string SocketsString { get; private set; }
 
         public ItemStringBuilder WithQuality(int quality)

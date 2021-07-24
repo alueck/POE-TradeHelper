@@ -7,7 +7,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class MapItemParser : ItemWithStatsParserBase
     {
-        private const int NameLineIndex = 1;
+        private const int NameLineIndex = 2;
         private readonly IItemTypeParser itemTypeParser;
 
         public MapItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser) : base(itemStatsParser)
