@@ -62,7 +62,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             };
 
             equippableItem.Type = this.itemTypeParser.ParseType(itemStringLines, equippableItem.Rarity, equippableItem.IsIdentified);
-            equippableItem.Category = this.itemDataService.GetCategory(equippableItem.Type).ParseToEnumByDisplayName<EquippableItemCategory>() ?? EquippableItemCategory.Unknown;
+            equippableItem.Category = this.itemDataService.GetCategory(equippableItem.Type).ParseToEnumByDisplayName<EquippableItemCategory>(System.StringComparison.OrdinalIgnoreCase) ?? EquippableItemCategory.Unknown;
 
             return equippableItem;
         }
