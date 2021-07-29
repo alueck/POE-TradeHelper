@@ -1,12 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System;
+using System.Linq;
+using Microsoft.Extensions.Options;
 using POETradeHelper.ItemSearch.Contract.Configuration;
-using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System;
-using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -25,7 +24,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 
             var matchingFilter = FindMatchingFilter(itemStat, queryRequest);
 
-            (int minValue, int maxValue)? minMaxTuple = GetMinMaxTuple(itemStat);
+            (decimal minValue, decimal maxValue)? minMaxTuple = GetMinMaxTuple(itemStat);
 
             result = minMaxTuple.HasValue
                 ? GetMinMaxStatFilterViewModel(itemStat, matchingFilter, minMaxTuple.Value)
@@ -39,9 +38,9 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return queryRequest.Query.Stats.SelectMany(s => s.Filters).FirstOrDefault(filter => string.Equals(filter.Id, itemStat.Id, StringComparison.Ordinal));
         }
 
-        private static (int minValue, int maxValue)? GetMinMaxTuple(ItemStat itemStat)
+        private static (decimal minValue, decimal maxValue)? GetMinMaxTuple(ItemStat itemStat)
         {
-            (int minValue, int maxValue)? minMaxTuple = null;
+            (decimal minValue, decimal maxValue)? minMaxTuple = null;
 
             if (itemStat is SingleValueItemStat singleValueItemStat)
             {
@@ -55,10 +54,10 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return minMaxTuple;
         }
 
-        private StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilter matchingFilter, (int minValue, int maxValue) minMaxTuple)
+        private StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilter matchingFilter, (decimal minValue, decimal maxValue) minMaxTuple)
         {
-            double minValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MinValuePercentageOffset;
-            double maxValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MaxValuePercentageOffset;
+            decimal minValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MinValuePercentageOffset;
+            decimal maxValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MaxValuePercentageOffset;
 
             if (itemStat.StatCategory == StatCategory.Monster)
             {
@@ -77,20 +76,28 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             };
         }
 
-        private static int? GetValueWithOffset(int? value, double offsetPercentage)
+        private static decimal? GetValueWithOffset(decimal? value, decimal offsetPercentage)
         {
-            return value.HasValue
-                ? (int?)(value * (1 + offsetPercentage))
-                : null;
+            if (!value.HasValue)
+            {
+                return default;
+            }
+
+            var valueIsInteger = value % 1 == 0;
+            var offsetValue = value.Value * (1 + offsetPercentage);
+
+            return valueIsInteger
+                ? Math.Truncate(offsetValue)
+                : Math.Round(offsetValue, 2, MidpointRounding.AwayFromZero);
         }
 
-        private static string GetCurrent(int? currentMinValue, int? currentMaxValue)
+        private static string GetCurrent(decimal? currentMinValue, decimal? currentMaxValue)
         {
-            var current = $"{currentMinValue}";
+            var current = $"{currentMinValue:0.##}";
 
             if (currentMaxValue.HasValue && currentMaxValue != currentMinValue)
             {
-                current += $" - {currentMaxValue}";
+                current += $" - {currentMaxValue:0.##}";
             }
 
             return current;

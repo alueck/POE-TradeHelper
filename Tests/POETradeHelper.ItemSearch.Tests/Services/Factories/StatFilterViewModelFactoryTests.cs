@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
@@ -88,14 +89,16 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result.Text, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void CreateShouldReturnStatFilterViewModelWithCurrentValueForSingleValueItemStat()
+        [SetCulture("")]
+        [TestCase(10.00, "10")]
+        [TestCase(0.34, "0.34")]
+        [TestCase(0.30, "0.3")]
+        public void CreateShouldReturnStatFilterViewModelWithCurrentValueForSingleValueItemStat(decimal value, string expected)
         {
             var itemStat = new SingleValueItemStat(StatCategory.Explicit)
             {
-                Value = 10
+                Value = value
             };
-            string expected = itemStat.Value.ToString();
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
@@ -103,29 +106,30 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result.Current, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void CreateShouldReturnStatFilterViewModelWithCurrentValueForMinMaxValueItemStat()
+        [SetCulture("")]
+        [TestCase(10.00, 20.00, "10", "20")]
+        [TestCase(0.23, 0.30, "0.23", "0.3")]
+        public void CreateShouldReturnStatFilterViewModelWithCurrentValueForMinMaxValueItemStat(decimal minValue, decimal maxValue, string expectedMinValue, string expectedMaxValue)
         {
             var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
             {
-                MinValue = 10,
-                MaxValue = 20
+                MinValue = minValue,
+                MaxValue = maxValue
             };
-            string expected = $"{itemStat.MinValue} - {itemStat.MaxValue}";
+            string expected = $"{expectedMinValue} - {expectedMaxValue}";
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Current, Is.EqualTo(expected));
         }
-
-        [Test]
-        public void CreateShouldReturnStatFilterViewModelWithMinValueForSingleValueItemStat()
+        
+        [TestCaseSource(nameof(DecimalValueRoundingTestCases))]
+        public void CreateShouldReturnStatFilterViewModelWithMinValueForSingleValueItemStat(decimal value, decimal expected)
         {
-            const int expected = 15;
             var itemStat = new SingleValueItemStat(StatCategory.Explicit)
             {
-                Value = expected
+                Value = value
             };
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
@@ -134,13 +138,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result.Min, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void CreateShouldReturnStatFilterViewModelWithMaxValueForSingleValueItemStat()
+        [TestCaseSource(nameof(DecimalValueRoundingTestCases))]
+        public void CreateShouldReturnStatFilterViewModelWithMaxValueForSingleValueItemStat(decimal value, decimal expected)
         {
-            const int expected = 20;
             var itemStat = new SingleValueItemStat(StatCategory.Explicit)
             {
-                Value = expected
+                Value = value
             };
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
@@ -149,13 +152,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result.Max, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void CreateShouldReturnStatFilterViewModelWithMinValueForMinMaxValueItemStat()
+        [TestCaseSource(nameof(DecimalValueRoundingTestCases))]
+        public void CreateShouldReturnStatFilterViewModelWithMinValueForMinMaxValueItemStat(decimal value, decimal expected)
         {
-            const int expected = 15;
             var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
             {
-                MinValue = expected
+                MinValue = value
             };
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
@@ -164,13 +166,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result.Min, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void CreateShouldReturnStatFilterViewModelWithMaxValueForMinMaxValueItemStat()
+        [TestCaseSource(nameof(DecimalValueRoundingTestCases))]
+        public void CreateShouldReturnStatFilterViewModelWithMaxValueForMinMaxValueItemStat(decimal value, decimal expected)
         {
-            const int expected = 20;
             var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
             {
-                MaxValue = expected
+                MaxValue = value
             };
 
             MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
@@ -178,11 +179,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.NotNull(result);
             Assert.That(result.Max, Is.EqualTo(expected));
         }
+        
+        public static IEnumerable<object> DecimalValueRoundingTestCases
+        {
+            get
+            {
+                yield return new object[] { 15m, 15m };
+                yield return new object[] { 0.123m, 0.12m };
+                yield return new object[] { 0.125m, 0.13m };
+                yield return new object[] { -0.125m, -0.13m };
+            }
+        }
 
-        [TestCase(-0.1, 10, 9)]
-        [TestCase(-0.15, 10, 8)]
-        [TestCase(0.1, 10, 11)]
-        public void CreateShouldConsiderMinValuePercentageOffsetForSingleValueItemStat(double offset, int value, int expected)
+        [TestCaseSource(nameof(DecimalValueOffsetTestCases))]
+        public void CreateShouldConsiderMinValuePercentageOffsetForSingleValueItemStat(decimal offset, decimal value, decimal expected)
         {
             var itemStat = new SingleValueItemStat(StatCategory.Explicit)
             {
@@ -192,10 +202,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             this.CreateShouldConsiderMinValuePercentageOffsetForItemStat(itemStat, offset, expected);
         }
 
-        [TestCase(-0.1, 10, 9)]
-        [TestCase(-0.15, 10, 8)]
-        [TestCase(0.1, 10, 11)]
-        public void CreateShouldConsiderMinValuePercentageOffsetForMinMaxValueItemStat(double offset, int minValue, int expected)
+        [TestCaseSource(nameof(DecimalValueOffsetTestCases))]
+        public void CreateShouldConsiderMinValuePercentageOffsetForMinMaxValueItemStat(decimal offset, decimal minValue, decimal expected)
         {
             var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
             {
@@ -205,7 +213,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             this.CreateShouldConsiderMinValuePercentageOffsetForItemStat(itemStat, offset, expected);
         }
 
-        private void CreateShouldConsiderMinValuePercentageOffsetForItemStat(ItemStat itemStat, double percentageOffset, int expected)
+        private void CreateShouldConsiderMinValuePercentageOffsetForItemStat(ItemStat itemStat, decimal percentageOffset, decimal expected)
         {
             this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions
@@ -223,10 +231,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result.Min, Is.EqualTo(expected));
         }
 
-        [TestCase(0.1, 20, 22)]
-        [TestCase(0.15, 20, 23)]
-        [TestCase(-0.1, 20, 18)]
-        public void CreateShouldConsiderMaxValuePercentageOffsetForSingleValueItemStat(double offset, int value, int expected)
+        [TestCaseSource(nameof(DecimalValueOffsetTestCases))]
+        public void CreateShouldConsiderMaxValuePercentageOffsetForSingleValueItemStat(decimal offset, decimal value, decimal expected)
         {
             var itemStat = new SingleValueItemStat(StatCategory.Explicit)
             {
@@ -236,10 +242,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             this.CreateShouldConsiderMaxValuePercentageOffsetForItemStat(itemStat, offset, expected);
         }
 
-        [TestCase(0.1, 20, 22)]
-        [TestCase(0.15, 20, 23)]
-        [TestCase(-0.1, 20, 18)]
-        public void CreateShouldConsiderMaxValuePercentageOffsetForMinMaxValueItemStat(double offset, int maxValue, int expected)
+        [TestCaseSource(nameof(DecimalValueOffsetTestCases))]
+        public void CreateShouldConsiderMaxValuePercentageOffsetForMinMaxValueItemStat(decimal offset, decimal maxValue, decimal expected)
         {
             var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
             {
@@ -249,7 +253,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             this.CreateShouldConsiderMaxValuePercentageOffsetForItemStat(itemStat, offset, expected);
         }
 
-        private void CreateShouldConsiderMaxValuePercentageOffsetForItemStat(ItemStat itemStat, double percentageOffset, int expected)
+        private void CreateShouldConsiderMaxValuePercentageOffsetForItemStat(ItemStat itemStat, decimal percentageOffset, decimal expected)
         {
             this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions
@@ -265,6 +269,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
             Assert.NotNull(result);
             Assert.That(result.Max, Is.EqualTo(expected));
+        }
+        
+        public static IEnumerable<object> DecimalValueOffsetTestCases
+        {
+            get
+            {
+                yield return new object[] { -0.1m, 10m, 9m };
+                yield return new object[] { -0.15m, 10m, 8m };
+                yield return new object[] { 0.1m, 10m, 11m };
+                yield return new object[] { 0.1m, 1.235m, 1.36m };
+                yield return new object[] { -0.1m, -1.34m, -1.21m };
+            }
         }
 
         [Test]
@@ -288,7 +304,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(null)]
         [TestCase(15)]
         [TestCase(20)]
-        public void CreateShouldTakeMinValueFromQueryRequestForSingleValueItemStat(int? expected)
+        [TestCase(10.111)]
+        public void CreateShouldTakeMinValueFromQueryRequestForSingleValueItemStat(decimal? expected)
         {
             var itemStat = new SingleValueItemStat(StatCategory.Explicit)
             {
@@ -301,7 +318,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(null)]
         [TestCase(15)]
         [TestCase(20)]
-        public void CreateShouldTakeMinValueFromQueryRequestForMinMaxValueItemStat(int? expected)
+        [TestCase(10.111)]
+        public void CreateShouldTakeMinValueFromQueryRequestForMinMaxValueItemStat(decimal? expected)
         {
             var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
             {
@@ -311,14 +329,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             this.CreateShouldTakeMinValueFromQueryRequest(itemStat, expected);
         }
 
-        private void CreateShouldTakeMinValueFromQueryRequest(ItemStat itemStat, int? expected)
+        private void CreateShouldTakeMinValueFromQueryRequest(ItemStat itemStat, decimal? expected)
         {
             this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions
                 {
                     AdvancedQueryOptions = new AdvancedQueryOptions
                     {
-                        MinValuePercentageOffset = -0.1
+                        MinValuePercentageOffset = -0.1m
                     }
                 });
 
@@ -332,7 +350,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(null)]
         [TestCase(30)]
         [TestCase(40)]
-        public void CreateShouldTakeMaxValueFromQueryRequestForSingleValueItemStat(int? expected)
+        [TestCase(20.222)]
+        public void CreateShouldTakeMaxValueFromQueryRequestForSingleValueItemStat(decimal? expected)
         {
             var itemStat = new SingleValueItemStat(StatCategory.Explicit)
             {
@@ -345,7 +364,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(null)]
         [TestCase(30)]
         [TestCase(40)]
-        public void CreateShouldTakeMaxValueFromQueryRequestForMinMaxValueItemStat(int? expected)
+        [TestCase(20.222)]
+        public void CreateShouldTakeMaxValueFromQueryRequestForMinMaxValueItemStat(decimal? expected)
         {
             var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
             {
@@ -355,14 +375,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             this.CreateShouldTakeMaxValueFromQueryRequest(itemStat, expected);
         }
 
-        private void CreateShouldTakeMaxValueFromQueryRequest(ItemStat itemStat, int? expected)
+        private void CreateShouldTakeMaxValueFromQueryRequest(ItemStat itemStat, decimal? expected)
         {
             this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions
                 {
                     AdvancedQueryOptions = new AdvancedQueryOptions
                     {
-                        MaxValuePercentageOffset = 0.1
+                        MaxValuePercentageOffset = 0.1m
                     }
                 });
 
@@ -426,8 +446,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 {
                     AdvancedQueryOptions = new AdvancedQueryOptions
                     {
-                        MinValuePercentageOffset = -0.1,
-                        MaxValuePercentageOffset = 0.1
+                        MinValuePercentageOffset = -0.1m,
+                        MaxValuePercentageOffset = 0.1m
                     }
                 });
 

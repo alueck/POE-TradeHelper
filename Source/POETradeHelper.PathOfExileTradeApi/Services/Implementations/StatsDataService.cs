@@ -16,7 +16,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         private IDictionary<string, StatData> statsDataDictionary = new Dictionary<string, StatData>();
 
-        private static readonly Regex NumberRegex = new Regex(@"[\+\-]?\d+", RegexOptions.Compiled);
+        private static readonly Regex NumberRegex = new Regex(@"[\+\-]?\d+(\.\d+)?", RegexOptions.Compiled);
         private readonly ILogger<StatsDataService> logger;
 
         public StatsDataService(IHttpClientFactoryWrapper httpclientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer, ILogger<StatsDataService> logger)

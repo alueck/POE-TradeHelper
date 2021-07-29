@@ -2,8 +2,8 @@
 {
     public class AdvancedQueryOptions
     {
-        public double MinValuePercentageOffset { get; set; } = -0.1;
+        public decimal MinValuePercentageOffset { get; set; } = -0.1m;
 
-        public double MaxValuePercentageOffset { get; set; } = 0.1;
+        public decimal MaxValuePercentageOffset { get; set; } = 0.1m;
     }
 }

@@ -44,10 +44,10 @@
             Margin="25,0,0,0"
             IsVisible="{Binding IsEnabled}">
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="40" />
-            <ColumnDefinition Width="40" />
-            <ColumnDefinition Width="40" />
-            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
           </Grid.ColumnDefinitions>
 
           <Grid.RowDefinitions>
@@ -120,9 +120,9 @@
             Margin="25,0,0,0"
             IsVisible="{Binding IsEnabled}">
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="40" />
-            <ColumnDefinition Width="40" />
-            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
           </Grid.ColumnDefinitions>
 
           <localViews:FilterTextBoxControl
@@ -169,9 +169,6 @@
 
       <Grid IsVisible="{Binding Header, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-        <Grid.RowDefinitions>
-          <RowDefinition />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="15" />
           <ColumnDefinition Width="Auto" />

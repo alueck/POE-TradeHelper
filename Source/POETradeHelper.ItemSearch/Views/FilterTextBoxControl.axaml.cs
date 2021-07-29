@@ -1,7 +1,10 @@
-﻿using Avalonia;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 
@@ -12,6 +15,8 @@ namespace POETradeHelper.ItemSearch.Views
         public FilterTextBoxControl()
         {
             this.InitializeComponent();
+            this.textBox = this.Get<TextBox>("textBox");
+            this.textBox.AddHandler(TextInputEvent, TextBox_OnTextInput, RoutingStrategies.Tunnel);
         }
 
         private void InitializeComponent()
@@ -19,13 +24,13 @@ namespace POETradeHelper.ItemSearch.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        public int? Value
+        public decimal? Value
         {
-            get => (int?)GetValue(ValueProperty);
+            get => (decimal?)GetValue(ValueProperty);
             set => SetValue(ValueProperty, value);
         }
 
-        public static AvaloniaProperty<int?> ValueProperty = AvaloniaProperty.Register<FilterTextBoxControl, int?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
+        public static AvaloniaProperty<decimal?> ValueProperty = AvaloniaProperty.Register<FilterTextBoxControl, decimal?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
 
         public string Watermark
         {
@@ -34,19 +39,26 @@ namespace POETradeHelper.ItemSearch.Views
         }
 
         public static AvaloniaProperty<string> WatermarkProperty = AvaloniaProperty.Register<FilterTextBoxControl, string>(nameof(Watermark));
+        private readonly TextBox textBox;
 
         public void TextBox_GotFocus(object sender, GotFocusEventArgs eventArgs)
         {
-            var textBox = (TextBox)sender;
-
-            if (textBox?.Text != null)
+            if (this.textBox.Text != null)
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    textBox.SelectionStart = 0;
-                    textBox.SelectionEnd = textBox.Text.Length;
+                    this.textBox.SelectionStart = 0;
+                    this.textBox.SelectionEnd = textBox.Text.Length;
                 });
             }
+        }
+
+        private void TextBox_OnTextInput(object sender, TextInputEventArgs e)
+        {
+            var numberRegex = $@"^[\+\-]?\d+[\.{Regex.Escape(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)}]?\d*$";
+            var newText = this.textBox.Text.Insert(this.textBox.SelectionStart, e.Text);
+            var isNumericText = Regex.IsMatch(newText, numberRegex);
+            e.Handled = !isNumericText;
         }
     }
 }

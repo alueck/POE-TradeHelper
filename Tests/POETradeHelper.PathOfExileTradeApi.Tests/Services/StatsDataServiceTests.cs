@@ -83,6 +83,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
         [TestCase("+39 to maximum life", "# to maximum life")]
         [TestCase("60% chance for Poisons inflicted with this Weapon to deal 100% more Damage", "#% chance for Poisons inflicted with this Weapon to deal 100% more Damage")]
+        [TestCase("0.37% of Physical Attack Damage Leeched as Life", "#% of Physical Attack Damage Leeched as Life")]
         public async Task GetStatDataShouldReturnCorrectStatDataForExplicitStat(string statText, string statDataText)
         {
             string statCategory = StatCategory.Explicit.GetDisplayName();

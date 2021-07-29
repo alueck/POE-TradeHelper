@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DynamicData;
@@ -95,7 +96,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private static ItemStat GetSingleValueItemStat(ItemStat itemStat)
         {
-            int? value = GetFirstNumericValue(itemStat.Text.Substring(itemStat.TextWithPlaceholders.IndexOf(Placeholder)));
+            decimal? value = GetFirstNumericValue(itemStat.Text.Substring(itemStat.TextWithPlaceholders.IndexOf(Placeholder)));
 
             return value.HasValue
                 ? new SingleValueItemStat(itemStat)
@@ -124,13 +125,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return result;
         }
 
-        private static int? GetFirstNumericValue(string text)
+        private static decimal? GetFirstNumericValue(string text)
         {
-            Match match = Regex.Match(text, @"[\+\-]?\d+");
+            Match match = Regex.Match(text, @"[\+\-]?\d+(\.\d+)?");
 
             return match.Success
-                ? int.Parse(match.Value)
-                : (int?)null;
+                ? decimal.Parse(match.Value, CultureInfo.InvariantCulture)
+                : null;
         }
 
         private static int GetMinValueIndex(ItemStat itemStat, int maxValueIndex)
