@@ -38,6 +38,7 @@ THE SOFTWARE.
 Apache 2.0 License
 
 applies to:
+- MediatR
 - Microsoft.Extensions.Caching.Abstractions
 - Microsoft.Extensions.Caching.Memory
 - Microsoft.Extensions.Configuration

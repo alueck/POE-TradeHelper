@@ -1,28 +1,27 @@
-﻿using System.ComponentModel;
+﻿using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Contract;
+using POETradeHelper.Common.Contract.Commands;
 
 namespace POETradeHelper.QualityOfLife.UserInputEventHandlers.Tests
 {
     public class GoToHideoutHandlerTests
     {
-        private Mock<IUserInputEventProvider> userInputEventProviderMock;
         private Mock<INativeKeyboard> nativeKeyboardMock;
         private GoToHideoutHandler goToHideoutHandler;
 
         [SetUp]
         public void Setup()
         {
-            this.userInputEventProviderMock = new Mock<IUserInputEventProvider>();
             this.nativeKeyboardMock = new Mock<INativeKeyboard>();
-            this.goToHideoutHandler = new GoToHideoutHandler(this.userInputEventProviderMock.Object, this.nativeKeyboardMock.Object);
+            this.goToHideoutHandler = new GoToHideoutHandler(this.nativeKeyboardMock.Object);
         }
 
         [Test]
-        public void GoToHideoutHandlerShouldCallSendGoToHideoutCommandToNativeKeyboard()
+        public async Task HandleShouldCallSendGoToHideoutCommandToNativeKeyboard()
         {
-            this.userInputEventProviderMock.Raise(x => x.GoToHidehout += null, new HandledEventArgs());
+            await this.goToHideoutHandler.Handle(new GotoHideoutCommand(), default);
 
             this.nativeKeyboardMock.Verify(x => x.SendGoToHideoutCommand());
         }

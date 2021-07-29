@@ -61,6 +61,15 @@ namespace POETradeHelper.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Debug.
+        /// </summary>
+        public static string DebugSettingsHeader {
+            get {
+                return ResourceManager.GetString("DebugSettingsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to save settings. Please try again..
         /// </summary>
         public static string FailedToSaveSettingsMessageText {
@@ -111,6 +120,15 @@ namespace POETradeHelper.Properties {
         public static string SavedMessageText {
             get {
                 return ResourceManager.GetString("SavedMessageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search item from clipboard.
+        /// </summary>
+        public static string SearchFromClipboardText {
+            get {
+                return ResourceManager.GetString("SearchFromClipboardText", resourceCulture);
             }
         }
     }

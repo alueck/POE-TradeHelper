@@ -1,28 +1,22 @@
-﻿using POETradeHelper.Common;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using POETradeHelper.Common.Contract;
+using POETradeHelper.Common.Contract.Commands;
 
 namespace POETradeHelper.QualityOfLife.UserInputEventHandlers
 {
-    public class GoToHideoutHandler : IUserInputEventHandler
+    public class GoToHideoutHandler : IRequestHandler<GotoHideoutCommand>
     {
-        private readonly IUserInputEventProvider userInputEventProvider;
         private readonly INativeKeyboard nativeKeyboard;
         private bool isExecuting;
 
-        public GoToHideoutHandler(IUserInputEventProvider userInputEventProvider, INativeKeyboard nativeKeyboard)
+        public GoToHideoutHandler(INativeKeyboard nativeKeyboard)
         {
-            this.userInputEventProvider = userInputEventProvider;
             this.nativeKeyboard = nativeKeyboard;
-
-            this.userInputEventProvider.GoToHidehout += GoToHideout;
         }
 
-        public void Dispose()
-        {
-            this.userInputEventProvider.GoToHidehout -= GoToHideout;
-        }
-
-        private void GoToHideout(object sender, System.ComponentModel.HandledEventArgs e)
+        public Task<Unit> Handle(GotoHideoutCommand request, CancellationToken cancellationToken)
         {
             if (!isExecuting)
             {
@@ -36,6 +30,8 @@ namespace POETradeHelper.QualityOfLife.UserInputEventHandlers
                     isExecuting = false;
                 }
             }
+
+            return Task.FromResult(Unit.Value);
         }
     }
 }

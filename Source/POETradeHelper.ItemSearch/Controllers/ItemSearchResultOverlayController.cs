@@ -1,33 +1,31 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 using Avalonia.Controls;
-using POETradeHelper.Common;
+using MediatR;
 using POETradeHelper.Common.Contract;
+using POETradeHelper.Common.Contract.Attributes;
+using POETradeHelper.Common.Contract.Commands;
+using POETradeHelper.Common.Contract.Queries;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.ItemSearch.Views;
 
 namespace POETradeHelper.ItemSearch.Controllers
 {
-    public class ItemSearchResultOverlayController : IUserInputEventHandler
+    [Singleton]
+    public class ItemSearchResultOverlayController : IRequestHandler<SearchItemCommand>, IRequestHandler<HideOverlayQuery, HideOverlayResponse>
     {
         private readonly IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel;
-        private readonly IUserInputEventProvider userInputEventProvider;
         private readonly IViewLocator viewLocator;
 
         private CancellationTokenSource searchItemCancellationTokenSource = new CancellationTokenSource();
 
         public ItemSearchResultOverlayController(
             IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel,
-            IViewLocator viewLocator,
-            IUserInputEventProvider userInputEventProvider)
+            IViewLocator viewLocator)
         {
             this.itemSearchResultOverlayViewModel = itemSearchResultOverlayViewModel;
             this.viewLocator = viewLocator;
-            this.userInputEventProvider = userInputEventProvider;
-
-            this.userInputEventProvider.SearchItem += UserInputEventProvider_SearchItem;
-            this.userInputEventProvider.HideOverlay += UserInputEventProvider_HideOverlay;
         }
 
         private IItemSearchResultOverlayView view;
@@ -49,30 +47,6 @@ namespace POETradeHelper.ItemSearch.Controllers
             throw new ArgumentException($"Could not find view for {nameof(IItemSearchResultOverlayViewModel)} that implements {nameof(IItemSearchResultOverlayView)}");
         }
 
-        private async void UserInputEventProvider_SearchItem(object sender, HandledEventArgs e)
-        {
-            e.Handled = true;
-
-            this.CancelSearchItemToken();
-
-            if (!this.searchItemCancellationTokenSource.IsCancellationRequested)
-            {
-                this.View.Show();
-            }
-
-            await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token).ConfigureAwait(true);
-        }
-
-        private void UserInputEventProvider_HideOverlay(object sender, HandledEventArgs e)
-        {
-            if (View.IsVisible)
-            {
-                this.CancelSearchItemToken();
-                View.Hide();
-                e.Handled = true;
-            }
-        }
-
         private void CancelSearchItemToken()
         {
             lock (this)
@@ -83,11 +57,31 @@ namespace POETradeHelper.ItemSearch.Controllers
             }
         }
 
-        public void Dispose()
+        public async Task<Unit> Handle(SearchItemCommand request, CancellationToken cancellationToken)
         {
-            this.userInputEventProvider.SearchItem -= UserInputEventProvider_SearchItem;
+            this.CancelSearchItemToken();
 
-            this.userInputEventProvider.Dispose();
+            if (!this.searchItemCancellationTokenSource.IsCancellationRequested)
+            {
+                this.View.Show();
+            }
+
+            await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token).ConfigureAwait(true);
+
+            return Unit.Value;
+        }
+
+        public Task<HideOverlayResponse> Handle(HideOverlayQuery request, CancellationToken cancellationToken)
+        {
+            var handled = false;
+            if (View.IsVisible)
+            {
+                this.CancelSearchItemToken();
+                View.Hide();
+                handled = true;
+            }
+
+            return Task.FromResult(new HideOverlayResponse(handled));
         }
     }
 }
