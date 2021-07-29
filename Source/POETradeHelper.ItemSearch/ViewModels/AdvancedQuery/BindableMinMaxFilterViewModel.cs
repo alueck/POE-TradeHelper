@@ -12,9 +12,9 @@ namespace POETradeHelper.ItemSearch.ViewModels
             this.IsEnabled = false;
         }
 
-        public int? Min { get; set; }
+        public decimal? Min { get; set; }
 
-        public int? Max { get; set; }
+        public decimal? Max { get; set; }
 
         public string Current { get; set; }
     }

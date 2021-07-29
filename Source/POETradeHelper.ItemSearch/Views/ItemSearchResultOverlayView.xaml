@@ -24,7 +24,6 @@
     mc:Ignorable="d">
 
   <Window.Resources>
-    <commonUiConverters:MessageTypeToBrushConverter x:Key="messageTypeToBrushConverter" />
     <localConverters:ItemRarityToBrushConverter x:Key="itemRarityToBrushConverter" />
     <localConverters:DoubleOffsetConverter x:Key="doubleOffsetConverter" />
   </Window.Resources>

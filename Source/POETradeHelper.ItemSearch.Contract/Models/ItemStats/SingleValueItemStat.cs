@@ -14,6 +14,6 @@
             }
         }
 
-        public int Value { get; set; }
+        public decimal Value { get; set; }
     }
 }

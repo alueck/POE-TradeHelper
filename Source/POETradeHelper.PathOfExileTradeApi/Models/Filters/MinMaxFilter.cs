@@ -2,8 +2,8 @@
 {
     public class MinMaxFilter : IFilter
     {
-        public int? Min { get; set; }
-        public int? Max { get; set; }
+        public decimal? Min { get; set; }
+        public decimal? Max { get; set; }
 
         public object Clone()
         {

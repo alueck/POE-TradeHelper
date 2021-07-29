@@ -170,11 +170,11 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return filter;
         }
 
-        private static int? GetMaxValue(IMinMaxFilterViewModel minMaxFilterViewModel)
+        private static decimal? GetMaxValue(IMinMaxFilterViewModel minMaxFilterViewModel)
         {
             return minMaxFilterViewModel.Max.HasValue
                 ? Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.Value)
-                : (int?)null;
+                : default(decimal?);
         }
     }
 }

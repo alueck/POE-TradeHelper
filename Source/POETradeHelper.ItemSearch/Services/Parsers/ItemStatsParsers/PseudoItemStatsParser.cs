@@ -80,18 +80,18 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             };
         }
 
-        private static int GetSingleValueItemStatValue(KeyValuePair<StatData, IList<ItemStat>> entry)
+        private static decimal GetSingleValueItemStatValue(KeyValuePair<StatData, IList<ItemStat>> entry)
         {
-            Func<SingleValueItemStat, int> sumFunction = GetSingleValueItemStatValueSumFunction(entry.Key);
+            Func<SingleValueItemStat, decimal> sumFunction = GetSingleValueItemStatValueSumFunction(entry.Key);
 
             return entry.Value.Cast<SingleValueItemStat>().Sum(sumFunction);
         }
 
-        private static Func<SingleValueItemStat, int> GetSingleValueItemStatValueSumFunction(StatData pseudoStatData)
+        private static Func<SingleValueItemStat, decimal> GetSingleValueItemStatValueSumFunction(StatData pseudoStatData)
         {
-            Func<SingleValueItemStat, int> sumFunction = itemStat => itemStat.Value;
+            Func<SingleValueItemStat, decimal> sumFunction = itemStat => itemStat.Value;
 
-            if (pseudoStatData.Id == PseudoStatId.TotalElementalResistance || pseudoStatData.Id == PseudoStatId.TotalResistance)
+            if (pseudoStatData.Id is PseudoStatId.TotalElementalResistance or PseudoStatId.TotalResistance)
             {
                 sumFunction = itemStat =>
                 {

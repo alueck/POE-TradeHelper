@@ -2,8 +2,8 @@
 {
     public class MinMaxStatFilterViewModel : StatFilterViewModel, IMinMaxFilterViewModel
     {
-        public int? Min { get; set; }
-        public int? Max { get; set; }
+        public decimal? Min { get; set; }
+        public decimal? Max { get; set; }
         public string Current { get; set; }
     }
 }
