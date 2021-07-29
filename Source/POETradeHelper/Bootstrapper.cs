@@ -6,12 +6,14 @@ using System.Reflection;
 using System.Text.Json;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ViewModels;
 using Serilog;
 using Serilog.Exceptions;
 using Splat;
@@ -39,13 +41,20 @@ namespace POETradeHelper
             container.RegisterAssemblyTypes(assemblies)
                 .PublicOnly()
                 .Where(t => !t.HasSingletonAttribute())
-                .AsImplementedInterfaces();
+                .AsImplementedInterfaces()
+                .Except<DebugSettingsViewModel>();
+
+#if DEBUG
+            container.RegisterType<DebugSettingsViewModel>().AsImplementedInterfaces();
+#endif
 
             container.RegisterAssemblyTypes(assemblies)
                     .PublicOnly()
                     .Where(t => t.HasSingletonAttribute())
                     .AsImplementedInterfaces()
                     .SingleInstance();
+
+            RegisterMediatR(container);
 
             container.Populate(serviceCollection);
             container.UseAutofacDependencyResolver();
@@ -110,6 +119,19 @@ namespace POETradeHelper
 
                 File.WriteAllText(FileConfiguration.PoeTradeHelperAppSettingsPath, defaultAppSettingsJson);
             }
+        }
+
+        private static void RegisterMediatR(ContainerBuilder container)
+        {
+            container
+                .RegisterType<Mediator>()
+                .As<IMediator>()
+                .InstancePerLifetimeScope();
+            container.Register<ServiceFactory>(context =>
+            {
+                var c = context.Resolve<IComponentContext>();
+                return t => c.Resolve(t);
+            });
         }
     }
 }

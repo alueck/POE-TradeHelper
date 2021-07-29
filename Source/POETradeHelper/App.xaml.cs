@@ -3,17 +3,17 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using POETradeHelper.Common;
+using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.UI;
 using POETradeHelper.ViewModels;
 using POETradeHelper.Views;
 using Splat;
-using Application = Avalonia.Application;
 
 namespace POETradeHelper
 {
     public class App : Application
     {
-        private IEnumerable<IUserInputEventHandler> userInputEventHandlers;
+        private IUserInputEventProvider userInputEventProvider;
 
         public override void Initialize()
         {
@@ -33,8 +33,8 @@ namespace POETradeHelper
 
             base.OnFrameworkInitializationCompleted();
 
-            // global key hook does not work with e.g. auto activation in Bootstrapper, so we instantiate our user input event handlers here
-            this.userInputEventHandlers = Locator.Current.GetServices<IUserInputEventHandler>();
+            // global key hook does not work with e.g. auto activation in Bootstrapper
+            this.userInputEventProvider = Locator.Current.GetService<IUserInputEventProvider>();
         }
     }
 }

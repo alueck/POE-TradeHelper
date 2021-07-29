@@ -135,4 +135,10 @@
   <data name="SavedMessageText" xml:space="preserve">
     <value>Saved!</value>
   </data>
+  <data name="SearchFromClipboardText" xml:space="preserve">
+    <value>Search item from clipboard</value>
+  </data>
+  <data name="DebugSettingsHeader" xml:space="preserve">
+    <value>Debug</value>
+  </data>
 </root>

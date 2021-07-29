@@ -1,51 +1,45 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using POETradeHelper.Common.Contract;
+﻿using System.Diagnostics.CodeAnalysis;
 using WindowsHook;
+using MediatR;
+using POETradeHelper.Common.Contract;
+using POETradeHelper.Common.Contract.Commands;
+using POETradeHelper.Common.Contract.Queries;
 
-namespace POETradeHelper
+namespace POETradeHelper.Win32
 {
     public class UserInputEventProvider : IUserInputEventProvider
     {
         private readonly IKeyboardMouseEvents globalInputEventsHook;
         private readonly IPathOfExileProcessHelper pathOfExileProcessHelper;
+        private readonly IMediator mediator;
 
-        public event EventHandler<HandledEventArgs> SearchItem;
-
-        public event EventHandler<HandledEventArgs> HideOverlay;
-
-        public event EventHandler<HandledEventArgs> GoToHidehout;
-
-        public UserInputEventProvider(IKeyboardMouseEvents globalInputEventsHook, IPathOfExileProcessHelper pathOfExileProcessHelper)
+        public UserInputEventProvider(IKeyboardMouseEvents globalInputEventsHook, IPathOfExileProcessHelper pathOfExileProcessHelper, IMediator mediator)
         {
             this.globalInputEventsHook = globalInputEventsHook;
 
             this.globalInputEventsHook.KeyDown += GlobalEventsHook_KeyDown;
             this.pathOfExileProcessHelper = pathOfExileProcessHelper;
+            this.mediator = mediator;
         }
 
-        private void GlobalEventsHook_KeyDown(object sender, KeyEventArgs e)
+        private async void GlobalEventsHook_KeyDown(object sender, KeyEventArgs e)
         {
-            var handledEventArgs = new HandledEventArgs();
-
             if (e.KeyCode == Keys.Escape)
             {
-                HideOverlay.Invoke(this, handledEventArgs);
+                var response = await this.mediator.Send(new HideOverlayQuery()).ConfigureAwait(false);
+                e.Handled = response.Handled;
             }
             else if (this.pathOfExileProcessHelper.IsPathOfExileActiveWindow())
             {
                 if (e.Modifiers == Keys.Control && e.KeyCode == Keys.D)
                 {
-                    SearchItem.Invoke(this, handledEventArgs);
+                     await this.mediator.Send(new SearchItemCommand()).ConfigureAwait(false);
                 }
                 else if (e.KeyCode == Keys.F5)
                 {
-                    GoToHidehout.Invoke(this, handledEventArgs);
+                    await this.mediator.Send(new GotoHideoutCommand()).ConfigureAwait(false);
                 }
             }
-
-            e.Handled = handledEventArgs.Handled;
         }
 
         [ExcludeFromCodeCoverage]
