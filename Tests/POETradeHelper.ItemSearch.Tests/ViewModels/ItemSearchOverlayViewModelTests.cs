@@ -1,42 +1,42 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.UI.Models;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Services;
+using POETradeHelper.ItemSearch.Contract.Queries;
+using POETradeHelper.ItemSearch.Exceptions;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PricePrediction.Services;
+using POETradeHelper.PricePrediction.Queries;
 using POETradeHelper.PricePrediction.ViewModels;
 
 namespace POETradeHelper.ItemSearch.Tests.ViewModels
 {
     public class ItemSearchOverlayViewModelTests
     {
-        private Mock<ISearchItemProvider> searchItemProviderMock;
         private Mock<IPoeTradeApiClient> poeTradeApiClientMock;
         private Mock<IItemListingsViewModelFactory> itemListingsViewModelFactoryMock;
         private Mock<IAdvancedQueryViewModelFactory> advancedQueryViewModelFactoryMock;
         private Mock<IQueryRequestFactory> queryRequestFactoryMock;
-        private Mock<IPricePredictionService> pricePredictionServiceMock;
+        private Mock<IMediator> mediatorMock;
         private Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
         private ItemSearchResultOverlayViewModel itemSearchOverlayViewModel;
 
         [SetUp]
         public void Setup()
         {
-            this.searchItemProviderMock = new Mock<ISearchItemProvider>();
             this.poeTradeApiClientMock = new Mock<IPoeTradeApiClient>();
             this.itemListingsViewModelFactoryMock = new Mock<IItemListingsViewModelFactory>();
             this.advancedQueryViewModelFactoryMock = new Mock<IAdvancedQueryViewModelFactory>();
             this.queryRequestFactoryMock = new Mock<IQueryRequestFactory>();
-            this.pricePredictionServiceMock = new Mock<IPricePredictionService>();
+            this.mediatorMock = new Mock<IMediator>();
 
             this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
             this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
@@ -47,30 +47,30 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         private ItemSearchResultOverlayViewModel CreateViewModel()
         {
             return new ItemSearchResultOverlayViewModel(
-                this.searchItemProviderMock.Object,
                 this.poeTradeApiClientMock.Object,
                 this.itemListingsViewModelFactoryMock.Object,
                 this.advancedQueryViewModelFactoryMock.Object,
                 this.queryRequestFactoryMock.Object,
-                this.pricePredictionServiceMock.Object,
+                this.mediatorMock.Object,
                 this.itemSearchOptionsMock.Object);
         }
 
         [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldCallGetItemFromUnderCursorOnSearchItemProvider()
+        public async Task SetListingForItemUnderCursorAsyncShouldSendGetItemFromCursorQuery()
         {
             var cancellationToken = new CancellationToken();
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(cancellationToken);
 
-            this.searchItemProviderMock.Verify(x => x.GetItemFromUnderCursorAsync(cancellationToken));
+            this.mediatorMock.Verify(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), cancellationToken));
         }
 
         [Test]
         public async Task SetListingForItemUnderCursorAsyncShouldCallCreateOnQueryRequestFactoryWithItem()
         {
             var item = new EquippableItem(ItemRarity.Normal) { Name = "TestItem" };
-            this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
+            this.mediatorMock
+                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
@@ -100,7 +100,8 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         {
             var item = new EquippableItem(ItemRarity.Unique);
 
-            this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
+            this.mediatorMock
+                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
@@ -156,7 +157,8 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         {
             Exception exception = new Exception("Exception text");
 
-            this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
+            this.mediatorMock
+                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .Throws(exception);
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
@@ -165,6 +167,20 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             Assert.That(this.itemSearchOverlayViewModel.Message.Type, Is.EqualTo(MessageType.Error));
             Assert.IsNotNull(this.itemSearchOverlayViewModel.Message.Text);
             Assert.IsNotEmpty(this.itemSearchOverlayViewModel.Message.Text);
+        }
+        
+        [Test]
+        public async Task SetListingForItemUnderCursorAsyncShouldNotSetMessageIfInvalidItemStringExceptionOccurs()
+        {
+            var exception = new InvalidItemStringException("invalid item string");
+
+            this.mediatorMock
+                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
+                .Throws(exception);
+
+            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+
+            Assert.IsNull(this.itemSearchOverlayViewModel.Message);
         }
 
         [Test]
@@ -187,7 +203,8 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
                 SearchQueryRequest = new SearchQueryRequest()
             };
 
-            this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
+            this.mediatorMock
+                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
             this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<IQueryRequest>(), It.IsAny<CancellationToken>()))
@@ -296,7 +313,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         }
 
         [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldCallPricePredictionServiceIfPricePredictionIsEnabledAndItemTextChanged()
+        public async Task SetListingForItemUnderCursorAsyncShouldSendGetPricePredictionViewModelQueryIfPricePredictionIsEnabledAndItemTextChanged()
         {
             // arrange
             var item = new EquippableItem(ItemRarity.Rare)
@@ -304,7 +321,8 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
                 ItemText = "text"
             };
 
-            this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
+            this.mediatorMock
+                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
             var cancellationTokenSource = new CancellationTokenSource();
@@ -320,11 +338,13 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(cancellationToken);
 
             // assert
-            this.pricePredictionServiceMock.Verify(x => x.GetPricePredictionAsync(item, cancellationToken));
+            this.mediatorMock.Verify(x => x.Send(
+                It.Is<GetPricePredictionViewModelQuery>(q => q.Item == item),
+                cancellationToken));
         }
 
         [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldNotCallPricePredictionServiceIfPricePredictionIsDisabled()
+        public async Task SetListingForItemUnderCursorAsyncShouldNotSendGetPricePredictionViewModelQueryIfPricePredictionIsDisabled()
         {
             // arrange
             this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
@@ -337,11 +357,11 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             // assert
-            this.pricePredictionServiceMock.Verify(x => x.GetPricePredictionAsync(It.IsAny<Item>(), It.IsAny<CancellationToken>()), Times.Never);
+            this.mediatorMock.Verify(x => x.Send(It.IsAny<GetPricePredictionViewModelQuery>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldNotCallPricePredictionServiceIfItemTextDidNotChange()
+        public async Task SetListingForItemUnderCursorAsyncShouldNotSendGetPricePredictionViewModelQueryIfItemTextDidNotChange()
         {
             // arrange
             var item = new EquippableItem(ItemRarity.Rare)
@@ -349,7 +369,8 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
                 ItemText = "text"
             };
 
-            this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
+            this.mediatorMock
+                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
             this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
@@ -364,7 +385,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             // assert
-            this.pricePredictionServiceMock.Verify(x => x.GetPricePredictionAsync(It.IsAny<Item>(), It.IsAny<CancellationToken>()), Times.Once);
+            this.mediatorMock.Verify(x => x.Send(It.IsAny<GetPricePredictionViewModelQuery>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -397,7 +418,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         }
 
         [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldCatchExceptionFromPricePredictionService()
+        public async Task SetListingForItemUnderCursorAsyncShouldCatchExceptionFromGetPricePredictionViewModelQuery()
         {
             // arrange
             var item = new EquippableItem(ItemRarity.Rare)
@@ -405,7 +426,8 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
                 ItemText = "text"
             };
 
-            this.searchItemProviderMock.Setup(x => x.GetItemFromUnderCursorAsync(It.IsAny<CancellationToken>()))
+            this.mediatorMock
+                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
             this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
@@ -414,7 +436,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
                     PricePredictionEnabled = true
                 });
 
-            this.pricePredictionServiceMock.Setup(x => x.GetPricePredictionAsync(It.IsAny<Item>(), It.IsAny<CancellationToken>()))
+            this.mediatorMock.Setup(x => x.Send(It.IsAny<GetPricePredictionViewModelQuery>(), It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
 
             // act

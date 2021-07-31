@@ -59,14 +59,19 @@ namespace POETradeHelper.ItemSearch.Controllers
 
         public async Task<Unit> Handle(SearchItemCommand request, CancellationToken cancellationToken)
         {
-            this.CancelSearchItemToken();
-
-            if (!this.searchItemCancellationTokenSource.IsCancellationRequested)
+            try
             {
-                this.View.Show();
-            }
+                this.CancelSearchItemToken();
 
-            await this.itemSearchResultOverlayViewModel.SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token).ConfigureAwait(true);
+                this.View.Show();
+
+                await this.itemSearchResultOverlayViewModel
+                    .SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token)
+                    .ConfigureAwait(true);
+            }
+            catch (Exception exception) when (exception is OperationCanceledException or TaskCanceledException)
+            {
+            }
 
             return Unit.Value;
         }

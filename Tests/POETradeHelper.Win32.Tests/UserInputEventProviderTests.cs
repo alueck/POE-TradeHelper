@@ -6,6 +6,7 @@ using NUnit.Framework;
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
 using POETradeHelper.Common.Contract.Queries;
+using POETradeHelper.QualityOfLife.Commands;
 
 namespace POETradeHelper.Win32.Tests
 {
@@ -29,49 +30,94 @@ namespace POETradeHelper.Win32.Tests
         }
 
         [Test]
-        public void SearchItemKeyCombinationShouldTriggerSearchItemEventIfPathOfExileIsActiveWindow()
+        public void SearchItemKeyCombinationShouldSendSearchItemCommandIfPathOfExileIsActiveWindow()
         {
+            var keyEventArgs = new KeyEventArgs(Keys.Control | Keys.D);
             this.pathOfExileProcessHelperMock.Setup(x => x.IsPathOfExileActiveWindow())
                 .Returns(true);
-
-            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, new KeyEventArgs(Keys.Control | Keys.D));
+            
+            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, keyEventArgs);
 
             this.mediatorMock.Verify(x => x.Send(It.IsAny<SearchItemCommand>(), It.IsAny<CancellationToken>()));
+            Assert.That(keyEventArgs.Handled, Is.True);
         }
 
         [Test]
-        public void SearchItemKeyCombinationShouldNotTriggerSearchItemEventIfPathOfExileIsNotActiveWindow()
+        public void SearchItemKeyCombinationShouldNotSendSearchItemCommandIfPathOfExileIsNotActiveWindow()
         {
-            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, new KeyEventArgs(Keys.Control | Keys.D));
+            var keyEventArgs = new KeyEventArgs(Keys.Control | Keys.D);
+            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, keyEventArgs);
 
             this.mediatorMock.Verify(x => x.Send(It.IsAny<SearchItemCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+            Assert.That(keyEventArgs.Handled, Is.False);
         }
 
         [Test]
-        public void HideOverlayKeyCombinationShouldTriggerHideOverlayEvent()
+        public void HideOverlayKeyCombinationShouldSendHideOverlayQuery()
         {
             this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, new KeyEventArgs(Keys.Escape));
 
             this.mediatorMock.Verify(x => x.Send(It.IsAny<HideOverlayQuery>(), It.IsAny<CancellationToken>()));
         }
 
-        [Test]
-        public void GotoHideoutKeyCombinationShouldTriggerGoToHideoutEventIfPathOfExileIsActiveWindow()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ShouldSetEventArgsHandledFromHideOverlayQuery(bool expected)
         {
-            this.pathOfExileProcessHelperMock.Setup(x => x.IsPathOfExileActiveWindow())
-                .Returns(true);
+            var keyEventArgs = new KeyEventArgs(Keys.Escape);
+            this.mediatorMock
+                .Setup(x => x.Send(It.IsAny<HideOverlayQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new HideOverlayResponse(expected));
+            
+            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, keyEventArgs);
 
-            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, new KeyEventArgs(Keys.F5));
-
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<GotoHideoutCommand>(), It.IsAny<CancellationToken>()));
+            Assert.That(keyEventArgs.Handled, Is.EqualTo(expected));
         }
 
         [Test]
-        public void GotoHideoutKeyCombinationShouldNotTriggerGoToHideoutEventIfPathOfExileIsNotActiveWindow()
+        public void GotoHideoutKeyCombinationShouldSendGotoHideoutCommandIfPathOfExileIsActiveWindow()
         {
-            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, new KeyEventArgs(Keys.F5));
+            var keyEventArgs = new KeyEventArgs(Keys.F5);
+            this.pathOfExileProcessHelperMock.Setup(x => x.IsPathOfExileActiveWindow())
+                .Returns(true);
+
+            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, keyEventArgs);
+
+            this.mediatorMock.Verify(x => x.Send(It.IsAny<GotoHideoutCommand>(), It.IsAny<CancellationToken>()));
+            Assert.That(keyEventArgs.Handled, Is.True);
+        }
+
+        [Test]
+        public void GotoHideoutKeyCombinationShouldNotSendGotoHideoutCommandIfPathOfExileIsNotActiveWindow()
+        {
+            var keyEventArgs = new KeyEventArgs(Keys.F5);
+            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, keyEventArgs);
 
             this.mediatorMock.Verify(x => x.Send(It.IsAny<GotoHideoutCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+            Assert.That(keyEventArgs.Handled, Is.False);
+        }
+
+        [Test]
+        public void OpenWikiKeyCombinationShouldSendOpenWikiCommandIfPathOfExileIsActiveWindow()
+        {
+            var keyEventArgs = new KeyEventArgs(Keys.Alt | Keys.W);
+            this.pathOfExileProcessHelperMock.Setup(x => x.IsPathOfExileActiveWindow())
+                .Returns(true);
+
+            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, keyEventArgs);
+            
+            this.mediatorMock.Verify(x => x.Send(It.IsAny<OpenWikiCommand>(), It.IsAny<CancellationToken>()));
+            Assert.That(keyEventArgs.Handled, Is.True);
+        }
+        
+        [Test]
+        public void OpenWikiKeyCombinationShouldNotSendOpenWikiCommandIfPathOfExileIsNotActiveWindow()
+        {
+            var keyEventArgs = new KeyEventArgs(Keys.Alt | Keys.W);
+            this.keyboardMouseEventsMock.Raise(x => x.KeyDown += null, keyEventArgs);
+            
+            this.mediatorMock.Verify(x => x.Send(It.IsAny<OpenWikiCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+            Assert.That(keyEventArgs.Handled, Is.False);
         }
     }
 }

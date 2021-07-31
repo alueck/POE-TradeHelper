@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:localVms="clr-namespace:POETradeHelper.QualityOfLife.ViewModels"
+             xmlns:resources="clr-namespace:POETradeHelper.QualityOfLife.Properties;assembly=POETradeHelper.QualityOfLife"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             d:DataContext="{d:DesignInstance Type=localVms:WikiSettingsViewModel}"
+             x:Class="POETradeHelper.QualityOfLife.Views.WikiSettingsView">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" MinWidth="150" />
+        </Grid.ColumnDefinitions>
+
+        <Label
+            Content="{x:Static resources:Resources.WikiLabel}"
+            Target="WikiTypeComboBox" />
+        <ComboBox
+            Grid.Column="1"
+            Name="WikiTypeComboBox"
+            Items="{Binding WikiTypes}"
+            SelectedItem="{Binding SelectedWikiType}">
+        </ComboBox>
+    </Grid>
+</UserControl>

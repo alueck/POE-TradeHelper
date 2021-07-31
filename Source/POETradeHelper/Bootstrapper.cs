@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.ViewModels;
 using Serilog;
 using Serilog.Exceptions;
@@ -106,7 +107,8 @@ namespace POETradeHelper
             serviceCollection
                 .AddOptions()
                 .Configure<AppSettings>(config)
-                .ConfigureWritable<ItemSearchOptions>(config.GetSection("ItemSearchOptions"), FileConfiguration.PoeTradeHelperAppSettingsPath);
+                .ConfigureWritable<ItemSearchOptions>(config.GetSection("ItemSearchOptions"), FileConfiguration.PoeTradeHelperAppSettingsPath)
+                .ConfigureWritable<WikiOptions>(config.GetSection("WikiOptions"), FileConfiguration.PoeTradeHelperAppSettingsPath);
         }
 
         private static void CreateAppSettingsFileIfMissing()

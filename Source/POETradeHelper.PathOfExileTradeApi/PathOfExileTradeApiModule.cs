@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using POETradeHelper.Common.Contract;
@@ -6,6 +7,7 @@ using Polly;
 
 namespace POETradeHelper.PathOfExileTradeApi
 {
+    [ExcludeFromCodeCoverage]
     internal class PathOfExileTradeApiModule : IModule
     {
         public void RegisterServices(IServiceCollection serviceCollection)

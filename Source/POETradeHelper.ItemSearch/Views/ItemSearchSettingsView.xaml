@@ -4,15 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.ViewModels"
     xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="450" d:DesignWidth="800"
+    d:DataContext="{d:DesignInstance Type=localVms:ItemSearchSettingsViewModel}"
     mc:Ignorable="d">
 
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="5" />
       <ColumnDefinition Width="Auto" MinWidth="150" />
     </Grid.ColumnDefinitions>
 
@@ -22,10 +22,12 @@
       <RowDefinition Height="Auto" MinHeight="25" />
     </Grid.RowDefinitions>
 
-    <TextBlock VerticalAlignment="Center" Text="{x:Static resources:Resources.LeagueLabel}" />
+    <Label 
+      Content="{x:Static resources:Resources.LeagueLabel}"
+      Target="LeaguesDropDown" />
     <ComboBox
         Name="LeaguesDropDown"
-        Grid.Column="2"
+        Grid.Column="1"
         Items="{Binding Leagues}"
         SelectedItem="{Binding SelectedLeague}">
       <ComboBox.ItemTemplate>
@@ -35,13 +37,14 @@
       </ComboBox.ItemTemplate>
     </ComboBox>
 
-    <TextBlock
+    <Label
         Grid.Row="2"
-        VerticalAlignment="Center"
-        Text="{x:Static resources:Resources.PricePredictionSettingLabel}" />
+        Content="{x:Static resources:Resources.PricePredictionSettingLabel}"
+        Target="PricePredictionCheckbox"/>
     <CheckBox
         Grid.Row="2"
         Grid.Column="2"
+        Name="PricePredictionCheckbox"
         IsChecked="{Binding PricePredictionEnabled}" />
   </Grid>
 </UserControl>

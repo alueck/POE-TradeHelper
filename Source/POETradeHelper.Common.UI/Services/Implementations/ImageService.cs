@@ -23,34 +23,21 @@ namespace POETradeHelper.Common.UI.Services
 
         public async Task<IBitmap> GetImageAsync(Uri uri, CancellationToken cancellationToken = default)
         {
-            IBitmap image = null;
-            try
+            if (this.memoryCache.TryGetValue(uri, out IBitmap image))
+                return image;
+
+            HttpResponseMessage response = await this.httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
             {
-                if (!this.memoryCache.TryGetValue(uri, out image))
-                {
-                    HttpResponseMessage response = await this.httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false);
+                var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+                image = this.bitmapFactory.Create(responseStream);
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-                        if (!cancellationToken.IsCancellationRequested)
-                        {
-                            image = this.bitmapFactory.Create(responseStream);
-
-                            using (ICacheEntry cacheEntry = this.memoryCache.CreateEntry(uri))
-                            {
-                                cacheEntry.SetValue(image);
-                                cacheEntry.SetSize(responseStream.Length);
-                            }
-                        }
-                    }
-                }
+                using ICacheEntry cacheEntry = this.memoryCache.CreateEntry(uri);
+                cacheEntry.SetValue(image);
+                cacheEntry.SetSize(responseStream.Length);
             }
-            catch (OperationCanceledException)
-            {
-            }
-
+            
             return image;
         }
     }

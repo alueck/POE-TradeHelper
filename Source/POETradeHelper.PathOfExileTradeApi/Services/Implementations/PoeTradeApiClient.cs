@@ -41,11 +41,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
                 return await this.GetListingsQueryResult(searchQueryResult, cancellationToken).ConfigureAwait(false);
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                return null;
-            }
-            catch (Exception exception) when (!(exception is PoeTradeApiCommunicationException))
+            catch (Exception exception) when (exception is not PoeTradeApiCommunicationException and not OperationCanceledException)
             {
                 throw new PoeTradeApiCommunicationException("Retrieving listings for item led to an exception.", exception);
             }
@@ -107,11 +103,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
                 return await this.ReadAsJsonAsync<TResult>(response.Content).ConfigureAwait(false);
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception exception) when (!(exception is PoeTradeApiCommunicationException))
+            catch (Exception exception) when (exception is not PoeTradeApiCommunicationException and not OperationCanceledException)
             {
                 throw new PoeTradeApiCommunicationException($"Retrieving data from '{endpoint}' led to an exception.", exception);
             }

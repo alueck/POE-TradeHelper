@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using POETradeHelper.Common;
 using POETradeHelper.Common.UI;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ItemSearch.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using ReactiveUI;
 
@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
         private League selectedLeague;
         private bool pricePredictionEnabled;
         private readonly ILeagueDataService leagueDataService;
-        public IWritableOptions<ItemSearchOptions> itemSearchOptions;
+        private readonly IWritableOptions<ItemSearchOptions> itemSearchOptions;
 
         public ItemSearchSettingsViewModel(ILeagueDataService leagueDataService, IWritableOptions<ItemSearchOptions> itemSearchOptions)
         {
@@ -51,7 +51,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             set => this.RaiseAndSetIfChanged(ref pricePredictionEnabled, value);
         }
 
-        public string Title => "Item search settings";
+        public string Title => Resources.ItemSearchSettingsHeader;
 
         public Task InitializeAsync()
         {

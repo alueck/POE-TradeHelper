@@ -4,6 +4,7 @@ using MediatR;
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
 using POETradeHelper.Common.Contract.Queries;
+using POETradeHelper.QualityOfLife.Commands;
 
 namespace POETradeHelper.Win32
 {
@@ -33,11 +34,18 @@ namespace POETradeHelper.Win32
             {
                 if (e.Modifiers == Keys.Control && e.KeyCode == Keys.D)
                 {
-                     await this.mediator.Send(new SearchItemCommand()).ConfigureAwait(false);
+                    e.Handled = true;
+                    await this.mediator.Send(new SearchItemCommand()).ConfigureAwait(false);
                 }
                 else if (e.KeyCode == Keys.F5)
                 {
+                    e.Handled = true;
                     await this.mediator.Send(new GotoHideoutCommand()).ConfigureAwait(false);
+                }
+                else if (e.Modifiers == Keys.Alt && e.KeyCode == Keys.W)
+                {
+                    e.Handled = true;
+                    await this.mediator.Send(new OpenWikiCommand()).ConfigureAwait(false);
                 }
             }
         }

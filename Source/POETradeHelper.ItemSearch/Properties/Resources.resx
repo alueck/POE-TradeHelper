@@ -172,7 +172,7 @@
     <value>Item level</value>
   </data>
   <data name="LeagueLabel" xml:space="preserve">
-    <value>League:</value>
+    <value>League</value>
   </data>
   <data name="Links" xml:space="preserve">
     <value>Links</value>
@@ -208,7 +208,7 @@
     <value>Price</value>
   </data>
   <data name="PricePredictionSettingLabel" xml:space="preserve">
-    <value>Enable price prediction:</value>
+    <value>Enable price prediction</value>
   </data>
   <data name="QualityColumn" xml:space="preserve">
     <value>Quality</value>
@@ -224,5 +224,8 @@
   </data>
   <data name="White" xml:space="preserve">
     <value>W</value>
+  </data>
+  <data name="ItemSearchSettingsHeader" xml:space="preserve">
+    <value>Item search settings</value>
   </data>
 </root>

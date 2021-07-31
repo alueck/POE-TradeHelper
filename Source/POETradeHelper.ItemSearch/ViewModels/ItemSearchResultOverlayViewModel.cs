@@ -1,43 +1,41 @@
 ﻿using System;
-using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Options;
-using POETradeHelper.Common.UI;
 using POETradeHelper.Common.UI.Models;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Services;
+using POETradeHelper.ItemSearch.Contract.Queries;
+using POETradeHelper.ItemSearch.Exceptions;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PricePrediction.Services;
+using POETradeHelper.PricePrediction.Queries;
 using POETradeHelper.PricePrediction.ViewModels;
 using ReactiveUI;
 using Splat;
+using Unit = System.Reactive.Unit;
 
 namespace POETradeHelper.ItemSearch.ViewModels
 {
     public class ItemSearchResultOverlayViewModel : ReactiveObject, IItemSearchResultOverlayViewModel
     {
-        private readonly ISearchItemProvider searchItemProvider;
         private readonly IPoeTradeApiClient poeTradeApiClient;
         private readonly IItemListingsViewModelFactory itemListingsViewModelFactory;
         private readonly IAdvancedQueryViewModelFactory advancedQueryViewModelFactory;
         private readonly IQueryRequestFactory queryRequestFactory;
-        private readonly IPricePredictionService pricePredictionService;
+        private readonly IMediator mediator;
         private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
 
         public ItemSearchResultOverlayViewModel(
-            ISearchItemProvider searchItemProvider,
             IPoeTradeApiClient tradeClient,
             IItemListingsViewModelFactory itemListingsViewModelFactory,
             IAdvancedQueryViewModelFactory advancedQueryViewModelFactory,
             IQueryRequestFactory queryRequestFactory,
-            IPricePredictionService pricePredictionService,
+            IMediator mediator,
             IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {
-            this.searchItemProvider = searchItemProvider;
             this.poeTradeApiClient = tradeClient;
             this.itemListingsViewModelFactory = itemListingsViewModelFactory;
             this.advancedQueryViewModelFactory = advancedQueryViewModelFactory;
@@ -45,7 +43,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             this.ExecuteAdvancedQueryCommand = ReactiveCommand.CreateFromTask(() => this.ExecuteAdvancedQueryAsync());
             this.ExecuteAdvancedQueryCommand.IsExecuting.ToProperty(this, x => x.IsBusy);
             this.queryRequestFactory = queryRequestFactory;
-            this.pricePredictionService = pricePredictionService;
+            this.mediator = mediator;
             this.itemSearchOptions = itemSearchOptions;
             this.itemSearchOptions.OnChange(newValue =>
             {
@@ -97,8 +95,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
             set => this.RaiseAndSetIfChanged(ref pricePredicition, value);
         }
 
-        public ReactiveCommand<IHideable, Unit> OpenQueryInBrowserCommand { get; }
-
         public ReactiveCommand<Unit, Unit> ExecuteAdvancedQueryCommand { get; }
 
         internal Item Item { get; set; }
@@ -109,22 +105,29 @@ namespace POETradeHelper.ItemSearch.ViewModels
             try
             {
                 this.IsBusy = true;
-
                 this.Message = null;
 
-                this.Item = await searchItemProvider.GetItemFromUnderCursorAsync(cancellationToken).ConfigureAwait(true);
+                this.Item = await this.mediator.Send(new GetItemFromCursorQuery(), cancellationToken).ConfigureAwait(true);
                 IQueryRequest queryRequest = this.queryRequestFactory.Create(this.Item);
                 ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(queryRequest, cancellationToken).ConfigureAwait(true);
 
-                if (itemListing != null && !cancellationToken.IsCancellationRequested)
+                if (itemListing != null)
                 {
                     this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(Item, itemListing, cancellationToken).ConfigureAwait(true);
                     this.AdvancedQuery = this.advancedQueryViewModelFactory.Create(Item, itemListing.SearchQueryRequest);
                 }
             }
+            catch (InvalidItemStringException exception)
+            {
+                this.Log().Error(exception); 
+                
+            }
             catch (Exception exception)
             {
-                this.HandleException(exception);
+                if (exception is not OperationCanceledException and not TaskCanceledException)
+                {
+                    this.HandleException(exception);
+                }
             }
             finally
             {
@@ -133,7 +136,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
                     this.IsBusy = false;
                 }
             }
-
+            
             if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled && !string.Equals(oldItem?.ItemText, this.Item?.ItemText, StringComparison.Ordinal))
             {
                 await GetPricePrediction(cancellationToken).ConfigureAwait(true);
@@ -145,7 +148,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             try
             {
                 this.PricePrediction = new PricePredictionViewModel();
-                this.PricePrediction = await this.pricePredictionService.GetPricePredictionAsync(this.Item, cancellationToken).ConfigureAwait(false);
+                this.PricePrediction = await this.mediator.Send(new GetPricePredictionViewModelQuery(this.Item), cancellationToken);
             }
             catch (Exception exception)
             {

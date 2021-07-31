@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -73,6 +74,16 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
             await this.overlayController.Handle(new SearchItemCommand(), default);
 
             this.viewMock.Verify(x => x.Show());
+        }
+
+        [Test]
+        public async Task HandleSearchItemQueryShouldCatchOperationCancelledException()
+        {
+            this.viewModelMock
+                .Setup(x => x.SetListingForItemUnderCursorAsync(It.IsAny<CancellationToken>()))
+                .Throws<OperationCanceledException>();
+            
+            await this.overlayController.Handle(new SearchItemCommand(), default);
         }
     }
 }

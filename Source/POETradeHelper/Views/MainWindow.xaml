@@ -43,7 +43,7 @@
         <ItemsControl Items="{Binding SettingsViewModels}">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
-              <HeaderedContentControl Content="{Binding .}" Header="{Binding Title}" />
+              <HeaderedContentControl Content="{Binding .}" Header="{Binding Title}" Margin="0,5" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>

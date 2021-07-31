@@ -1,13 +1,16 @@
-﻿using Microsoft.Extensions.Options;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 
 namespace POETradeHelper.Common
 {
     public class WritableOptions<TOptions> : IWritableOptions<TOptions> where TOptions : class, new()
     {
+        private static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } };
         private readonly IOptionsMonitor<TOptions> options;
         private readonly string sectionName;
         private readonly string filePath;
@@ -27,7 +30,7 @@ namespace POETradeHelper.Common
         {
             var jsonDocument = JsonDocument.Parse(File.ReadAllText(this.filePath));
             var section = jsonDocument.RootElement.TryGetProperty(this.sectionName, out JsonElement sectionElement)
-                ? JsonSerializer.Deserialize<TOptions>(sectionElement.ToString())
+                ? JsonSerializer.Deserialize<TOptions>(sectionElement.ToString(), jsonSerializerOptions)
                 : (this.Value ?? new TOptions());
 
             update(section);
@@ -39,22 +42,47 @@ namespace POETradeHelper.Common
 
         private string BuildNewConfigurationJson(JsonDocument currentConfiguration, TOptions updatedSection)
         {
-            StringBuilder jsonBuilder = new StringBuilder();
-            jsonBuilder.AppendLine("{");
-
+            var foundSection = false;
+            var sectionsJson = new List<string>();
+            var jsonBuilder = new StringBuilder();
+            
             foreach (var element in currentConfiguration.RootElement.EnumerateObject())
             {
-                string elementJson = element.Name == this.sectionName
-                   ? JsonSerializer.Serialize(updatedSection)
-                   : element.ToString();
+                bool isCurrentSection = element.Name == this.sectionName;
+                foundSection |= isCurrentSection;
+                
+                string elementJson = isCurrentSection
+                   ? GetUpdatedJson(updatedSection)
+                   : GetCurrentJson(element);
 
-                jsonBuilder
-                    .AppendLine($"\"{element.Name}\":")
-                    .AppendLine(elementJson);
+                sectionsJson.Add(GetSectionJson(element.Name, elementJson));
             }
-            jsonBuilder.AppendLine("}");
 
-            return jsonBuilder.ToString();
+            if (!foundSection)
+            {
+                sectionsJson.Add(GetSectionJson(this.sectionName, GetUpdatedJson(updatedSection)));
+            }
+            
+            return jsonBuilder
+                .AppendLine("{")
+                .AppendJoin($",{Environment.NewLine}", sectionsJson)
+                .AppendLine("}")
+                .ToString();
+        }
+
+        private static string GetUpdatedJson(TOptions updatedSection)
+        {
+            return JsonSerializer.Serialize(updatedSection, jsonSerializerOptions);
+        }
+
+        private static string GetCurrentJson(JsonProperty element)
+        {
+            return element.Value.ToString();
+        }
+
+        private static string GetSectionJson(string elementName, string elementJson)
+        {
+            return $"\"{elementName}\":{elementJson}";
         }
 
         private static string FormatJson(string json)

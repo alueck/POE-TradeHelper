@@ -4,6 +4,6 @@
     {
         void SendCopyCommand();
 
-        void SendGoToHideoutCommand();
+        void SendGotoHideoutCommand();
     }
 }
