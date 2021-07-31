@@ -8,7 +8,7 @@ namespace POETradeHelper.Common.Extensions
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
-        public static void ConfigureWritable<T>(
+        public static IServiceCollection ConfigureWritable<T>(
             this IServiceCollection services,
             IConfigurationSection section,
             string file = "appsettings.json")
@@ -20,6 +20,8 @@ namespace POETradeHelper.Common.Extensions
                 var options = provider.GetService<IOptionsMonitor<T>>();
                 return new WritableOptions<T>(options, section.Key, file);
             });
+
+            return services;
         }
     }
 }

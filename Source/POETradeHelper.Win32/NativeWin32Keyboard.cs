@@ -12,7 +12,7 @@ namespace POETradeHelper.Win32
             SendKeys.SendWait("^C");
         }
 
-        public void SendGoToHideoutCommand()
+        public void SendGotoHideoutCommand()
         {
             SendKeys.SendWait("{ENTER}/hideout{ENTER}{ENTER}{UP}{UP}{ESC}");
         }

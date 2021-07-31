@@ -23,9 +23,9 @@ namespace POETradeHelper.PricePrediction.Services
             this.logger = logger;
         }
 
-        public async Task<PoePricesInfoItem> GetPricePredictionAsync(string league, string itemText, CancellationToken cancellationToken = default)
+        public async Task<PoePricesInfoPrediction> GetPricePredictionAsync(string league, string itemText, CancellationToken cancellationToken = default)
         {
-            PoePricesInfoItem result = null;
+            PoePricesInfoPrediction result = null;
 
             if (string.IsNullOrEmpty(league) || string.IsNullOrEmpty(itemText))
             {
@@ -34,31 +34,32 @@ namespace POETradeHelper.PricePrediction.Services
 
             try
             {
-                var base64ItemText = Convert.ToBase64String(Encoding.UTF8.GetBytes(itemText));
-
-                var url = $"https://www.poeprices.info/api?i={base64ItemText}&l={league}";
-
+                var url = GetUrl(league, itemText);
                 System.Net.Http.HttpResponseMessage httpResponse = await this.httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
                 if (httpResponse.IsSuccessStatusCode)
                 {
                     string jsonResult = await httpResponse.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                    result = this.jsonSerializer.Deserialize<PoePricesInfoItem>(jsonResult, new JsonSerializerOptions { PropertyNamingPolicy = new JsonSnakeCaseNamingPolicy() });
+                    result = this.jsonSerializer.Deserialize<PoePricesInfoPrediction>(jsonResult, new JsonSerializerOptions { PropertyNamingPolicy = new JsonSnakeCaseNamingPolicy() });
                 }
                 else
                 {
                     this.logger.LogError("Poeprices.info api returned non success status code for league {@league} and item text {@itemText}. Response: {@response}", league, itemText, httpResponse);
                 }
             }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (Exception exception)
+            catch (Exception exception) when (exception is not OperationCanceledException)
             {
                 this.logger.LogError(exception, "Failed to get price prediction in league {@league} with item text {@itemText}.", league, itemText);
             }
 
             return result;
+        }
+
+        private static string GetUrl(string league, string itemText)
+        {
+            var base64ItemText = Convert.ToBase64String(Encoding.UTF8.GetBytes(itemText));
+
+            return $"https://www.poeprices.info/api?i={base64ItemText}&l={league}";
         }
     }
 }

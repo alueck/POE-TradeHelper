@@ -223,7 +223,16 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to League:.
+        ///   Looks up a localized string similar to Item search settings.
+        /// </summary>
+        public static string ItemSearchSettingsHeader {
+            get {
+                return ResourceManager.GetString("ItemSearchSettingsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to League.
         /// </summary>
         public static string LeagueLabel {
             get {
@@ -331,7 +340,7 @@ namespace POETradeHelper.ItemSearch.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable price prediction:.
+        ///   Looks up a localized string similar to Enable price prediction.
         /// </summary>
         public static string PricePredictionSettingLabel {
             get {

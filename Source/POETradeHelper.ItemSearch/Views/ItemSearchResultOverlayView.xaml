@@ -3,9 +3,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
-    xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:POETradeHelper.ItemSearch;assembly=POETradeHelper.ItemSearch"
     xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.Converters;assembly=POETradeHelper.ItemSearch"
     xmlns:localViews="clr-namespace:POETradeHelper.ItemSearch.Views;assembly=POETradeHelper.ItemSearch"
     xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.ViewModels;assembly=POETradeHelper.ItemSearch"
@@ -19,6 +17,7 @@
     MaxHeight="380"
     d:DesignHeight="400"
     d:DesignWidth="800"
+    d:DataContext="{d:DesignInstance Type=localVms:ItemSearchResultOverlayViewModel}"
     HasSystemDecorations="False"
     Topmost="True"
     mc:Ignorable="d">

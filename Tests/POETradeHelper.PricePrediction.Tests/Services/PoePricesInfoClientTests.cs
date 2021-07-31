@@ -74,7 +74,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
-            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoItem>(json, It.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy.GetType() == typeof(JsonSnakeCaseNamingPolicy))));
+            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoPrediction>(json, It.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy.GetType() == typeof(JsonSnakeCaseNamingPolicy))));
         }
 
         [Test]
@@ -91,14 +91,14 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
-            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoItem>(It.IsAny<string>(), It.IsAny<JsonSerializerOptions>()), Times.Never);
+            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoPrediction>(It.IsAny<string>(), It.IsAny<JsonSerializerOptions>()), Times.Never);
         }
 
         [Test]
         public async Task GetPricePredictionAsyncShouldReturnResultFromJsonSerializer()
         {
             // arrange
-            var expected = new PoePricesInfoItem
+            var expected = new PoePricesInfoPrediction
             {
                 Min = 0.15m,
                 Max = 0.25m,
@@ -106,29 +106,41 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 ConfidenceScore = 0.89744m
             };
 
-            this.jsonSerializerMock.Setup(x => x.Deserialize<PoePricesInfoItem>(It.IsAny<string>(), It.IsAny<JsonSerializerOptions>()))
+            this.jsonSerializerMock.Setup(x => x.Deserialize<PoePricesInfoPrediction>(It.IsAny<string>(), It.IsAny<JsonSerializerOptions>()))
                 .Returns(expected);
 
             // act
-            PoePricesInfoItem result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            PoePricesInfoPrediction result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
             Assert.That(result, Is.EqualTo(expected));
         }
 
-        [TestCase(typeof(OperationCanceledException))]
-        [TestCase(typeof(Exception))]
-        public async Task GetPricePredictionAsyncShouldReturnNullForAnyException(Type exceptionType)
+        [Test]
+        public async Task GetPricePredictionAsyncShouldReturnNullIfExceptionIsThrown()
         {
             // arrange
-            this.httpClientMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Throws((Exception)Activator.CreateInstance(exceptionType));
+            this.httpClientMock
+                .Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Throws<Exception>();
 
             // act
-            PoePricesInfoItem result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            PoePricesInfoPrediction result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
             Assert.IsNull(result);
+        }
+
+        [Test]
+        public void GetPricePredictionAsyncShouldNotCatchOperationCanceledException()
+        {
+            this.httpClientMock
+                .Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Throws<OperationCanceledException>();
+
+            async Task Action() => await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+
+            Assert.ThrowsAsync<OperationCanceledException>(Action);
         }
 
         [TestCase("Heist", "")]
@@ -138,7 +150,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         public async Task GetPricePredictionAsyncShouldReturnNullIf(string league, string itemText)
         {
             // act
-            PoePricesInfoItem result = await this.poePricesInfoClient.GetPricePredictionAsync(league, itemText);
+            PoePricesInfoPrediction result = await this.poePricesInfoClient.GetPricePredictionAsync(league, itemText);
 
             // assert
             Assert.IsNull(result);
