@@ -18,8 +18,7 @@ jobs:
           dotnet-version: 5.0.100
       - name: Build project
         run: |
-          dotnet publish .\Source\POETradeHelper\POETradeHelper.csproj -c Release -r win10-x64 -o Publish
-          powershell Compress-Archive -Path Publish/* -DestinationPath POETradeHelper-Winx64.zip
+          dotnet publish .\Source\POETradeHelper\POETradeHelper.csproj -c Release -r win10-x64 -o Publish -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
@@ -37,6 +36,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./POETradeHelper-Winx64.zip
-          asset_name: POETradeHelper-Winx64.zip
+          asset_path: ./Publish/POETradeHelper.exe
+          asset_name: POETradeHelper.exe
           asset_content_type: application/vnd.microsoft.portable-executable
