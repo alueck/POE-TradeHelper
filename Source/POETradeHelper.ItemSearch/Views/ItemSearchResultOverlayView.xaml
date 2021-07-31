@@ -14,7 +14,7 @@
     MinWidth="400"
     MinHeight="200"
     MaxWidth="800"
-    MaxHeight="380"
+    MaxHeight="392"
     d:DesignHeight="400"
     d:DesignWidth="800"
     d:DataContext="{d:DesignInstance Type=localVms:ItemSearchResultOverlayViewModel}"
@@ -79,9 +79,8 @@
           <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-          <RowDefinition Height="20" />
           <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -205,8 +204,8 @@
             Grid.Column="1"
             Grid.ColumnSpan="2">
           <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="25"/>
           </Grid.RowDefinitions>
 
           <DataGrid
@@ -244,6 +243,7 @@
           <pricePrediction:PricePredictionControl
               Grid.Row="1"
               HorizontalAlignment="Left"
+              VerticalAlignment="Bottom"
               DataContext="{Binding PricePrediction}" />
         </Grid>
       </Grid>
