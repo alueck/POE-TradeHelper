@@ -26,7 +26,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
         private readonly IAdvancedQueryViewModelFactory advancedQueryViewModelFactory;
         private readonly IQueryRequestFactory queryRequestFactory;
         private readonly IMediator mediator;
-        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
 
         public ItemSearchResultOverlayViewModel(
             IPoeTradeApiClient tradeClient,
@@ -34,7 +33,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             IAdvancedQueryViewModelFactory advancedQueryViewModelFactory,
             IQueryRequestFactory queryRequestFactory,
             IMediator mediator,
-            IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
+            IPricePredictionViewModel pricePredictionViewModel)
         {
             this.poeTradeApiClient = tradeClient;
             this.itemListingsViewModelFactory = itemListingsViewModelFactory;
@@ -44,21 +43,12 @@ namespace POETradeHelper.ItemSearch.ViewModels
             this.ExecuteAdvancedQueryCommand.IsExecuting.ToProperty(this, x => x.IsBusy);
             this.queryRequestFactory = queryRequestFactory;
             this.mediator = mediator;
-            this.itemSearchOptions = itemSearchOptions;
-            this.itemSearchOptions.OnChange(newValue =>
-            {
-                if (!newValue.PricePredictionEnabled)
-                {
-                    this.PricePrediction = new PricePredictionViewModel();
-                }
-            });
 
-            this.PricePrediction = new PricePredictionViewModel();
+            this.PricePrediction = pricePredictionViewModel;
         }
 
         private ItemListingsViewModel itemListing;
-        private Message message;
-
+        
         public ItemListingsViewModel ItemListings
         {
             get => this.itemListing;
@@ -73,6 +63,8 @@ namespace POETradeHelper.ItemSearch.ViewModels
             set => this.RaiseAndSetIfChanged(ref advancedQuery, value);
         }
 
+        private Message message;
+        
         public Message Message
         {
             get => this.message;
@@ -83,17 +75,11 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         public bool IsBusy
         {
-            get { return isBusy; }
-            set { this.RaiseAndSetIfChanged(ref this.isBusy, value); }
+            get => isBusy;
+            set => this.RaiseAndSetIfChanged(ref this.isBusy, value);
         }
 
-        private PricePredictionViewModel pricePredicition;
-
-        public PricePredictionViewModel PricePrediction
-        {
-            get => this.pricePredicition;
-            set => this.RaiseAndSetIfChanged(ref pricePredicition, value);
-        }
+        public IPricePredictionViewModel PricePrediction { get; set; }
 
         public ReactiveCommand<Unit, Unit> ExecuteAdvancedQueryCommand { get; }
 
@@ -136,24 +122,8 @@ namespace POETradeHelper.ItemSearch.ViewModels
                     this.IsBusy = false;
                 }
             }
-            
-            if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled && !string.Equals(oldItem?.ItemText, this.Item?.ItemText, StringComparison.Ordinal))
-            {
-                await GetPricePrediction(cancellationToken).ConfigureAwait(true);
-            }
-        }
 
-        private async Task GetPricePrediction(CancellationToken cancellationToken)
-        {
-            try
-            {
-                this.PricePrediction = new PricePredictionViewModel();
-                this.PricePrediction = await this.mediator.Send(new GetPricePredictionViewModelQuery(this.Item), cancellationToken);
-            }
-            catch (Exception exception)
-            {
-                this.Log().Error(exception);
-            }
+            await this.PricePrediction.LoadAsync(this.Item, cancellationToken);
         }
 
         private void HandleException(Exception exception)
