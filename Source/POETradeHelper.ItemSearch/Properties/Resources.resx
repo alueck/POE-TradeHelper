@@ -228,4 +228,7 @@
   <data name="ItemSearchSettingsHeader" xml:space="preserve">
     <value>Item search settings</value>
   </data>
+  <data name="Query" xml:space="preserve">
+    <value>Query</value>
+  </data>
 </root>

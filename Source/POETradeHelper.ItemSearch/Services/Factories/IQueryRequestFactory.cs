@@ -8,6 +8,6 @@ namespace POETradeHelper.ItemSearch.Services.Factories
     {
         IQueryRequest Create(Item item);
 
-        IQueryRequest Create(AdvancedQueryViewModel advancedQueryViewModel);
+        IQueryRequest Create(IQueryRequest originalRequest, IAdvancedFiltersViewModel advancedFiltersViewModel);
     }
 }

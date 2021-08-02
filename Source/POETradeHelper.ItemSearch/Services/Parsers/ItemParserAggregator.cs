@@ -39,7 +39,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private string[] GetLines(string itemString)
         {
-            return itemString.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            return itemString?.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                ?? Array.Empty<string>();
         }
 
         private static void VerifyMatchingParsers(string itemString, IList<IItemParser> parsers)

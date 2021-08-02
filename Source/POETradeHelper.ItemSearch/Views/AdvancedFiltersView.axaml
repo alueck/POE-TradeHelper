@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.ViewModels;assembly=POETradeHelper.ItemSearch"
+             xmlns:localViews="clr-namespace:POETradeHelper.ItemSearch.Views;assembly=POETradeHelper.ItemSearch"
+             xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             d:DataContext="{d:DesignInstance Type=localVms:AdvancedFiltersViewModel}"
+             x:Class="POETradeHelper.ItemSearch.Views.AdvancedFiltersView">
+
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto">
+        <Grid Grid.IsSharedSizeScope="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="25" SharedSizeGroup="SelectColumn" />
+                    <ColumnDefinition MaxWidth="325" SharedSizeGroup="StatColumn" />
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <localViews:FiltersControl
+                Name="EnchantedItemStatFilters"
+                Grid.Row="1"
+                Header="{x:Static resources:Resources.FilterCategory_Enchant}"
+                Items="{Binding EnchantedItemStatFilters}" />
+
+            <localViews:FiltersControl
+                Name="FracturedItemStatFilters"
+                Grid.Row="2"
+                Header="{x:Static resources:Resources.FilterCategory_Fractured}"
+                Items="{Binding FracturedItemStatFilters}" />
+
+            <localViews:FiltersControl
+                Name="ImplicitItemStatFilters"
+                Grid.Row="3"
+                Header="{x:Static resources:Resources.FilterCategory_Implicit}"
+                Items="{Binding ImplicitItemStatFilters}" />
+
+            <localViews:FiltersControl
+                Name="ExplicitItemStatFilters"
+                Grid.Row="4"
+                Header="{x:Static resources:Resources.FilterCategory_Explicit}"
+                Items="{Binding ExplicitItemStatFilters}" />
+
+            <localViews:FiltersControl
+                Name="CraftedItemStatFilters"
+                Grid.Row="5"
+                Header="{x:Static resources:Resources.FilterCategory_Crafted}"
+                Items="{Binding CraftedItemStatFilters}" />
+
+            <localViews:FiltersControl
+                Name="MonsterItemStatFilters"
+                Grid.Row="6"
+                Items="{Binding MonsterItemStatFilters}" />
+
+            <localViews:FiltersControl
+                Name="PseudoItemStatFilters"
+                Grid.Row="7"
+                Header="{x:Static resources:Resources.FilterCategory_Pseudo}"
+                Items="{Binding PseudoItemStatFilters}" />
+
+            <localViews:FiltersControl
+                Name="AdditionalFilters"
+                Grid.Row="8"
+                Items="{Binding AdditionalFilters}" />
+        </Grid>
+    </ScrollViewer>
+</UserControl>

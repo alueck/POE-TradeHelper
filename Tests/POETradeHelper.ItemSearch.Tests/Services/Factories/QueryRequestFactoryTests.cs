@@ -74,10 +74,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(result, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(nameof(CreateShouldMapEnabledStatFilterToQueryStatFilterTestData))]
-        public void CreateShouldMapEnabledStatFilterToQueryStatFilter(AdvancedQueryViewModel advancedQueryViewModel, MinMaxStatFilterViewModel statFilterViewModel)
+        [Test]
+        public void CreateShouldMapEnabledStatFilterToQueryStatFilter()
         {
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            MinMaxStatFilterViewModel statFilterViewModel = new MinMaxStatFilterViewModel
+            {
+                Id = "itemStatId",
+                Text = "# to Maximum Life",
+                Min = 50,
+                Max = 65,
+                IsEnabled = true
+            };
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
+            SearchQueryRequest result = this.queryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
 
@@ -104,17 +113,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Max = 40,
                 IsEnabled = true
             };
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
 
-            var advancedQueryViewModel = new AdvancedQueryViewModel
-            {
-                ExplicitItemStatFilters =
-                {
-                    statFilterViewModel
-                },
-                QueryRequest = new SearchQueryRequest()
-            };
-
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
 
@@ -131,33 +132,27 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [Test]
         public void CreateShouldCreateMultipleFilters()
         {
-            var advancedQueryViewModel = new AdvancedQueryViewModel
+            var filters = new StatFilterViewModel[]
             {
-                ExplicitItemStatFilters =
+                new MinMaxStatFilterViewModel
                 {
-                    new MinMaxStatFilterViewModel
-                    {
-                        Id = "explicitItemStatId",
-                        IsEnabled = false
-                    },
-                    new MinMaxStatFilterViewModel
-                    {
-                        Id = "explicitItemStatId2",
-                        IsEnabled = true
-                    }
+                    Id = "statId1",
+                    IsEnabled = true
                 },
-                ImplicitItemStatFilters =
+                new MinMaxStatFilterViewModel
                 {
-                    new MinMaxStatFilterViewModel
-                    {
-                        Id = "implicitItemStatId",
-                        IsEnabled = true
-                    }
+                    Id = "statId2",
+                    IsEnabled = false
                 },
-                QueryRequest = new SearchQueryRequest()
+                new MinMaxStatFilterViewModel
+                {
+                    Id = "statId3",
+                    IsEnabled = true
+                }
             };
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(filters, null);
 
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
 
@@ -165,10 +160,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             StatFilters statFilters = result.Query.Stats.First();
 
             Assert.That(statFilters.Filters, Has.Count.EqualTo(2));
-            StatFilter statFilter = statFilters.Filters.First();
-
-            Assert.That(statFilters.Filters, Has.One.Matches<StatFilter>(f => f.Id == advancedQueryViewModel.ExplicitItemStatFilters[1].Id));
-            Assert.That(statFilters.Filters, Has.One.Matches<StatFilter>(f => f.Id == advancedQueryViewModel.ImplicitItemStatFilters[0].Id));
+            Assert.That(statFilters.Filters, Has.One.Matches<StatFilter>(f => f.Id == filters[0].Id));
+            Assert.That(statFilters.Filters, Has.One.Matches<StatFilter>(f => f.Id == filters[2].Id));
         }
 
         [Test]
@@ -182,32 +175,26 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Max = 65,
                 IsEnabled = true
             };
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
 
-            var advancedQueryViewModel = new AdvancedQueryViewModel
+            var searchQueryRequest = new SearchQueryRequest
             {
-                ExplicitItemStatFilters =
+                Query =
                 {
-                    statFilterViewModel
-                },
-                QueryRequest = new SearchQueryRequest
-                {
-                    Query =
+                    Stats =
                     {
-                        Stats =
+                        new StatFilters
                         {
-                            new StatFilters
+                            Filters =
                             {
-                                Filters =
-                                {
-                                    new StatFilter()
-                                }
+                                new StatFilter()
                             }
                         }
                     }
                 }
             };
 
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
             Assert.That(result.Query.Stats, Has.Count.EqualTo(1));
@@ -223,17 +210,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Text = "Trigger Edict of Frost on Kill",
                 IsEnabled = true
             };
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
 
-            var advancedQueryViewModel = new AdvancedQueryViewModel
-            {
-                ExplicitItemStatFilters =
-                {
-                    statFilterViewModel
-                },
-                QueryRequest = new SearchQueryRequest()
-            };
-
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
 
@@ -259,17 +238,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Max = maxValue,
                 IsEnabled = true
             };
+            
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
-            var advancedQueryViewModel = new AdvancedQueryViewModel
-            {
-                QueryRequest = new SearchQueryRequest(),
-                AdditionalFilters =
-                {
-                    additionalFilter
-                }
-            };
-
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
 
@@ -286,17 +258,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             {
                 IsEnabled = false
             };
-
-            var advancedQueryViewModel = new AdvancedQueryViewModel
-            {
-                QueryRequest = new SearchQueryRequest(),
-                AdditionalFilters =
-                {
-                    additionalFilter
-                }
-            };
-
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
+            
+            SearchQueryRequest result = this.queryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
             Assert.Null(result.Query.Filters.MiscFilters.Quality);
@@ -310,17 +274,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             {
                 IsEnabled = value
             };
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
-            var advancedQueryViewModel = new AdvancedQueryViewModel
-            {
-                QueryRequest = new SearchQueryRequest(),
-                AdditionalFilters =
-                {
-                    additionalFilter
-                }
-            };
-
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
 
@@ -333,17 +289,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         public void CreateShouldNotMapAdditionalBoolFilterWithoutEnabledValueToQuery()
         {
             BindableFilterViewModel additionalFilter = new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.CrusaderItem);
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
-            var advancedQueryViewModel = new AdvancedQueryViewModel
-            {
-                QueryRequest = new SearchQueryRequest(),
-                AdditionalFilters =
-                {
-                    additionalFilter
-                }
-            };
-
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
             Assert.IsNull(result.Query.Filters.MiscFilters.CrusaderItem);
@@ -356,56 +304,50 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             {
                 IsEnabled = true
             };
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
             const string categoryOptionValue = "axe";
             const string rarityOptionValue = "unique";
-            var advancedQueryViewModel = new AdvancedQueryViewModel
+            var searchQueryRequest = new SearchQueryRequest
             {
-                QueryRequest = new SearchQueryRequest
+                Query =
                 {
-                    Query =
+                    Filters =
                     {
-                        Filters =
+                        ArmourFilters =
                         {
-                            ArmourFilters =
-                            {
-                                Armour = new MinMaxFilter()
-                            },
-                            MapFilters =
-                            {
-                                MapTier = new MinMaxFilter()
-                            },
-                            MiscFilters =
-                            {
-                                Corrupted = new BoolOptionFilter()
-                            },
-                            RequirementsFilters =
-                            {
-                                Level = new MinMaxFilter()
-                            },
-                            SocketFilters =
-                            {
-                                Links = new SocketsFilter()
-                            },
-                            TypeFilters =
-                            {
-                                Category = new OptionFilter{ Option = categoryOptionValue },
-                                Rarity = new OptionFilter { Option = rarityOptionValue}
-                            },
-                            WeaponFilters =
-                            {
-                                Damage = new MinMaxFilter()
-                            }
+                            Armour = new MinMaxFilter()
+                        },
+                        MapFilters =
+                        {
+                            MapTier = new MinMaxFilter()
+                        },
+                        MiscFilters =
+                        {
+                            Corrupted = new BoolOptionFilter()
+                        },
+                        RequirementsFilters =
+                        {
+                            Level = new MinMaxFilter()
+                        },
+                        SocketFilters =
+                        {
+                            Links = new SocketsFilter()
+                        },
+                        TypeFilters =
+                        {
+                            Category = new OptionFilter{ Option = categoryOptionValue },
+                            Rarity = new OptionFilter { Option = rarityOptionValue}
+                        },
+                        WeaponFilters =
+                        {
+                            Damage = new MinMaxFilter()
                         }
                     }
-                },
-                AdditionalFilters =
-                {
-                    additionalFilter
                 }
             };
 
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.NotNull(result);
             Assert.IsNull(result.Query.Filters.ArmourFilters.Filters);
@@ -426,19 +368,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         public void CreateShouldMapName()
         {
             const string expected = "expected name";
-
-            var advancedQueryViewModel = new AdvancedQueryViewModel
+            var searchQueryRequest = new SearchQueryRequest
             {
-                QueryRequest = new SearchQueryRequest
+                Query =
                 {
-                    Query =
-                    {
-                        Name = expected
-                    }
+                    Name = expected
                 }
             };
 
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null)) as SearchQueryRequest;
 
             Assert.IsNotNull(result);
             Assert.That(result.Query.Name, Is.EqualTo(expected));
@@ -448,19 +386,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         public void CreateShouldMapTerm()
         {
             const string expected = "expected term";
-
-            var advancedQueryViewModel = new AdvancedQueryViewModel
+            var searchQueryRequest = new SearchQueryRequest
             {
-                QueryRequest = new SearchQueryRequest
+                Query =
                 {
-                    Query =
-                    {
-                        Term = expected
-                    }
+                    Term = expected
                 }
             };
 
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null)) as SearchQueryRequest;
 
             Assert.IsNotNull(result);
             Assert.That(result.Query.Term, Is.EqualTo(expected));
@@ -470,19 +404,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         public void CreateShouldMapType()
         {
             const string expected = "expected type";
-
-            var advancedQueryViewModel = new AdvancedQueryViewModel
+            var searchQueryRequest = new SearchQueryRequest
             {
-                QueryRequest = new SearchQueryRequest
+                Query =
                 {
-                    Query =
-                    {
-                        Type = expected
-                    }
+                    Type = expected
                 }
             };
 
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null)) as SearchQueryRequest;
 
             Assert.IsNotNull(result);
             Assert.That(result.Query.Type, Is.EqualTo(expected));
@@ -492,16 +422,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         public void CreateShouldMapLeague()
         {
             const string expected = "expected league";
-
-            var advancedQueryViewModel = new AdvancedQueryViewModel
+            var searchQueryRequest = new SearchQueryRequest
             {
-                QueryRequest = new SearchQueryRequest
-                {
-                    League = expected
-                }
+                League = expected
             };
 
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null)) as SearchQueryRequest;
 
             Assert.IsNotNull(result);
             Assert.That(result.League, Is.EqualTo(expected));
@@ -520,16 +446,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 White = 2,
                 IsEnabled = true
             };
-            var advancedQueryViewModel = new AdvancedQueryViewModel
-            {
-                QueryRequest = new SearchQueryRequest(),
-                AdditionalFilters =
-                {
-                    bindableSocketsFilterViewModel
-                }
-            };
+            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { bindableSocketsFilterViewModel });
 
-            SearchQueryRequest result = this.queryRequestFactory.Create(advancedQueryViewModel) as SearchQueryRequest;
+            SearchQueryRequest result = this.queryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel) as SearchQueryRequest;
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Query.Filters.SocketFilters);
@@ -544,26 +463,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Assert.That(socketsFilter.White, Is.EqualTo(bindableSocketsFilterViewModel.White));
         }
 
-        private static IEnumerable<TestCaseData> CreateShouldMapEnabledStatFilterToQueryStatFilterTestData
+        private static IAdvancedFiltersViewModel GetAdvancedFiltersViewModel(IEnumerable<StatFilterViewModel> statFilters, IEnumerable<FilterViewModelBase> additionalFilters)
         {
-            get
-            {
-                MinMaxStatFilterViewModel statFilterViewModel = new MinMaxStatFilterViewModel
-                {
-                    Id = "itemStatId",
-                    Text = "# to Maximum Life",
-                    Min = 50,
-                    Max = 65,
-                    IsEnabled = true
-                };
+            var mock = new Mock<IAdvancedFiltersViewModel>();
+            mock.Setup(x => x.AllStatFilters)
+                .Returns(statFilters ?? new List<StatFilterViewModel>());
+            mock.Setup(x => x.AdditionalFilters)
+                .Returns(additionalFilters?.ToList() ?? new List<FilterViewModelBase>());
 
-                yield return new TestCaseData(new AdvancedQueryViewModel { EnchantedItemStatFilters = { statFilterViewModel }, QueryRequest = new SearchQueryRequest() }, statFilterViewModel);
-                yield return new TestCaseData(new AdvancedQueryViewModel { ImplicitItemStatFilters = { statFilterViewModel }, QueryRequest = new SearchQueryRequest() }, statFilterViewModel);
-                yield return new TestCaseData(new AdvancedQueryViewModel { ExplicitItemStatFilters = { statFilterViewModel }, QueryRequest = new SearchQueryRequest() }, statFilterViewModel);
-                yield return new TestCaseData(new AdvancedQueryViewModel { CraftedItemStatFilters = { statFilterViewModel }, QueryRequest = new SearchQueryRequest() }, statFilterViewModel);
-                yield return new TestCaseData(new AdvancedQueryViewModel { MonsterItemStatFilters = { statFilterViewModel }, QueryRequest = new SearchQueryRequest() }, statFilterViewModel);
-                yield return new TestCaseData(new AdvancedQueryViewModel { AdditionalFilters = { statFilterViewModel }, QueryRequest = new SearchQueryRequest() }, statFilterViewModel);
-            }
+            return mock.Object;
         }
     }
 }
