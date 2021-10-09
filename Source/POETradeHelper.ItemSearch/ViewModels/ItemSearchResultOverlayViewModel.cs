@@ -84,7 +84,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         public async Task SetListingForItemUnderCursorAsync(CancellationToken cancellationToken = default)
         {
-            var oldItem = this.Item;
             try
             {
                 this.IsBusy = true;

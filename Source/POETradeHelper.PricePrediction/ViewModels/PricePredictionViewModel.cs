@@ -87,7 +87,6 @@ namespace POETradeHelper.PricePrediction.ViewModels
         {
             try
             {
-
                 if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled && !string.Equals(this.item?.ItemText, item?.ItemText))
                 {
                     this.item = item;

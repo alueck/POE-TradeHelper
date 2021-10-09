@@ -9,7 +9,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
 {
     public interface IAdvancedFiltersViewModel
     {
-
         IList<FilterViewModelBase> AdditionalFilters { get; }
 
         IEnumerable<StatFilterViewModel> AllStatFilters{ get; }
