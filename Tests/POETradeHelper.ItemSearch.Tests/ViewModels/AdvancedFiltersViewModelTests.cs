@@ -1,21 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Factories
+namespace POETradeHelper.ItemSearch.Tests.ViewModels
 {
-    public class AdvancedQueryViewModelFactoryTests
+    public class AdvancedFiltersViewModelTests
     {
         private Mock<IStatFilterViewModelFactory> statFilterViewModelFactoryMock;
         private List<Mock<IAdditionalFilterViewModelsFactory>> additionalFiltersViewModelFactoryMocks;
-        private AdvancedQueryViewModelFactory advancedQueryViewModelFactory;
+        private AdvancedFiltersViewModel advancedFiltersViewModel;
 
         [SetUp]
         public void Setup()
@@ -25,41 +25,40 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 new Mock<IAdditionalFilterViewModelsFactory>(),
                 new Mock<IAdditionalFilterViewModelsFactory>()
             };
-            this.advancedQueryViewModelFactory = new AdvancedQueryViewModelFactory(this.statFilterViewModelFactoryMock.Object, this.additionalFiltersViewModelFactoryMocks.Select(x => x.Object));
+            this.advancedFiltersViewModel = new AdvancedFiltersViewModel(
+                this.statFilterViewModelFactoryMock.Object,
+                this.additionalFiltersViewModelFactoryMocks.Select(x => x.Object));
         }
 
         [Test]
-        public void CreateShouldReturnDisabledAdvancedQueryViewModelForExchangeQueryRequest()
+        public async Task LoadAsyncShouldSetIsEnabledToFalseForExchangeQueryRequest()
         {
             var item = new EquippableItem(ItemRarity.Normal);
             var searchQueryRequest = new ExchangeQueryRequest();
 
-            AdvancedQueryViewModel result = this.advancedQueryViewModelFactory.Create(item, searchQueryRequest);
+            await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.IsEnabled);
+            Assert.IsFalse(this.advancedFiltersViewModel.IsEnabled);
         }
 
         [TestCaseSource(nameof(DisabledItems))]
-        public void CreateShouldReturnDisabledAdvancedQueryViewModel(Item item)
+        public async Task LoadAsyncShouldSetIsEnabledToFalse(Item item)
         {
             var searchQueryRequest = new SearchQueryRequest();
 
-            AdvancedQueryViewModel result = this.advancedQueryViewModelFactory.Create(item, searchQueryRequest);
+            await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.IsEnabled);
+            Assert.IsFalse(this.advancedFiltersViewModel.IsEnabled);
         }
 
         [TestCaseSource(nameof(EnabledItems))]
-        public void CreateShouldReturnEnabledAdvancedQueryViewModel(Item item)
+        public async Task LoadAsyncShouldSetIsEnabledToTrue(Item item)
         {
             var searchQueryRequest = new SearchQueryRequest();
 
-            AdvancedQueryViewModel result = this.advancedQueryViewModelFactory.Create(item, searchQueryRequest);
+            await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.IsEnabled);
+            Assert.IsTrue(this.advancedFiltersViewModel.IsEnabled);
         }
 
         [TestCase(StatCategory.Enchant)]
@@ -69,21 +68,21 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [TestCase(StatCategory.Crafted)]
         [TestCase(StatCategory.Monster)]
         [TestCase(StatCategory.Pseudo)]
-        public void CreateShouldCallCreateOnStatFilterViewModelFactoryForItemStats(StatCategory statCategory)
+        public async Task LoadAsyncShouldCallCreateOnStatFilterViewModelFactoryForItemStats(StatCategory statCategory)
         {
             ItemWithStats item = CreateItemWithStats(statCategory);
-
-            SearchQueryRequest queryRequest = new SearchQueryRequest();
-            this.advancedQueryViewModelFactory.Create(item, queryRequest);
+            SearchQueryRequest searchQueryRequest = new SearchQueryRequest { League = "Heist" };
+            
+            await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
             foreach (var itemStat in item.Stats.AllStats)
             {
-                this.statFilterViewModelFactoryMock.Verify(x => x.Create(itemStat, queryRequest));
+                this.statFilterViewModelFactoryMock.Verify(x => x.Create(itemStat, searchQueryRequest));
             }
         }
 
-        [TestCaseSource(nameof(CreateShouldAssignFilterViewModelsStatsTestCases))]
-        public void CreateShouldAssignStatFilterViewModels(StatCategory statCategory, GetFilterViewModels getFilterViewModelsDelegate)
+        [TestCaseSource(nameof(LoadAsyncShouldAssignFilterViewModelsStatsTestCases))]
+        public async Task LoadAsyncShouldSetStatFilterViewModels(StatCategory statCategory, GetFilterViewModels getFilterViewModelsDelegate)
         {
             ItemWithStats item = CreateItemWithStats(statCategory);
             var expected1 = new MinMaxStatFilterViewModel { Id = item.Stats.AllStats[0].Id };
@@ -93,11 +92,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 .Returns(expected1)
                 .Returns(expected2);
 
-            AdvancedQueryViewModel result = this.advancedQueryViewModelFactory.Create(item, new SearchQueryRequest());
+            await this.advancedFiltersViewModel.LoadAsync(item, new SearchQueryRequest(), default);
 
-            Assert.IsNotNull(result);
-
-            var filterViewModels = getFilterViewModelsDelegate(result);
+            var filterViewModels = getFilterViewModelsDelegate(this.advancedFiltersViewModel);
 
             Assert.That(filterViewModels, Has.Count.EqualTo(2));
 
@@ -106,30 +103,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         }
 
         [Test]
-        public void CreateShouldSetQueryRequest()
-        {
-            var expected = new SearchQueryRequest();
-            var item = new EquippableItem(ItemRarity.Magic);
-
-            AdvancedQueryViewModel result = this.advancedQueryViewModelFactory.Create(item, expected);
-
-            Assert.That(result.QueryRequest, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void CreateShouldCallCreateOnAdditionalFiltersViewModelFactories()
+        public async Task LoadAsyncShouldCallCreateOnAdditionalFiltersViewModelFactories()
         {
             var item = new EquippableItem(ItemRarity.Magic);
-            SearchQueryRequest searchQueryRequest = new SearchQueryRequest();
+            SearchQueryRequest searchQueryRequest = new SearchQueryRequest { League = "Heist" };
 
-            this.advancedQueryViewModelFactory.Create(item, searchQueryRequest);
+            await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
             this.additionalFiltersViewModelFactoryMocks[0].Verify(x => x.Create(item, searchQueryRequest));
             this.additionalFiltersViewModelFactoryMocks[1].Verify(x => x.Create(item, searchQueryRequest));
         }
 
         [Test]
-        public void CreateShouldAddReturnValuesOfAdditionalFiltersViewModelFactoriesToAdditionalFilters()
+        public async Task LoadAsyncShouldAddReturnValuesOfAdditionalFiltersViewModelFactoriesToAdditionalFilters()
         {
             var item = new EquippableItem(ItemRarity.Magic);
             var expected1 = new BindableMinMaxFilterViewModel(x => x.Query.Filters.MiscFilters.Quality);
@@ -140,11 +126,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             this.additionalFiltersViewModelFactoryMocks[1].Setup(x => x.Create(It.IsAny<Item>(), It.IsAny<SearchQueryRequest>()))
                 .Returns(new[] { expected2 });
 
-            AdvancedQueryViewModel result = this.advancedQueryViewModelFactory.Create(item, new SearchQueryRequest());
+            await this.advancedFiltersViewModel.LoadAsync(item, new SearchQueryRequest(), default);
 
-            Assert.That(result.AdditionalFilters, Has.Count.EqualTo(2));
-            Assert.That(result.AdditionalFilters, Contains.Item(expected1));
-            Assert.That(result.AdditionalFilters, Contains.Item(expected2));
+            Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Has.Count.EqualTo(2));
+            Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Contains.Item(expected1));
+            Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Contains.Item(expected2));
         }
 
         private static ItemWithStats CreateItemWithStats(StatCategory statCategory)
@@ -162,9 +148,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
         }
 
-        public delegate IList<StatFilterViewModel> GetFilterViewModels(AdvancedQueryViewModel advancedQueryViewModel);
+        public delegate IList<StatFilterViewModel> GetFilterViewModels(AdvancedFiltersViewModel advancedFiltersViewModel);
 
-        private static IEnumerable CreateShouldAssignFilterViewModelsStatsTestCases
+        private static IEnumerable LoadAsyncShouldAssignFilterViewModelsStatsTestCases
         {
             get
             {

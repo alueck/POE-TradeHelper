@@ -2,11 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.UI.Models;
-using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Queries;
 using POETradeHelper.ItemSearch.Exceptions;
@@ -14,7 +12,6 @@ using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PricePrediction.Queries;
 using POETradeHelper.PricePrediction.ViewModels;
 
 namespace POETradeHelper.ItemSearch.Tests.ViewModels
@@ -23,10 +20,10 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
     {
         private Mock<IPoeTradeApiClient> poeTradeApiClientMock;
         private Mock<IItemListingsViewModelFactory> itemListingsViewModelFactoryMock;
-        private Mock<IAdvancedQueryViewModelFactory> advancedQueryViewModelFactoryMock;
         private Mock<IQueryRequestFactory> queryRequestFactoryMock;
         private Mock<IMediator> mediatorMock;
-        private Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
+        private Mock<IPricePredictionViewModel> pricePredictionViewModelMock;
+        private Mock<IAdvancedFiltersViewModel> advancedFiltersViewModelMock;
         private ItemSearchResultOverlayViewModel itemSearchOverlayViewModel;
 
         [SetUp]
@@ -34,13 +31,11 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         {
             this.poeTradeApiClientMock = new Mock<IPoeTradeApiClient>();
             this.itemListingsViewModelFactoryMock = new Mock<IItemListingsViewModelFactory>();
-            this.advancedQueryViewModelFactoryMock = new Mock<IAdvancedQueryViewModelFactory>();
             this.queryRequestFactoryMock = new Mock<IQueryRequestFactory>();
             this.mediatorMock = new Mock<IMediator>();
 
-            this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
-                .Returns(new ItemSearchOptions());
+            this.pricePredictionViewModelMock = new Mock<IPricePredictionViewModel>();
+            this.advancedFiltersViewModelMock = new Mock<IAdvancedFiltersViewModel>();
             this.itemSearchOverlayViewModel = this.CreateViewModel();
         }
 
@@ -49,10 +44,10 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             return new ItemSearchResultOverlayViewModel(
                 this.poeTradeApiClientMock.Object,
                 this.itemListingsViewModelFactoryMock.Object,
-                this.advancedQueryViewModelFactoryMock.Object,
                 this.queryRequestFactoryMock.Object,
                 this.mediatorMock.Object,
-                this.itemSearchOptionsMock.Object);
+                this.pricePredictionViewModelMock.Object,
+                this.advancedFiltersViewModelMock.Object);
         }
 
         [Test]
@@ -194,52 +189,41 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         }
 
         [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldCallCreateOnAdvancedQueryViewModelFactory()
+        public async Task SetListingForItemUnderCursorAsyncShouldCallLoadOnAdvancedFiltersViewModel()
         {
             var item = new EquippableItem(ItemRarity.Unique);
-
+            var searchQueryRequest = new SearchQueryRequest();
+            
             var itemListingsResult = new ItemListingsQueryResult
             {
-                SearchQueryRequest = new SearchQueryRequest()
+                SearchQueryRequest = searchQueryRequest
             };
 
             this.mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
+            this.queryRequestFactoryMock
+                .Setup(x => x.Create(It.IsAny<Item>()))
+                .Returns(searchQueryRequest);
+
             this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<IQueryRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(itemListingsResult);
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
-
-            this.advancedQueryViewModelFactoryMock.Verify(x => x.Create(item, itemListingsResult.SearchQueryRequest));
+            
+            this.advancedFiltersViewModelMock.Verify(x => x.LoadAsync(item, searchQueryRequest, default));
         }
 
         [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldSetAdvancedQueryViewModel()
+        public async Task ExecuteAdvancedQueryAsyncShouldCallCreateOnQueryRequestFactory()
         {
-            var expected = new AdvancedQueryViewModel();
-
-            this.advancedQueryViewModelFactoryMock.Setup(x => x.Create(It.IsAny<Item>(), It.IsAny<IQueryRequest>()))
-                .Returns(expected);
-
-            this.poeTradeApiClientMock.Setup(x => x.GetListingsAsync(It.IsAny<IQueryRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ItemListingsQueryResult());
-
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
-
-            Assert.That(this.itemSearchOverlayViewModel.AdvancedQuery, Is.SameAs(expected));
-        }
-
-        [Test]
-        public async Task ExecuteAdvancedQueryAsyncShouldCallMapOnAdvancedQueryViewModelToSearchQueryMapper()
-        {
-            AdvancedQueryViewModel advancedQueryViewModel = new AdvancedQueryViewModel();
-            this.itemSearchOverlayViewModel.AdvancedQuery = advancedQueryViewModel;
+            var searchQueryRequest = new SearchQueryRequest();
+            this.itemSearchOverlayViewModel.QueryRequest = searchQueryRequest;
 
             await this.itemSearchOverlayViewModel.ExecuteAdvancedQueryAsync();
 
-            this.queryRequestFactoryMock.Verify(x => x.Create(advancedQueryViewModel));
+            this.queryRequestFactoryMock.Verify(x => x.Create(searchQueryRequest, this.advancedFiltersViewModelMock.Object));
         }
 
         [Test]
@@ -247,7 +231,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         {
             var queryRequest = new SearchQueryRequest();
 
-            this.queryRequestFactoryMock.Setup(x => x.Create(It.IsAny<AdvancedQueryViewModel>()))
+            this.queryRequestFactoryMock.Setup(x => x.Create( It.IsAny<IQueryRequest>(), It.IsAny<IAdvancedFiltersViewModel>()))
                 .Returns(queryRequest);
 
             await this.itemSearchOverlayViewModel.ExecuteAdvancedQueryAsync();
@@ -286,34 +270,7 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         }
 
         [Test]
-        public async Task ExecuteAdvancedQueryAsyncShouldCallCreateOnAdvancedQueryViewModelFactory()
-        {
-            var queryRequest = new SearchQueryRequest();
-            this.queryRequestFactoryMock.Setup(x => x.Create(It.IsAny<AdvancedQueryViewModel>()))
-                .Returns(queryRequest);
-
-            this.itemSearchOverlayViewModel.Item = new EquippableItem(ItemRarity.Unique);
-
-            await this.itemSearchOverlayViewModel.ExecuteAdvancedQueryAsync();
-
-            this.advancedQueryViewModelFactoryMock.Verify(x => x.Create(this.itemSearchOverlayViewModel.Item, queryRequest));
-        }
-
-        [Test]
-        public async Task ExecuteAdvancedQueryAsyncShouldSetAdvancedQuery()
-        {
-            var advancedQueryViewModel = new AdvancedQueryViewModel();
-
-            this.advancedQueryViewModelFactoryMock.Setup(x => x.Create(It.IsAny<Item>(), It.IsAny<IQueryRequest>()))
-                .Returns(advancedQueryViewModel);
-
-            await this.itemSearchOverlayViewModel.ExecuteAdvancedQueryAsync();
-
-            Assert.That(this.itemSearchOverlayViewModel.AdvancedQuery, Is.EqualTo(advancedQueryViewModel));
-        }
-
-        [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldSendGetPricePredictionViewModelQueryIfPricePredictionIsEnabledAndItemTextChanged()
+        public async Task SetListingForItemUnderCursorAsyncShouldCallLoadAsyncOnPricePredictionViewModel()
         {
             // arrange
             var item = new EquippableItem(ItemRarity.Rare)
@@ -328,119 +285,11 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             var cancellationTokenSource = new CancellationTokenSource();
             var cancellationToken = cancellationTokenSource.Token;
 
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
-                .Returns(new ItemSearchOptions
-                {
-                    PricePredictionEnabled = true
-                });
-
             // act
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(cancellationToken);
 
             // assert
-            this.mediatorMock.Verify(x => x.Send(
-                It.Is<GetPricePredictionViewModelQuery>(q => q.Item == item),
-                cancellationToken));
-        }
-
-        [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldNotSendGetPricePredictionViewModelQueryIfPricePredictionIsDisabled()
-        {
-            // arrange
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
-                .Returns(new ItemSearchOptions
-                {
-                    PricePredictionEnabled = false
-                });
-
-            // act
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
-
-            // assert
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<GetPricePredictionViewModelQuery>(), It.IsAny<CancellationToken>()), Times.Never);
-        }
-
-        [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldNotSendGetPricePredictionViewModelQueryIfItemTextDidNotChange()
-        {
-            // arrange
-            var item = new EquippableItem(ItemRarity.Rare)
-            {
-                ItemText = "text"
-            };
-
-            this.mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(item);
-
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
-                .Returns(new ItemSearchOptions
-                {
-                    PricePredictionEnabled = true
-                });
-
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
-
-            // act
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
-
-            // assert
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<GetPricePredictionViewModelQuery>(), It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Test]
-        public void ShouldResetPricePredictionIfPricePredictionOptionChangesToDisabled()
-        {
-            // arrange
-            Action<ItemSearchOptions, string> listener = null;
-            this.itemSearchOptionsMock.Setup(x => x.OnChange(It.IsAny<Action<ItemSearchOptions, string>>()))
-                .Callback<Action<ItemSearchOptions, string>>(l => listener = l);
-
-            var pricePredictionViewModel = new PricePredictionViewModel
-            {
-                Prediction = "1-2",
-                ConfidenceScore = "85 %"
-            };
-
-            this.itemSearchOverlayViewModel = this.CreateViewModel();
-            this.itemSearchOverlayViewModel.PricePrediction = pricePredictionViewModel;
-
-            // act
-            listener(new ItemSearchOptions
-            {
-                PricePredictionEnabled = false
-            }, null);
-
-            // assert
-            Assert.That(this.itemSearchOverlayViewModel.PricePrediction, Is.Not.Null);
-            Assert.That(this.itemSearchOverlayViewModel.PricePrediction, Is.Not.SameAs(pricePredictionViewModel));
-            Assert.That(this.itemSearchOverlayViewModel.PricePrediction.HasValue, Is.False);
-        }
-
-        [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldCatchExceptionFromGetPricePredictionViewModelQuery()
-        {
-            // arrange
-            var item = new EquippableItem(ItemRarity.Rare)
-            {
-                ItemText = "text"
-            };
-
-            this.mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(item);
-
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
-                .Returns(new ItemSearchOptions
-                {
-                    PricePredictionEnabled = true
-                });
-
-            this.mediatorMock.Setup(x => x.Send(It.IsAny<GetPricePredictionViewModelQuery>(), It.IsAny<CancellationToken>()))
-                .Throws<Exception>();
-
-            // act
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            this.pricePredictionViewModelMock.Verify(x => x.LoadAsync(item, cancellationToken));
         }
     }
 }

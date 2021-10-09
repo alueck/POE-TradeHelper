@@ -28,11 +28,11 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return mapper?.MapToQueryRequest(item);
         }
 
-        public IQueryRequest Create(AdvancedQueryViewModel advancedQueryViewModel)
+        public IQueryRequest Create(IQueryRequest originalRequest, IAdvancedFiltersViewModel advancedFiltersViewModel)
         {
-            IQueryRequest result = advancedQueryViewModel.QueryRequest;
+            IQueryRequest result = originalRequest;
 
-            if (advancedQueryViewModel.QueryRequest is SearchQueryRequest sourceSearchQueryRequest)
+            if (originalRequest is SearchQueryRequest sourceSearchQueryRequest)
             {
                 var searchQueryRequest = new SearchQueryRequest
                 {
@@ -53,8 +53,8 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                     }
                 };
 
-                SetStatFilters(advancedQueryViewModel, searchQueryRequest);
-                SetAdditionalFilters(advancedQueryViewModel, searchQueryRequest);
+                SetStatFilters(advancedFiltersViewModel, searchQueryRequest);
+                SetAdditionalFilters(advancedFiltersViewModel, searchQueryRequest);
 
                 result = searchQueryRequest;
             }
@@ -62,9 +62,9 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return result;
         }
 
-        private static void SetStatFilters(AdvancedQueryViewModel advancedQueryViewModel, SearchQueryRequest searchQueryRequest)
+        private static void SetStatFilters(IAdvancedFiltersViewModel advancedFiltersViewModel, SearchQueryRequest searchQueryRequest)
         {
-            var enabledStatFilterViewModels = advancedQueryViewModel.AllFilters.Where(f => f.IsEnabled == true).OfType<StatFilterViewModel>();
+            var enabledStatFilterViewModels = advancedFiltersViewModel.AllStatFilters.Where(f => f.IsEnabled == true);
 
             var statFilters = new StatFilters();
 
@@ -99,9 +99,9 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             return statFilter;
         }
 
-        private static void SetAdditionalFilters(AdvancedQueryViewModel advancedQueryViewModel, SearchQueryRequest searchQueryRequest)
+        private static void SetAdditionalFilters(IAdvancedFiltersViewModel advancedFiltersViewModel, SearchQueryRequest searchQueryRequest)
         {
-            foreach (var filterViewModel in advancedQueryViewModel.AdditionalFilters.OfType<BindableFilterViewModel>())
+            foreach (var filterViewModel in advancedFiltersViewModel.AdditionalFilters.OfType<BindableFilterViewModel>())
             {
                 SetValueByExpression(filterViewModel.BindingExpression, searchQueryRequest, filterViewModel);
             }

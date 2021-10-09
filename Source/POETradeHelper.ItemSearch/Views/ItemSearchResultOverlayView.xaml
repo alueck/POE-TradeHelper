@@ -22,231 +22,145 @@
     Topmost="True"
     mc:Ignorable="d">
 
-  <Window.Resources>
-    <localConverters:ItemRarityToBrushConverter x:Key="itemRarityToBrushConverter" />
-    <localConverters:DoubleOffsetConverter x:Key="doubleOffsetConverter" />
-  </Window.Resources>
+    <Window.Resources>
+        <localConverters:ItemRarityToBrushConverter x:Key="itemRarityToBrushConverter" />
+        <localConverters:DoubleOffsetConverter x:Key="doubleOffsetConverter" />
+    </Window.Resources>
 
-  <Window.Styles>
-    <Style Selector="DataGridCell.alignRight">
-      <Setter Property="HorizontalContentAlignment" Value="Right" />
-    </Style>
+    <Window.Styles>
+        <Style Selector="DataGridCell.alignRight">
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+        </Style>
 
-    <!--  override DataGridRow selection and mouse over style  -->
+        <!--  override DataGridRow selection and mouse over style  -->
 
-    <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
-      <Setter Property="IsVisible" Value="False" />
-    </Style>
+        <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
 
-    <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
-      <Setter Property="IsVisible" Value="False" />
-    </Style>
+        <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
 
-    <Style Selector="DataGridRow:selected" />
+        <Style Selector="DataGridRow:selected" />
 
-    <!--  end - override DataGridRow selection and mouse over style  -->
+        <!--  end - override DataGridRow selection and mouse over style  -->
 
-    <Style Selector="DataGridColumnHeader">
-      <Setter Property="FontWeight" Value="Bold" />
-      <Setter Property="Padding" Value="8,4" />
-    </Style>
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Padding" Value="8,4" />
+        </Style>
 
-    <Style Selector="Separator">
-      <Setter Property="Background" Value="{DynamicResource ThemeBorderLowBrush}" />
-      <Setter Property="Height" Value="5" />
-      <Setter Property="RenderTransform">
-        <Setter.Value>
-          <ScaleTransform ScaleY="0.1" />
-        </Setter.Value>
-      </Setter>
-    </Style>
-  </Window.Styles>
+        <Style Selector="Separator">
+            <Setter Property="Background" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="Height" Value="5" />
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleY="0.1" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Styles>
 
-  <commonUiControls:BusyIndicator DisplayAfter="0:0:0.500" IsBusy="{Binding IsBusy}">
-
-    <Grid
-        MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
-        MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
-        Margin="10">
-
-      <commonUiControls:MessageTextBlock VerticalAlignment="Center" Message="{Binding Message}" />
-
-      <Grid IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
-
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" MaxWidth="400" />
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <TextBlock
-            Grid.Column="1"
-            Margin="0,0,25,5"
-            FontWeight="Bold"
-            Foreground="{Binding ItemListings.ItemRarity, Converter={StaticResource itemRarityToBrushConverter}}"
-            Text="{Binding ItemListings.ItemDescription}" />
-
-        <commonUiControls:HyperlinkButton
-            Grid.Column="2"
-            Margin="0,0,0,5"
-            HorizontalAlignment="Right"
-            Content="{x:Static resources:Resources.OpenInBrowser}"
-            HideableWindow="{Binding $parent[Window]}"
-            Uri="{Binding ItemListings.ListingsUri}" />
+    <commonUiControls:BusyIndicator DisplayAfter="0:0:0.500" IsBusy="{Binding IsBusy}">
 
         <Grid
-            Name="AdvancedQueryGrid"
-            Grid.Row="1"
+            MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
             MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
-            Margin="8"
-            Grid.IsSharedSizeScope="True"
-            IsVisible="{Binding AdvancedQuery.IsEnabled}">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition MaxHeight="{Binding $parent[Grid].MaxHeight}" />
-          </Grid.RowDefinitions>
+            Margin="10">
 
-          <Grid
-              Grid.Row="1"
-              Width="350"
-              MaxWidth="350">
-            <Grid.RowDefinitions>
-              <RowDefinition MaxHeight="{Binding $parent.MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-75}" />
-              <RowDefinition MaxHeight="25" />
-            </Grid.RowDefinitions>
+            <commonUiControls:MessageTextBlock VerticalAlignment="Center" Message="{Binding Message}" />
 
-            <ScrollViewer
-                Grid.Row="0"
-                HorizontalScrollBarVisibility="Disabled"
-                VerticalScrollBarVisibility="Auto">
-              <Grid Grid.IsSharedSizeScope="True">
+            <Grid IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MaxWidth="400" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0">
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="25" SharedSizeGroup="SelectColumn" />
-                    <ColumnDefinition MaxWidth="325" SharedSizeGroup="StatColumn" />
-                  </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="0,0,25,5"
+                    FontWeight="Bold"
+                    Foreground="{Binding ItemListings.ItemRarity, Converter={StaticResource itemRarityToBrushConverter}}"
+                    Text="{Binding ItemListings.ItemDescription}" />
+
+                <commonUiControls:HyperlinkButton
+                    Grid.Column="2"
+                    Margin="0,0,0,5"
+                    HorizontalAlignment="Right"
+                    Content="{x:Static resources:Resources.OpenInBrowser}"
+                    HideableWindow="{Binding $parent[Window]}"
+                    Uri="{Binding ItemListings.ListingsUri}" />
+
+                <Grid Grid.Row="1" RowDefinitions="Auto,35">
+                    <localViews:AdvancedFiltersView
+                        Grid.Row="0"
+                        Height="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-100}"
+                        Width="350"
+                        Margin="8"
+                        DataContext="{Binding AdvancedFilters}" />
+                    <Button
+                        Grid.Row="1"
+                        MaxWidth="150"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding ExecuteAdvancedQueryCommand}"
+                        Content="Query" />
                 </Grid>
 
-                <localViews:FiltersControl
-                    Name="EnchantedItemStatFilters"
+                <Grid
                     Grid.Row="1"
-                    Header="{x:Static resources:Resources.FilterCategory_Enchant}"
-                    Items="{Binding AdvancedQuery.EnchantedItemStatFilters}" />
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="25" />
+                    </Grid.RowDefinitions>
 
-                <localViews:FiltersControl
-                    Name="FracturedItemStatFilters"
-                    Grid.Row="2"
-                    Header="{x:Static resources:Resources.FilterCategory_Fractured}"
-                    Items="{Binding AdvancedQuery.FracturedItemStatFilters}" />
+                    <DataGrid
+                        Name="ListingsGrid"
+                        AutoGenerateColumns="True"
+                        ColumnWidth="Auto"
+                        IsReadOnly="True"
+                        Items="{Binding ItemListings.Listings}"
+                        ScrollViewer.VerticalScrollBarVisibility="Visible">
+                        <DataGrid.DataTemplates>
+                            <DataTemplate DataType="{x:Type localVms:PriceViewModel}">
+                                <StackPanel DataContext="{Binding Price}" Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Amount}" />
+                                    <TextBlock Text=" " />
+                                    <Image
+                                        Height="30"
+                                        VerticalAlignment="Center"
+                                        IsVisible="{Binding Image, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                        Source="{Binding Image}"
+                                        ToolTip.Tip="{Binding Currency}" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        IsVisible="{Binding Image, Converter={x:Static ObjectConverters.IsNull}}"
+                                        Text="{Binding Currency}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGrid.DataTemplates>
+                    </DataGrid>
 
-                <localViews:FiltersControl
-                    Name="ImplicitItemStatFilters"
-                    Grid.Row="3"
-                    Header="{x:Static resources:Resources.FilterCategory_Implicit}"
-                    Items="{Binding AdvancedQuery.ImplicitItemStatFilters}" />
-
-                <localViews:FiltersControl
-                    Name="ExplicitItemStatFilters"
-                    Grid.Row="4"
-                    Header="{x:Static resources:Resources.FilterCategory_Explicit}"
-                    Items="{Binding AdvancedQuery.ExplicitItemStatFilters}" />
-
-                <localViews:FiltersControl
-                    Name="CraftedItemStatFilters"
-                    Grid.Row="5"
-                    Header="{x:Static resources:Resources.FilterCategory_Crafted}"
-                    Items="{Binding AdvancedQuery.CraftedItemStatFilters}" />
-
-                <localViews:FiltersControl
-                    Name="MonsterItemStatFilters"
-                    Grid.Row="6"
-                    Items="{Binding AdvancedQuery.MonsterItemStatFilters}" />
-
-                <localViews:FiltersControl
-                    Name="PseudoItemStatFilters"
-                    Grid.Row="7"
-                    Header="{x:Static resources:Resources.FilterCategory_Pseudo}"
-                    Items="{Binding AdvancedQuery.PseudoItemStatFilters}" />
-
-                <localViews:FiltersControl
-                    Name="AdditionalFilters"
-                    Grid.Row="8"
-                    Items="{Binding AdvancedQuery.AdditionalFilters}" />
-              </Grid>
-            </ScrollViewer>
-
-            <Button
-                Grid.Row="1"
-                MaxWidth="150"
-                Command="{Binding ExecuteAdvancedQueryCommand}"
-                Content="Query" />
-          </Grid>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsVisible="{Binding !ItemListings.Listings.Count}"
+                        Text="{x:Static resources:Resources.NoItemsFoundText}" />
+                    <pricePrediction:PricePredictionControl
+                        Grid.Row="1"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        DataContext="{Binding PricePrediction}" />
+                </Grid>
+            </Grid>
         </Grid>
-
-        <Grid
-            Grid.Row="1"
-            Grid.Column="1"
-            Grid.ColumnSpan="2">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="25"/>
-          </Grid.RowDefinitions>
-
-          <DataGrid
-              Name="ListingsGrid"
-              AutoGenerateColumns="True"
-              ColumnWidth="Auto"
-              IsReadOnly="True"
-              Items="{Binding ItemListings.Listings}"
-              ScrollViewer.VerticalScrollBarVisibility="Visible">
-            <DataGrid.DataTemplates>
-              <DataTemplate DataType="{x:Type localVms:PriceViewModel}">
-                <StackPanel DataContext="{Binding Price}" Orientation="Horizontal">
-                  <TextBlock VerticalAlignment="Center" Text="{Binding Amount}" />
-                  <TextBlock Text=" " />
-                  <Image
-                      Height="30"
-                      VerticalAlignment="Center"
-                      IsVisible="{Binding Image, Converter={x:Static ObjectConverters.IsNotNull}}"
-                      Source="{Binding Image}"
-                      ToolTip.Tip="{Binding Currency}" />
-                  <TextBlock
-                      VerticalAlignment="Center"
-                      IsVisible="{Binding Image, Converter={x:Static ObjectConverters.IsNull}}"
-                      Text="{Binding Currency}" />
-                </StackPanel>
-              </DataTemplate>
-            </DataGrid.DataTemplates>
-          </DataGrid>
-
-          <TextBlock
-              HorizontalAlignment="Center"
-              VerticalAlignment="Center"
-              IsVisible="{Binding !ItemListings.Listings.Count}"
-              Text="{x:Static resources:Resources.NoItemsFoundText}" />
-          <pricePrediction:PricePredictionControl
-              Grid.Row="1"
-              HorizontalAlignment="Left"
-              VerticalAlignment="Bottom"
-              DataContext="{Binding PricePrediction}" />
-        </Grid>
-      </Grid>
-    </Grid>
-  </commonUiControls:BusyIndicator>
+    </commonUiControls:BusyIndicator>
 </Window>

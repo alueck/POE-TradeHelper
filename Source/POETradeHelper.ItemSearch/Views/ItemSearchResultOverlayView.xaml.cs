@@ -29,10 +29,6 @@ namespace POETradeHelper.ItemSearch.Views
             var dataGrid = this.Get<DataGrid>("ListingsGrid");
 
             dataGrid.AutoGeneratingColumn += OnDataGridAutoGeneratingColumn;
-
-            var advancedQueryGrid = this.Get<Grid>("AdvancedQueryGrid");
-
-            advancedQueryGrid.IsVisible = false;
         }
 
         private void OnDataGridAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)

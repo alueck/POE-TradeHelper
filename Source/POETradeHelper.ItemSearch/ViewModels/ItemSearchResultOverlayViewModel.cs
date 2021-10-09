@@ -2,16 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.Extensions.Options;
 using POETradeHelper.Common.UI.Models;
-using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Queries;
 using POETradeHelper.ItemSearch.Exceptions;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PricePrediction.Queries;
 using POETradeHelper.PricePrediction.ViewModels;
 using ReactiveUI;
 using Splat;
@@ -23,56 +20,46 @@ namespace POETradeHelper.ItemSearch.ViewModels
     {
         private readonly IPoeTradeApiClient poeTradeApiClient;
         private readonly IItemListingsViewModelFactory itemListingsViewModelFactory;
-        private readonly IAdvancedQueryViewModelFactory advancedQueryViewModelFactory;
         private readonly IQueryRequestFactory queryRequestFactory;
         private readonly IMediator mediator;
-        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
 
         public ItemSearchResultOverlayViewModel(
             IPoeTradeApiClient tradeClient,
             IItemListingsViewModelFactory itemListingsViewModelFactory,
-            IAdvancedQueryViewModelFactory advancedQueryViewModelFactory,
             IQueryRequestFactory queryRequestFactory,
             IMediator mediator,
-            IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
+            IPricePredictionViewModel pricePredictionViewModel,
+            IAdvancedFiltersViewModel advancedFiltersViewModel)
         {
             this.poeTradeApiClient = tradeClient;
             this.itemListingsViewModelFactory = itemListingsViewModelFactory;
-            this.advancedQueryViewModelFactory = advancedQueryViewModelFactory;
-
-            this.ExecuteAdvancedQueryCommand = ReactiveCommand.CreateFromTask(() => this.ExecuteAdvancedQueryAsync());
-            this.ExecuteAdvancedQueryCommand.IsExecuting.ToProperty(this, x => x.IsBusy);
             this.queryRequestFactory = queryRequestFactory;
             this.mediator = mediator;
-            this.itemSearchOptions = itemSearchOptions;
-            this.itemSearchOptions.OnChange(newValue =>
-            {
-                if (!newValue.PricePredictionEnabled)
-                {
-                    this.PricePrediction = new PricePredictionViewModel();
-                }
-            });
-
-            this.PricePrediction = new PricePredictionViewModel();
+            this.PricePrediction = pricePredictionViewModel;
+            this.AdvancedFilters = advancedFiltersViewModel;
+            
+            this.ExecuteAdvancedQueryCommand = ReactiveCommand.CreateFromTask(this.ExecuteAdvancedQueryAsync);
+            this.ExecuteAdvancedQueryCommand.IsExecuting.ToProperty(this, x => x.IsBusy);
         }
 
         private ItemListingsViewModel itemListing;
-        private Message message;
-
+        
         public ItemListingsViewModel ItemListings
         {
             get => this.itemListing;
             set => this.RaiseAndSetIfChanged(ref itemListing, value);
         }
 
-        private AdvancedQueryViewModel advancedQuery;
+        private IAdvancedFiltersViewModel advancedFilters;
 
-        public AdvancedQueryViewModel AdvancedQuery
+        public IAdvancedFiltersViewModel AdvancedFilters
         {
-            get => this.advancedQuery;
-            set => this.RaiseAndSetIfChanged(ref advancedQuery, value);
+            get => this.advancedFilters;
+            set => this.RaiseAndSetIfChanged(ref advancedFilters, value);
         }
 
+        private Message message;
+        
         public Message Message
         {
             get => this.message;
@@ -83,38 +70,33 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         public bool IsBusy
         {
-            get { return isBusy; }
-            set { this.RaiseAndSetIfChanged(ref this.isBusy, value); }
+            get => isBusy;
+            set => this.RaiseAndSetIfChanged(ref this.isBusy, value);
         }
 
-        private PricePredictionViewModel pricePredicition;
-
-        public PricePredictionViewModel PricePrediction
-        {
-            get => this.pricePredicition;
-            set => this.RaiseAndSetIfChanged(ref pricePredicition, value);
-        }
+        public IPricePredictionViewModel PricePrediction { get; set; }
 
         public ReactiveCommand<Unit, Unit> ExecuteAdvancedQueryCommand { get; }
 
         internal Item Item { get; set; }
 
+        internal IQueryRequest QueryRequest { get; set; }
+
         public async Task SetListingForItemUnderCursorAsync(CancellationToken cancellationToken = default)
         {
-            var oldItem = this.Item;
             try
             {
                 this.IsBusy = true;
                 this.Message = null;
 
                 this.Item = await this.mediator.Send(new GetItemFromCursorQuery(), cancellationToken).ConfigureAwait(true);
-                IQueryRequest queryRequest = this.queryRequestFactory.Create(this.Item);
-                ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(queryRequest, cancellationToken).ConfigureAwait(true);
+                this.QueryRequest = this.queryRequestFactory.Create(this.Item);
+                ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(this.QueryRequest, cancellationToken).ConfigureAwait(true);
 
                 if (itemListing != null)
                 {
                     this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(Item, itemListing, cancellationToken).ConfigureAwait(true);
-                    this.AdvancedQuery = this.advancedQueryViewModelFactory.Create(Item, itemListing.SearchQueryRequest);
+                    await this.AdvancedFilters.LoadAsync(this.Item, this.QueryRequest, cancellationToken);
                 }
             }
             catch (InvalidItemStringException exception)
@@ -136,24 +118,8 @@ namespace POETradeHelper.ItemSearch.ViewModels
                     this.IsBusy = false;
                 }
             }
-            
-            if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled && !string.Equals(oldItem?.ItemText, this.Item?.ItemText, StringComparison.Ordinal))
-            {
-                await GetPricePrediction(cancellationToken).ConfigureAwait(true);
-            }
-        }
 
-        private async Task GetPricePrediction(CancellationToken cancellationToken)
-        {
-            try
-            {
-                this.PricePrediction = new PricePredictionViewModel();
-                this.PricePrediction = await this.mediator.Send(new GetPricePredictionViewModelQuery(this.Item), cancellationToken);
-            }
-            catch (Exception exception)
-            {
-                this.Log().Error(exception);
-            }
+            await this.PricePrediction.LoadAsync(this.Item, cancellationToken);
         }
 
         private void HandleException(Exception exception)
@@ -173,10 +139,10 @@ namespace POETradeHelper.ItemSearch.ViewModels
             {
                 this.Message = null;
 
-                var queryRequest = this.queryRequestFactory.Create(this.AdvancedQuery);
-                this.AdvancedQuery = this.advancedQueryViewModelFactory.Create(this.Item, queryRequest);
+                this.QueryRequest = this.queryRequestFactory.Create(this.QueryRequest, this.AdvancedFilters);
+                await this.AdvancedFilters.LoadAsync(this.Item, this.QueryRequest, default);
 
-                ItemListingsQueryResult itemListingsQueryResult = await this.poeTradeApiClient.GetListingsAsync(queryRequest).ConfigureAwait(true);
+                ItemListingsQueryResult itemListingsQueryResult = await this.poeTradeApiClient.GetListingsAsync(this.QueryRequest).ConfigureAwait(true);
                 this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item, itemListingsQueryResult).ConfigureAwait(true);
             }
             catch (Exception exception)

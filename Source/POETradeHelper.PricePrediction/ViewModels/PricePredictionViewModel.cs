@@ -1,17 +1,137 @@
-﻿using Avalonia.Media.Imaging;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using MediatR;
+using Microsoft.Extensions.Options;
+using POETradeHelper.Common.UI.Services;
+using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.PathOfExileTradeApi.Services;
+using POETradeHelper.PricePrediction.Models;
+using POETradeHelper.PricePrediction.Queries;
+using ReactiveUI;
+using Splat;
 
 namespace POETradeHelper.PricePrediction.ViewModels
 {
-    public class PricePredictionViewModel
+    public class PricePredictionViewModel : ReactiveObject, IPricePredictionViewModel
     {
-        public string Prediction { get; set; }
+        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
+        private readonly IMediator mediator;
+        private readonly IStaticDataService staticDataService;
+        private readonly IImageService imageService;
 
-        public string Currency { get; set; }
+        private Item item;
+        private string currency;
+        private IBitmap currencyImage;
+        private string confidenceScore;
 
-        public IBitmap CurrencyImage { get; set; }
+        public PricePredictionViewModel(
+            IOptionsMonitor<ItemSearchOptions> itemSearchOptions,
+            IMediator mediator,
+            IStaticDataService staticDataService,
+            IImageService imageService)
+        {
+            this.itemSearchOptions = itemSearchOptions;
+            this.mediator = mediator;
+            this.staticDataService = staticDataService;
+            this.imageService = imageService;
 
-        public string ConfidenceScore { get; set; }
+            this.itemSearchOptions.OnChange(newValue =>
+            {
+                if (!newValue.PricePredictionEnabled)
+                {
+                    this.Clear();
+                }
+            });
+        }
+
+        private string prediction;
+
+        public string Prediction
+        {
+            get => prediction;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref prediction, value);
+                this.RaisePropertyChanged(nameof(HasValue));
+            }
+        }
+
+        public string Currency
+        {
+            get => currency;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref currency, value);
+                this.RaisePropertyChanged(nameof(HasValue));
+            }
+        }
+
+        public IBitmap CurrencyImage
+        {
+            get => currencyImage;
+            set => this.RaiseAndSetIfChanged(ref currencyImage, value);
+        }
+
+        public string ConfidenceScore
+        {
+            get => confidenceScore;
+            set => this.RaiseAndSetIfChanged(ref confidenceScore, value);
+        }
 
         public bool HasValue => !string.IsNullOrEmpty(this.Prediction) && !string.IsNullOrEmpty(this.Currency);
+        
+        public async Task LoadAsync(Item item, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled && !string.Equals(this.item?.ItemText, item?.ItemText))
+                {
+                    this.item = item;
+                    this.Clear();
+                    
+                    var request = new GetPoePricesInfoPredictionQuery(item, this.itemSearchOptions.CurrentValue.League);
+                    var poePricesInfoPrediction = await this.mediator.Send(request, cancellationToken).ConfigureAwait(true);
+
+                    await this.MapPrediction(poePricesInfoPrediction, cancellationToken);
+                }
+            }
+            catch (Exception exception)
+            {
+                if (exception is not OperationCanceledException and not TaskCanceledException)
+                {
+                    this.Log().Error(exception);
+                }
+            }
+        }
+
+        private void Clear()
+        {
+            this.Prediction = null;
+            this.Currency = null;
+            this.CurrencyImage = null;
+            this.ConfidenceScore = null;
+        }
+        
+        private async Task MapPrediction(PoePricesInfoPrediction prediction, CancellationToken cancellationToken)
+        {
+            if (prediction is not { ErrorCode: 0 })
+                return;
+            
+            this.Prediction = $"{prediction.Min:N}-{prediction.Max:N}";
+            this.ConfidenceScore = $"{prediction.ConfidenceScore:N} %";
+            this.Currency = this.staticDataService.GetText(prediction.Currency);
+            this.CurrencyImage = await GetCurrencyImage(prediction.Currency, cancellationToken).ConfigureAwait(false);
+        }
+
+        private async Task<IBitmap> GetCurrencyImage(string currency, CancellationToken cancellationToken)
+        {
+            Uri imageUrl = this.staticDataService.GetImageUrl(currency);
+            IBitmap image = await this.imageService.GetImageAsync(imageUrl, cancellationToken).ConfigureAwait(false);
+            
+            return image;
+        }
     }
 }
