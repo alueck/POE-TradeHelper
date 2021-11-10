@@ -35,7 +35,7 @@ namespace POETradeHelper.ViewModels
         private async void InitializeAsync(IEnumerable<IInitializable> initializables)
         {
             bool success = await this.InitializeAsync(
-                async () => await this.InitializeInitializablesAsync(initializables).ConfigureAwait(true),
+                async () => await InitializeInitializablesAsync(initializables).ConfigureAwait(true),
                 Resources.RetrievingDataText,
                 Resources.ProblemCommunicatingWithPoeApi,
                 resetBusyTextOnly: true).ConfigureAwait(true);
@@ -50,7 +50,7 @@ namespace POETradeHelper.ViewModels
             }
         }
 
-        private async Task InitializeInitializablesAsync(IEnumerable<IInitializable> initializables)
+        private static async Task InitializeInitializablesAsync(IEnumerable<IInitializable> initializables)
         {
             foreach (var initializable in initializables)
             {
