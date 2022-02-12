@@ -12,10 +12,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
-      - name: Setup .NET 5.0
+      - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.100
+          dotnet-version: 6.0.102
       - name: Build project
         run: |
           dotnet publish .\Source\POETradeHelper\POETradeHelper.csproj -c Release -r win10-x64 -o Publish -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true -p:PublishTrimmed=true

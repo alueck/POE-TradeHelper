@@ -7,16 +7,16 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 {
     public class PoeTradeApiJsonSerializer : IPoeTradeApiJsonSerializer
     {
-        private static readonly JsonSerializerOptions camelCaseJsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        private static readonly JsonSerializerOptions camelCaseJsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-        private static readonly JsonSerializerOptions snakeCaseJsonSerializerOptions = new JsonSerializerOptions
+        private static readonly JsonSerializerOptions snakeCaseJsonSerializerOptions = new()
         {
             PropertyNamingPolicy = new JsonSnakeCaseNamingPolicy(),
             Converters = { new JsonStringEnumConverter(new JsonSnakeCaseNamingPolicy()) },
-            IgnoreNullValues = true
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
 
-        private IJsonSerializerWrapper jsonSerializer;
+        private readonly IJsonSerializerWrapper jsonSerializer;
 
         public PoeTradeApiJsonSerializer(IJsonSerializerWrapper jsonSerializer)
         {

@@ -25,7 +25,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public void DeserializeShouldCallDeserializeOnJsonSerializerWithCamelCaseNamingPolicy()
         {
-            string json = "{ \"request\": { } }";
+            const string json = "{ \"request\": { } }";
 
             this.poeTradeApiJsonSerializer.Deserialize<object>(json);
 
@@ -59,7 +59,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.poeTradeApiJsonSerializer.Serialize(obj);
 
-            this.jsonSerializerWrapperMock.Verify(x => x.Serialize(obj, It.Is<JsonSerializerOptions>(o => o.IgnoreNullValues)));
+            this.jsonSerializerWrapperMock.Verify(x => x.Serialize(obj, It.Is<JsonSerializerOptions>(o => o.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull)));
         }
     }
 }
