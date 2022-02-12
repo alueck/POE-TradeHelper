@@ -83,7 +83,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
         [TestCase("Sanguine Leather Belt of the Whelpling")]
         [TestCase("Leather Belt")]
-        [TestCase("Belt")]
         public async Task GetTypeShouldReturnCorrectTypeForItemName(string name)
         {
             const string expectedType = "Leather Belt";
@@ -98,8 +97,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Entries = new List<ItemData>
                             {
                                 new ItemData { Name = "Wurm's Molt", Type = expectedType },
-                                new ItemData { Name = "Test" , Text = "Belt" },
-                                new ItemData { Name = expectedType , Text = expectedType }
+                                new ItemData { Name = "Belt" , Text = "Belt" },
+                                new ItemData { Name = expectedType , Text = expectedType },
                             }
                         }
                    }
