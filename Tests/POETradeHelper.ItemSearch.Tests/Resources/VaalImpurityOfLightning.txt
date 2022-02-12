@@ -1,0 +1,40 @@
+Item Class: Active Skill Gems
+Rarity: Gem
+Purity of Lightning
+--------
+Aura, Vaal, Spell, AoE, Duration, Lightning
+Level: 1
+Reservation: 35% Mana
+Cooldown Time: 1.20 sec
+Cast Time: Instant
+--------
+Requirements:
+Level: 24
+Int: 58
+--------
+Casts an aura that grants lightning resistance to you and your allies.
+--------
+You and nearby allies gain 22% additional Lightning Resistance
+--------
+Vaal Impurity of Lightning
+--------
+Cooldown Time: 0.50 sec
+Souls Per Use: 50
+Can Store 1 Use
+Soul Gain Prevention: 8 sec
+Cast Time: Instant
+--------
+Casts an aura that reduces lightning damage taken and provides shock immunity to you and nearby allies, and makes hits against nearby enemies ignore their lightning resistance. 
+--------
+Base duration is 3.00 seconds
+Modifiers to Skill Effect Duration also apply to this Skill's Soul Gain Prevention
++14 to radius
+You and nearby allies gain 5% additional maximum Lightning Resistance
+You and nearby allies are Immune to Shock
+Nearby Enemies' Lightning Resistance is Ignored by Hits
+--------
+Experience: 1/118383
+--------
+Place into an item socket of the right colour to gain this skill. Right click to remove from a socket.
+--------
+Corrupted

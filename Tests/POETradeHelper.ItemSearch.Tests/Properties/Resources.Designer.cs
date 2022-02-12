@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.Tests.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,7 +61,8 @@ namespace POETradeHelper.ItemSearch.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rarity: Gem
+        ///   Looks up a localized string similar to Item Class: Active Skill Gems
+        ///Rarity: Gem
         ///Flameblast
         ///--------
         ///Vaal, Spell, AoE, Fire, Channelling
@@ -77,13 +78,43 @@ namespace POETradeHelper.ItemSearch.Tests.Properties {
         ///Level: 70
         ///Int: 155
         ///--------
-        ///Channels to build up a large explosion, which is released when you stop using the skill. The longer you channel, the larger the area of effect and damage of the explosion, up to 10 stages.
-        ///--------
-        ///Deals 280 to 419 Fi [rest of string was truncated]&quot;;.
+        ///Channels to build up a large explosion, which is released when you stop using the skill. The longer you channel, the larger the area of effect and damage of the explosion, up to 10 stages. [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string AnomalousVaalFlameblast {
             get {
                 return ResourceManager.GetString("AnomalousVaalFlameblast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item Class: Active Skill Gems
+        ///Rarity: Gem
+        ///Purity of Lightning
+        ///--------
+        ///Aura, Vaal, Spell, AoE, Duration, Lightning
+        ///Level: 1
+        ///Reservation: 35% Mana
+        ///Cooldown Time: 1.20 sec
+        ///Cast Time: Instant
+        ///--------
+        ///Requirements:
+        ///Level: 24
+        ///Int: 58
+        ///--------
+        ///Casts an aura that grants lightning resistance to you and your allies.
+        ///--------
+        ///You and nearby allies gain 22% additional Lightning Resistance
+        ///--------
+        ///Vaal Impurity of Lightning
+        ///--------
+        ///Cooldown Time: 0.50 sec
+        ///Souls Per Use: 50
+        ///Can Store 1 Use
+        ///Soul [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string VaalImpurityOfLightning {
+            get {
+                return ResourceManager.GetString("VaalImpurityOfLightning", resourceCulture);
             }
         }
     }

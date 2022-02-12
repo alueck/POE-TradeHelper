@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
@@ -15,13 +17,21 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         public string GetType(string name)
         {
-            ItemData matchingItemData = this.Data
-                .SelectMany(x => x.Entries)
-                .Where(x => x.Type != null && name.Contains(x.Type))
-                .OrderBy(x => x.Type.Length)
-                .FirstOrDefault();
+            List<ItemData> matches = new();
 
-            return matchingItemData?.Type;
+            foreach (var entry in this.Data.SelectMany(x => x.Entries).Where(x => x.Type != null))
+            {
+                if (entry.Type == name)
+                    return entry.Type;
+
+                if (name.Contains(entry.Type))
+                    matches.Add(entry);
+            }
+
+            return matches
+                .Select(x => x.Type)
+                .OrderBy(x => x.Length)
+                .FirstOrDefault();
         }
 
         public string GetCategory(string type)
