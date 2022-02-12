@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
@@ -25,22 +26,20 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         protected override Item ParseItem(string[] itemStringLines)
         {
+            var vaalName = Array.FindLast(itemStringLines, l => l.Contains(Resources.VaalKeyword));
+            var name = this.itemDataService.GetType(vaalName ?? itemStringLines[NameLineIndex]);
+
             var gemItem = new GemItem
             {
+                Name = name,
+                Type = name,
                 IsCorrupted = this.IsCorrupted(itemStringLines),
                 Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 Level = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.LevelDescriptor),
                 ExperiencePercent = GetExperiencePercent(itemStringLines),
-                IsVaalVersion = IsVaalVersion(itemStringLines),
+                IsVaalVersion = !string.IsNullOrEmpty(vaalName),
                 QualityType = GetQualityType(itemStringLines)
             };
-
-            gemItem.Name = gemItem.Type = this.itemDataService.GetType(itemStringLines[NameLineIndex]);
-
-            if (gemItem.IsVaalVersion)
-            {
-                gemItem.Name = gemItem.Type = GetVaalVersionName(itemStringLines[NameLineIndex]);
-            }
 
             return gemItem;
         }
@@ -72,11 +71,6 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return (int)percent;
         }
 
-        private bool IsVaalVersion(string[] lines)
-        {
-            return IsCorrupted(lines) && lines.Any(l => l.Contains(Resources.VaalKeyword));
-        }
-
         private static GemQualityType GetQualityType(string[] itemStringLines)
         {
             GemQualityType result = default;
@@ -91,11 +85,6 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             }
 
             return result;
-        }
-
-        private static string GetVaalVersionName(string gemName)
-        {
-            return $"{Resources.VaalKeyword} {gemName}";
         }
     }
 }

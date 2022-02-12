@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
@@ -143,25 +146,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.Level, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void ParseShouldParseVaalGems()
-        {
-            const string name = "Flameblast";
-            string expected = $"{Resources.VaalKeyword} {name}";
-
-            string[] itemStringLines = this.itemStringBuilder
-                .WithName(name)
-                .WithTags($"{Resources.VaalKeyword}, Spell, AoE, Fire, Channelling")
-                .WithCorrupted()
-                .BuildLines();
-
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
-
-            Assert.IsTrue(result.IsVaalVersion);
-            Assert.That(result.Name, Is.EqualTo(expected));
-            Assert.That(result.Type, Is.EqualTo(expected));
-        }
-
         [TestCase("150/1.000", 15)]
         [TestCase("123/1.000", 12)]
         [TestCase("129/1.000", 12)]
@@ -204,6 +188,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         public void ParseShouldParseVaalGem()
         {
             string[] itemStringLines = Properties.Resources.AnomalousVaalFlameblast.Split(Environment.NewLine);
+            this.itemDataServiceMock
+                .Setup(x => x.GetType("Anomalous Vaal Flameblast"))
+                .Returns("Vaal Flameblast");
 
             GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
 
@@ -215,6 +202,23 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.Level, Is.EqualTo(20));
             Assert.That(result.Quality, Is.EqualTo(20));
             Assert.That(result.QualityType, Is.EqualTo(GemQualityType.Anomalous));
+        }
+
+        [Test]
+        public void ParseShouldParseVaalGemWithDifferentNameCorrectly()
+        {
+            string[] itemStringLines = Properties.Resources.VaalImpurityOfLightning.Split(Environment.NewLine);
+            this.itemDataServiceMock
+                .Setup(x => x.GetType("Vaal Impurity of Lightning"))
+                .Returns("Vaal Impurity of Lightning");
+
+            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+
+            Assert.IsNotNull(result);
+            Assert.That(result.Name, Is.EqualTo("Vaal Impurity of Lightning"));
+            Assert.That(result.Type, Is.EqualTo("Vaal Impurity of Lightning"));
+            Assert.That(result.IsCorrupted);
+            Assert.That(result.IsVaalVersion);
         }
 
         protected override string[] GetValidItemStringLines()
