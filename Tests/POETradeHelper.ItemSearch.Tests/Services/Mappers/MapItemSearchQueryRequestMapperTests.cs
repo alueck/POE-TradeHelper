@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
@@ -125,6 +126,38 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             Assert.NotNull(mapTierFilter);
             Assert.That(mapTierFilter.Min, Is.EqualTo(mapTier));
             Assert.That(mapTierFilter.Max, Is.EqualTo(mapTier));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MapToQueryItemShouldMapBlighted(bool isBlighted)
+        {
+            var item = new MapItem(ItemRarity.Normal)
+            {
+                IsBlighted = isBlighted
+            };
+
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+
+            BoolOptionFilter blightedFilter = result.Query.Filters.MapFilters.MapBlighted;
+            Assert.NotNull(blightedFilter);
+            Assert.That(blightedFilter.Option, Is.EqualTo(isBlighted));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MapToQueryItemShouldMapBlightRavaged(bool isBlightRavaged)
+        {
+            var item = new MapItem(ItemRarity.Normal)
+            {
+                IsBlightRavaged = isBlightRavaged
+            };
+
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+
+            BoolOptionFilter blightRavaged = result.Query.Filters.MapFilters.MapBlightRavaged;
+            Assert.NotNull(blightRavaged);
+            Assert.That(blightRavaged.Option, Is.EqualTo(isBlightRavaged));
         }
     }
 }

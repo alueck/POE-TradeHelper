@@ -1,4 +1,5 @@
 ﻿using System;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
@@ -6,6 +7,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class ItemTypeParser : IItemTypeParser
     {
+        private const int NamedItemTypeIndex = 3;
+
         private IItemDataService itemDataService;
 
         public ItemTypeParser(IItemDataService itemDataService)
@@ -21,9 +24,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             }
 
             bool itemHasName = isIdentified && itemRarity >= ItemRarity.Rare;
-            int typeLineIndex = itemHasName ? 3 : 2;
 
-            return this.itemDataService.GetType(itemStringLines[typeLineIndex]);
+            return itemHasName
+                ? itemStringLines[NamedItemTypeIndex]
+                : this.itemDataService.GetType(itemStringLines[NamedItemTypeIndex - 1]);
         }
     }
 }

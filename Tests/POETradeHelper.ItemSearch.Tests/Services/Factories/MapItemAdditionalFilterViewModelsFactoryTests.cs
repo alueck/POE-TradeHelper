@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Properties;
 using POETradeHelper.ItemSearch.Services.Factories;
@@ -249,6 +251,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.MapBlighted);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CreateShouldReturnBlightRavagedFilterViewModel(bool value)
+        {
+            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapBlightRavaged;
+            var mapItem = new MapItem(ItemRarity.Rare)
+            {
+                IsBlightRavaged = value
+            };
+
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.MapBlightRavaged);
         }
 
         [Test]

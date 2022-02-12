@@ -1,5 +1,7 @@
 ﻿using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
@@ -171,6 +173,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             MapItem result = this.ItemParser.Parse(itemStringLines) as MapItem;
 
             Assert.IsTrue(result.IsBlighted);
+        }
+
+        [Test]
+        public void ParseShouldParseBlightRavagedMap()
+        {
+            string[] itemStringLines = this.mapItemStringBuilder
+                .WithType($"{Resources.BlightRavagedPrefix} Dig Map")
+                .BuildLines();
+
+            MapItem result = this.ItemParser.Parse(itemStringLines) as MapItem;
+
+            Assert.IsTrue(result.IsBlightRavaged);
         }
 
         [Test]

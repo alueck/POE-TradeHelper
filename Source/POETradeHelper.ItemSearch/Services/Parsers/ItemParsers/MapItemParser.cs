@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
@@ -37,6 +38,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
             mapItem.Type = this.itemTypeParser.ParseType(itemStringLines, mapItem.Rarity, mapItem.IsIdentified);
             mapItem.IsBlighted = mapItem.Name.Contains(Resources.BlightedPrefix);
+            mapItem.IsBlightRavaged = mapItem.Name.Contains(Resources.BlightRavagedPrefix);
 
             return mapItem;
         }

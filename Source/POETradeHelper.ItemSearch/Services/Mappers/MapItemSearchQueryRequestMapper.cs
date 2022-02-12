@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System;
+
+using Microsoft.Extensions.Options;
+
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -24,6 +27,8 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             var mapItem = (MapItem)item;
             MapIdentified(result, mapItem);
             MapTier(result, mapItem);
+            MapBlighted(result, mapItem);
+            MapBlightRavaged(result, mapItem);
 
             return result;
         }
@@ -42,6 +47,22 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             {
                 Min = mapItem.Tier,
                 Max = mapItem.Tier
+            };
+        }
+
+        private void MapBlighted(SearchQueryRequest result, MapItem mapItem)
+        {
+            result.Query.Filters.MapFilters.MapBlighted = new BoolOptionFilter
+            {
+                Option = mapItem.IsBlighted
+            };
+        }
+
+        private void MapBlightRavaged(SearchQueryRequest result, MapItem mapItem)
+        {
+            result.Query.Filters.MapFilters.MapBlightRavaged = new BoolOptionFilter
+            {
+                Option = mapItem.IsBlightRavaged
             };
         }
     }

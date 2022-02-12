@@ -30,7 +30,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
             return matches
                 .Select(x => x.Type)
-                .OrderBy(x => x.Length)
+                .OrderByDescending(x => x.Length)
                 .FirstOrDefault();
         }
 
