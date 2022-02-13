@@ -116,15 +116,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.Quality, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void ParseShouldParseIdentified()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ParseShouldParseIdentified(bool identified)
         {
             string[] itemStringLines = this.mapItemStringBuilder
+                .WithIdentified(identified)
                 .BuildLines();
 
             MapItem result = this.ItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.IsTrue(result.IsIdentified);
+            Assert.That(result.IsIdentified, Is.EqualTo(identified));
         }
 
         [TestCase(ItemRarity.Magic, true)]
@@ -151,16 +153,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.Type, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void ParseShouldParseBlightedMap()
+        [TestCase("Blighted Dig Map", true)]
+        [TestCase("Dig Map", false)]
+        [TestCase("Blight-ravaged Dig Map", false)]
+        public void ParseShouldParseBlightedMap(string type, bool expected)
         {
             string[] itemStringLines = this.mapItemStringBuilder
-                .WithType($"{Resources.BlightedPrefix} Dig Map")
+                .WithType(type)
                 .BuildLines();
 
             MapItem result = this.ItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.IsTrue(result.IsBlighted);
+            Assert.That(result.IsBlighted, Is.EqualTo(expected));
         }
 
         [Test]
@@ -175,28 +179,31 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.IsTrue(result.IsBlighted);
         }
 
-        [Test]
-        public void ParseShouldParseBlightRavagedMap()
+        [TestCase("Blight-ravaged Dig Map", true)]
+        [TestCase("Dig Map", false)]
+        [TestCase("Blighted Dig Map", false)]
+        public void ParseShouldParseBlightRavagedMap(string type, bool expected)
         {
             string[] itemStringLines = this.mapItemStringBuilder
-                .WithType($"{Resources.BlightRavagedPrefix} Dig Map")
+                .WithType(type)
                 .BuildLines();
 
             MapItem result = this.ItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.IsTrue(result.IsBlightRavaged);
+            Assert.That(result.IsBlightRavaged, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void ParseShouldParseCorruptedMap()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ParseShouldParseCorruptedMap(bool isCorrupted)
         {
             string[] itemStringLines = this.mapItemStringBuilder
-                .WithCorrupted()
+                .WithCorrupted(isCorrupted)
                 .BuildLines();
 
             MapItem result = this.ItemParser.Parse(itemStringLines) as MapItem;
 
-            Assert.IsTrue(result.IsCorrupted);
+            Assert.That(result.IsCorrupted, Is.EqualTo(isCorrupted));
         }
 
         [Test]
