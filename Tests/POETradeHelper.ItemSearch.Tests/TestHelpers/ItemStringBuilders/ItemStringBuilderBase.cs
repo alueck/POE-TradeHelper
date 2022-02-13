@@ -1,4 +1,5 @@
 ﻿using System;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 
@@ -36,9 +37,9 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             return (T)this;
         }
 
-        public T WithCorrupted()
+        public T WithCorrupted(bool isCorrupted = true)
         {
-            this.IsCorrupted = true;
+            this.IsCorrupted = isCorrupted;
             return (T)this;
         }
 

@@ -22,5 +22,6 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         public int MonsterPackSize { get; set; }
         public int Quality { get; set; }
         public bool IsBlighted { get; set; }
+        public bool IsBlightRavaged { get; set; }
     }
 }

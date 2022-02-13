@@ -1,6 +1,9 @@
 ﻿using System;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers;
@@ -34,21 +37,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.Throws<ArgumentException>(action);
         }
 
-        [TestCase(ItemRarity.Rare)]
-        [TestCase(ItemRarity.Unique)]
-        public void ParseTypeShouldCallGetTypeOnItemDataServiceForIdentifiedRareOrUniqueItem(ItemRarity itemRarity)
-        {
-            const string Type = "Identified item type";
-            string[] itemStringLines = this.itemStringBuilder
-                .WithName("Item name")
-                .WithType(Type)
-                .BuildLines();
-
-            this.itemTypeParser.ParseType(itemStringLines, itemRarity, true);
-
-            this.itemDataServiceMock.Verify(x => x.GetType(Type));
-        }
-
         [Test]
         public void ParseTypeShouldCallGetTypeOnItemDataServiceForIdentifiedMagicItem()
         {
@@ -65,7 +53,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [TestCase(ItemRarity.Normal)]
         [TestCase(ItemRarity.Magic)]
         [TestCase(ItemRarity.Rare)]
-        [TestCase(ItemRarity.Unique)]
         public void ParseTypeShouldCallGetTypeOnItemDataServiceForUnidentifiedItem(ItemRarity itemRarity)
         {
             const string Type = "Unidentified item type";
@@ -78,23 +65,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemDataServiceMock.Verify(x => x.GetType(Type));
         }
 
-        [TestCase(ItemRarity.Magic)]
         [TestCase(ItemRarity.Rare)]
         [TestCase(ItemRarity.Unique)]
-        public void ParseTypeShouldReturnResultFromItemDataServiceForIdentifiedItems(ItemRarity itemRarity)
+        public void ParseTypeShouldReturnTypeForIdentifiedRareOrUniqueItem(ItemRarity itemRarity)
         {
-            const string expected = "Result from ItemDataService";
+            const string expected = "Item type";
             string[] itemStringLines = this.itemStringBuilder
                 .WithName("Item name")
-                .WithType("Item type")
+                .WithType(expected)
                 .BuildLines();
-
-            this.itemDataServiceMock.Setup(x => x.GetType(It.IsAny<string>()))
-                .Returns(expected);
 
             string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, true);
 
             Assert.That(result, Is.EqualTo(expected));
+            this.itemDataServiceMock.Verify(x => x.GetType(It.IsAny<string>()), Times.Never);
         }
 
         [TestCase(ItemRarity.Normal)]

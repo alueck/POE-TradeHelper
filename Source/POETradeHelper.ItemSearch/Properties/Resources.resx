@@ -231,4 +231,7 @@
   <data name="Query" xml:space="preserve">
     <value>Query</value>
   </data>
+  <data name="MapBlightRavaged" xml:space="preserve">
+    <value>Blight-ravaged</value>
+  </data>
 </root>

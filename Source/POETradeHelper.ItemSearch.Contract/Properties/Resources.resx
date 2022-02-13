@@ -270,4 +270,7 @@
   <data name="ItemClassDescriptor" xml:space="preserve">
     <value>Item Class:</value>
   </data>
+  <data name="BlightRavagedPrefix" xml:space="preserve">
+    <value>Blight-ravaged</value>
+  </data>
 </root>

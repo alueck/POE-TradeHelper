@@ -96,9 +96,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Id = "Accessories",
                             Entries = new List<ItemData>
                             {
-                                new ItemData { Name = "Wurm's Molt", Type = expectedType },
-                                new ItemData { Name = "Belt" , Text = "Belt" },
-                                new ItemData { Name = expectedType , Text = expectedType },
+                                new ItemData { Name = "Belt" , Type = "Belt" },
+                                new ItemData { Name = expectedType , Type = expectedType },
                             }
                         }
                    }
@@ -107,6 +106,41 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             await this.itemDataService.OnInitAsync();
 
             string result = this.itemDataService.GetType(name);
+
+            Assert.That(result, Is.EqualTo(expectedType));
+        }
+
+        [Test]
+        public async Task GetTypeShouldReturnCorrectTypeForMap()
+        {
+            const string expectedType = "Primordial Pool Map";
+            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
+               .Returns(new QueryResult<Data<ItemData>>
+               {
+                   Result = new List<Data<ItemData>>
+                   {
+                        new Data<ItemData>
+                        {
+                            Id = "Gems",
+                            Entries = new List<ItemData>
+                            {
+                                new ItemData { Name = "Blight" , Type = "Blight" },
+                            }
+                        },
+                        new Data<ItemData>
+                        {
+                            Id = "Maps",
+                            Entries = new List<ItemData>
+                            {
+                                new ItemData { Name = expectedType , Type = expectedType },
+                            }
+                        }
+                   }
+               });
+
+            await this.itemDataService.OnInitAsync();
+
+            string result = this.itemDataService.GetType("Blight-ravaged Primordial Pool Map");
 
             Assert.That(result, Is.EqualTo(expectedType));
         }

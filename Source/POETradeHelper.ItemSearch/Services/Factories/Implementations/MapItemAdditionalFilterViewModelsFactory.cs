@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Properties;
 using POETradeHelper.ItemSearch.ViewModels;
@@ -20,6 +21,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
                 result.Add(this.GetMonsterPacksizeFilterViewModel(mapItem, searchQueryRequest));
                 result.Add(this.GetMapTierFilterViewModel(mapItem, searchQueryRequest));
                 result.Add(this.GetMapBlightedFilterViewModel(searchQueryRequest));
+                result.Add(this.GetMapBlightRavagedFilterViewModel(searchQueryRequest));
                 result.Add(this.GetCorruptedFilterViewModel(searchQueryRequest));
                 result.Add(this.GetIdentifiedFilterViewModel(searchQueryRequest));
             }
@@ -69,6 +71,15 @@ namespace POETradeHelper.ItemSearch.Services.Factories
             {
                 Text = Resources.MapBlighted,
                 IsEnabled = searchQueryRequest.Query.Filters.MapFilters.MapBlighted?.Option
+            };
+        }
+
+        private FilterViewModelBase GetMapBlightRavagedFilterViewModel(SearchQueryRequest searchQueryRequest)
+        {
+            return new BindableFilterViewModel(x => x.Query.Filters.MapFilters.MapBlightRavaged)
+            {
+                Text = Resources.MapBlightRavaged,
+                IsEnabled = searchQueryRequest.Query.Filters.MapFilters.MapBlightRavaged?.Option
             };
         }
     }

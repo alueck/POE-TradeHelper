@@ -6,6 +6,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
     {
         private const string MapIncreasedItemQuantityFilterName = "map_iiq";
         private const string MapIncreasedItemRarityFilterName = "map_iir";
+        private const string MapBlightRavagedFilterName = "map_uberblighted";
 
         [JsonIgnore]
         public MinMaxFilter MapTier
@@ -54,6 +55,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
+        }
+
+        [JsonIgnore]
+        public BoolOptionFilter MapBlightRavaged
+        {
+            get => this.GetFilter<BoolOptionFilter>(MapBlightRavagedFilterName);
+            set => this.SetFilter(value, MapBlightRavagedFilterName);
         }
 
         [JsonIgnore]
