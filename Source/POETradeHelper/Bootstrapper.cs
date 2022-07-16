@@ -9,6 +9,9 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy;
 
+using Avalonia.ReactiveUI;
+using Avalonia.Threading;
+
 using Castle.DynamicProxy;
 
 using MediatR;
@@ -20,9 +23,14 @@ using Microsoft.Extensions.Logging;
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.Common.UI;
+using POETradeHelper.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.ViewModels;
+
+using Polly.Bulkhead;
+
+using ReactiveUI;
 
 using Serilog;
 using Serilog.Events;
@@ -57,11 +65,9 @@ namespace POETradeHelper
             ServiceCollection serviceCollection = ConfigureServiceCollection(assemblies);
 
             var builder = new ContainerBuilder();
-
-            builder
-                .RegisterInstance(new UiThreadDispatcher())
-                .As<IUiThreadDispatcher>();
-
+            var autofacResolver = builder.UseAutofacDependencyResolver();
+            builder.RegisterInstance(autofacResolver);
+            
             RegisterInterceptors(builder, assemblies);
             RegisterNonSingletonTypes(builder, assemblies);
             RegisterSingletonTypes(builder, assemblies);
@@ -69,9 +75,14 @@ namespace POETradeHelper
             RegisterMediatR(builder);
 
             builder.Populate(serviceCollection);
-            builder.UseAutofacDependencyResolver();
 
-            Locator.CurrentMutable.UseMicrosoftExtensionsLoggingWithWrappingFullLogger(Locator.Current.GetService<ILoggerFactory>()!);
+            Locator.CurrentMutable.InitializeSplat();
+            Locator.CurrentMutable.InitializeReactiveUI();
+            Locator.CurrentMutable.InitializeAvalonia();
+            Locator.CurrentMutable.UseMicrosoftExtensionsLoggingWithWrappingFullLogger(() => Locator.Current.GetService<ILoggerFactory>());
+
+            var container = builder.Build();
+            autofacResolver.SetLifetimeScope(container);
         }
 
         private static ServiceCollection ConfigureServiceCollection(params Assembly[] applicationAssemblies)
