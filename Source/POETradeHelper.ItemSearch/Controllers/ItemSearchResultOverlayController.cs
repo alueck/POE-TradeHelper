@@ -1,31 +1,38 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Avalonia.Controls;
+using Avalonia.Threading;
+
 using MediatR;
+
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Attributes;
 using POETradeHelper.Common.Contract.Commands;
-using POETradeHelper.Common.Contract.Queries;
+using POETradeHelper.Common.UI;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.ItemSearch.Views;
 
 namespace POETradeHelper.ItemSearch.Controllers
 {
     [Singleton]
-    public class ItemSearchResultOverlayController : IRequestHandler<SearchItemCommand>, IRequestHandler<HideOverlayQuery, HideOverlayResponse>
+    public class ItemSearchResultOverlayController : IRequestHandler<SearchItemCommand>, IRequestHandler<HideOverlayCommand>
     {
         private readonly IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel;
         private readonly IViewLocator viewLocator;
+        private readonly IUiThreadDispatcher uiThreadDispatcher;
 
         private CancellationTokenSource searchItemCancellationTokenSource = new CancellationTokenSource();
 
         public ItemSearchResultOverlayController(
             IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel,
-            IViewLocator viewLocator)
+            IViewLocator viewLocator,
+            IUiThreadDispatcher uiThreadDispatcher)
         {
             this.itemSearchResultOverlayViewModel = itemSearchResultOverlayViewModel;
             this.viewLocator = viewLocator;
+            this.uiThreadDispatcher = uiThreadDispatcher;
         }
 
         private IItemSearchResultOverlayView view;
@@ -44,7 +51,8 @@ namespace POETradeHelper.ItemSearch.Controllers
                 return itemSearchResultOverlay;
             }
 
-            throw new ArgumentException($"Could not find view for {nameof(IItemSearchResultOverlayViewModel)} that implements {nameof(IItemSearchResultOverlayView)}");
+            throw new ArgumentException(
+                $"Could not find view for {nameof(IItemSearchResultOverlayViewModel)} that implements {nameof(IItemSearchResultOverlayView)}");
         }
 
         private void CancelSearchItemToken()
@@ -59,34 +67,39 @@ namespace POETradeHelper.ItemSearch.Controllers
 
         public async Task<Unit> Handle(SearchItemCommand request, CancellationToken cancellationToken)
         {
-            try
+            await this.uiThreadDispatcher.InvokeAsync(async () =>
             {
-                this.CancelSearchItemToken();
+                try
+                {
+                    this.CancelSearchItemToken();
 
-                this.View.Show();
+                    this.View.Show();
 
-                await this.itemSearchResultOverlayViewModel
-                    .SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token)
-                    .ConfigureAwait(true);
-            }
-            catch (Exception exception) when (exception is OperationCanceledException or TaskCanceledException)
-            {
-            }
-
+                    await this.itemSearchResultOverlayViewModel
+                        .SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token)
+                        .ConfigureAwait(true);
+                }
+                catch (Exception exception) when (exception is OperationCanceledException or TaskCanceledException)
+                {
+                }
+            });
+            
             return Unit.Value;
         }
 
-        public Task<HideOverlayResponse> Handle(HideOverlayQuery request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(HideOverlayCommand request, CancellationToken cancellationToken)
         {
-            var handled = false;
-            if (View.IsVisible)
+            await this.uiThreadDispatcher.InvokeAsync(() =>
             {
-                this.CancelSearchItemToken();
-                View.Hide();
-                handled = true;
-            }
-
-            return Task.FromResult(new HideOverlayResponse(handled));
+                if (View.IsVisible)
+                {
+                    request.OnHandled();
+                    this.CancelSearchItemToken();
+                    View.Hide();
+                }
+            });
+            
+            return Unit.Value;
         }
     }
 }

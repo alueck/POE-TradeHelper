@@ -9,22 +9,22 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
 {
     public class GotoHideoutCommandHandlerTests
     {
-        private Mock<INativeKeyboard> nativeKeyboardMock;
+        private Mock<IUserInputSimulator> userInputSimulatorMock;
         private GotoHideoutCommandHandler goToHideoutCommandHandler;
 
         [SetUp]
         public void Setup()
         {
-            this.nativeKeyboardMock = new Mock<INativeKeyboard>();
-            this.goToHideoutCommandHandler = new GotoHideoutCommandHandler(this.nativeKeyboardMock.Object);
+            this.userInputSimulatorMock = new Mock<IUserInputSimulator>();
+            this.goToHideoutCommandHandler = new GotoHideoutCommandHandler(this.userInputSimulatorMock.Object);
         }
 
         [Test]
-        public async Task HandleShouldCallSendGotoHideoutCommandToNativeKeyboard()
+        public async Task HandleShouldCallSendGotoHideoutCommandOnUserInputSimulator()
         {
             await this.goToHideoutCommandHandler.Handle(new GotoHideoutCommand(), default);
 
-            this.nativeKeyboardMock.Verify(x => x.SendGotoHideoutCommand());
+            this.userInputSimulatorMock.Verify(x => x.SendGotoHideoutCommand());
         }
     }
 }

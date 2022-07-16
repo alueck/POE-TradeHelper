@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Avalonia.Threading;
+
+using FluentAssertions;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
-using POETradeHelper.Common.Contract.Queries;
+using POETradeHelper.Common.UI;
 using POETradeHelper.ItemSearch.Controllers;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.ItemSearch.Views;
@@ -17,6 +24,7 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
         private Mock<IItemSearchResultOverlayView> viewMock;
         private Mock<IItemSearchResultOverlayViewModel> viewModelMock;
         private Mock<IViewLocator> viewLocatorMock;
+        private Mock<IUiThreadDispatcher> uiThreadDispatcherMock;
         private ItemSearchResultOverlayController overlayController;
 
         [SetUp]
@@ -27,43 +35,43 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
             this.viewLocatorMock = new Mock<IViewLocator>();
             this.viewLocatorMock.Setup(x => x.GetView(It.IsAny<IItemSearchResultOverlayViewModel>()))
                 .Returns(this.viewMock.Object);
-            this.overlayController = new ItemSearchResultOverlayController(this.viewModelMock.Object, this.viewLocatorMock.Object);
+            this.uiThreadDispatcherMock = new Mock<IUiThreadDispatcher>();
+            this.overlayController = new ItemSearchResultOverlayController(this.viewModelMock.Object, this.viewLocatorMock.Object, this.uiThreadDispatcherMock.Object);
         }
 
         [Test]
         public async Task HandleHideOverlayQueryShouldCallHideOnOverlayIfOverlayIsVisible()
         {
-            viewMock.Setup(x => x.IsVisible).Returns(true);
+            this.viewMock.Setup(x => x.IsVisible).Returns(true);
 
-            await this.overlayController.Handle(new HideOverlayQuery(), default);
+            await this.ExecuteHideOverlayCommand(new HideOverlayCommand(() => {}));
 
-            viewMock.Verify(x => x.Hide());
+            this.viewMock.Verify(x => x.Hide());
+        }
+        
+        [Test]
+        public async Task HandleHideOverlayQueryShouldInvokeOnHandledActionIfOverlayIsVisible()
+        {
+            bool handled = false;
+            this.viewMock.Setup(x => x.IsVisible).Returns(true);
+
+            await this.ExecuteHideOverlayCommand(new HideOverlayCommand(() => handled = true));
+
+            handled.Should().BeTrue();
         }
 
         [Test]
         public async Task HandleHideOverlayQueryShouldNotCallHideOnOverlayIfOverlayIsNotVisible()
         {
-            await this.overlayController.Handle(new HideOverlayQuery(), default);
+            await this.ExecuteHideOverlayCommand(new HideOverlayCommand(() => {}));
 
-            viewMock.Verify(x => x.Hide(), Times.Never);
-        }
-
-        [TestCase(true, true)]
-        [TestCase(false, false)]
-        public async Task HandleHideOverlayQueryShouldReturnResponse(bool isVisible, bool expectedHandledValue)
-        {
-            viewMock.Setup(x => x.IsVisible).Returns(isVisible);
-
-            var result = await this.overlayController.Handle(new HideOverlayQuery(), default);
-
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Handled, Is.EqualTo(expectedHandledValue));
+            this.viewMock.Verify(x => x.Hide(), Times.Never);
         }
 
         [Test]
         public async Task HandleSearchItemQueryShouldCallSetListingForItemUnderCursorAsyncOnViewModel()
         {
-            await this.overlayController.Handle(new SearchItemCommand(), default);
+            await this.ExecuteSearchItemCommand(new SearchItemCommand());
 
             this.viewModelMock.Verify(x => x.SetListingForItemUnderCursorAsync(It.Is<CancellationToken>(c => c != CancellationToken.None)));
         }
@@ -71,7 +79,7 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
         [Test]
         public async Task HandleSearchItemQueryShouldOpenOverlay()
         {
-            await this.overlayController.Handle(new SearchItemCommand(), default);
+            await this.ExecuteSearchItemCommand(new SearchItemCommand());
 
             this.viewMock.Verify(x => x.Show());
         }
@@ -83,7 +91,29 @@ namespace POETradeHelper.ItemSearch.Tests.Controllers
                 .Setup(x => x.SetListingForItemUnderCursorAsync(It.IsAny<CancellationToken>()))
                 .Throws<OperationCanceledException>();
             
-            await this.overlayController.Handle(new SearchItemCommand(), default);
+            await this.ExecuteSearchItemCommand(new SearchItemCommand());
+        }
+
+        private async Task ExecuteHideOverlayCommand(HideOverlayCommand command)
+        {
+            Action action = null;
+            this.uiThreadDispatcherMock
+                .Setup(x => x.InvokeAsync(It.IsAny<Action>(), It.IsAny<DispatcherPriority>()))
+                .Callback((Action func, DispatcherPriority _) => action = func);
+            
+            await this.overlayController.Handle(command, default);
+            action();
+        }
+
+        private async Task ExecuteSearchItemCommand(SearchItemCommand command)
+        {
+            Func<Task> action = null;
+            this.uiThreadDispatcherMock
+                .Setup(x => x.InvokeAsync(It.IsAny<Func<Task>>(), It.IsAny<DispatcherPriority>()))
+                .Callback((Func<Task> func, DispatcherPriority _) => action = func);
+            
+            await this.overlayController.Handle(command, default);
+            await action();
         }
     }
 }

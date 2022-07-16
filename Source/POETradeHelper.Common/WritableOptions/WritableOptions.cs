@@ -4,9 +4,10 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
 using Microsoft.Extensions.Options;
 
-namespace POETradeHelper.Common
+namespace POETradeHelper.Common.WritableOptions
 {
     public class WritableOptions<TOptions> : IWritableOptions<TOptions> where TOptions : class, new()
     {

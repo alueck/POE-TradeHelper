@@ -1,4 +1,4 @@
-﻿using POETradeHelper.PathOfExileTradeApi.Models;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace POETradeHelper.ItemSearch.ViewModels
@@ -7,6 +7,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
     {
         ItemListingsViewModel ItemListings { get; set; }
 
-        Task SetListingForItemUnderCursorAsync(System.Threading.CancellationToken token = default);
+        Task SetListingForItemUnderCursorAsync(CancellationToken token = default);
     }
 }

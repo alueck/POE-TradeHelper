@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using POETradeHelper.Common.Commands;
+using POETradeHelper.Common.Contract.Commands;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Queries;
 using POETradeHelper.QualityOfLife.Models;

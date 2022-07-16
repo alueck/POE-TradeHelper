@@ -1,14 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.12" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.12" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.12" />
-    <PackageReference Include="System.Text.Json" Version="6.0.2" />
+    <PackageReference Include="Avalonia" Version="0.10.16" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.16" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.16" />
+    <PackageReference Include="System.Text.Json" Version="6.0.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +23,9 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Views\PricePredictionView.axaml.cs">
+      <DependentUpon>PricePredictionView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 

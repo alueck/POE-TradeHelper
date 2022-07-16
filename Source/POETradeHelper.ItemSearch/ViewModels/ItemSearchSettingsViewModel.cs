@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using POETradeHelper.Common;
 using POETradeHelper.Common.UI;
+using POETradeHelper.Common.WritableOptions;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Properties;

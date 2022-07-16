@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 
+using POETradeHelper.Common.WritableOptions;
+
 namespace POETradeHelper.Common.Extensions
 {
     [ExcludeFromCodeCoverage]

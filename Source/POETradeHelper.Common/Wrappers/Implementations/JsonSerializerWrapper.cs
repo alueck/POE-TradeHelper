@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
-namespace POETradeHelper.Common.Wrappers
+namespace POETradeHelper.Common.Wrappers.Implementations
 {
     [ExcludeFromCodeCoverage]
     public class JsonSerializerWrapper : IJsonSerializerWrapper

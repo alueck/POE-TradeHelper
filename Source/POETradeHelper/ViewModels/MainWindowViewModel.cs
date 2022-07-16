@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using DynamicData;
-using POETradeHelper.Common;
+
+using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.UI;
 using POETradeHelper.Common.UI.Models;
 using POETradeHelper.Properties;
+
 using ReactiveUI;
+
 using Splat;
 
 namespace POETradeHelper.ViewModels

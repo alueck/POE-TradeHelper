@@ -8,22 +8,22 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
 {
     public class GotoHideoutCommandHandler : IRequestHandler<GotoHideoutCommand>
     {
-        private readonly INativeKeyboard nativeKeyboard;
+        private readonly IUserInputSimulator userInputSimulator;
         private bool isExecuting;
 
-        public GotoHideoutCommandHandler(INativeKeyboard nativeKeyboard)
+        public GotoHideoutCommandHandler(IUserInputSimulator userInputSimulator)
         {
-            this.nativeKeyboard = nativeKeyboard;
+            this.userInputSimulator = userInputSimulator;
         }
 
-        public Task<Unit> Handle(GotoHideoutCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(GotoHideoutCommand request, CancellationToken cancellationToken)
         {
             if (!isExecuting)
             {
                 try
                 {
                     isExecuting = true;
-                    this.nativeKeyboard.SendGotoHideoutCommand();
+                    await this.userInputSimulator.SendGotoHideoutCommand();
                 }
                 finally
                 {
@@ -31,7 +31,7 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
                 }
             }
 
-            return Task.FromResult(Unit.Value);
+            return Unit.Value;
         }
     }
 }

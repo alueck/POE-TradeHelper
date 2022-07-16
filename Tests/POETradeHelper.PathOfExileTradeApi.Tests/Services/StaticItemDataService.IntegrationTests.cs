@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using POETradeHelper.Common.Wrappers;
+using POETradeHelper.Common.Wrappers.Implementations;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PathOfExileTradeApi.Tests.Properties;
 
