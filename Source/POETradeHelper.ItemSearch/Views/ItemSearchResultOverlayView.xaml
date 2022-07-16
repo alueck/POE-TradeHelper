@@ -5,10 +5,8 @@
     xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.Converters;assembly=POETradeHelper.ItemSearch"
-    xmlns:localViews="clr-namespace:POETradeHelper.ItemSearch.Views;assembly=POETradeHelper.ItemSearch"
     xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.ViewModels;assembly=POETradeHelper.ItemSearch"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pricePrediction="clr-namespace:POETradeHelper.PricePrediction.Views;assembly=POETradeHelper.PricePrediction"
     xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
     Title="Overlay"
     MinWidth="400"
@@ -18,7 +16,7 @@
     d:DesignHeight="400"
     d:DesignWidth="800"
     d:DataContext="{d:DesignInstance Type=localVms:ItemSearchResultOverlayViewModel}"
-    HasSystemDecorations="False"
+    SystemDecorations="None"
     Topmost="True"
     mc:Ignorable="d">
 
@@ -99,12 +97,11 @@
                     Uri="{Binding ItemListings.ListingsUri}" />
 
                 <Grid Grid.Row="1" RowDefinitions="Auto,35">
-                    <localViews:AdvancedFiltersView
-                        Grid.Row="0"
-                        Height="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-100}"
-                        Width="350"
-                        Margin="8"
-                        DataContext="{Binding AdvancedFilters}" />
+
+                    <ContentControl Grid.Row="0"
+                                    Height="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-100}"
+                                    Width="350"
+                                    Margin="8" Content="{Binding AdvancedFilters}" />
                     <Button
                         Grid.Row="1"
                         MaxWidth="150"
@@ -154,11 +151,12 @@
                         VerticalAlignment="Center"
                         IsVisible="{Binding !ItemListings.Listings.Count}"
                         Text="{x:Static resources:Resources.NoItemsFoundText}" />
-                    <pricePrediction:PricePredictionControl
+
+                    <ContentControl
                         Grid.Row="1"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        DataContext="{Binding PricePrediction}" />
+                        Content="{Binding PricePrediction}" />
                 </Grid>
             </Grid>
         </Grid>

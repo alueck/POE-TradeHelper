@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 
-namespace POETradeHelper.Common.Wrappers
+namespace POETradeHelper.Common.Wrappers.Implementations
 {
     [ExcludeFromCodeCoverage]
     public class HttpClientFactoryWrapper : IHttpClientFactoryWrapper

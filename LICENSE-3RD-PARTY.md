@@ -10,7 +10,7 @@ applies to:
 - Serilog.Exceptions, Copyright (c) 2015 Muhammad Rehan Saeed
 - Splat.Autofac, Copyright (c) .NET Foundation and Contributors
 - Splat.Microsoft.Extensions.Logging, Copyright (c) .NET Foundation and Contributors
-- WindowsHook, Copyright (c) 2010-2018 George Mamaladze
+- SharpHook, Copyright (c) 2021 Anatoliy Pylypchuk
 
 -----------------------------------------------------------------------------
 

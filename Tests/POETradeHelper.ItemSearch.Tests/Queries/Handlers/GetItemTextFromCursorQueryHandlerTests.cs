@@ -10,15 +10,15 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
     public class GetItemTextFromCursorQueryHandlerTests
     {
         private Mock<IClipboardHelper> clipboardHelperMock;
-        private Mock<INativeKeyboard> nativeKeyBoardMock;
+        private Mock<IUserInputSimulator> userInputSimulatorMock;
         private GetItemTextFromCursorQueryHandler handler;
 
         [SetUp]
         public void Setup()
         {
             this.clipboardHelperMock = new Mock<IClipboardHelper>();
-            this.nativeKeyBoardMock = new Mock<INativeKeyboard>();
-            this.handler = new GetItemTextFromCursorQueryHandler(this.clipboardHelperMock.Object, this.nativeKeyBoardMock.Object);
+            this.userInputSimulatorMock = new Mock<IUserInputSimulator>();
+            this.handler = new GetItemTextFromCursorQueryHandler(this.clipboardHelperMock.Object, this.userInputSimulatorMock.Object);
         }
 
         [Test]
@@ -30,11 +30,11 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
         }
 
         [Test]
-        public async Task HandleShouldCallSendCopyCommandOnNativeKeyboard()
+        public async Task HandleShouldCallSendCopyCommandOnUserInputSimulator()
         {
             await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
-            this.nativeKeyBoardMock.Verify(x => x.SendCopyCommand());
+            this.userInputSimulatorMock.Verify(x => x.SendCopyCommand());
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
             this.clipboardHelperMock.Setup(x => x.GetTextAsync())
                 .ReturnsAsync("previously copied text");
 
-            this.nativeKeyBoardMock.Setup(x => x.SendCopyCommand())
+            this.userInputSimulatorMock.Setup(x => x.SendCopyCommand())
                 .Callback(() => this.clipboardHelperMock.Setup(x => x.GetTextAsync()).ReturnsAsync(expected));
 
             string result = await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
@@ -59,7 +59,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
             this.clipboardHelperMock.Setup(x => x.GetTextAsync())
                 .ReturnsAsync(expected);
 
-            this.nativeKeyBoardMock.Setup(x => x.SendCopyCommand())
+            this.userInputSimulatorMock.Setup(x => x.SendCopyCommand())
                 .Callback(() => this.clipboardHelperMock.Setup(x => x.GetTextAsync()).ReturnsAsync(expected));
 
             string result = await this.handler.Handle(new GetItemTextFromCursorQuery(), default);

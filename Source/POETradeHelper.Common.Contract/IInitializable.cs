@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
+
 using POETradeHelper.Common.Contract.Attributes;
 
-namespace POETradeHelper.Common
+namespace POETradeHelper.Common.Contract
 {
     [Singleton]
     public interface IInitializable

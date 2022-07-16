@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 
-namespace POETradeHelper.Common
+using Microsoft.Extensions.Options;
+
+namespace POETradeHelper.Common.WritableOptions
 {
     public interface IWritableOptions<out TOptions> : IOptionsSnapshot<TOptions> where TOptions : class, new()
     {

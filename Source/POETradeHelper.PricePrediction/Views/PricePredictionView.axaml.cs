@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace POETradeHelper.PricePrediction.Views
 {
-    public class PricePredictionControl : UserControl
+    public class PricePredictionView : UserControl
     {
-        public PricePredictionControl()
+        public PricePredictionView()
         {
             this.InitializeComponent();
         }

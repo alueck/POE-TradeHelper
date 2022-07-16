@@ -19,11 +19,15 @@ using Microsoft.Extensions.Logging;
 
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Extensions;
+using POETradeHelper.Common.UI;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.ViewModels;
+
 using Serilog;
+using Serilog.Events;
 using Serilog.Exceptions;
+
 using Splat;
 using Splat.Autofac;
 using Splat.Microsoft.Extensions.Logging;
@@ -38,6 +42,15 @@ namespace POETradeHelper
             RegisterDependencies();
         }
 
+        public static void Shutdown()
+        {
+            var modules = Locator.Current.GetServices<IModule>();
+            foreach (var module in modules.OfType<IDisposable>())
+            {
+                module.Dispose();
+            }
+        }
+
         private static void RegisterDependencies()
         {
             Assembly[] assemblies = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "POETradeHelper*.dll").Select(Assembly.LoadFrom).ToArray();
@@ -45,6 +58,9 @@ namespace POETradeHelper
 
             var builder = new ContainerBuilder();
 
+            builder
+                .RegisterInstance(new UiThreadDispatcher())
+                .As<IUiThreadDispatcher>();
 
             RegisterInterceptors(builder, assemblies);
             RegisterNonSingletonTypes(builder, assemblies);
@@ -62,11 +78,11 @@ namespace POETradeHelper
         {
             var serviceCollection = new ServiceCollection();
 
-            Serilog.Log.Logger = new LoggerConfiguration()
-                            .MinimumLevel.Is(Serilog.Events.LogEventLevel.Warning)
-                            .Enrich.WithExceptionDetails()
-                            .WriteTo.Debug()
-                            .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Is(LogEventLevel.Warning)
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Debug()
+                .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
 
             serviceCollection.AddLogging(builder => builder.AddSerilog());
             serviceCollection.AddMemoryCache();

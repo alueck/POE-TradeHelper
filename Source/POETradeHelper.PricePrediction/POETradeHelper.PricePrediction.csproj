@@ -24,6 +24,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Views\PricePredictionView.axaml.cs">
+      <DependentUpon>PricePredictionView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

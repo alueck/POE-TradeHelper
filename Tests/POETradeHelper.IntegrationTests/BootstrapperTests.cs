@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Linq;
+
 using NUnit.Framework;
+
+using POETradeHelper.Common.Contract;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.Services;
 using Splat;
@@ -29,6 +33,12 @@ namespace POETradeHelper.IntegrationTests
                         () => $"No {nameof(IWikiUrlProvider)} registered/implemented for wiki type '{wikiType}'");
                 }
             });
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            Bootstrapper.Shutdown();
         }
     }
 }

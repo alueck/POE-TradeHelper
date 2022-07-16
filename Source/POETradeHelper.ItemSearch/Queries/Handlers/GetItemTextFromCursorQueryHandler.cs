@@ -9,22 +9,22 @@ namespace POETradeHelper.ItemSearch.Queries.Handlers
     public class GetItemTextFromCursorQueryHandler : IRequestHandler<GetItemTextFromCursorQuery, string>
     {
         private readonly IClipboardHelper clipboardHelper;
-        private readonly INativeKeyboard nativeKeyboard;
+        private readonly IUserInputSimulator userInputSimulator;
 
-        public GetItemTextFromCursorQueryHandler(IClipboardHelper clipboardHelper, INativeKeyboard nativeKeyboard)
+        public GetItemTextFromCursorQueryHandler(IClipboardHelper clipboardHelper, IUserInputSimulator userInputSimulator)
         {
             this.clipboardHelper = clipboardHelper;
-            this.nativeKeyboard = nativeKeyboard;
+            this.userInputSimulator = userInputSimulator;
         }
 
         public async Task<string> Handle(GetItemTextFromCursorQuery request, CancellationToken cancellationToken)
         {
             string clipBoardTemp = await this.clipboardHelper.GetTextAsync();
 
-            this.nativeKeyboard.SendCopyCommand();
+            this.userInputSimulator.SendCopyCommand();
 
             //small delay, because the text is not always directly available after the copy key command
-            await Task.Delay(200, cancellationToken);
+            await Task.Delay(300, cancellationToken);
 
             string itemString = await this.clipboardHelper.GetTextAsync();
 

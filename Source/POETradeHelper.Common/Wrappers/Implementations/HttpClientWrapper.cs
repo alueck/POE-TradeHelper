@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace POETradeHelper.Common.Wrappers
+namespace POETradeHelper.Common.Wrappers.Implementations
 {
     [ExcludeFromCodeCoverage]
     public class HttpClientWrapper : IHttpClientWrapper

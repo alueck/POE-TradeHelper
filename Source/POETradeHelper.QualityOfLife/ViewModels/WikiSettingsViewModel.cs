@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using POETradeHelper.Common;
 using POETradeHelper.Common.UI;
+using POETradeHelper.Common.WritableOptions;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.Properties;
 using ReactiveUI;

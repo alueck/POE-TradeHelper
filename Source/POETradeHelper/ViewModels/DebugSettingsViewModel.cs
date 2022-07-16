@@ -19,7 +19,7 @@ namespace POETradeHelper.ViewModels
 
         public string Title => Resources.DebugSettingsHeader;
 
-        public bool IsBusy { get => false; set { } }
+        public bool IsBusy => false;
 
         public Task InitializeAsync()
         {
