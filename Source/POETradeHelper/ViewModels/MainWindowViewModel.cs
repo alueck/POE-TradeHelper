@@ -10,6 +10,7 @@ using POETradeHelper.Common.UI.Models;
 using POETradeHelper.Properties;
 
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 using Splat;
 
@@ -17,22 +18,47 @@ namespace POETradeHelper.ViewModels
 {
     public class MainWindowViewModel : ReactiveObject
     {
-        private bool isBusy;
-        private string isBusyText;
-        private Message errorMessage;
-        private IEnumerable<ISettingsViewModel> settingsViewModels;
-        private ObservableAsPropertyHelper<Message> saveSettingsMessage;
-
         public MainWindowViewModel(IEnumerable<ISettingsViewModel> settingsViewModels, IEnumerable<IInitializable> initializables)
         {
-            this.settingsViewModels = settingsViewModels;
+            this.SettingsViewModels = settingsViewModels;
 
-            InitializeAsync(initializables);
+            this.InitializeAsync(initializables);
 
-            this.SaveSettingsCommand = ReactiveCommand.Create(SaveSettings);
-            ConfigureSaveSettingsCommand();
+            this.SaveSettingsCommand = ReactiveCommand.Create(this.SaveSettings);
+            this.SaveSettingsCommand
+                .Select(success =>
+                {
+                    if (success)
+                    {
+                        var successMessage = new Message { Type = MessageType.Success, Text = Resources.SavedMessageText };
+                        return Observable.Return(successMessage).Concat(Observable.Return((Message)null).Delay(TimeSpan.FromSeconds(3), RxApp.MainThreadScheduler));
+                    }
+                    else
+                    {
+                        var failedMessage = new Message { Type = MessageType.Error, Text = Resources.FailedToSaveSettingsMessageText };
+                        return Observable.Return(failedMessage);
+                    }
+                })
+                .Switch()
+                .ToPropertyEx(this, x => x.SaveSettingsMessage);
         }
 
+        public IEnumerable<ISettingsViewModel> SettingsViewModels { get; }
+
+        [Reactive]
+        public bool IsBusy { get; private set; }
+
+        [Reactive]
+        public string IsBusyText { get; private set; }
+
+        [ObservableAsProperty]
+        public Message SaveSettingsMessage { get; }
+
+        public ReactiveCommand<Unit, bool> SaveSettingsCommand { get; }
+
+        [Reactive]
+        public Message ErrorMessage { get; private set; }
+        
         private async void InitializeAsync(IEnumerable<IInitializable> initializables)
         {
             bool success = await this.InitializeAsync(
@@ -61,7 +87,7 @@ namespace POETradeHelper.ViewModels
 
         private async Task InitializeSettingViewModelsAsync()
         {
-            foreach (var settingsViewModel in this.settingsViewModels)
+            foreach (var settingsViewModel in this.SettingsViewModels)
             {
                 await settingsViewModel.InitializeAsync().ConfigureAwait(true);
             }
@@ -99,31 +125,11 @@ namespace POETradeHelper.ViewModels
             this.IsBusyText = null;
         }
 
-        private void ConfigureSaveSettingsCommand()
-        {
-            this.SaveSettingsCommand
-                .Select(success =>
-                {
-                    if (success)
-                    {
-                        var successMessage = new Message { Type = MessageType.Success, Text = Resources.SavedMessageText };
-                        return Observable.Return(successMessage).Concat(Observable.Return((Message)null).Delay(TimeSpan.FromSeconds(3), RxApp.MainThreadScheduler));
-                    }
-                    else
-                    {
-                        var failedMessage = new Message { Type = MessageType.Error, Text = Resources.FailedToSaveSettingsMessageText };
-                        return Observable.Return(failedMessage);
-                    }
-                })
-                .Switch()
-                .ToProperty(this, x => x.SaveSettingsMessage, out saveSettingsMessage);
-        }
-
         private bool SaveSettings()
         {
             try
             {
-                foreach (var settingsViewModel in settingsViewModels)
+                foreach (var settingsViewModel in this.SettingsViewModels)
                 {
                     settingsViewModel.SaveSettings();
                 }
@@ -135,37 +141,6 @@ namespace POETradeHelper.ViewModels
             }
 
             return true;
-        }
-
-        public bool IsBusy
-        {
-            get => this.isBusy;
-            set => this.RaiseAndSetIfChanged(ref this.isBusy, value);
-        }
-
-        public string IsBusyText
-        {
-            get => this.isBusyText;
-            set => this.RaiseAndSetIfChanged(ref this.isBusyText, value);
-        }
-
-        public Message SaveSettingsMessage
-        {
-            get => saveSettingsMessage.Value;
-        }
-
-        public IEnumerable<ISettingsViewModel> SettingsViewModels
-        {
-            get => this.settingsViewModels;
-            set => this.RaiseAndSetIfChanged(ref this.settingsViewModels, value);
-        }
-
-        public ReactiveCommand<Unit, bool> SaveSettingsCommand { get; }
-
-        public Message ErrorMessage
-        {
-            get => this.errorMessage;
-            set => this.RaiseAndSetIfChanged(ref this.errorMessage, value);
         }
     }
 }

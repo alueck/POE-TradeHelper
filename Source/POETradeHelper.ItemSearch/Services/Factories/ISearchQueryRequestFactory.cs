@@ -4,10 +4,10 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
-    public interface IQueryRequestFactory
+    public interface ISearchQueryRequestFactory
     {
-        IQueryRequest Create(Item item);
+        SearchQueryRequest Create(Item item);
 
-        IQueryRequest Create(IQueryRequest originalRequest, IAdvancedFiltersViewModel advancedFiltersViewModel);
+        SearchQueryRequest Create(SearchQueryRequest originalRequest, IAdvancedFiltersViewModel advancedFiltersViewModel);
     }
 }

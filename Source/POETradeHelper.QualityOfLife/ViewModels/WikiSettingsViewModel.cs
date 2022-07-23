@@ -7,6 +7,7 @@ using POETradeHelper.Common.WritableOptions;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.Properties;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace POETradeHelper.QualityOfLife.ViewModels
 {
@@ -23,21 +24,11 @@ namespace POETradeHelper.QualityOfLife.ViewModels
 
         public bool IsBusy => false;
 
-        private IEnumerable<WikiType> wikiTypes;
+        [Reactive]
+        public IEnumerable<WikiType> WikiTypes { get; private set; }
 
-        public IEnumerable<WikiType> WikiTypes
-        {
-            get => wikiTypes;
-            set => this.RaiseAndSetIfChanged(ref wikiTypes, value);
-        }
-
-        private WikiType? selectedWikiType;
-
-        public WikiType SelectedWikiType
-        {
-            get => this.selectedWikiType.GetValueOrDefault();
-            set => this.RaiseAndSetIfChanged(ref selectedWikiType, value);
-        }
+        [Reactive]
+        public WikiType SelectedWikiType { get; private set; }
 
         public Task InitializeAsync()
         {
@@ -50,7 +41,7 @@ namespace POETradeHelper.QualityOfLife.ViewModels
         {
             this.wikiOptions.Update(options =>
             {
-                options.Wiki = this.selectedWikiType.GetValueOrDefault();
+                options.Wiki = this.SelectedWikiType;
             });
         }
     }

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -31,22 +33,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             this.itemToExchangeQueryRequestMapper = new ItemToExchangeQueryRequestMapper(this.staticDataServiceMock.Object, this.itemSearchOptionsMock.Object);
         }
 
-        [TestCaseSource(nameof(SupportedItems))]
-        public void CanMapShouldReturnTrueForSupportedItemTypes(Item item)
-        {
-            bool result = this.itemToExchangeQueryRequestMapper.CanMap(item);
-
-            Assert.IsTrue(result);
-        }
-
-        [TestCaseSource(nameof(UnsupportedItems))]
-        public void CanMapShouldReturnFalseForUnsupportedItemTypes(Item item)
-        {
-            bool result = this.itemToExchangeQueryRequestMapper.CanMap(item);
-
-            Assert.IsFalse(result);
-        }
-
         [Test]
         public void MapToQueryRequestShouldMapLeague()
         {
@@ -62,7 +48,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                     }
                 });
 
-            IQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
+            ExchangeQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.League, Is.EqualTo(expected));
         }
@@ -89,46 +75,23 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             this.staticDataServiceMock.Setup(x => x.GetId(It.IsAny<string>()))
                 .Returns(expected);
 
-            var result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item) as ExchangeQueryRequest;
+            var result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result);
-            Assert.That(result.Exchange.Want, Has.Count.EqualTo(1));
-            Assert.That(result.Exchange.Want, Has.One.EqualTo(expected));
+            Assert.That(result.Query.Have, Has.Count.EqualTo(1));
+            Assert.That(result.Query.Have, Has.One.EqualTo(expected));
         }
 
         [Test]
-        public void MapToQueryRequestShouldReturnExchangeQueryRequestWithChaosAsHave()
+        public void MapToQueryRequestShouldReturnExchangeQueryRequestWithChaosAsWant()
         {
             var item = new CurrencyItem();
 
-            var result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item) as ExchangeQueryRequest;
+            var result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result);
-            Assert.That(result.Exchange.Have, Has.Count.EqualTo(1));
-            Assert.That(result.Exchange.Have, Has.One.EqualTo("chaos"));
-        }
-
-        private static IEnumerable<Item> SupportedItems
-        {
-            get
-            {
-                yield return new CurrencyItem();
-                yield return new FragmentItem();
-                yield return new DivinationCardItem();
-            }
-        }
-
-        private static IEnumerable<Item> UnsupportedItems
-        {
-            get
-            {
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new MapItem(ItemRarity.Normal);
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-                yield return new EquippableItem(ItemRarity.Normal);
-                yield return new GemItem();
-            }
+            Assert.That(result.Query.Want, Has.Count.EqualTo(1));
+            Assert.That(result.Query.Want, Has.One.EqualTo("chaos"));
         }
     }
 }

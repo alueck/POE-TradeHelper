@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public class SearchQueryRequest : IQueryRequest
+    public class SearchQueryRequest : ICloneable
     {
         public Query Query { get; private set; } = new Query();
 

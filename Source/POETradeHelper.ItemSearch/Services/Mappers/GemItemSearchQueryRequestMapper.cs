@@ -17,7 +17,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             return item is GemItem;
         }
 
-        public override IQueryRequest MapToQueryRequest(Item item)
+        public override SearchQueryRequest MapToQueryRequest(Item item)
         {
             SearchQueryRequest result = (SearchQueryRequest)base.MapToQueryRequest(item);
 

@@ -1,6 +1,6 @@
 ﻿namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public class Price
+    public record Price
     {
         public string Type { get; set; }
 

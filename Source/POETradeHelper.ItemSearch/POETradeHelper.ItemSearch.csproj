@@ -12,14 +12,12 @@
       <SubType>Designer</SubType>
     </AvaloniaResource>
     <AvaloniaResource Include="Assets\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AvaloniaResource Remove="Views\ItemSearchSettingsView.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Views\ItemSearchSettingsView.xaml" />
+    <Compile Update="Views\ExchangeResultsView.xaml.cs">
+      <DependentUpon>ExchangeResultsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ItemResultsView.xaml.cs">
+      <DependentUpon>ItemResultsView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -29,12 +27,7 @@
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.16" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.16" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Views\ItemSearchSettingsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
+    <PackageReference Include="ReactiveUI.Fody" Version="18.3.1" />
   </ItemGroup>
 
   <ItemGroup>

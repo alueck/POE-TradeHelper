@@ -7,6 +7,6 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
     {
         bool CanMap(Item item);
 
-        IQueryRequest MapToQueryRequest(Item item);
+        SearchQueryRequest MapToQueryRequest(Item item);
     }
 }

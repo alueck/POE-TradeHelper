@@ -32,9 +32,9 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             return item is EquippableItem;
         }
 
-        public override IQueryRequest MapToQueryRequest(Item item)
+        public override SearchQueryRequest MapToQueryRequest(Item item)
         {
-            var result = (SearchQueryRequest)base.MapToQueryRequest(item);
+            var result = base.MapToQueryRequest(item);
 
             var equippableItem = (EquippableItem)item;
             MapItemLinks(result, equippableItem);

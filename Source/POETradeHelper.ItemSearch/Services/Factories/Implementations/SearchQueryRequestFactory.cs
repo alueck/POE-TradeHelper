@@ -12,54 +12,47 @@ using ReactiveUI;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
-    public class QueryRequestFactory : IQueryRequestFactory
+    public class SearchQueryRequestFactory : ISearchQueryRequestFactory
     {
         private readonly IEnumerable<IItemSearchQueryRequestMapper> itemToQueryRequestMappers;
 
-        public QueryRequestFactory(IEnumerable<IItemSearchQueryRequestMapper> itemToQueryRequestMappers)
+        public SearchQueryRequestFactory(IEnumerable<IItemSearchQueryRequestMapper> itemToQueryRequestMappers)
         {
             this.itemToQueryRequestMappers = itemToQueryRequestMappers;
         }
 
-        public IQueryRequest Create(Item item)
+        public SearchQueryRequest Create(Item item)
         {
             IItemSearchQueryRequestMapper mapper = this.itemToQueryRequestMappers.FirstOrDefault(m => m.CanMap(item));
 
             return mapper?.MapToQueryRequest(item);
         }
 
-        public IQueryRequest Create(IQueryRequest originalRequest, IAdvancedFiltersViewModel advancedFiltersViewModel)
+        public SearchQueryRequest Create(SearchQueryRequest originalRequest, IAdvancedFiltersViewModel advancedFiltersViewModel)
         {
-            IQueryRequest result = originalRequest;
-
-            if (originalRequest is SearchQueryRequest sourceSearchQueryRequest)
+            var searchQueryRequest = new SearchQueryRequest
             {
-                var searchQueryRequest = new SearchQueryRequest
+                League = originalRequest.League,
+                Query =
                 {
-                    League = sourceSearchQueryRequest.League,
-                    Query =
+                    Name = originalRequest.Query.Name,
+                    Term = originalRequest.Query.Term,
+                    Type = originalRequest.Query.Type,
+                    Filters =
                     {
-                        Name = sourceSearchQueryRequest.Query.Name,
-                        Term = sourceSearchQueryRequest.Query.Term,
-                        Type = sourceSearchQueryRequest.Query.Type,
-                        Filters =
+                        TypeFilters =
                         {
-                            TypeFilters =
-                            {
-                                Category = (OptionFilter)sourceSearchQueryRequest.Query.Filters.TypeFilters.Category?.Clone(),
-                                Rarity = (OptionFilter)sourceSearchQueryRequest.Query.Filters.TypeFilters.Rarity?.Clone()
-                            }
+                            Category = (OptionFilter)originalRequest.Query.Filters.TypeFilters.Category?.Clone(),
+                            Rarity = (OptionFilter)originalRequest.Query.Filters.TypeFilters.Rarity?.Clone()
                         }
                     }
-                };
+                }
+            };
 
-                SetStatFilters(advancedFiltersViewModel, searchQueryRequest);
-                SetAdditionalFilters(advancedFiltersViewModel, searchQueryRequest);
+            SetStatFilters(advancedFiltersViewModel, searchQueryRequest);
+            SetAdditionalFilters(advancedFiltersViewModel, searchQueryRequest);
 
-                result = searchQueryRequest;
-            }
-
-            return result;
+            return searchQueryRequest;
         }
 
         private static void SetStatFilters(IAdvancedFiltersViewModel advancedFiltersViewModel, SearchQueryRequest searchQueryRequest)
