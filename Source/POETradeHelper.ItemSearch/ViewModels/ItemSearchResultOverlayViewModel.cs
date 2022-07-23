@@ -69,8 +69,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
             }
             catch (InvalidItemStringException exception)
             {
-                this.Log().Error(exception); 
-                
+                this.Log().Error(exception);
             }
             catch (Exception exception)
             {
