@@ -13,6 +13,7 @@
         Background="Transparent"
         BorderThickness="0"
         Command="{Binding $parent[UserControl].OpenHyperlink}"
+        IsEnabled="{Binding !!$parent[UserControl].Uri}"
         Cursor="Hand"
         Foreground="{DynamicResource ThemeAccentBrush}"
         Content="{TemplateBinding Content}" />

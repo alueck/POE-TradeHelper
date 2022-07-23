@@ -7,12 +7,8 @@ namespace POETradeHelper.ItemSearch.ViewModels
 {
     public class ItemListingsViewModel
     {
-        public string ItemDescription { get; set; }
-
-        public ItemRarity ItemRarity { get; set; }
-
         public Uri ListingsUri { get; set; }
 
-        public ICollection<object> Listings { get; } = new ObservableCollection<object>();
+        public ICollection<SimpleListingViewModel> Listings { get; } = new ObservableCollection<SimpleListingViewModel>();
     }
 }

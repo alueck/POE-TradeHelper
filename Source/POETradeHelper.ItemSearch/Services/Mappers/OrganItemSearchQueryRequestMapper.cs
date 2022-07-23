@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             return item is OrganItem;
         }
 
-        public IQueryRequest MapToQueryRequest(Item item)
+        public SearchQueryRequest MapToQueryRequest(Item item)
         {
             var organItem = (OrganItem)item;
 

@@ -7,6 +7,7 @@ applies to:
 - Autofac, Copyright © 2014 Autofac Project
 - Autofac.Extensions.DependencyInjection, Copyright © 2014 Autofac Project
 - Avalonia, Copyright (c) 2014 Steven Kirk
+- ReactiveUI.Fody, Copyright (c) 2014 Kirk Woll
 - Serilog.Exceptions, Copyright (c) 2015 Muhammad Rehan Saeed
 - Splat.Autofac, Copyright (c) .NET Foundation and Contributors
 - Splat.Microsoft.Extensions.Logging, Copyright (c) .NET Foundation and Contributors

@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Avalonia.Media.Imaging;
+
 using MediatR;
+
 using Microsoft.Extensions.Options;
+
 using POETradeHelper.Common.UI.Services;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PricePrediction.Models;
 using POETradeHelper.PricePrediction.Queries;
+
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+
 using Splat;
 
 namespace POETradeHelper.PricePrediction.ViewModels
@@ -23,10 +30,7 @@ namespace POETradeHelper.PricePrediction.ViewModels
         private readonly IImageService imageService;
 
         private Item item;
-        private string currency;
-        private IBitmap currencyImage;
-        private string confidenceScore;
-
+        
         public PricePredictionViewModel(
             IOptionsMonitor<ItemSearchOptions> itemSearchOptions,
             IMediator mediator,
@@ -45,42 +49,25 @@ namespace POETradeHelper.PricePrediction.ViewModels
                     this.Clear();
                 }
             });
+
+            this.WhenAnyValue(x => x.Prediction, x => x.Currency,
+                    (prediction, currency) => !string.IsNullOrEmpty(prediction) && !string.IsNullOrEmpty(currency))
+                .ToPropertyEx(this, x => x.HasValue);
         }
 
-        private string prediction;
+        [Reactive]
+        public string Prediction { get; set; }
 
-        public string Prediction
-        {
-            get => prediction;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref prediction, value);
-                this.RaisePropertyChanged(nameof(HasValue));
-            }
-        }
+        [Reactive]
+        public string Currency { get; set; }
 
-        public string Currency
-        {
-            get => currency;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref currency, value);
-                this.RaisePropertyChanged(nameof(HasValue));
-            }
-        }
+        [Reactive]
+        public IBitmap CurrencyImage { get; set; }
 
-        public IBitmap CurrencyImage
-        {
-            get => currencyImage;
-            set => this.RaiseAndSetIfChanged(ref currencyImage, value);
-        }
+        [Reactive]
+        public string ConfidenceScore { get; set; }
 
-        public string ConfidenceScore
-        {
-            get => confidenceScore;
-            set => this.RaiseAndSetIfChanged(ref confidenceScore, value);
-        }
-
+        [ObservableAsProperty]
         public bool HasValue => !string.IsNullOrEmpty(this.Prediction) && !string.IsNullOrEmpty(this.Currency);
         
         public async Task LoadAsync(Item item, CancellationToken cancellationToken)

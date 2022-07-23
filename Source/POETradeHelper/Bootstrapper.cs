@@ -25,6 +25,7 @@ using POETradeHelper.Common.Extensions;
 using POETradeHelper.Common.UI;
 using POETradeHelper.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.ViewModels;
 
@@ -117,7 +118,6 @@ namespace POETradeHelper
 #if DEBUG
             builder.RegisterType<DebugSettingsViewModel>().AsImplementedInterfaces();
 #endif
-            
             builder.RegisterAssemblyTypes(assemblies)
                 .PublicOnly()
                 .Where(t => !t.HasSingletonAttribute() && t.GetCustomAttributes<InterceptAttribute>().Any())

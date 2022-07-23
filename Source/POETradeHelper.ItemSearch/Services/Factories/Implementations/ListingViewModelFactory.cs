@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Factories
 {
@@ -22,24 +23,32 @@ namespace POETradeHelper.ItemSearch.Services.Factories
 
         public async Task<SimpleListingViewModel> CreateAsync(ListingResult listingResult, Item item, CancellationToken cancellationToken = default)
         {
-            SimpleListingViewModel result = new SimpleListingViewModel();
-
-            if (item is GemItem)
+            SimpleListingViewModel result = item switch
             {
-                result = this.CreateGemItemListingViewModel(listingResult);
-            }
-            else if (item is EquippableItem || item is OrganItem)
-            {
-                result = this.CreateItemListingViewModelWithItemLevel(listingResult);
-            }
-            else if (item is FlaskItem)
-            {
-                result = this.CreateFlaskItemViewModel(listingResult);
-            }
+                GemItem => this.CreateGemItemListingViewModel(listingResult),
+                EquippableItem or OrganItem => this.CreateItemListingViewModelWithItemLevel(listingResult),
+                FlaskItem => this.CreateFlaskItemViewModel(listingResult),
+                _ => new SimpleListingViewModel()
+            };
 
             await this.SetSimpleListingViewModelProperties(result, listingResult, cancellationToken).ConfigureAwait(false);
 
             return result;
+        }
+        
+        public async Task<SimpleListingViewModel> CreateAsync(ExchangeListing listing, CancellationToken cancellationToken = default)
+        {
+            ExchangeOffer offer = listing.Offers.FirstOrDefault();
+            Price price = offer != null
+                ? offer.Item with { Amount = offer.Item.Amount / offer.Exchange.Amount }
+                : null;
+
+            return new SimpleListingViewModel
+            {
+                AccountName = listing.Account?.Name,
+                Age = listing.AgeText,
+                Price = await this.priceViewModelFactory.CreateAsync(price, cancellationToken).ConfigureAwait(false),
+            };
         }
 
         private async Task SetSimpleListingViewModelProperties(SimpleListingViewModel result, ListingResult listingResult, CancellationToken cancellationToken)

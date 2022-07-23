@@ -8,6 +8,7 @@
     xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.ViewModels;assembly=POETradeHelper.ItemSearch"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.Properties;assembly=POETradeHelper.ItemSearch"
+    xmlns:reactiveUi="http://reactiveui.net"
     Title="Overlay"
     MinWidth="400"
     MinHeight="200"
@@ -21,34 +22,11 @@
     mc:Ignorable="d">
 
     <Window.Resources>
-        <localConverters:ItemRarityToBrushConverter x:Key="itemRarityToBrushConverter" />
-        <localConverters:DoubleOffsetConverter x:Key="doubleOffsetConverter" />
+        <localConverters:ItemRarityToBrushConverter x:Key="ItemRarityToBrushConverter" />
+        <localConverters:DoubleOffsetConverter x:Key="DoubleOffsetConverter" />
     </Window.Resources>
 
     <Window.Styles>
-        <Style Selector="DataGridCell.alignRight">
-            <Setter Property="HorizontalContentAlignment" Value="Right" />
-        </Style>
-
-        <!--  override DataGridRow selection and mouse over style  -->
-
-        <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-
-        <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-
-        <Style Selector="DataGridRow:selected" />
-
-        <!--  end - override DataGridRow selection and mouse over style  -->
-
-        <Style Selector="DataGridColumnHeader">
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Padding" Value="8,4" />
-        </Style>
-
         <Style Selector="Separator">
             <Setter Property="Background" Value="{DynamicResource ThemeBorderLowBrush}" />
             <Setter Property="Height" Value="5" />
@@ -63,8 +41,8 @@
     <commonUiControls:BusyIndicator DisplayAfter="0:0:0.500" IsBusy="{Binding IsBusy}">
 
         <Grid
-            MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
-            MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-20}"
+            MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource DoubleOffsetConverter}, ConverterParameter=-20}"
+            MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource DoubleOffsetConverter}, ConverterParameter=-20}"
             Margin="10">
 
             <commonUiControls:MessageTextBlock VerticalAlignment="Center" Message="{Binding Message}" />
@@ -72,9 +50,8 @@
             <Grid IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MaxWidth="400" />
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -82,82 +59,23 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock
-                    Grid.Column="1"
+                    Grid.Row="0"
+                    Grid.Column="0"
                     Margin="0,0,25,5"
                     FontWeight="Bold"
-                    Foreground="{Binding ItemListings.ItemRarity, Converter={StaticResource itemRarityToBrushConverter}}"
-                    Text="{Binding ItemListings.ItemDescription}" />
+                    Foreground="{Binding Item.Rarity, Converter={StaticResource ItemRarityToBrushConverter}}"
+                    Text="{Binding Item.DisplayName}" />
 
                 <commonUiControls:HyperlinkButton
-                    Grid.Column="2"
+                    Grid.Row="0"
+                    Grid.Column="1"
                     Margin="0,0,0,5"
                     HorizontalAlignment="Right"
                     Content="{x:Static resources:Resources.OpenInBrowser}"
                     HideableWindow="{Binding $parent[Window]}"
-                    Uri="{Binding ItemListings.ListingsUri}" />
+                    Uri="{Binding Url}" />
 
-                <Grid Grid.Row="1" RowDefinitions="Auto,35">
-
-                    <ContentControl Grid.Row="0"
-                                    Height="{Binding $parent[Window].MaxHeight, Converter={StaticResource doubleOffsetConverter}, ConverterParameter=-100}"
-                                    Width="350"
-                                    Margin="8" Content="{Binding AdvancedFilters}" />
-                    <Button
-                        Grid.Row="1"
-                        MaxWidth="150"
-                        VerticalAlignment="Bottom"
-                        Command="{Binding ExecuteAdvancedQueryCommand}"
-                        Content="Query" />
-                </Grid>
-
-                <Grid
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Grid.ColumnSpan="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="25" />
-                    </Grid.RowDefinitions>
-
-                    <DataGrid
-                        Name="ListingsGrid"
-                        AutoGenerateColumns="True"
-                        ColumnWidth="Auto"
-                        IsReadOnly="True"
-                        Items="{Binding ItemListings.Listings}"
-                        ScrollViewer.VerticalScrollBarVisibility="Visible">
-                        <DataGrid.DataTemplates>
-                            <DataTemplate DataType="{x:Type localVms:PriceViewModel}">
-                                <StackPanel DataContext="{Binding Price}" Orientation="Horizontal">
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Amount}" />
-                                    <TextBlock Text=" " />
-                                    <Image
-                                        Height="30"
-                                        VerticalAlignment="Center"
-                                        IsVisible="{Binding Image, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                        Source="{Binding Image}"
-                                        ToolTip.Tip="{Binding Currency}" />
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        IsVisible="{Binding Image, Converter={x:Static ObjectConverters.IsNull}}"
-                                        Text="{Binding Currency}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGrid.DataTemplates>
-                    </DataGrid>
-
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        IsVisible="{Binding !ItemListings.Listings.Count}"
-                        Text="{x:Static resources:Resources.NoItemsFoundText}" />
-
-                    <ContentControl
-                        Grid.Row="1"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
-                        Content="{Binding PricePrediction}" />
-                </Grid>
+                <reactiveUi:RoutedViewHost Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Router="{Binding Router}" />
             </Grid>
         </Grid>
     </commonUiControls:BusyIndicator>

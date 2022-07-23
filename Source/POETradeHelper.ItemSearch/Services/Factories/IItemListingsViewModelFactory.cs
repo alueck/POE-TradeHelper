@@ -9,5 +9,7 @@ namespace POETradeHelper.ItemSearch.Services.Factories
     public interface IItemListingsViewModelFactory
     {
         Task<ItemListingsViewModel> CreateAsync(Item item, ItemListingsQueryResult itemListingsQueryResult, CancellationToken cancellationToken = default);
+        
+        Task<ItemListingsViewModel> CreateAsync(ExchangeQueryResult exchangeQueryResult, CancellationToken cancellationToken = default);
     }
 }

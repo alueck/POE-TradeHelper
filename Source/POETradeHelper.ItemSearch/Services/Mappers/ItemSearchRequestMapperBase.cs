@@ -18,7 +18,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
         public abstract bool CanMap(Item item);
 
-        public virtual IQueryRequest MapToQueryRequest(Item item)
+        public virtual SearchQueryRequest MapToQueryRequest(Item item)
         {
             var result = new SearchQueryRequest
             {

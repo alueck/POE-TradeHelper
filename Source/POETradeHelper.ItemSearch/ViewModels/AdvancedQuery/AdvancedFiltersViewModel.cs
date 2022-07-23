@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.PathOfExileTradeApi.Models;
+
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace POETradeHelper.ItemSearch.ViewModels
 {
@@ -14,16 +16,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
     {
         private readonly IStatFilterViewModelFactory statFilterViewModelFactory;
         private readonly IEnumerable<IAdditionalFilterViewModelsFactory> additionalFilterViewModelsFactories;
-
-        private bool isEnabled;
-        private IList<StatFilterViewModel> enchantedItemStatFilters;
-        private IList<StatFilterViewModel> fracturedItemStatFilters;
-        private IList<StatFilterViewModel> implicitItemStatFilters;
-        private IList<StatFilterViewModel> explicitItemStatFilters;
-        private IList<StatFilterViewModel> craftedItemStatFilters;
-        private IList<StatFilterViewModel> monsterItemStatFilters;
-        private IList<StatFilterViewModel> pseudoItemStatFilters;
-        private IList<FilterViewModelBase> additionalFilters;
 
         public AdvancedFiltersViewModel(
             IStatFilterViewModelFactory statFilterViewModelFactory,
@@ -34,53 +26,29 @@ namespace POETradeHelper.ItemSearch.ViewModels
             this.Reset();
         }
 
-        public IList<StatFilterViewModel> EnchantedItemStatFilters
-        {
-            get => enchantedItemStatFilters;
-            private set => this.RaiseAndSetIfChanged(ref enchantedItemStatFilters, value);
-        }
+        [Reactive]
+        public IList<StatFilterViewModel> EnchantedItemStatFilters { get; private set; }
+        
+        [Reactive]
+        public IList<StatFilterViewModel> FracturedItemStatFilters { get; private set; }
+        
+        [Reactive]
+        public IList<StatFilterViewModel> ImplicitItemStatFilters { get; private set; }
 
-        public IList<StatFilterViewModel> FracturedItemStatFilters
-        {
-            get => fracturedItemStatFilters;
-            private set => this.RaiseAndSetIfChanged(ref fracturedItemStatFilters, value);
-        }
+        [Reactive]
+        public IList<StatFilterViewModel> ExplicitItemStatFilters { get; private set; }
 
-        public IList<StatFilterViewModel> ImplicitItemStatFilters
-        {
-            get => implicitItemStatFilters;
-            private set => this.RaiseAndSetIfChanged(ref implicitItemStatFilters, value);
-        }
+        [Reactive]
+        public IList<StatFilterViewModel> CraftedItemStatFilters { get; private set; }
 
-        public IList<StatFilterViewModel> ExplicitItemStatFilters
-        {
-            get => explicitItemStatFilters;
-            private set => this.RaiseAndSetIfChanged(ref explicitItemStatFilters, value);
-        }
+        [Reactive]
+        public IList<StatFilterViewModel> MonsterItemStatFilters { get; private set; }
+        
+        [Reactive]
+        public IList<StatFilterViewModel> PseudoItemStatFilters { get; private set; }
 
-        public IList<StatFilterViewModel> CraftedItemStatFilters
-        {
-            get => craftedItemStatFilters;
-            private set => this.RaiseAndSetIfChanged(ref craftedItemStatFilters, value);
-        }
-
-        public IList<StatFilterViewModel> MonsterItemStatFilters
-        {
-            get => monsterItemStatFilters;
-            private set => this.RaiseAndSetIfChanged(ref monsterItemStatFilters, value);
-        }
-
-        public IList<StatFilterViewModel> PseudoItemStatFilters
-        {
-            get => pseudoItemStatFilters;
-            private set => this.RaiseAndSetIfChanged(ref pseudoItemStatFilters, value);
-        }
-
-        public IList<FilterViewModelBase> AdditionalFilters
-        {
-            get => additionalFilters;
-            private set => this.RaiseAndSetIfChanged(ref additionalFilters, value);
-        }
+        [Reactive]
+        public IList<FilterViewModelBase> AdditionalFilters { get; private set; }
 
         public IEnumerable<StatFilterViewModel> AllStatFilters => this.EnchantedItemStatFilters
             .Concat(this.FracturedItemStatFilters)
@@ -90,15 +58,11 @@ namespace POETradeHelper.ItemSearch.ViewModels
             .Concat(this.MonsterItemStatFilters)
             .Concat(this.PseudoItemStatFilters);
 
-        public bool IsEnabled
-        {
-            get => isEnabled;
-            set => this.RaiseAndSetIfChanged(ref isEnabled, value);
-        }
+        [Reactive]
+        public bool IsEnabled { get; private set; }
 
-        public Task LoadAsync(Item item, IQueryRequest queryRequest, CancellationToken cancellationToken)
+        public Task LoadAsync(Item item, SearchQueryRequest searchQueryRequest, CancellationToken cancellationToken)
         {
-            SearchQueryRequest searchQueryRequest = queryRequest as SearchQueryRequest;
             this.IsEnabled = searchQueryRequest != null && item is ItemWithStats or GemItem;
 
             if (!this.IsEnabled)
@@ -130,14 +94,14 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         private void Reset()
         {
-            this.enchantedItemStatFilters = new List<StatFilterViewModel>();
-            this.fracturedItemStatFilters = new List<StatFilterViewModel>();
-            this.implicitItemStatFilters = new List<StatFilterViewModel>();
-            this.explicitItemStatFilters = new List<StatFilterViewModel>();
-            this.craftedItemStatFilters = new List<StatFilterViewModel>();
-            this.monsterItemStatFilters = new List<StatFilterViewModel>();
-            this.pseudoItemStatFilters = new List<StatFilterViewModel>();
-            this.additionalFilters = new List<FilterViewModelBase>();
+            this.EnchantedItemStatFilters = new List<StatFilterViewModel>();
+            this.FracturedItemStatFilters = new List<StatFilterViewModel>();
+            this.ImplicitItemStatFilters = new List<StatFilterViewModel>();
+            this.ExplicitItemStatFilters = new List<StatFilterViewModel>();
+            this.CraftedItemStatFilters = new List<StatFilterViewModel>();
+            this.MonsterItemStatFilters = new List<StatFilterViewModel>();
+            this.PseudoItemStatFilters = new List<StatFilterViewModel>();
+            this.AdditionalFilters = new List<FilterViewModelBase>();
         }
     }
 }

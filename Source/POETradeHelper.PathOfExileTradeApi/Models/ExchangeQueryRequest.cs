@@ -1,11 +1,14 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public class ExchangeQueryRequest : IQueryRequest
+    public class ExchangeQueryRequest : ICloneable
     {
-        public Exchange Exchange { get; private set; } = new Exchange();
+        public string Engine => "new";
+        
+        public Exchange Query { get; private set; } = new Exchange();
 
         [JsonIgnore]
         public string Endpoint => Resources.PoeTradeApiExchangeEndpoint;
@@ -17,7 +20,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         {
             return new ExchangeQueryRequest
             {
-                Exchange = (Exchange)this.Exchange.Clone(),
+                Query = (Exchange)this.Query.Clone(),
                 League = this.League
             };
         }

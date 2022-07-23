@@ -20,7 +20,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             return item is MapItem;
         }
 
-        public override IQueryRequest MapToQueryRequest(Item item)
+        public override SearchQueryRequest MapToQueryRequest(Item item)
         {
             var result = (SearchQueryRequest)base.MapToQueryRequest(item);
 

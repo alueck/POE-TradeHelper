@@ -13,6 +13,6 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         IEnumerable<StatFilterViewModel> AllStatFilters{ get; }
         
-        Task LoadAsync(Item item, IQueryRequest queryRequest, CancellationToken cancellationToken);
+        Task LoadAsync(Item item, SearchQueryRequest searchQueryRequest, CancellationToken cancellationToken);
     }
 }

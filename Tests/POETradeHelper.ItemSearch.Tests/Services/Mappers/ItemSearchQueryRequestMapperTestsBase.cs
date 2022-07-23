@@ -7,6 +7,7 @@ using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
+using POETradeHelper.PathOfExileTradeApi.Models;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
@@ -42,7 +43,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                     }
                 });
 
-            PathOfExileTradeApi.Models.IQueryRequest queryRequest = this.ItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest queryRequest = this.ItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(queryRequest.League, Is.EqualTo(expectedLeague));
         }

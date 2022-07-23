@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using POETradeHelper.Common;
+
 using POETradeHelper.Common.UI;
 using POETradeHelper.Common.WritableOptions;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
+
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace POETradeHelper.ItemSearch.ViewModels
 {
     public class ItemSearchSettingsViewModel : ReactiveObject, ISettingsViewModel
     {
-        private bool isBusy;
-        private IList<League> leagues;
-        private League selectedLeague;
-        private bool pricePredictionEnabled;
         private readonly ILeagueDataService leagueDataService;
         private readonly IWritableOptions<ItemSearchOptions> itemSearchOptions;
 
@@ -28,29 +26,17 @@ namespace POETradeHelper.ItemSearch.ViewModels
             this.itemSearchOptions = itemSearchOptions;
         }
 
-        public bool IsBusy
-        {
-            get => isBusy;
-            set => this.RaiseAndSetIfChanged(ref this.isBusy, value);
-        }
+        [Reactive]
+        public bool IsBusy { get; private set; }
 
-        public IList<League> Leagues
-        {
-            get => leagues;
-            set => this.RaiseAndSetIfChanged(ref this.leagues, value);
-        }
+        [Reactive]
+        public IList<League> Leagues { get; private set; }
 
-        public League SelectedLeague
-        {
-            get => selectedLeague;
-            set => this.RaiseAndSetIfChanged(ref this.selectedLeague, value);
-        }
+        [Reactive]
+        public League SelectedLeague { get; set; }
 
-        public bool PricePredictionEnabled
-        {
-            get => pricePredictionEnabled;
-            set => this.RaiseAndSetIfChanged(ref pricePredictionEnabled, value);
-        }
+        [Reactive]
+        public bool PricePredictionEnabled { get; set; }
 
         public string Title => Resources.ItemSearchSettingsHeader;
 
@@ -73,7 +59,7 @@ namespace POETradeHelper.ItemSearch.ViewModels
 
         public void SaveSettings()
         {
-            SaveSettingsPrivate(true);
+            this.SaveSettingsPrivate(true);
         }
 
         private void SaveSettingsPrivate(bool resetIsBusy)

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
@@ -28,17 +31,6 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
             this.advancedFiltersViewModel = new AdvancedFiltersViewModel(
                 this.statFilterViewModelFactoryMock.Object,
                 this.additionalFiltersViewModelFactoryMocks.Select(x => x.Object));
-        }
-
-        [Test]
-        public async Task LoadAsyncShouldSetIsEnabledToFalseForExchangeQueryRequest()
-        {
-            var item = new EquippableItem(ItemRarity.Normal);
-            var searchQueryRequest = new ExchangeQueryRequest();
-
-            await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
-
-            Assert.IsFalse(this.advancedFiltersViewModel.IsEnabled);
         }
 
         [TestCaseSource(nameof(DisabledItems))]
