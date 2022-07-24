@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-using Autofac.Extras.DynamicProxy;
+﻿using Autofac.Extras.DynamicProxy;
 
 using MediatR;
 
@@ -13,9 +10,7 @@ using POETradeHelper.PricePrediction.Services;
 namespace POETradeHelper.PricePrediction.Queries.Handlers
 {
     [Intercept(typeof(CacheResultAttributeInterceptor))]
-    public class
-        GetPoePricesInfoPredictionQueryHandler : IRequestHandler<GetPoePricesInfoPredictionQuery,
-            PoePricesInfoPrediction>
+    public class GetPoePricesInfoPredictionQueryHandler : IRequestHandler<GetPoePricesInfoPredictionQuery, PoePricesInfoPrediction?>
     {
         private readonly IPoePricesInfoClient poePricesInfoClient;
 
@@ -25,9 +20,9 @@ namespace POETradeHelper.PricePrediction.Queries.Handlers
         }
 
         [CacheResult(DurationSeconds = 30 * 60)]
-        public async Task<PoePricesInfoPrediction> Handle(GetPoePricesInfoPredictionQuery request, CancellationToken cancellationToken)
+        public async Task<PoePricesInfoPrediction?> Handle(GetPoePricesInfoPredictionQuery request, CancellationToken cancellationToken)
         {
-            PoePricesInfoPrediction prediction = null;
+            PoePricesInfoPrediction? prediction = null;
 
             if (request is { League: { }, Item: { Rarity: ItemRarity.Rare } }
                 && !string.IsNullOrEmpty(request.Item.ItemText))

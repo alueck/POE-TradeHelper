@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace POETradeHelper.PricePrediction.Views
+namespace POETradeHelper.PricePrediction.UI.Avalonia.Views
 {
     public class PricePredictionView : UserControl
     {

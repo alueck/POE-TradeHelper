@@ -7,7 +7,7 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PricePrediction.ViewModels;
+using POETradeHelper.PricePrediction.UI.Avalonia.ViewModels;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;

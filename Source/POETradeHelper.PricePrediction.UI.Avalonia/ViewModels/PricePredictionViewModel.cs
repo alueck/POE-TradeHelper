@@ -20,7 +20,7 @@ using ReactiveUI.Fody.Helpers;
 
 using Splat;
 
-namespace POETradeHelper.PricePrediction.ViewModels
+namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
 {
     public class PricePredictionViewModel : ReactiveObject, IPricePredictionViewModel
     {

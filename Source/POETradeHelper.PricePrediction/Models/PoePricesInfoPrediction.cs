@@ -2,18 +2,18 @@
 
 namespace POETradeHelper.PricePrediction.Models
 {
-    public class PoePricesInfoPrediction
+    public record PoePricesInfoPrediction
     {
-        public decimal Min { get; set; }
+        public decimal Min { get; init; }
 
-        public decimal Max { get; set; }
+        public decimal Max { get; init; }
 
-        public string Currency { get; set; }
+        public string Currency { get; init; } = string.Empty;
 
         [JsonPropertyName("error")]
-        public int ErrorCode { get; set; }
+        public int ErrorCode { get; init; }
 
         [JsonPropertyName("pred_confidence_score")]
-        public decimal ConfidenceScore { get; set; }
+        public decimal ConfidenceScore { get; init; }
     }
 }

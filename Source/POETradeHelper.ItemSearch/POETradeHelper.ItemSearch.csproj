@@ -36,7 +36,7 @@
     <ProjectReference Include="..\POETradeHelper.Common\POETradeHelper.Common.csproj" />
     <ProjectReference Include="..\POETradeHelper.ItemSearch.Contract\POETradeHelper.ItemSearch.Contract.csproj" />
     <ProjectReference Include="..\POETradeHelper.PathOfExileTradeApi\POETradeHelper.PathOfExileTradeApi.csproj" />
-    <ProjectReference Include="..\POETradeHelper.PricePrediction\POETradeHelper.PricePrediction.csproj" />
+    <ProjectReference Include="..\POETradeHelper.PricePrediction.UI.Avalonia\POETradeHelper.PricePrediction.UI.Avalonia.csproj" />
   </ItemGroup>
 
   <ItemGroup>

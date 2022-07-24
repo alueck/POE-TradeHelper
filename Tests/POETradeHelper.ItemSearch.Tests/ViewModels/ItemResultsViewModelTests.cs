@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,7 +14,7 @@ using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PricePrediction.ViewModels;
+using POETradeHelper.PricePrediction.UI.Avalonia.ViewModels;
 
 namespace POETradeHelper.ItemSearch.Tests.ViewModels;
 

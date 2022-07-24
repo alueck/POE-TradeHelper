@@ -1,9 +1,8 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
+
 using Microsoft.Extensions.Logging;
+
 using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PricePrediction.Models;
@@ -23,9 +22,9 @@ namespace POETradeHelper.PricePrediction.Services
             this.logger = logger;
         }
 
-        public async Task<PoePricesInfoPrediction> GetPricePredictionAsync(string league, string itemText, CancellationToken cancellationToken = default)
+        public async Task<PoePricesInfoPrediction?> GetPricePredictionAsync(string league, string itemText, CancellationToken cancellationToken = default)
         {
-            PoePricesInfoPrediction result = null;
+            PoePricesInfoPrediction? result = null;
 
             if (string.IsNullOrEmpty(league) || string.IsNullOrEmpty(itemText))
             {
@@ -35,7 +34,7 @@ namespace POETradeHelper.PricePrediction.Services
             try
             {
                 var url = GetUrl(league, itemText);
-                System.Net.Http.HttpResponseMessage httpResponse = await this.httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+                HttpResponseMessage httpResponse = await this.httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
                 if (httpResponse.IsSuccessStatusCode)
                 {

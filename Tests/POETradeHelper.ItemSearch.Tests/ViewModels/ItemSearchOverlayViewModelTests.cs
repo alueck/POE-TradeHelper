@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Drawing.Imaging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,17 +7,16 @@ using FluentAssertions;
 using FluentAssertions.Reactive;
 
 using MediatR;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.UI.Models;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Queries;
 using POETradeHelper.ItemSearch.Exceptions;
-using POETradeHelper.ItemSearch.Services.Factories;
 using POETradeHelper.ItemSearch.ViewModels;
-using POETradeHelper.PathOfExileTradeApi.Models;
-using POETradeHelper.PathOfExileTradeApi.Services;
-using POETradeHelper.PricePrediction.ViewModels;
 
 using ReactiveUI;
 

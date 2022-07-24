@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace POETradeHelper.PricePrediction.Properties {
+namespace POETradeHelper.PricePrediction.UI.Avalonia.Properties {
     using System;
     
     

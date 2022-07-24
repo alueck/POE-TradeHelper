@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using FluentAssertions;
 
 using Moq;
 
@@ -14,15 +13,15 @@ using POETradeHelper.PricePrediction.Services;
 
 namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
 {
+    [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     public class GetPoePricesInfoPredictionQueryHandlerTests
     {
-        private Mock<IPoePricesInfoClient> poePricesInfoClientMock;
-        private GetPoePricesInfoPredictionQueryHandler handler;
+        private readonly Mock<IPoePricesInfoClient> poePricesInfoClientMock;
+        private readonly GetPoePricesInfoPredictionQueryHandler handler;
         
-        private GetPoePricesInfoPredictionQuery validRequest;
+        private readonly GetPoePricesInfoPredictionQuery validRequest;
 
-        [SetUp]
-        public void Setup()
+        public GetPoePricesInfoPredictionQueryHandlerTests()
         {
             this.poePricesInfoClientMock = new Mock<IPoePricesInfoClient>();
             this.handler = new GetPoePricesInfoPredictionQueryHandler(this.poePricesInfoClientMock.Object);
@@ -56,10 +55,10 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
                 .Setup(x => x.GetPricePredictionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expected);
             // act
-            PoePricesInfoPrediction result = await this.handler.Handle(this.validRequest, default);
+            PoePricesInfoPrediction? result = await this.handler.Handle(this.validRequest, default);
 
             // assert
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().BeEquivalentTo(expected);
         }
 
         private static PoePricesInfoPrediction GetPoePricesInfoItem()

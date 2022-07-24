@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using POETradeHelper.ItemSearch.Contract.Models;
 
-namespace POETradeHelper.PricePrediction.ViewModels
+namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
 {
     public interface IPricePredictionViewModel
     {

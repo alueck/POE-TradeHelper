@@ -11,7 +11,7 @@ using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PricePrediction.Queries;
-using POETradeHelper.PricePrediction.ViewModels;
+using POETradeHelper.PricePrediction.UI.Avalonia.ViewModels;
 
 namespace POETradeHelper.PricePrediction.Tests.ViewModels
 {
