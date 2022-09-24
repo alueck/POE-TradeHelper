@@ -18,12 +18,12 @@ namespace POETradeHelper.Common.UI.UserControls
             AvaloniaXamlLoader.Load(this);
         }
 
-        public Message Message
+        public Message? Message
         {
-            get => (Message)GetValue(MessageProperty);
-            set => SetValue(MessageProperty, value);
+            get => this.GetValue<Message?>(MessageProperty);
+            set => this.SetValue(MessageProperty, value);
         }
 
-        public static AvaloniaProperty<Message> MessageProperty = AvaloniaProperty.Register<MessageTextBlock, Message>(nameof(Message));
+        public static AvaloniaProperty<Message?> MessageProperty = AvaloniaProperty.Register<MessageTextBlock, Message?>(nameof(Message));
     }
 }
