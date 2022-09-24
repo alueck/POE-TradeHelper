@@ -3,6 +3,8 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
+using System.Linq;
+
 namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public class GemItemParser : ItemParserBase
@@ -70,18 +72,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
         private static GemQualityType GetQualityType(string[] itemStringLines)
         {
-            GemQualityType result = default;
-
-            foreach (GemQualityType gemQualityType in Enum.GetValues(typeof(GemQualityType)))
-            {
-                if (itemStringLines.Any(l => l.StartsWith(gemQualityType.GetDisplayName())))
-                {
-                    result = gemQualityType;
-                    break;
-                }
-            }
-
-            return result;
+            return Enum.GetValues<GemQualityType>()
+                .FirstOrDefault(gemQualityType => itemStringLines.Any(l => l.StartsWith(gemQualityType.GetDisplayName())));
         }
     }
 }

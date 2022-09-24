@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -11,6 +12,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         public LeagueDataService(IHttpClientFactoryWrapper httpClientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer)
             : base(Resources.PoeTradeApiLeaguesEndpoint, httpClientFactory, poeTradeApiJsonSerializer)
         {
+        }
+
+        protected override IList<LeagueData> GetData(QueryResult<LeagueData> queryResult)
+        {
+            return queryResult.Result
+                .Where(leagueData => string.Equals(leagueData.Realm, "PC", System.StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         public IList<LeagueData> GetLeaguesData()

@@ -4,7 +4,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
     public class BindableSocketsFilterViewModel : BindableMinMaxFilterViewModel
     {
-        public BindableSocketsFilterViewModel(System.Linq.Expressions.Expression<Func<PathOfExileTradeApi.Models.SearchQueryRequest, PathOfExileTradeApi.Models.Filters.IFilter>> bindingExpression)
+        public BindableSocketsFilterViewModel(System.Linq.Expressions.Expression<Func<PathOfExileTradeApi.Models.SearchQueryRequest, PathOfExileTradeApi.Models.Filters.IFilter?>> bindingExpression)
             : base(bindingExpression)
         {
         }

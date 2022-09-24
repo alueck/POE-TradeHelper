@@ -8,6 +8,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories
 {
     public interface IPriceViewModelFactory
     {
-        Task<PriceViewModel> CreateAsync(Price price, CancellationToken cancellationToken = default);
+        Task<PriceViewModel?> CreateAsync(Price? price, CancellationToken cancellationToken = default);
     }
 }

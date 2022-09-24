@@ -11,20 +11,20 @@ using System.Linq.Expressions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Factories
+namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class GemItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
         [SetUp]
         public void Setup()
         {
-            this.AdditionalFilterViewModelsFactory = new GemItemAdditionalFilterViewModelsFactory();
+            AdditionalFilterViewModelsFactory = new GemItemAdditionalFilterViewModelsFactory();
         }
 
         [TestCaseSource(nameof(NonGemItems))]
         public void CreateShouldReturnEmptyEnumerableForNonGemItems(Item item)
         {
-            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             Assert.IsNotNull(result);
             Assert.That(result, Is.Empty);
@@ -41,7 +41,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, gemItem, gemItem.Quality, Resources.QualityColumn);
+            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, gemItem, gemItem.Quality, Resources.QualityColumn);
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Max = 17
             };
 
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, gemItem, gemItem.Quality, Resources.QualityColumn, queryRequestFilter);
+            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, gemItem, gemItem.Quality, Resources.QualityColumn, queryRequestFilter);
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, gemItem, gemItem.Level, Resources.GemLevelColumn);
+            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, gemItem, gemItem.Level, Resources.GemLevelColumn);
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Max = 20
             };
 
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, gemItem, gemItem.Level, Resources.GemLevelColumn, queryRequestFilter);
+            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, gemItem, gemItem.Level, Resources.GemLevelColumn, queryRequestFilter);
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, gemItem, gemItem.ExperiencePercent, Resources.GemExperiencePercentColumn);
+            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, gemItem, gemItem.ExperiencePercent, Resources.GemExperiencePercentColumn);
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Max = 90
             };
 
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, gemItem, gemItem.ExperiencePercent, Resources.GemExperiencePercentColumn, queryRequestFilter);
+            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, gemItem, gemItem.ExperiencePercent, Resources.GemExperiencePercentColumn, queryRequestFilter);
         }
 
         private static IEnumerable<Item> NonGemItems

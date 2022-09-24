@@ -14,7 +14,7 @@ using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
 using ReactiveUI;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Factories
+namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public abstract class AdditionalFilterViewModelsFactoryTestsBase
     {
@@ -33,7 +33,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act
-            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             //assert
             Assert.IsNotNull(result);
@@ -63,7 +63,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
 
             // act
-            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
+            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             //assert
             Assert.IsNotNull(result);
@@ -85,7 +85,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act
-            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             //assert
             Assert.IsNotNull(result);
@@ -119,7 +119,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
 
             // act
-            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
+            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             //assert
             Assert.IsNotNull(result);
@@ -138,7 +138,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act
-            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             //assert
             Assert.IsNotNull(result);
@@ -160,7 +160,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
 
             // act
-            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
+            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             //assert
             Assert.IsNotNull(result);

@@ -25,9 +25,9 @@ namespace POETradeHelper.Common.UI.Services
         }
 
         [CacheResult]
-        public async Task<IBitmap> GetImageAsync(Uri uri, CancellationToken cancellationToken = default)
+        public async Task<IBitmap?> GetImageAsync(Uri uri, CancellationToken cancellationToken = default)
         {
-            IBitmap image = null;
+            IBitmap? image = null;
             HttpResponseMessage response = await this.httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)

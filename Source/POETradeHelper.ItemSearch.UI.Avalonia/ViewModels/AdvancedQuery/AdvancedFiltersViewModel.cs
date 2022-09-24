@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,28 +28,28 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         }
 
         [Reactive]
-        public IList<StatFilterViewModel> EnchantedItemStatFilters { get; private set; }
+        public IList<StatFilterViewModel> EnchantedItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
 
         [Reactive]
-        public IList<StatFilterViewModel> FracturedItemStatFilters { get; private set; }
+        public IList<StatFilterViewModel> FracturedItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
 
         [Reactive]
-        public IList<StatFilterViewModel> ImplicitItemStatFilters { get; private set; }
+        public IList<StatFilterViewModel> ImplicitItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
 
         [Reactive]
-        public IList<StatFilterViewModel> ExplicitItemStatFilters { get; private set; }
+        public IList<StatFilterViewModel> ExplicitItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
 
         [Reactive]
-        public IList<StatFilterViewModel> CraftedItemStatFilters { get; private set; }
+        public IList<StatFilterViewModel> CraftedItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
 
         [Reactive]
-        public IList<StatFilterViewModel> MonsterItemStatFilters { get; private set; }
+        public IList<StatFilterViewModel> MonsterItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
 
         [Reactive]
-        public IList<StatFilterViewModel> PseudoItemStatFilters { get; private set; }
+        public IList<StatFilterViewModel> PseudoItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
 
         [Reactive]
-        public IList<FilterViewModelBase> AdditionalFilters { get; private set; }
+        public IList<FilterViewModelBase> AdditionalFilters { get; private set; } = new List<FilterViewModelBase>();
 
         public IEnumerable<StatFilterViewModel> AllStatFilters => this.EnchantedItemStatFilters
             .Concat(this.FracturedItemStatFilters)
@@ -73,16 +74,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 
             if (item is ItemWithStats { Stats: { } } itemWithStats)
             {
-                this.EnchantedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.EnchantedStats, searchQueryRequest);
-                this.FracturedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.FracturedStats, searchQueryRequest);
-                this.ImplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ImplicitStats, searchQueryRequest);
-                this.ExplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ExplicitStats, searchQueryRequest);
-                this.CraftedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.CraftedStats, searchQueryRequest);
-                this.MonsterItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.MonsterStats, searchQueryRequest);
-                this.PseudoItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.PseudoStats, searchQueryRequest);
+                this.EnchantedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.EnchantedStats, searchQueryRequest!);
+                this.FracturedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.FracturedStats, searchQueryRequest!);
+                this.ImplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ImplicitStats, searchQueryRequest!);
+                this.ExplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ExplicitStats, searchQueryRequest!);
+                this.CraftedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.CraftedStats, searchQueryRequest!);
+                this.MonsterItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.MonsterStats, searchQueryRequest!);
+                this.PseudoItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.PseudoStats, searchQueryRequest!);
             }
 
-            this.AdditionalFilters = this.additionalFilterViewModelsFactories.SelectMany(x => x.Create(item, searchQueryRequest)).ToList();
+            this.AdditionalFilters = this.additionalFilterViewModelsFactories.SelectMany(x => x.Create(item, searchQueryRequest!)).ToList();
 
             return Task.CompletedTask;
         }

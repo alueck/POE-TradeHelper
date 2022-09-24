@@ -17,7 +17,7 @@ namespace POETradeHelper.Common.Contract.Attributes;
 
 public class CacheResultAttributeInterceptor : IInterceptor
 {
-    private static readonly IDictionary<MethodInfo, CacheResultAttribute> attributeCache = new ConcurrentDictionary<MethodInfo, CacheResultAttribute>();
+    private static readonly IDictionary<MethodInfo, CacheResultAttribute?> attributeCache = new ConcurrentDictionary<MethodInfo, CacheResultAttribute?>();
 
     private readonly IMemoryCache memoryCache;
 
@@ -28,7 +28,7 @@ public class CacheResultAttributeInterceptor : IInterceptor
 
     public void Intercept(IInvocation invocation)
     {
-        CacheResultAttribute attribute = GetAttribute(invocation);
+        CacheResultAttribute? attribute = GetAttribute(invocation);
         if (attribute == null || invocation.MethodInvocationTarget.ReturnType == typeof(void) || invocation.MethodInvocationTarget.ReturnType == typeof(Task))
         {
             invocation.Proceed();
@@ -98,7 +98,7 @@ public class CacheResultAttributeInterceptor : IInterceptor
         return Convert.ToHexString(hashBytes);
     }
 
-    private static CacheResultAttribute GetAttribute(IInvocation invocation)
+    private static CacheResultAttribute? GetAttribute(IInvocation invocation)
     {
         if (!attributeCache.TryGetValue(invocation.MethodInvocationTarget, out var attribute))
         {

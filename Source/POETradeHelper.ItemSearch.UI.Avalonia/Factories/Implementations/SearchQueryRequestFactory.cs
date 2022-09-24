@@ -25,9 +25,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         public SearchQueryRequest Create(Item item)
         {
-            IItemSearchQueryRequestMapper mapper = this.itemToQueryRequestMappers.FirstOrDefault(m => m.CanMap(item));
+            IItemSearchQueryRequestMapper mapper = this.itemToQueryRequestMappers.First(m => m.CanMap(item));
 
-            return mapper?.MapToQueryRequest(item);
+            return mapper.MapToQueryRequest(item);
         }
 
         public SearchQueryRequest Create(SearchQueryRequest originalRequest, IAdvancedFiltersViewModel advancedFiltersViewModel)
@@ -44,8 +44,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                     {
                         TypeFilters =
                         {
-                            Category = (OptionFilter)originalRequest.Query.Filters.TypeFilters.Category?.Clone(),
-                            Rarity = (OptionFilter)originalRequest.Query.Filters.TypeFilters.Rarity?.Clone()
+                            Category = (OptionFilter?)originalRequest.Query.Filters.TypeFilters.Category?.Clone(),
+                            Rarity = (OptionFilter?)originalRequest.Query.Filters.TypeFilters.Rarity?.Clone()
                         }
                     }
                 }
@@ -102,17 +102,17 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             }
         }
 
-        private static void SetValueByExpression(Expression<Func<SearchQueryRequest, IFilter>> bindingExpression, SearchQueryRequest searchQueryRequest, BindableFilterViewModel bindableFilterViewModel)
+        private static void SetValueByExpression(Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression, SearchQueryRequest searchQueryRequest, BindableFilterViewModel bindableFilterViewModel)
         {
             var expressions = bindingExpression.Body.GetExpressionChain().ToList();
-            object parent = searchQueryRequest;
+            object? parent = searchQueryRequest;
 
-            foreach (MemberExpression expression in expressions)
+            foreach (MemberExpression expression in expressions.OfType<MemberExpression>())
             {
-                PropertyInfo property = ((PropertyInfo)expression.Member);
+                PropertyInfo property = ((PropertyInfo)expression.Member)!;
                 if (expression == expressions.Last())
                 {
-                    IFilter filter = GetFilter(bindableFilterViewModel);
+                    IFilter? filter = GetFilter(bindableFilterViewModel);
                     property.SetValue(parent, filter);
                     break;
                 }
@@ -121,9 +121,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             }
         }
 
-        private static IFilter GetFilter(FilterViewModelBase filterViewModel)
+        private static IFilter? GetFilter(FilterViewModelBase filterViewModel)
         {
-            IFilter filter = null;
+            IFilter? filter = null;
 
             if (filterViewModel is BindableSocketsFilterViewModel socketsFilterViewModel)
             {

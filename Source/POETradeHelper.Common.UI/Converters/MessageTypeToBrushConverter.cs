@@ -20,9 +20,9 @@ namespace POETradeHelper.Common.UI.Converters
             [MessageType.Error] = Brushes.Red
         };
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            IBrush result = null;
+            IBrush? result = null;
 
             if (typeof(IBrush).IsAssignableFrom(targetType) && value is MessageType messageType)
             {
@@ -32,7 +32,7 @@ namespace POETradeHelper.Common.UI.Converters
             return result;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (targetType.IsAssignableFrom(typeof(MessageType)) && value is Color color)
             {

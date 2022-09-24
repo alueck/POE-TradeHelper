@@ -29,11 +29,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                     result.Add(GetLinksFilterViewModel(equippableItem, searchQueryRequest));
                 }
 
-                if (equippableItem.Influence != InfluenceType.None)
-                {
-                    result.Add(GetInfluenceFilterViewModel(equippableItem, searchQueryRequest));
-                }
-
+                result.AddIfNotNull(GetInfluenceFilterViewModel(equippableItem, searchQueryRequest));
                 result.Add(this.GetIdentifiedFilterViewModel(searchQueryRequest));
                 result.Add(this.GetCorruptedFilterViewModel(searchQueryRequest));
             }
@@ -50,18 +46,20 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 searchQueryRequest.Query.Filters.MiscFilters.ItemLevel);
         }
 
-        private static FilterViewModelBase GetInfluenceFilterViewModel(EquippableItem equippableItem, SearchQueryRequest searchQueryRequest)
+        private static FilterViewModelBase? GetInfluenceFilterViewModel(EquippableItem equippableItem, SearchQueryRequest searchQueryRequest)
         {
-            Expression<Func<SearchQueryRequest, IFilter>> bindingExpression = GetInfluenceBindingExpression(equippableItem.Influence);
+            Expression<Func<SearchQueryRequest, IFilter?>>? bindingExpression = GetInfluenceBindingExpression(equippableItem.Influence);
 
-            return new BindableFilterViewModel(bindingExpression)
-            {
-                Text = equippableItem.Influence.GetDisplayName(),
-                IsEnabled = bindingExpression.Compile().Invoke(searchQueryRequest) is BoolOptionFilter boolOptionFilter ? boolOptionFilter.Option : null
-            };
+            return bindingExpression != null
+                ? new BindableFilterViewModel(bindingExpression)
+                {
+                    Text = equippableItem.Influence.GetDisplayName(),
+                    IsEnabled = bindingExpression.Compile().Invoke(searchQueryRequest) is BoolOptionFilter boolOptionFilter ? boolOptionFilter.Option : null
+                }
+                : null;
         }
 
-        private static Expression<Func<SearchQueryRequest, IFilter>> GetInfluenceBindingExpression(InfluenceType influenceType)
+        private static Expression<Func<SearchQueryRequest, IFilter?>>? GetInfluenceBindingExpression(InfluenceType influenceType)
         {
             return influenceType switch
             {
@@ -80,7 +78,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return CreateBindableSocketsFilterViewModel(
                 x => x.Query.Filters.SocketFilters.Sockets,
                 Resources.Sockets,
-                equippableItem.Sockets.Count,
+                equippableItem.Sockets!.Count,
                 searchQueryRequest.Query.Filters.SocketFilters.Sockets);
         }
 
@@ -89,11 +87,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return CreateBindableSocketsFilterViewModel(
                 x => x.Query.Filters.SocketFilters.Links,
                 Resources.Links,
-                equippableItem.Sockets.SocketGroups.Max(x => x.Links),
+                equippableItem.Sockets!.SocketGroups.Max(x => x.Links),
                 searchQueryRequest.Query.Filters.SocketFilters.Links);
         }
 
-        private static FilterViewModelBase CreateBindableSocketsFilterViewModel(Expression<Func<SearchQueryRequest, IFilter>> bindingExpression, string text, int currentValue, SocketsFilter queryRequestFilter)
+        private static FilterViewModelBase CreateBindableSocketsFilterViewModel(
+            Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression,
+            string text,
+            int currentValue,
+            SocketsFilter? queryRequestFilter)
         {
             var result = new BindableSocketsFilterViewModel(bindingExpression)
             {

@@ -13,17 +13,19 @@ namespace POETradeHelper
 
         public IControl Build(object data)
         {
-            var name = data.GetType().AssemblyQualifiedName.Replace("ViewModel", "View");
-            var type = Type.GetType(name);
+            var name = data.GetType().AssemblyQualifiedName?.Replace("ViewModel", "View");
 
-            if (type != null)
+            if (!string.IsNullOrEmpty(name))
             {
-                return (Control)Activator.CreateInstance(type);
+                var type = Type.GetType(name);
+
+                if (type != null)
+                {
+                    return (Control)Activator.CreateInstance(type)!;
+                }
             }
-            else
-            {
-                return new TextBlock { Text = "Not Found: " + name };
-            }
+
+            return new TextBlock { Text = "Not Found: " + name };
         }
 
         public object GetView(object viewModel)

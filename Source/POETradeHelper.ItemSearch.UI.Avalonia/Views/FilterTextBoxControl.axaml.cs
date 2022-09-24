@@ -27,19 +27,19 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
 
         public decimal? Value
         {
-            get => (decimal?)GetValue(ValueProperty);
-            set => SetValue(ValueProperty, value);
+            get => this.GetValue<decimal?>(ValueProperty);
+            set => this.SetValue(ValueProperty, value);
         }
 
         public static AvaloniaProperty<decimal?> ValueProperty = AvaloniaProperty.Register<FilterTextBoxControl, decimal?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
 
-        public string Watermark
+        public string? Watermark
         {
-            get => (string)GetValue(WatermarkProperty);
-            set => SetValue(WatermarkProperty, value);
+            get => this.GetValue<string?>(WatermarkProperty);
+            set => this.SetValue(WatermarkProperty, value);
         }
 
-        public static AvaloniaProperty<string> WatermarkProperty = AvaloniaProperty.Register<FilterTextBoxControl, string>(nameof(Watermark));
+        public static AvaloniaProperty<string?> WatermarkProperty = AvaloniaProperty.Register<FilterTextBoxControl, string?>(nameof(Watermark));
         private readonly TextBox textBox;
 
         public void TextBox_GotFocus(object sender, GotFocusEventArgs eventArgs)
@@ -54,10 +54,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
             }
         }
 
-        private void TextBox_OnTextInput(object sender, TextInputEventArgs e)
+        private void TextBox_OnTextInput(object? sender, TextInputEventArgs e)
         {
             var numberRegex = $@"^[\+\-]?\d+[\.{Regex.Escape(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)}]?\d*$";
-            var newText = this.textBox.Text.Insert(this.textBox.SelectionStart, e.Text);
+            var newText = this.textBox.Text.Insert(this.textBox.SelectionStart, e.Text ?? string.Empty);
             var isNumericText = Regex.IsMatch(newText, numberRegex);
             e.Handled = !isNumericText;
         }

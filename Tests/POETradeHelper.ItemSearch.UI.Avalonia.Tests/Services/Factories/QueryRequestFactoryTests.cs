@@ -12,7 +12,7 @@ using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Factories
+namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class QueryRequestFactoryTests
     {
@@ -22,24 +22,26 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [SetUp]
         public void Setup()
         {
-            this.itemSearchQueryRequestMapperMocks = new List<Mock<IItemSearchQueryRequestMapper>>
+            itemSearchQueryRequestMapperMocks = new List<Mock<IItemSearchQueryRequestMapper>>
             {
                 new Mock<IItemSearchQueryRequestMapper>(),
                 new Mock<IItemSearchQueryRequestMapper>()
             };
 
-            this.searchQueryRequestFactory = new SearchQueryRequestFactory(this.itemSearchQueryRequestMapperMocks.Select(x => x.Object));
+            searchQueryRequestFactory = new SearchQueryRequestFactory(itemSearchQueryRequestMapperMocks.Select(x => x.Object));
         }
 
         [Test]
         public void CreateShouldCallCanMapOnAllItemSearchQueryRequestMappers()
         {
             var item = new EquippableItem(ItemRarity.Rare) { Name = "TestItem" };
+            itemSearchQueryRequestMapperMocks[1].Setup(x => x.CanMap(item))
+                .Returns(true);
 
-            this.searchQueryRequestFactory.Create(item);
+            searchQueryRequestFactory.Create(item);
 
-            this.itemSearchQueryRequestMapperMocks[0].Verify(x => x.CanMap(item));
-            this.itemSearchQueryRequestMapperMocks[1].Verify(x => x.CanMap(item));
+            itemSearchQueryRequestMapperMocks[0].Verify(x => x.CanMap(item));
+            itemSearchQueryRequestMapperMocks[1].Verify(x => x.CanMap(item));
         }
 
         [Test]
@@ -47,15 +49,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         {
             var item = new EquippableItem(ItemRarity.Rare) { Name = "TestItem" };
 
-            this.itemSearchQueryRequestMapperMocks[0].Setup(x => x.CanMap(item))
+            itemSearchQueryRequestMapperMocks[0].Setup(x => x.CanMap(item))
                 .Returns(true);
-            this.itemSearchQueryRequestMapperMocks[1].Setup(x => x.CanMap(item))
+            itemSearchQueryRequestMapperMocks[1].Setup(x => x.CanMap(item))
                 .Returns(true);
 
-            this.searchQueryRequestFactory.Create(item);
+            searchQueryRequestFactory.Create(item);
 
-            this.itemSearchQueryRequestMapperMocks[0].Verify(x => x.MapToQueryRequest(item));
-            this.itemSearchQueryRequestMapperMocks[1].Verify(x => x.MapToQueryRequest(item), Times.Never);
+            itemSearchQueryRequestMapperMocks[0].Verify(x => x.MapToQueryRequest(item));
+            itemSearchQueryRequestMapperMocks[1].Verify(x => x.MapToQueryRequest(item), Times.Never);
         }
 
         [Test]
@@ -67,12 +69,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 League = "Heist"
             };
 
-            this.itemSearchQueryRequestMapperMocks[0].Setup(x => x.CanMap(item))
+            itemSearchQueryRequestMapperMocks[0].Setup(x => x.CanMap(item))
                 .Returns(true);
-            this.itemSearchQueryRequestMapperMocks[0].Setup(x => x.MapToQueryRequest(item))
+            itemSearchQueryRequestMapperMocks[0].Setup(x => x.MapToQueryRequest(item))
                 .Returns(expected);
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(item);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(item);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -89,7 +91,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 IsEnabled = true
             };
             var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.NotNull(result);
 
@@ -118,7 +120,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.NotNull(result);
 
@@ -155,7 +157,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             var advancedFiltersViewModel = GetAdvancedFiltersViewModel(filters, null);
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.NotNull(result);
 
@@ -197,7 +199,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 }
             };
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel);
 
             Assert.NotNull(result);
             Assert.That(result.Query.Stats, Has.Count.EqualTo(1));
@@ -215,7 +217,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.NotNull(result);
 
@@ -244,7 +246,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
 
             var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.NotNull(result);
 
@@ -263,7 +265,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.NotNull(result);
             Assert.Null(result.Query.Filters.MiscFilters.Quality);
@@ -279,7 +281,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.NotNull(result);
 
@@ -294,7 +296,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             BindableFilterViewModel additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem);
             var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.NotNull(result);
             Assert.IsNull(result.Query.Filters.MiscFilters.CrusaderItem);
@@ -350,7 +352,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 }
             };
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel);
 
             Assert.NotNull(result);
             Assert.IsNull(result.Query.Filters.ArmourFilters.Filters);
@@ -379,7 +381,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 }
             };
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
+            SearchQueryRequest result = searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
 
             Assert.IsNotNull(result);
             Assert.That(result.Query.Name, Is.EqualTo(expected));
@@ -397,7 +399,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 }
             };
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
+            SearchQueryRequest result = searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
 
             Assert.IsNotNull(result);
             Assert.That(result.Query.Term, Is.EqualTo(expected));
@@ -415,7 +417,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 }
             };
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
+            SearchQueryRequest result = searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
 
             Assert.IsNotNull(result);
             Assert.That(result.Query.Type, Is.EqualTo(expected));
@@ -430,7 +432,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 League = expected
             };
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
+            SearchQueryRequest result = searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
 
             Assert.IsNotNull(result);
             Assert.That(result.League, Is.EqualTo(expected));
@@ -451,7 +453,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
             var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { bindableSocketsFilterViewModel });
 
-            SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
+            SearchQueryRequest result = searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Query.Filters.SocketFilters);

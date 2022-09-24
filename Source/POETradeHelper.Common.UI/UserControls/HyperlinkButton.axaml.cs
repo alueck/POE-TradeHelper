@@ -22,17 +22,17 @@ namespace POETradeHelper.Common.UI.UserControls
         /// <summary>
         /// Allows to set a hideable window that should be hidden if the button is clicked.
         /// </summary>
-        public IHideable HideableWindow
+        public IHideable? HideableWindow
         {
-            get => (IHideable)GetValue(HideableWindowProperty);
-            set => SetValue(HideableWindowProperty, value);
+            get => this.GetValue<IHideable?>(HideableWindowProperty);
+            set => this.SetValue(HideableWindowProperty, value);
         }
 
-        public static AvaloniaProperty<IHideable> HideableWindowProperty = AvaloniaProperty.Register<HyperlinkButton, IHideable>(nameof(HideableWindow));
+        public static AvaloniaProperty<IHideable?> HideableWindowProperty = AvaloniaProperty.Register<HyperlinkButton, IHideable?>(nameof(HideableWindow));
 
         public Uri Uri
         {
-            get => (Uri)GetValue(UriProperty);
+            get => this.GetValue<Uri>(UriProperty);
             set => SetValue(UriProperty, value);
         }
 

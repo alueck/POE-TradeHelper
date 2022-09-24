@@ -41,16 +41,16 @@ public partial class SearchResultsDataGrid : UserControl
         this.ListingsGrid.AutoGeneratingColumn += this.OnDataGridAutoGeneratingColumn;
     }
 
-    private void OnDataGridAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+    private void OnDataGridAutoGeneratingColumn(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
-        DataGrid dataGrid = (DataGrid)sender;
+        DataGrid dataGrid = (DataGrid)sender!;
 
         var itemsEnumerator = dataGrid.Items.GetEnumerator();
 
         if (itemsEnumerator.MoveNext())
         {
             Type itemType = itemsEnumerator.Current.GetType();
-            PropertyInfo property = itemType.GetProperty(e.PropertyName);
+            PropertyInfo property = itemType.GetProperty(e.PropertyName)!;
 
             if (property.PropertyType == typeof(PriceViewModel))
             {

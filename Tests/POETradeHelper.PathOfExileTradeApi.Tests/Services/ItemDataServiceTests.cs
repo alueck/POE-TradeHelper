@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
+
+using FluentAssertions;
 
 using Moq;
 
@@ -78,7 +81,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             AsyncTestDelegate testDelegate = async () => await this.itemDataService.OnInitAsync();
 
             var exception = Assert.CatchAsync<PoeTradeApiCommunicationException>(testDelegate);
-            Assert.That(exception.Message, Contains.Substring(Resources.PoeTradeApiItemDataEndpoint));
+            exception.Message.Should().Contain(Resources.PoeTradeApiItemDataEndpoint);
         }
 
         [TestCase("Sanguine Leather Belt of the Whelpling")]
@@ -107,7 +110,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             string result = this.itemDataService.GetType(name);
 
-            Assert.That(result, Is.EqualTo(expectedType));
+            result.Should().Be(expectedType);
         }
 
         [Test]
@@ -142,11 +145,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             string result = this.itemDataService.GetType("Blight-ravaged Primordial Pool Map");
 
-            Assert.That(result, Is.EqualTo(expectedType));
+            result.Should().Be(expectedType);
         }
 
         [Test]
-        public async Task GetTypeShouldReturnNullIfNoMatchFound()
+        public async Task GetTypeShouldReturnEmptyStringIfNoMatchFound()
         {
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
                .Returns(new QueryResult<Data<ItemData>>
@@ -170,7 +173,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             string result = this.itemDataService.GetType("No Match");
 
-            Assert.That(result, Is.Null);
+            result.Should().BeEmpty();
         }
 
         [Test]
@@ -207,7 +210,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             string result = this.itemDataService.GetCategory(itemType);
 
-            Assert.That(result, Is.EqualTo(expectedCategory));
+            result.Should().Be(expectedCategory);
         }
 
         [Test]
@@ -233,7 +236,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             string result = this.itemDataService.GetCategory("abc");
 
-            Assert.That(result, Is.Null);
+            result.Should().BeNull();
         }
     }
 }

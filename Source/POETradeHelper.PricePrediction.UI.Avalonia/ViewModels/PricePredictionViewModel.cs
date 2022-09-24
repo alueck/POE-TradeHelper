@@ -29,7 +29,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
         private readonly IStaticDataService staticDataService;
         private readonly IImageService imageService;
 
-        private Item item;
+        private Item? item;
 
         public PricePredictionViewModel(
             IOptionsMonitor<ItemSearchOptions> itemSearchOptions,
@@ -56,16 +56,16 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
         }
 
         [Reactive]
-        public string Prediction { get; set; }
+        public string Prediction { get; set; } = string.Empty;
 
         [Reactive]
-        public string Currency { get; set; }
+        public string Currency { get; set; } = string.Empty;
 
         [Reactive]
-        public IBitmap CurrencyImage { get; set; }
+        public IBitmap? CurrencyImage { get; set; }
 
         [Reactive]
-        public string ConfidenceScore { get; set; }
+        public string ConfidenceScore { get; set; } = string.Empty;
 
         [ObservableAsProperty]
         public bool HasValue => !string.IsNullOrEmpty(this.Prediction) && !string.IsNullOrEmpty(this.Currency);
@@ -74,12 +74,12 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
         {
             try
             {
-                if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled && !string.Equals(this.item?.ItemText, item?.ItemText))
+                if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled && !string.Equals(this.item?.ItemText, item.ItemText))
                 {
                     this.item = item;
                     this.Clear();
 
-                    var request = new GetPoePricesInfoPredictionQuery(item, this.itemSearchOptions.CurrentValue.League);
+                    var request = new GetPoePricesInfoPredictionQuery(item!, this.itemSearchOptions.CurrentValue.League);
                     var poePricesInfoPrediction = await this.mediator.Send(request, cancellationToken).ConfigureAwait(true);
 
                     await this.MapPrediction(poePricesInfoPrediction, cancellationToken);
@@ -96,10 +96,10 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
 
         private void Clear()
         {
-            this.Prediction = null;
-            this.Currency = null;
+            this.Prediction = string.Empty;
+            this.Currency = string.Empty;
             this.CurrencyImage = null;
-            this.ConfidenceScore = null;
+            this.ConfidenceScore = string.Empty;
         }
 
         private async Task MapPrediction(PoePricesInfoPrediction prediction, CancellationToken cancellationToken)
@@ -113,12 +113,11 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
             this.CurrencyImage = await GetCurrencyImage(prediction.Currency, cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<IBitmap> GetCurrencyImage(string currency, CancellationToken cancellationToken)
+        private async Task<IBitmap?> GetCurrencyImage(string currency, CancellationToken cancellationToken)
         {
             Uri imageUrl = this.staticDataService.GetImageUrl(currency);
-            IBitmap image = await this.imageService.GetImageAsync(imageUrl, cancellationToken).ConfigureAwait(false);
 
-            return image;
+            return await this.imageService.GetImageAsync(imageUrl, cancellationToken).ConfigureAwait(false);
         }
     }
 }

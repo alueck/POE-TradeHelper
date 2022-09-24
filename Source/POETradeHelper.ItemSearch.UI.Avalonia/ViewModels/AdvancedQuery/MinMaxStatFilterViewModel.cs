@@ -4,6 +4,6 @@
     {
         public decimal? Min { get; set; }
         public decimal? Max { get; set; }
-        public string Current { get; set; }
+        public string Current { get; set; } = string.Empty;
     }
 }

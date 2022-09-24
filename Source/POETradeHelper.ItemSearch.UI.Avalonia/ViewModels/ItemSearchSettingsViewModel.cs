@@ -30,10 +30,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         public bool IsBusy { get; private set; }
 
         [Reactive]
-        public IList<League> Leagues { get; private set; }
+        public IList<League> Leagues { get; private set; } = new List<League>();
 
         [Reactive]
-        public League SelectedLeague { get; set; }
+        public League? SelectedLeague { get; set; }
 
         [Reactive]
         public bool PricePredictionEnabled { get; set; }
@@ -70,7 +70,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 
                 this.itemSearchOptions.Update(o =>
                 {
-                    o.League = this.SelectedLeague;
+                    o.League = this.SelectedLeague!;
                     o.PricePredictionEnabled = this.PricePredictionEnabled;
                 });
             }

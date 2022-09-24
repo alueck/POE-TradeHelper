@@ -17,7 +17,7 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PricePrediction.UI.Avalonia.ViewModels;
 
-namespace POETradeHelper.ItemSearch.Tests.ViewModels;
+namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels;
 
 public class ItemResultsViewModelTests
 {
@@ -32,19 +32,19 @@ public class ItemResultsViewModelTests
     [SetUp]
     public void Setup()
     {
-        this.itemSearchResultsOverlayViewModelMock = new Mock<IItemSearchResultOverlayViewModel>();
-        this.searchQueryRequestFactoryMock = new Mock<ISearchQueryRequestFactory>();
-        this.itemListingsViewModelFactoryMock = new Mock<IItemListingsViewModelFactory>();
-        this.poeTradeApiClientMock = new Mock<IPoeTradeApiClient>();
-        this.pricePredictionViewModelMock = new Mock<IPricePredictionViewModel>();
-        this.advancedFiltersViewModelMock = new Mock<IAdvancedFiltersViewModel>();
-        this.viewModel = new ItemResultsViewModel(
-            this.itemSearchResultsOverlayViewModelMock.Object,
-            this.searchQueryRequestFactoryMock.Object,
-            this.itemListingsViewModelFactoryMock.Object,
-            this.poeTradeApiClientMock.Object,
-            this.pricePredictionViewModelMock.Object,
-            this.advancedFiltersViewModelMock.Object);
+        itemSearchResultsOverlayViewModelMock = new Mock<IItemSearchResultOverlayViewModel>();
+        searchQueryRequestFactoryMock = new Mock<ISearchQueryRequestFactory>();
+        itemListingsViewModelFactoryMock = new Mock<IItemListingsViewModelFactory>();
+        poeTradeApiClientMock = new Mock<IPoeTradeApiClient>();
+        pricePredictionViewModelMock = new Mock<IPricePredictionViewModel>();
+        advancedFiltersViewModelMock = new Mock<IAdvancedFiltersViewModel>();
+        viewModel = new ItemResultsViewModel(
+            itemSearchResultsOverlayViewModelMock.Object,
+            searchQueryRequestFactoryMock.Object,
+            itemListingsViewModelFactoryMock.Object,
+            poeTradeApiClientMock.Object,
+            pricePredictionViewModelMock.Object,
+            advancedFiltersViewModelMock.Object);
     }
 
     [Test]
@@ -52,9 +52,9 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
 
-        await this.viewModel.InitializeAsync(item, default);
+        await viewModel.InitializeAsync(item, default);
 
-        this.searchQueryRequestFactoryMock
+        searchQueryRequestFactoryMock
             .Verify(x => x.Create(item));
     }
 
@@ -63,13 +63,13 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
         SearchQueryRequest expected = new() { League = "Test" };
-        this.searchQueryRequestFactoryMock
+        searchQueryRequestFactoryMock
             .Setup(x => x.Create(It.IsAny<Item>()))
             .Returns(expected);
 
-        await this.viewModel.InitializeAsync(item, default);
+        await viewModel.InitializeAsync(item, default);
 
-        this.viewModel.QueryRequest.Should().Be(expected);
+        viewModel.QueryRequest.Should().Be(expected);
     }
 
     [Test]
@@ -77,14 +77,14 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
         SearchQueryRequest expected = new() { League = "Test" };
-        this.searchQueryRequestFactoryMock
+        searchQueryRequestFactoryMock
             .Setup(x => x.Create(It.IsAny<Item>()))
             .Returns(expected);
         CancellationTokenSource cts = new();
 
-        await this.viewModel.InitializeAsync(item, cts.Token);
+        await viewModel.InitializeAsync(item, cts.Token);
 
-        this.poeTradeApiClientMock
+        poeTradeApiClientMock
             .Verify(x => x.GetListingsAsync(expected, cts.Token));
     }
 
@@ -93,14 +93,14 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
         ItemListingsQueryResult result = new() { TotalCount = 1 };
-        this.poeTradeApiClientMock
+        poeTradeApiClientMock
             .Setup(x => x.GetListingsAsync(It.IsAny<SearchQueryRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(result);
         CancellationTokenSource cts = new();
 
-        await this.viewModel.InitializeAsync(item, cts.Token);
+        await viewModel.InitializeAsync(item, cts.Token);
 
-        this.itemListingsViewModelFactoryMock
+        itemListingsViewModelFactoryMock
             .Verify(x => x.CreateAsync(item, result, cts.Token));
     }
 
@@ -109,13 +109,13 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
         ItemListingsViewModel expected = new() { ListingsUri = new Uri("https://test.uri") };
-        this.itemListingsViewModelFactoryMock
+        itemListingsViewModelFactoryMock
             .Setup(x => x.CreateAsync(It.IsAny<Item>(), It.IsAny<ItemListingsQueryResult>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        await this.viewModel.InitializeAsync(item, default);
+        await viewModel.InitializeAsync(item, default);
 
-        this.viewModel.ItemListings.Should().Be(expected);
+        viewModel.ItemListings.Should().Be(expected);
     }
 
     [Test]
@@ -123,14 +123,14 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
         SearchQueryRequest queryRequest = new() { League = "Test" };
-        this.searchQueryRequestFactoryMock
+        searchQueryRequestFactoryMock
             .Setup(x => x.Create(It.IsAny<Item>()))
             .Returns(queryRequest);
         CancellationTokenSource cts = new();
 
-        await this.viewModel.InitializeAsync(item, cts.Token);
+        await viewModel.InitializeAsync(item, cts.Token);
 
-        this.advancedFiltersViewModelMock
+        advancedFiltersViewModelMock
             .Verify(x => x.LoadAsync(item, queryRequest, cts.Token));
     }
 
@@ -140,9 +140,9 @@ public class ItemResultsViewModelTests
         EquippableItem item = new(ItemRarity.Rare);
         CancellationTokenSource cts = new();
 
-        await this.viewModel.InitializeAsync(item, cts.Token);
+        await viewModel.InitializeAsync(item, cts.Token);
 
-        this.pricePredictionViewModelMock
+        pricePredictionViewModelMock
             .Verify(x => x.LoadAsync(item, cts.Token));
     }
 
@@ -150,25 +150,25 @@ public class ItemResultsViewModelTests
     public async Task ExecuteAdvancedQueryCommandCallsCreateOnSearchQueryRequestFactory()
     {
         SearchQueryRequest originalQueryRequest = new() { League = "test" };
-        this.viewModel.QueryRequest = originalQueryRequest;
+        viewModel.QueryRequest = originalQueryRequest;
 
-        await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
+        await viewModel.ExecuteAdvancedQueryCommand.Execute();
 
-        this.searchQueryRequestFactoryMock
-            .Verify(x => x.Create(originalQueryRequest, this.advancedFiltersViewModelMock.Object));
+        searchQueryRequestFactoryMock
+            .Verify(x => x.Create(originalQueryRequest, advancedFiltersViewModelMock.Object));
     }
 
     [Test]
     public async Task ExecuteAdvancedQueryCommandSetsQueryRequest()
     {
         SearchQueryRequest expected = new() { League = "abc" };
-        this.searchQueryRequestFactoryMock
+        searchQueryRequestFactoryMock
             .Setup(x => x.Create(It.IsAny<SearchQueryRequest>(), It.IsAny<IAdvancedFiltersViewModel>()))
             .Returns(expected);
 
-        await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
+        await viewModel.ExecuteAdvancedQueryCommand.Execute();
 
-        this.viewModel.QueryRequest.Should().Be(expected);
+        viewModel.QueryRequest.Should().Be(expected);
     }
 
     [Test]
@@ -176,14 +176,14 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Magic);
         SearchQueryRequest queryRequest = new() { League = "abc" };
-        this.searchQueryRequestFactoryMock
+        searchQueryRequestFactoryMock
             .SetupSequence(x => x.Create(It.IsAny<SearchQueryRequest>(), It.IsAny<IAdvancedFiltersViewModel>()))
             .Returns(queryRequest);
-        await this.viewModel.InitializeAsync(item, default);
+        await viewModel.InitializeAsync(item, default);
 
-        await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
+        await viewModel.ExecuteAdvancedQueryCommand.Execute();
 
-        this.advancedFiltersViewModelMock
+        advancedFiltersViewModelMock
             .Verify(x => x.LoadAsync(item, queryRequest, default));
     }
 
@@ -192,14 +192,14 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
         SearchQueryRequest queryRequest = new() { League = "Test" };
-        this.searchQueryRequestFactoryMock
+        searchQueryRequestFactoryMock
             .SetupSequence(x => x.Create(It.IsAny<SearchQueryRequest>(), It.IsAny<IAdvancedFiltersViewModel>()))
             .Returns(queryRequest);
-        await this.viewModel.InitializeAsync(item, default);
+        await viewModel.InitializeAsync(item, default);
 
-        await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
+        await viewModel.ExecuteAdvancedQueryCommand.Execute();
 
-        this.poeTradeApiClientMock
+        poeTradeApiClientMock
             .Verify(x => x.GetListingsAsync(queryRequest, default));
     }
 
@@ -208,15 +208,15 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
         ItemListingsQueryResult result = new() { TotalCount = 1 };
-        this.poeTradeApiClientMock
+        poeTradeApiClientMock
             .SetupSequence(x => x.GetListingsAsync(It.IsAny<SearchQueryRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ItemListingsQueryResult)null)
             .ReturnsAsync(result);
-        await this.viewModel.InitializeAsync(item, default);
+        await viewModel.InitializeAsync(item, default);
 
-        await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
+        await viewModel.ExecuteAdvancedQueryCommand.Execute();
 
-        this.itemListingsViewModelFactoryMock
+        itemListingsViewModelFactoryMock
             .Verify(x => x.CreateAsync(item, result, default));
     }
 
@@ -225,15 +225,15 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
         ItemListingsViewModel expected = new() { ListingsUri = new Uri("https://test.test") };
-        this.itemListingsViewModelFactoryMock
+        itemListingsViewModelFactoryMock
             .SetupSequence(x => x.CreateAsync(It.IsAny<Item>(), It.IsAny<ItemListingsQueryResult>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ItemListingsViewModel)null)
             .ReturnsAsync(expected);
-        await this.viewModel.InitializeAsync(item, default);
+        await viewModel.InitializeAsync(item, default);
 
-        await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
+        await viewModel.ExecuteAdvancedQueryCommand.Execute();
 
-        this.viewModel.ItemListings.Should().Be(expected);
+        viewModel.ItemListings.Should().Be(expected);
     }
 
     [Test]
@@ -241,13 +241,13 @@ public class ItemResultsViewModelTests
     {
         EquippableItem item = new(ItemRarity.Rare);
         Exception exception = new();
-        this.searchQueryRequestFactoryMock
+        searchQueryRequestFactoryMock
             .Setup(x => x.Create(It.IsAny<SearchQueryRequest>(), It.IsAny<IAdvancedFiltersViewModel>()))
             .Throws(exception);
 
-        await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
+        await viewModel.ExecuteAdvancedQueryCommand.Execute();
 
-        this.itemSearchResultsOverlayViewModelMock
+        itemSearchResultsOverlayViewModelMock
             .Verify(x => x.HandleException(exception));
     }
 }

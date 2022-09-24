@@ -34,7 +34,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
             this.uiThreadDispatcher = uiThreadDispatcher;
         }
 
-        private IItemSearchResultOverlayView view;
+        private IItemSearchResultOverlayView? view;
         private IItemSearchResultOverlayView View => LazyInitializer.EnsureInitialized(ref view, CreateView);
 
         private IItemSearchResultOverlayView CreateView()
@@ -80,6 +80,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
                 }
                 catch (Exception exception) when (exception is OperationCanceledException or TaskCanceledException)
                 {
+                    // do nothing
                 }
             });
 

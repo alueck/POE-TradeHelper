@@ -20,16 +20,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
 
         public ICollection Items
         {
-            get => (ICollection)GetValue(ItemsProperty);
-            set => SetValue(ItemsProperty, value);
+            get => this.GetValue<ICollection>(ItemsProperty);
+            set => this.SetValue(ItemsProperty, value);
         }
 
         public static AvaloniaProperty<ICollection> ItemsProperty = AvaloniaProperty.Register<FiltersControl, ICollection>(nameof(Items));
 
         public string Header
         {
-            get => (string)GetValue(HeaderProperty);
-            set => SetValue(HeaderProperty, value);
+            get => this.GetValue<string>(HeaderProperty);
+            set => this.SetValue(HeaderProperty, value);
         }
 
         public static AvaloniaProperty<string> HeaderProperty = AvaloniaProperty.Register<FiltersControl, string>(nameof(Header));

@@ -31,7 +31,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 : GetStatFilterViewModel(itemStat, matchingFilter);
         }
 
-        private static StatFilter FindMatchingFilter(ItemStat itemStat, SearchQueryRequest queryRequest)
+        private static StatFilter? FindMatchingFilter(ItemStat itemStat, SearchQueryRequest queryRequest)
         {
             return queryRequest.Query.Stats.SelectMany(s => s.Filters).FirstOrDefault(filter => string.Equals(filter.Id, itemStat.Id, StringComparison.Ordinal));
         }
@@ -52,7 +52,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return minMaxTuple;
         }
 
-        private StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilter matchingFilter, (decimal minValue, decimal maxValue) minMaxTuple)
+        private StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilter? matchingFilter, (decimal minValue, decimal maxValue) minMaxTuple)
         {
             decimal minValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MinValuePercentageOffset;
             decimal maxValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MaxValuePercentageOffset;
@@ -101,7 +101,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return current;
         }
 
-        private static StatFilterViewModel GetStatFilterViewModel(ItemStat itemStat, StatFilter matchingFilter)
+        private static StatFilterViewModel GetStatFilterViewModel(ItemStat itemStat, StatFilter? matchingFilter)
         {
             return new StatFilterViewModel
             {

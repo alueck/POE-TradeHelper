@@ -17,7 +17,7 @@ namespace POETradeHelper.Common.UI.UserControls
             this.InitializeComponent();
         }
 
-        private void DisplayAfterTimerEnded(object sender, EventArgs e)
+        private void DisplayAfterTimerEnded(object? sender, EventArgs e)
         {
             displayAfterTimer.Stop();
             IsBusyIndicatorVisible = true;
@@ -37,7 +37,7 @@ namespace POETradeHelper.Common.UI.UserControls
                 return;
             }
 
-            if ((bool)eventArgs.NewValue)
+            if (eventArgs.NewValue is bool newValue && newValue)
             {
                 if (DisplayAfter == TimeSpan.Zero)
                 {
@@ -58,7 +58,7 @@ namespace POETradeHelper.Common.UI.UserControls
 
         public TimeSpan DisplayAfter
         {
-            get => (TimeSpan)this.GetValue(DisplayAfterProperty);
+            get => this.GetValue<TimeSpan>(DisplayAfterProperty);
             set => this.SetValue(DisplayAfterProperty, value);
         }
 
@@ -66,23 +66,23 @@ namespace POETradeHelper.Common.UI.UserControls
 
         public bool IsBusy
         {
-            get => (bool)this.GetValue(IsBusyProperty);
+            get => this.GetValue<bool>(IsBusyProperty);
             set => this.SetValue(IsBusyProperty, value);
         }
 
         public static AvaloniaProperty<bool> IsBusyProperty = AvaloniaProperty.Register<BusyIndicator, bool>(nameof(IsBusy));
 
-        public string Text
+        public string? Text
         {
-            get => (string)this.GetValue(TextProperty);
+            get => this.GetValue<string?>(TextProperty);
             set => this.SetValue(TextProperty, value);
         }
 
-        public static AvaloniaProperty<string> TextProperty = AvaloniaProperty.Register<BusyIndicator, string>(nameof(Text));
+        public static AvaloniaProperty<string?> TextProperty = AvaloniaProperty.Register<BusyIndicator, string?>(nameof(Text));
 
         protected bool IsBusyIndicatorVisible
         {
-            get => (bool)this.GetValue(IsBusyIndicatorVisibleProperty);
+            get => this.GetValue<bool>(IsBusyIndicatorVisibleProperty);
             set => this.SetValue(IsBusyIndicatorVisibleProperty, value);
         }
 
