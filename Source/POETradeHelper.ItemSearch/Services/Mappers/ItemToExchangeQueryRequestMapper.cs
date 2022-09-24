@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -25,15 +23,15 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             {
                 throw new ArgumentException("Item must be currency, fragment or divination card.", nameof(item));
             }
-            
+
             var result = new ExchangeQueryRequest
             {
                 League = this.itemSearchOptions.CurrentValue.League.Id
             };
-            string itemId = this.staticItemDataService.GetId(item.Name);
+            string? itemId = this.staticItemDataService.GetId(item.Name);
 
             result.Query.Want.Add("chaos");
-            result.Query.Have.Add(itemId);
+            result.Query.Have.Add(itemId!);
 
             return result;
         }

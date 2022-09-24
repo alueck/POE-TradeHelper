@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -19,7 +20,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
         public override SearchQueryRequest MapToQueryRequest(Item item)
         {
-            SearchQueryRequest result = (SearchQueryRequest)base.MapToQueryRequest(item);
+            SearchQueryRequest result = base.MapToQueryRequest(item);
 
             var gemItem = (GemItem)item;
 
@@ -32,9 +33,10 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
         protected override void MapItemRarity(SearchQueryRequest result, Item item)
         {
+            // rarity is always Gem
         }
 
-        private void MapGemLevel(SearchQueryRequest result, GemItem gemItem)
+        private static void MapGemLevel(SearchQueryRequest result, GemItem gemItem)
         {
             result.Query.Filters.MiscFilters.GemLevel = new MinMaxFilter
             {
@@ -42,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             };
         }
 
-        private void MapQuality(SearchQueryRequest result, GemItem gemItem)
+        private static void MapQuality(SearchQueryRequest result, GemItem gemItem)
         {
             result.Query.Filters.MiscFilters.Quality = new MinMaxFilter
             {
@@ -50,7 +52,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             };
         }
 
-        private void MapGemQualityType(SearchQueryRequest result, GemItem gemItem)
+        private static void MapGemQualityType(SearchQueryRequest result, GemItem gemItem)
         {
             result.Query.Filters.MiscFilters.GemAlternateQuality = new OptionFilter
             {

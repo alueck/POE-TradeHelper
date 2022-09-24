@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.Services.Impl;
@@ -10,7 +12,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
     public class PoeDbUrlProviderTests
     {
         private const string RootUrl = "https://poedb.tw/us/";
-        
+
         private PoeDbUrlProvider wikiUrlProvider;
 
         [SetUp]
@@ -23,7 +25,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
         public void WikiTyperReturnsPoeDb()
         {
             var result = this.wikiUrlProvider.HandledWikiType;
-            
+
             Assert.That(result, Is.EqualTo(WikiType.PoeDb));
         }
 
@@ -33,7 +35,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
             var expected = new Uri(RootUrl + item.Type.Replace(' ', '_').Replace("'", ""));
 
             var result = this.wikiUrlProvider.GetUrl(item);
-            
+
             Assert.That(result, Is.EqualTo(expected));
         }
 
@@ -61,7 +63,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
             var expected = new Uri(RootUrl + item.Name.Replace(' ', '_').Replace("'", ""));
 
             var result = this.wikiUrlProvider.GetUrl(item);
-            
+
             Assert.That(result, Is.EqualTo(expected));
         }
 

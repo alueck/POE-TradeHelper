@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using POETradeHelper.ItemSearch.Contract.Models;
+﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 {
     public class PseudoItemStatsParser : IPseudoItemStatsParser
     {
@@ -21,9 +18,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         public IEnumerable<ItemStat> Parse(IEnumerable<ItemStat> itemStats)
         {
             IList<ItemStat> result = new List<ItemStat>();
-            IDictionary<StatData, IList<ItemStat>> pseudoStatDataMapping = GetRelevantPseudoStatDataMappings(itemStats);
-
-            foreach (var entry in pseudoStatDataMapping)
+            foreach (var entry in this.GetRelevantPseudoStatDataMappings(itemStats))
             {
                 switch (entry.Value[0])
                 {
@@ -42,7 +37,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private IDictionary<StatData, IList<ItemStat>> GetRelevantPseudoStatDataMappings(IEnumerable<ItemStat> itemStats)
         {
-            IDictionary<StatData, IList<ItemStat>> pseudoStatDataMapping = GetPseudoStatDataMappings(itemStats);
+            IDictionary<StatData, IList<ItemStat>> pseudoStatDataMapping = this.GetPseudoStatDataMappings(itemStats);
 
             return pseudoStatDataMapping
                 .Where(x => x.Value.Count > 1)
@@ -58,7 +53,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
                 foreach (var pseudoStatData in pseudoStatDataList)
                 {
-                    if (!pseudoStatDataMapping.TryGetValue(pseudoStatData, out IList<ItemStat> mappedItemStats))
+                    if (!pseudoStatDataMapping.TryGetValue(pseudoStatData, out IList<ItemStat>? mappedItemStats))
                     {
                         pseudoStatDataMapping[pseudoStatData] = mappedItemStats = new List<ItemStat>();
                     }

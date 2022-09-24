@@ -2,8 +2,8 @@
 {
     public interface IItemDataService
     {
-        string GetType(string name);
+        string? GetType(string name);
 
-        string GetCategory(string type);
+        string? GetCategory(string type);
     }
 }

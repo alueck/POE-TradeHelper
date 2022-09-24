@@ -27,7 +27,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
         private Mock<IBitmapFactory> bitmapFactoryMock;
         private ImageService imageService;
 
-        private static readonly Uri uri = new Uri("http://www.google.de");
+        private static readonly Uri uri = new("http://www.google.de");
 
         [SetUp]
         public void Setup()
@@ -61,7 +61,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             // assert
             this.httpClientWrapperMock.Verify(x => x.GetAsync(uri, cancellationToken));
         }
-        
+
         [Test]
         public async Task GetImageAsyncShouldCallCreateOnBitmapFactoryIfHttpResponseIndicatesSuccess()
         {
@@ -75,7 +75,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             var stream = await httpResponse.Content.ReadAsStreamAsync();
             this.bitmapFactoryMock.Verify(x => x.Create(stream));
         }
-        
+
         [Test]
         public async Task GetImageAsyncShouldReturnImageIfHttpResponseIndicatesSuccess()
         {
@@ -95,7 +95,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
         [Test]
         public async Task GetImageAsyncShouldReturnNullIfHttpResponseDoesNotIndicatesSuccess()
         {
-            HttpResponseMessage httpResponse = new HttpResponseMessage
+            HttpResponseMessage httpResponse = new()
             {
                 StatusCode = HttpStatusCode.BadRequest
             };
@@ -129,7 +129,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
 
         private HttpResponseMessage MockHttpClientGetAsyncSuccessResponse(Stream stream = null)
         {
-            HttpResponseMessage httpResponse = new HttpResponseMessage
+            HttpResponseMessage httpResponse = new()
             {
                 StatusCode = HttpStatusCode.OK,
                 Content = new StreamContent(stream ?? new MemoryStream())

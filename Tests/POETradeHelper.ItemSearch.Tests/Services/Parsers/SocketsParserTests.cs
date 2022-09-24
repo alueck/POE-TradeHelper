@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers;
 
@@ -8,10 +7,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class SocketsParserTests
     {
-        private SocketsParser socketsParser;
+        private readonly SocketsParser socketsParser;
 
-        [SetUp]
-        public void Setup()
+        public SocketsParserTests()
         {
             this.socketsParser = new SocketsParser();
         }

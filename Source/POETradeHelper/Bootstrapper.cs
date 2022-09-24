@@ -9,9 +9,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy;
 
-using Avalonia.ReactiveUI;
-using Avalonia.Threading;
-
 using Castle.DynamicProxy;
 
 using MediatR;
@@ -22,14 +19,10 @@ using Microsoft.Extensions.Logging;
 
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Extensions;
-using POETradeHelper.Common.UI;
 using POETradeHelper.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
-using POETradeHelper.ItemSearch.ViewModels;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.ViewModels;
-
-using Polly.Bulkhead;
 
 using ReactiveUI;
 
@@ -39,7 +32,6 @@ using Serilog.Exceptions;
 
 using Splat;
 using Splat.Autofac;
-using Splat.Microsoft.Extensions.Logging;
 
 namespace POETradeHelper
 {
@@ -68,7 +60,7 @@ namespace POETradeHelper
             var builder = new ContainerBuilder();
             var autofacResolver = builder.UseAutofacDependencyResolver();
             builder.RegisterInstance(autofacResolver);
-            
+
             RegisterInterceptors(builder, assemblies);
             RegisterNonSingletonTypes(builder, assemblies);
             RegisterSingletonTypes(builder, assemblies);

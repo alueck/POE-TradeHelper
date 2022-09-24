@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace POETradeHelper.ItemSearch.Exceptions
+﻿namespace POETradeHelper.ItemSearch.Exceptions
 {
     public class InvalidItemStringException : Exception
     {

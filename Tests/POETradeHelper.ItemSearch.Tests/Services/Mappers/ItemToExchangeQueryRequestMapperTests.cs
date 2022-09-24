@@ -15,12 +15,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class ItemToExchangeQueryRequestMapperTests
     {
-        private Mock<IStaticDataService> staticDataServiceMock;
-        private Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
-        private ItemToExchangeQueryRequestMapper itemToExchangeQueryRequestMapper;
+        private readonly Mock<IStaticDataService> staticDataServiceMock;
+        private readonly Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
+        private readonly ItemToExchangeQueryRequestMapper itemToExchangeQueryRequestMapper;
 
-        [SetUp]
-        public void Setup()
+        public ItemToExchangeQueryRequestMapperTests()
         {
             this.staticDataServiceMock = new Mock<IStaticDataService>();
             this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();

@@ -1,8 +1,11 @@
 ﻿using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Services;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;

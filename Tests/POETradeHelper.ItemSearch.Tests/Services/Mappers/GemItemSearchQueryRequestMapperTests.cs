@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -8,12 +9,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class GemItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<GemItem>
     {
-        private GemItemSearchQueryRequestMapper gemItemSearchQueryRequestMapper;
+        private readonly GemItemSearchQueryRequestMapper gemItemSearchQueryRequestMapper;
 
-        [SetUp]
-        public override void Setup()
+        public GemItemSearchQueryRequestMapperTests()
         {
-            base.Setup();
             this.ItemSearchQueryRequestMapper = this.gemItemSearchQueryRequestMapper = new GemItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
@@ -26,7 +25,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Type = expected
             };
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.Query.Type, Is.EqualTo(expected));
         }
@@ -40,7 +39,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Name = expected
             };
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Name);
         }
@@ -50,7 +49,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             var item = new GemItem();
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Filters.TypeFilters.Rarity);
         }
@@ -64,11 +63,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Level = expected
             };
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            MinMaxFilter gemLevelFilter = result.Query.Filters.MiscFilters.GemLevel;
+            MinMaxFilter? gemLevelFilter = result.Query.Filters.MiscFilters.GemLevel;
             Assert.IsNotNull(gemLevelFilter);
-            Assert.That(gemLevelFilter.Min, Is.EqualTo(expected));
+            Assert.That(gemLevelFilter!.Min, Is.EqualTo(expected));
             Assert.IsNull(gemLevelFilter.Max);
         }
 
@@ -81,11 +80,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Quality = expected
             };
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            MinMaxFilter qualityFilter = result.Query.Filters.MiscFilters.Quality;
+            MinMaxFilter? qualityFilter = result.Query.Filters.MiscFilters.Quality;
             Assert.IsNotNull(qualityFilter);
-            Assert.That(qualityFilter.Min, Is.EqualTo(expected));
+            Assert.That(qualityFilter!.Min, Is.EqualTo(expected));
             Assert.IsNull(qualityFilter.Max);
         }
 
@@ -101,11 +100,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 QualityType = gemQualityType
             };
 
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            OptionFilter gemQualityTypeFilter = result.Query.Filters.MiscFilters.GemAlternateQuality;
+            OptionFilter? gemQualityTypeFilter = result.Query.Filters.MiscFilters.GemAlternateQuality;
             Assert.IsNotNull(gemQualityTypeFilter);
-            Assert.That(gemQualityTypeFilter.Option, Is.EqualTo(expected));
+            Assert.That(gemQualityTypeFilter!.Option, Is.EqualTo(expected));
         }
     }
 }

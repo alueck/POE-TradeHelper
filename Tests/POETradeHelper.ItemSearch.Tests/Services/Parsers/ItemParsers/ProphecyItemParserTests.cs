@@ -1,18 +1,18 @@
 ﻿using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
-using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class ProphecyItemParserTests : ItemParserTestsBase
     {
         private const string Prophecy = "The Unbreathing Queen I";
-        private ItemStringBuilder itemStringBuilder;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public ProphecyItemParserTests()
         {
             this.ItemParser = new ProphecyItemParser();
             this.itemStringBuilder = new ItemStringBuilder();
@@ -47,7 +47,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             string[] itemStringLines = this.GetValidItemStringLines();
 
-            ProphecyItem result = this.ItemParser.Parse(itemStringLines) as ProphecyItem;
+            ProphecyItem result = (ProphecyItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(Prophecy));
         }
@@ -57,7 +57,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             string[] itemStringLines = this.GetValidItemStringLines();
 
-            ProphecyItem result = this.ItemParser.Parse(itemStringLines) as ProphecyItem;
+            ProphecyItem result = (ProphecyItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Type, Is.EqualTo(Prophecy));
         }

@@ -1,6 +1,9 @@
 ﻿using System.Threading.Tasks;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
 using POETradeHelper.QualityOfLife.Commands.Handlers;

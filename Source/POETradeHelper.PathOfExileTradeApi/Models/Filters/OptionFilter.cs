@@ -2,7 +2,7 @@
 {
     public class OptionFilter : IFilter
     {
-        public string Option { get; set; }
+        public string Option { get; set; } = string.Empty;
 
         public object Clone()
         {

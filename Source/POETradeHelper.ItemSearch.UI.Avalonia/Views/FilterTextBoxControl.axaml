@@ -1,0 +1,22 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Views.FilterTextBoxControl">
+    
+    <UserControl.Resources>
+        <commonUiConverters:NullableDecimalStringConverter x:Key="nullableDecimalStringConverter" />
+    </UserControl.Resources>
+    
+    <TextBox DataContext="{Binding $parent[UserControl]}"
+             Name="textBox"
+             Text="{Binding Value, Converter={StaticResource nullableDecimalStringConverter}}"
+             HorizontalAlignment="Stretch"
+             Margin="5"
+             TextAlignment="Right"
+             GotFocus="TextBox_GotFocus"
+             Watermark="{Binding Watermark}"
+    />
+</UserControl>

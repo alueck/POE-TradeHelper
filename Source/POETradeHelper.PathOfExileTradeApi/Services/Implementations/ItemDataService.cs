@@ -15,7 +15,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         {
         }
 
-        public string GetType(string name)
+        public string? GetType(string name)
         {
             List<ItemData> matches = new();
 
@@ -24,17 +24,16 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
                 if (entry.Type == name)
                     return entry.Type;
 
-                if (name.Contains(entry.Type))
+                if (name.Contains(entry.Type!))
                     matches.Add(entry);
             }
 
             return matches
-                .Select(x => x.Type)
-                .OrderByDescending(x => x.Length)
-                .FirstOrDefault();
+                .Select(x => x.Type!)
+                .MaxBy(x => x.Length);
         }
 
-        public string GetCategory(string type)
+        public string? GetCategory(string type)
         {
             return this.Data
                         .FirstOrDefault(x => x.Entries.Any(itemEntry => string.Equals(itemEntry.Type, type, StringComparison.Ordinal)))

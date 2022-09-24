@@ -1,5 +1,4 @@
-﻿using System;
-using POETradeHelper.Common.Contract.Attributes;
+﻿using POETradeHelper.Common.Contract.Attributes;
 
 namespace POETradeHelper.Common.Contract
 {

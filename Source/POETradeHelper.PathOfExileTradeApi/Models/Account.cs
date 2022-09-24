@@ -2,8 +2,8 @@
 {
     public class Account
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public string LastCharacterName { get; set; }
+        public string LastCharacterName { get; set; } = string.Empty;
     }
 }

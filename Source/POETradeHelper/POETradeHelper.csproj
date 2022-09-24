@@ -50,8 +50,8 @@
   <ItemGroup>
     <ProjectReference Include="..\POETradeHelper.Common.UI\POETradeHelper.Common.UI.csproj" />
     <ProjectReference Include="..\POETradeHelper.ItemSearch.Contract\POETradeHelper.ItemSearch.Contract.csproj" />
-    <ProjectReference Include="..\POETradeHelper.ItemSearch\POETradeHelper.ItemSearch.csproj" />
-    <ProjectReference Include="..\POETradeHelper.QualityOfLife\POETradeHelper.QualityOfLife.csproj" />
+    <ProjectReference Include="..\POETradeHelper.ItemSearch.UI.Avalonia\POETradeHelper.ItemSearch.UI.Avalonia.csproj" />
+    <ProjectReference Include="..\POETradeHelper.QualityOfLife.UI.Avalonia\POETradeHelper.QualityOfLife.UI.Avalonia.csproj" />
     <ProjectReference Include="..\POETradeHelper.Win32\POETradeHelper.Win32.csproj" />
   </ItemGroup>
   <ItemGroup>

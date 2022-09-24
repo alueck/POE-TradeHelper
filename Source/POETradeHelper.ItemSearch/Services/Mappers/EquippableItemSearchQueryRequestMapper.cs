@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -11,7 +9,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class EquippableItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
-        private static readonly IDictionary<InfluenceType, Action<MiscFilters>> InfluenceMappings = new Dictionary<InfluenceType, Action<MiscFilters>>
+        private static readonly IDictionary<InfluenceType, Action<MiscFilters>?> InfluenceMappings = new Dictionary<InfluenceType, Action<MiscFilters>?>
         {
             [InfluenceType.None] = null,
             [InfluenceType.Crusader] = (miscFilters) => miscFilters.CrusaderItem = new BoolOptionFilter { Option = true },
@@ -55,7 +53,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             }
         }
 
-        private void MapItemLinks(SearchQueryRequest result, EquippableItem equippableItem)
+        private static void MapItemLinks(SearchQueryRequest result, EquippableItem equippableItem)
         {
             if (equippableItem.Sockets?.Count == 0)
             {
@@ -74,7 +72,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             }
         }
 
-        private void MapInfluence(SearchQueryRequest result, EquippableItem equippableItem)
+        private static void MapInfluence(SearchQueryRequest result, EquippableItem equippableItem)
         {
             if (InfluenceMappings.TryGetValue(equippableItem.Influence, out var setInfluenceAction))
             {

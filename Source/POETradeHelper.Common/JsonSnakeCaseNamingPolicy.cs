@@ -22,7 +22,7 @@ namespace POETradeHelper.Common
             // Allocates a string builder with the guessed result length,
             // where 5 is the average word length in English, and
             // max(2, length / 5) is the number of underscores.
-            StringBuilder builder = new StringBuilder(name.Length + Math.Max(2, name.Length / 5));
+            StringBuilder builder = new(name.Length + Math.Max(2, name.Length / 5));
             UnicodeCategory? previousCategory = null;
 
             for (int currentIndex = 0; currentIndex < name.Length; currentIndex++)

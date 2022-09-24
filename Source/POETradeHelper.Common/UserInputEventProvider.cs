@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +20,7 @@ namespace POETradeHelper.Common
         private readonly IReactiveGlobalHook hook;
         private readonly IPathOfExileProcessHelper pathOfExileProcessHelper;
         private readonly IMediator mediator;
-        private IDisposable subscription;
+        private readonly CompositeDisposable disposables = new();
 
         public UserInputEventProvider(IReactiveGlobalHook hook, IPathOfExileProcessHelper pathOfExileProcessHelper, IMediator mediator)
         {
@@ -29,10 +31,11 @@ namespace POETradeHelper.Common
 
         public Task OnInitAsync()
         {
-            this.subscription = this.hook.KeyPressed
+            var subscription = this.hook.KeyPressed
                 .Select(args => Observable.FromAsync(() => this.OnKeyPressed(args)))
                 .Concat()
                 .Subscribe();
+            this.disposables.Add(subscription);
 
             return Task.CompletedTask;
         }
@@ -44,17 +47,14 @@ namespace POETradeHelper.Common
                 void OnHandled() => eventArgs.Reserved = EventReservedValueMask.SuppressEvent;
                 await this.mediator.Send(new HideOverlayCommand(OnHandled)).ConfigureAwait(false);
             }
-            else if (this.pathOfExileProcessHelper.IsPathOfExileActiveWindow())
+            else if (this.pathOfExileProcessHelper.IsPathOfExileActiveWindow() && TryGetRequest(eventArgs, out var request))
             {
-                if (TryGetRequest(eventArgs, out var request))
-                {
-                    eventArgs.Reserved = EventReservedValueMask.SuppressEvent;
-                    await this.mediator.Send(request).ConfigureAwait(false);
-                }
+                eventArgs.Reserved = EventReservedValueMask.SuppressEvent;
+                await this.mediator.Send(request).ConfigureAwait(false);
             }
         }
 
-        private static bool TryGetRequest(KeyboardHookEventArgs eventArgs, out IRequest request)
+        private static bool TryGetRequest(KeyboardHookEventArgs eventArgs, [NotNullWhen(true)] out IRequest? request)
         {
             request = null;
             if (IsModifierPressed(eventArgs, ModifierMask.Ctrl) && eventArgs.Data.KeyCode == KeyCode.VcD)
@@ -80,7 +80,7 @@ namespace POETradeHelper.Common
 
         public void Dispose()
         {
-            this.subscription.Dispose();
+            this.disposables.Dispose();
         }
     }
 }

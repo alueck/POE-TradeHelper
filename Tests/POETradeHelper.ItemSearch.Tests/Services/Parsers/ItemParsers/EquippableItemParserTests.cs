@@ -1,25 +1,27 @@
 ﻿using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class EquippableItemParserTests : ItemParserTestsBase
     {
-        private Mock<ISocketsParser> socketsParserMock;
-        private Mock<IItemTypeParser> itemTypeParserMock;
-        private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
-        private Mock<IItemDataService> itemDataServiceMock;
-        private ItemStringBuilder itemStringBuilder;
+        private readonly Mock<ISocketsParser> socketsParserMock;
+        private readonly Mock<IItemTypeParser> itemTypeParserMock;
+        private readonly Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
+        private readonly Mock<IItemDataService> itemDataServiceMock;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public EquippableItemParserTests()
         {
             this.socketsParserMock = new Mock<ISocketsParser>();
             this.itemTypeParserMock = new Mock<IItemTypeParser>();
@@ -130,7 +132,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithRarity(expected)
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Rarity, Is.EqualTo(expected));
         }
@@ -141,7 +143,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string[] itemStringLines = this.itemStringBuilder
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsTrue(result.IsIdentified);
         }
@@ -153,7 +155,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithUnidentified()
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsFalse(result.IsIdentified);
         }
@@ -168,7 +170,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithType("Cutthroat's Garb")
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(expected));
         }
@@ -184,7 +186,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithName(expected)
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(expected));
         }
@@ -208,7 +210,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
                 .Returns(expected);
 
-            var result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            var result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Type, Is.EqualTo(expected));
         }
@@ -220,7 +222,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithCorrupted()
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsTrue(result.IsCorrupted);
         }
@@ -231,7 +233,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string[] itemStringLines = this.itemStringBuilder
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsFalse(result.IsCorrupted);
         }
@@ -244,7 +246,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithItemLevel(expected)
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.ItemLevel, Is.EqualTo(expected));
         }
@@ -257,7 +259,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithQuality(expected)
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Quality, Is.EqualTo(expected));
         }
@@ -271,7 +273,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithInflucence(expected)
                                             .BuildLines();
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Influence, Is.EqualTo(expected));
         }
@@ -295,7 +297,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string[] itemStringLines = this.itemStringBuilder
                                             .BuildLines();
 
-            ItemSockets expected = new ItemSockets
+            ItemSockets expected = new()
             {
                 SocketGroups =
                 {
@@ -310,7 +312,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.socketsParserMock.Setup(x => x.Parse(It.IsAny<string>()))
                 .Returns(expected);
 
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Sockets, Is.EqualTo(expected));
         }
@@ -337,6 +339,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                            .WithType("Thicket Bow")
                                            .BuildLines();
 
+            const string itemType = "parsed item type";
+            this.itemTypeParserMock.Setup(x => x.ParseType(It.IsAny<string[]>(), It.IsAny<ItemRarity>(), It.IsAny<bool>()))
+                .Returns(itemType);
             this.itemDataServiceMock.Setup(x => x.GetCategory(It.IsAny<string>()))
                 .Returns(itemCategory.GetDisplayName());
 
@@ -361,7 +366,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldSetItemStatsFromItemStatsParserOnItem()
         {
-            ItemStats expected = new ItemStats();
+            ItemStats expected = new();
             string[] itemStringLines = this.itemStringBuilder
                                .WithType("Thicket Bow")
                                .BuildLines();
@@ -369,7 +374,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()))
                 .Returns(expected);
 
-            EquippableItem equippableItem = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem equippableItem = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(equippableItem.Stats, Is.SameAs(expected));
         }
@@ -399,12 +404,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             // arrange
             string[] itemStringLines = this.itemStringBuilder.BuildLines();
+            const string itemType = "parsed item type";
 
+            this.itemTypeParserMock.Setup(x => x.ParseType(It.IsAny<string[]>(), It.IsAny<ItemRarity>(), It.IsAny<bool>()))
+                .Returns(itemType);
             this.itemDataServiceMock.Setup(x => x.GetCategory(It.IsAny<string>()))
                 .Returns(itemCategory?.GetDisplayName().ToLower());
 
             // act
-            EquippableItem result = this.ItemParser.Parse(itemStringLines) as EquippableItem;
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             // assert
             Assert.That(result.Category, Is.EqualTo(expectedItemCategory));

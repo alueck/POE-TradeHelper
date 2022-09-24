@@ -1,7 +1,4 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace POETradeHelper.ItemSearch.Exceptions
 {
@@ -9,11 +6,7 @@ namespace POETradeHelper.ItemSearch.Exceptions
     {
         private static readonly string exceptionMessage = $"Multiple parsers ({{0}}) signaled a match for the following item string:{Environment.NewLine}{{1}}";
 
-        public MultipleMatchingParsersFoundException(string itemString, IEnumerable<IItemParser> parsers) : this(itemString, parsers, null)
-        {
-        }
-
-        public MultipleMatchingParsersFoundException(string itemString, IEnumerable<IItemParser> parsers, Exception innerException) : base(itemString, FormatMessage(itemString, parsers), innerException)
+        public MultipleMatchingParsersFoundException(string itemString, IEnumerable<IItemParser> parsers, Exception? innerException = null) : base(itemString, FormatMessage(itemString, parsers), innerException)
         {
         }
 

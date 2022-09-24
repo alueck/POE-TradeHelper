@@ -1,6 +1,7 @@
 ﻿using System.Collections;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -13,12 +14,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class EquippableItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<EquippableItem>
     {
-        private EquippableItemSearchQueryRequestMapper equippableItemToQueryRequestMapper;
+        private readonly EquippableItemSearchQueryRequestMapper equippableItemToQueryRequestMapper;
 
-        [SetUp]
-        public override void Setup()
+        public EquippableItemSearchQueryRequestMapperTests()
         {
-            base.Setup();
             this.ItemSearchQueryRequestMapper = this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
@@ -32,7 +31,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 IsIdentified = true
             };
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.Query.Name, Is.EqualTo(expected));
         }
@@ -45,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Type = "Thicket Bow"
             };
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Name);
         }
@@ -58,7 +57,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Name = "Dire Nock"
             };
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Name);
         }
@@ -72,13 +71,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Sockets = GetLinkedItemSockets(linkCount)
             };
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result.Query.Filters.SocketFilters);
             Assert.NotNull(result.Query.Filters.SocketFilters.Links);
 
-            SocketsFilter socketsFilter = result.Query.Filters.SocketFilters.Links;
-            Assert.That(socketsFilter.Min, Is.EqualTo(linkCount));
+            SocketsFilter? socketsFilter = result.Query.Filters.SocketFilters.Links;
+            Assert.That(socketsFilter, Is.Not.Null);
+            Assert.That(socketsFilter!.Min, Is.EqualTo(linkCount));
             Assert.That(socketsFilter.Max, Is.EqualTo(linkCount));
         }
 
@@ -94,7 +94,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Sockets = GetLinkedItemSockets(linkCount)
             };
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Filters.SocketFilters.Links);
         }
@@ -104,10 +104,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             var item = new EquippableItem(ItemRarity.Unique);
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result.Query.Filters.TypeFilters);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
+            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
         }
 
         [TestCaseSource(nameof(NonUniqueItemRarities))]
@@ -115,10 +115,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             var item = new EquippableItem(itemRarity);
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result.Query.Filters.TypeFilters);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
+            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
         }
 
         [TestCaseSource(nameof(InfluenceTestCases))]
@@ -129,12 +129,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Influence = influenceType
             };
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            BoolOptionFilter filter = filterOptionAccessor(result);
+            BoolOptionFilter? filter = filterOptionAccessor(result);
 
             Assert.That(filter, Is.Not.Null);
-            Assert.That(filter.Option, Is.True);
+            Assert.That(filter!.Option, Is.True);
         }
 
         [Test]
@@ -153,11 +153,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                     League = new League()
                 });
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            MinMaxFilter itemLevelFilter = result.Query.Filters.MiscFilters.ItemLevel;
+            MinMaxFilter? itemLevelFilter = result.Query.Filters.MiscFilters.ItemLevel;
             Assert.NotNull(itemLevelFilter);
-            Assert.That(itemLevelFilter.Min, Is.EqualTo(itemLevel));
+            Assert.That(itemLevelFilter!.Min, Is.EqualTo(itemLevel));
             Assert.IsNull(itemLevelFilter.Max);
         }
 
@@ -177,23 +177,23 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                     League = new League()
                 });
 
-            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Filters.MiscFilters.ItemLevel);
         }
 
-        public delegate BoolOptionFilter BoolOptionAccessor(SearchQueryRequest searchQueryRequest);
+        public delegate BoolOptionFilter? BoolOptionAccessor(SearchQueryRequest searchQueryRequest);
 
         private static IEnumerable InfluenceTestCases
         {
             get
             {
-                yield return new TestCaseData(InfluenceType.Crusader, (BoolOptionAccessor)((SearchQueryRequest result) => result.Query.Filters.MiscFilters.CrusaderItem));
-                yield return new TestCaseData(InfluenceType.Elder, (BoolOptionAccessor)((SearchQueryRequest result) => result.Query.Filters.MiscFilters.ElderItem));
-                yield return new TestCaseData(InfluenceType.Hunter, (BoolOptionAccessor)((SearchQueryRequest result) => result.Query.Filters.MiscFilters.HunterItem));
-                yield return new TestCaseData(InfluenceType.Redeemer, (BoolOptionAccessor)((SearchQueryRequest result) => result.Query.Filters.MiscFilters.RedeemerItem));
-                yield return new TestCaseData(InfluenceType.Shaper, (BoolOptionAccessor)((SearchQueryRequest result) => result.Query.Filters.MiscFilters.ShaperItem));
-                yield return new TestCaseData(InfluenceType.Warlord, (BoolOptionAccessor)((SearchQueryRequest result) => result.Query.Filters.MiscFilters.WarlordItem));
+                yield return new TestCaseData(InfluenceType.Crusader, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.CrusaderItem));
+                yield return new TestCaseData(InfluenceType.Elder, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.ElderItem));
+                yield return new TestCaseData(InfluenceType.Hunter, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.HunterItem));
+                yield return new TestCaseData(InfluenceType.Redeemer, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.RedeemerItem));
+                yield return new TestCaseData(InfluenceType.Shaper, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.ShaperItem));
+                yield return new TestCaseData(InfluenceType.Warlord, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.WarlordItem));
             }
         }
 

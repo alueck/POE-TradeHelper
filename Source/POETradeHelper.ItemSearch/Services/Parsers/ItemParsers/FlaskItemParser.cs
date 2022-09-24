@@ -2,7 +2,7 @@
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public class FlaskItemParser : ItemWithStatsParserBase
     {
@@ -23,11 +23,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
-            ItemRarity? rarity = this.GetRarity(itemStringLines);
-            var flaskItem = new FlaskItem(rarity.Value)
+            ItemRarity? rarity = GetRarity(itemStringLines);
+            var flaskItem = new FlaskItem(rarity!.Value)
             {
                 Name = itemStringLines[NameLineIndex],
-                Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
+                Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 IsIdentified = this.IsIdentified(itemStringLines),
             };
 

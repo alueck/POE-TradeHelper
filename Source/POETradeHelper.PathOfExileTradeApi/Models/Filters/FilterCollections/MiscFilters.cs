@@ -7,147 +7,147 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
         private const string ItemLevelFilterName = "ilvl";
 
         [JsonIgnore]
-        public MinMaxFilter Quality
+        public MinMaxFilter? Quality
         {
             get => this.GetFilter<MinMaxFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public MinMaxFilter ItemLevel
+        public MinMaxFilter? ItemLevel
         {
             get => this.GetFilter<MinMaxFilter>(ItemLevelFilterName);
             set => this.SetFilter(value, ItemLevelFilterName);
         }
 
         [JsonIgnore]
-        public MinMaxFilter GemLevel
+        public MinMaxFilter? GemLevel
         {
             get => this.GetFilter<MinMaxFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public MinMaxFilter GemLevelProgress
+        public MinMaxFilter? GemLevelProgress
         {
             get => this.GetFilter<MinMaxFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public OptionFilter GemAlternateQuality
+        public OptionFilter? GemAlternateQuality
         {
             get => this.GetFilter<OptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter ShaperItem
+        public BoolOptionFilter? ShaperItem
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter ElderItem
+        public BoolOptionFilter? ElderItem
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter CrusaderItem
+        public BoolOptionFilter? CrusaderItem
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter RedeemerItem
+        public BoolOptionFilter? RedeemerItem
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter HunterItem
+        public BoolOptionFilter? HunterItem
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter WarlordItem
+        public BoolOptionFilter? WarlordItem
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter FracturedItem
+        public BoolOptionFilter? FracturedItem
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter SynthesisedItem
+        public BoolOptionFilter? SynthesisedItem
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter AlternateArt
+        public BoolOptionFilter? AlternateArt
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter Identified
+        public BoolOptionFilter? Identified
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter Corrupted
+        public BoolOptionFilter? Corrupted
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter Mirrored
+        public BoolOptionFilter? Mirrored
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter Crafted
+        public BoolOptionFilter? Crafted
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter Veiled
+        public BoolOptionFilter? Veiled
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter Enchanted
+        public BoolOptionFilter? Enchanted
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public MinMaxFilter TalismanTier
+        public MinMaxFilter? TalismanTier
         {
             get => this.GetFilter<MinMaxFilter>();
             set => this.SetFilter(value);

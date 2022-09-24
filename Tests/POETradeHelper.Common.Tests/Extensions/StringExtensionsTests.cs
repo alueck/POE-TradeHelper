@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
+
 using POETradeHelper.Common.Extensions;
-using System;
 
 namespace POETradeHelper.Common.Tests.Extensions
 {

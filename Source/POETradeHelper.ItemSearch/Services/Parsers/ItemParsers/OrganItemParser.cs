@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using POETradeHelper.ItemSearch.Contract.Models;
+﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public class OrganItemParser : SimpleItemParserBase<OrganItem>
     {
@@ -20,7 +19,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         protected override Item ParseItem(string[] itemStringLines)
         {
-            OrganItem organItem = base.ParseItem(itemStringLines) as OrganItem;
+            OrganItem organItem = (OrganItem)base.ParseItem(itemStringLines);
 
             organItem.Stats = this.organItemStatsParser.Parse(itemStringLines, false);
 

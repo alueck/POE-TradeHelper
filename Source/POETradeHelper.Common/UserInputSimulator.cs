@@ -34,7 +34,7 @@ namespace POETradeHelper.Common
         private async Task SendChatCommand(string chatCommand)
         {
             string clipBoardText = await this.clipboardHelper.GetTextAsync();
-            
+
             await this.clipboardHelper.SetTextAsync(chatCommand);
             this.TypeKey(KeyCode.VcEnter);
             this.SendKeyWithModifier(KeyCode.VcLeftControl, KeyCode.VcA);

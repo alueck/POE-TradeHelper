@@ -4,8 +4,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -50,7 +53,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task OnInitShouldDeserializeGetAsyncResponseAsQueryResult()
         {
-            string content = "serialized content";
+            const string content = "serialized content";
 
             this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage

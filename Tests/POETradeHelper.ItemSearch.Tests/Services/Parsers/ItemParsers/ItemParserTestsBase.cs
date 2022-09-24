@@ -1,13 +1,13 @@
-﻿using System;
-using NUnit.Framework;
-using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Services.Parsers;
+﻿using NUnit.Framework;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public abstract class ItemParserTestsBase
     {
-        protected ItemParserBase ItemParser { get; set; }
+        protected ItemParserBase ItemParser { get; set; } = null!;
 
         [Test]
         public void ParseShouldSetItemText()

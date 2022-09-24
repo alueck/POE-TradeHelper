@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;

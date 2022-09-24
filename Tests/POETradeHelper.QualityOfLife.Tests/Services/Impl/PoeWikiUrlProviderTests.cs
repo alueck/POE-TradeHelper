@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.Services.Impl;
@@ -10,7 +12,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
     public class PoeWikiUrlProviderTests
     {
         private const string RootUrl = "https://pathofexile.gamepedia.com/";
-        
+
         private PoeWikiUrlProvider wikiUrlProvider;
 
         [SetUp]
@@ -23,7 +25,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
         public void WikiTyperReturnsPoeWiki()
         {
             var result = this.wikiUrlProvider.HandledWikiType;
-            
+
             Assert.That(result, Is.EqualTo(WikiType.PoeWiki));
         }
 
@@ -33,7 +35,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
             var expected = new Uri(RootUrl + item.Type);
 
             var result = this.wikiUrlProvider.GetUrl(item);
-            
+
             Assert.That(result, Is.EqualTo(expected));
         }
 
@@ -61,7 +63,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
             var expected = new Uri(RootUrl + item.Name);
 
             var result = this.wikiUrlProvider.GetUrl(item);
-            
+
             Assert.That(result, Is.EqualTo(expected));
         }
 

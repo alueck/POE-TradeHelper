@@ -1,7 +1,8 @@
-﻿using POETradeHelper.ItemSearch.Contract.Properties;
-using System.Text;
+﻿using System.Text;
 
-namespace POETradeHelper.ItemSearch.Tests.TestHelpers
+using POETradeHelper.ItemSearch.Contract.Properties;
+
+namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models
 {
     public class MapItemStatsGroup : ItemStatsGroupBase
     {

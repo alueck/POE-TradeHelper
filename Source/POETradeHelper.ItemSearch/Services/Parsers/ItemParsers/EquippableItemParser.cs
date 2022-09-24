@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using POETradeHelper.Common.Extensions;
+﻿using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public class EquippableItemParser : ItemWithStatsParserBase
     {
@@ -24,7 +23,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         public override bool CanParse(string[] itemStringLines)
         {
-            ItemRarity? itemRarity = this.GetRarity(itemStringLines);
+            ItemRarity? itemRarity = GetRarity(itemStringLines);
             return itemRarity >= ItemRarity.Normal && itemRarity <= ItemRarity.Unique
                 && HasItemLevel(itemStringLines)
                 && !IsMapOrOrganItem(itemStringLines)
@@ -33,51 +32,52 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private static bool HasItemLevel(string[] itemStringLines)
         {
-            return itemStringLines.Any(l => l.Contains(Contract.Properties.Resources.ItemLevelDescriptor));
+            return itemStringLines.Any(l => l.Contains(Resources.ItemLevelDescriptor));
         }
 
         private static bool IsMapOrOrganItem(string[] itemStringLines)
         {
-            return itemStringLines.Any(l => l.Contains(Contract.Properties.Resources.MapTierDescriptor)
-                                         || l.Contains(Contract.Properties.Resources.OrganItemDescriptor));
+            return itemStringLines.Any(l => l.Contains(Resources.MapTierDescriptor)
+                                         || l.Contains(Resources.OrganItemDescriptor));
         }
 
-        private bool TypeOrNameContains(string[] itemStringLines, params string[] keywords)
+        private static bool TypeOrNameContains(string[] itemStringLines, params string[] keywords)
         {
             return itemStringLines.Skip(2).Take(2).Any(line => keywords.Any(line.Contains));
         }
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
-            ItemRarity? itemRarity = this.GetRarity(itemStringLines);
-            var equippableItem = new EquippableItem(itemRarity.Value)
+            ItemRarity? itemRarity = GetRarity(itemStringLines);
+            var equippableItem = new EquippableItem(itemRarity!.Value)
             {
                 Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
                 IsCorrupted = this.IsCorrupted(itemStringLines),
-                ItemLevel = this.GetIntegerFromFirstStringContaining(itemStringLines, Contract.Properties.Resources.ItemLevelDescriptor),
-                Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Contract.Properties.Resources.QualityDescriptor),
+                ItemLevel = GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemLevelDescriptor),
+                Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 Influence = GetInfluenceType(itemStringLines),
                 Sockets = this.GetSockets(itemStringLines)
             };
 
             equippableItem.Type = this.itemTypeParser.ParseType(itemStringLines, equippableItem.Rarity, equippableItem.IsIdentified);
-            equippableItem.Category = this.itemDataService.GetCategory(equippableItem.Type).ParseToEnumByDisplayName<EquippableItemCategory>(System.StringComparison.OrdinalIgnoreCase) ?? EquippableItemCategory.Unknown;
+            if (!string.IsNullOrEmpty(equippableItem.Type))
+            {
+                equippableItem.Category = this.itemDataService.GetCategory(equippableItem.Type).ParseToEnumByDisplayName<EquippableItemCategory>(StringComparison.OrdinalIgnoreCase) ?? EquippableItemCategory.Unknown;
+            }
 
             return equippableItem;
         }
 
         private ItemSockets GetSockets(string[] itemStringLines)
         {
-            string socketsLine = itemStringLines.FirstOrDefault(l => l.Contains(Contract.Properties.Resources.SocketsDescriptor));
-            string socketsString = socketsLine?.Replace(Contract.Properties.Resources.SocketsDescriptor, "").Trim();
+            string? socketsLine = itemStringLines.FirstOrDefault(l => l.Contains(Resources.SocketsDescriptor));
+            string? socketsString = socketsLine?.Replace(Resources.SocketsDescriptor, "").Trim();
 
-            ItemSockets itemSockets = this.socketsParser.Parse(socketsString);
-
-            return itemSockets;
+            return this.socketsParser.Parse(socketsString);
         }
 
-        private InfluenceType GetInfluenceType(string[] itemStringLines)
+        private static InfluenceType GetInfluenceType(string[] itemStringLines)
         {
             InfluenceType? influenceType = itemStringLines.Last().ParseToEnumByDisplayName<InfluenceType>();
 

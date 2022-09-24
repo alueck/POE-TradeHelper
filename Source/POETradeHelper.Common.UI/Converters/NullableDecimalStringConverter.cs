@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 
@@ -20,7 +21,7 @@ namespace POETradeHelper.Common.UI.Converters
             {
                 return null;
             }
-            
+
             if (value is string stringValue)
             {
                 if (string.IsNullOrEmpty(stringValue))
@@ -34,7 +35,7 @@ namespace POETradeHelper.Common.UI.Converters
                     return decimalValue;
                 }
             }
-            
+
             return new BindingNotification(new InvalidCastException($"'{value}' is not a valid number."), BindingErrorType.Error);
         }
     }

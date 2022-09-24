@@ -1,24 +1,21 @@
-﻿using System;
-
-using Moq;
+﻿using Moq;
 
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class ItemTypeParserTests
     {
-        private ItemStringBuilder itemStringBuilder;
-        private Mock<IItemDataService> itemDataServiceMock;
-        private ItemTypeParser itemTypeParser;
+        private readonly ItemStringBuilder itemStringBuilder;
+        private readonly Mock<IItemDataService> itemDataServiceMock;
+        private readonly ItemTypeParser itemTypeParser;
 
-        [SetUp]
-        public void Setup()
+        public ItemTypeParserTests()
         {
             this.itemStringBuilder = new ItemStringBuilder();
             this.itemDataServiceMock = new Mock<IItemDataService>();
@@ -75,7 +72,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithType(expected)
                 .BuildLines();
 
-            string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, true);
+            string? result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, true);
 
             Assert.That(result, Is.EqualTo(expected));
             this.itemDataServiceMock.Verify(x => x.GetType(It.IsAny<string>()), Times.Never);
@@ -95,7 +92,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemDataServiceMock.Setup(x => x.GetType(It.IsAny<string>()))
                 .Returns(expected);
 
-            string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, false);
+            string? result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, false);
 
             Assert.That(result, Is.EqualTo(expected));
         }

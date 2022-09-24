@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Avalonia.Media.Imaging;
 
 namespace POETradeHelper.Common.UI.Services

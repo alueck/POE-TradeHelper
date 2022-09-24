@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.16" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.16" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.16" />
+    <PackageReference Include="ReactiveUI.Fody" Version="18.3.1" />
+    <PackageReference Include="System.Text.Json" Version="6.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\POETradeHelper.Common.UI\POETradeHelper.Common.UI.csproj" />
+    <ProjectReference Include="..\POETradeHelper.Common\POETradeHelper.Common.csproj" />
+    <ProjectReference Include="..\POETradeHelper.ItemSearch.Contract\POETradeHelper.ItemSearch.Contract.csproj" />
+    <ProjectReference Include="..\POETradeHelper.PathOfExileTradeApi\POETradeHelper.PathOfExileTradeApi.csproj" />
+    <ProjectReference Include="..\POETradeHelper.PricePrediction\POETradeHelper.PricePrediction.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Views\PricePredictionView.axaml.cs">
+      <DependentUpon>PricePredictionView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

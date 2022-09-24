@@ -1,26 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Moq;
+﻿using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 {
     public class ItemStatsParserTests
     {
-        private Mock<IStatsDataService> statsDataServiceMock;
-        private Mock<IPseudoItemStatsParser> pseudoItemStatsParserMock;
-        private ItemStatsParser itemStatsParser;
-        private ItemStringBuilder itemStringBuilder;
+        private readonly Mock<IStatsDataService> statsDataServiceMock;
+        private readonly Mock<IPseudoItemStatsParser> pseudoItemStatsParserMock;
+        private readonly ItemStatsParser itemStatsParser;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public ItemStatsParserTests()
         {
             this.statsDataServiceMock = new Mock<IStatsDataService>();
             this.pseudoItemStatsParserMock = new Mock<IPseudoItemStatsParser>();
@@ -276,7 +275,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
-            SingleValueItemStat itemStat = result.AllStats.First() as SingleValueItemStat;
+            SingleValueItemStat itemStat = (SingleValueItemStat)result.AllStats.First();
             Assert.That(itemStat.Value, Is.EqualTo(expected));
         }
 
@@ -299,7 +298,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
-            MinMaxValueItemStat itemStat = result.AllStats.First() as MinMaxValueItemStat;
+            MinMaxValueItemStat itemStat = (MinMaxValueItemStat)result.AllStats.First();
             Assert.That(itemStat.MinValue, Is.EqualTo(expected));
         }
 
@@ -322,7 +321,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
-            MinMaxValueItemStat itemStat = result.AllStats.First() as MinMaxValueItemStat;
+            MinMaxValueItemStat itemStat = (MinMaxValueItemStat)result.AllStats.First();
             Assert.That(itemStat.MaxValue, Is.EqualTo(expected));
         }
 
@@ -349,7 +348,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldAddResultFromPseudoItemStatsParserToResult()
         {
-            ItemStat expected = new ItemStat(StatCategory.Pseudo) { Id = "test id" };
+            ItemStat expected = new(StatCategory.Pseudo) { Id = "test id" };
 
             string[] itemStringLines = this.itemStringBuilder
                 .WithName("Titan Greaves")
@@ -404,11 +403,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 Value = 10
             };
 
-            ItemStat[] itemStats = new[] { expectedExplicitItemStat, expectedImplicitItemStat, expectedCraftedItemStat, expectedEnchantedItemStat };
+            ItemStat[] itemStats = { expectedExplicitItemStat, expectedImplicitItemStat, expectedCraftedItemStat, expectedEnchantedItemStat };
 
             foreach (var itemStat in itemStats)
             {
-                this.statsDataServiceMock.Setup(x => x.GetStatData(It.Is<string>(x => x == itemStat.Text), It.IsAny<bool>(), It.IsAny<string[]>()))
+                this.statsDataServiceMock.Setup(x => x.GetStatData(It.Is<string>(s => s == itemStat.Text), It.IsAny<bool>(), It.IsAny<string[]>()))
                     .Returns(new StatData { Id = itemStat.Id, Text = itemStat.TextWithPlaceholders, Type = itemStat.StatCategory.GetDisplayName() });
             }
 

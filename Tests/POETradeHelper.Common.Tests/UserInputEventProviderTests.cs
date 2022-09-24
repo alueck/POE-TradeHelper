@@ -72,7 +72,7 @@ namespace POETradeHelper.Common.Tests
                 Mask = ModifierMask.Ctrl,
                 Type = EventType.KeyPressed
             });
-            
+
             this.keyPressed.OnNext(keyEventArgs);
 
             this.mediatorMock.Verify(x => x.Send(It.IsAny<SearchItemCommand>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -107,7 +107,6 @@ namespace POETradeHelper.Common.Tests
                 .Setup(x => x.Send(It.IsAny<HideOverlayCommand>(), It.IsAny<CancellationToken>()))
                 .Callback((IRequest<Unit> command, CancellationToken _) => onHandledAction = ((HideOverlayCommand)command).OnHandled);
 
-
             this.keyPressed.OnNext(keyEventArgs);
 
             onHandledAction.Should().NotBeNull();
@@ -141,7 +140,7 @@ namespace POETradeHelper.Common.Tests
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcF5 },
                 Type = EventType.KeyPressed
             });
-            
+
             this.keyPressed.OnNext(keyEventArgs);
 
             this.mediatorMock.Verify(x => x.Send(It.IsAny<GotoHideoutCommand>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -161,11 +160,11 @@ namespace POETradeHelper.Common.Tests
                 .Returns(true);
 
             this.keyPressed.OnNext(keyEventArgs);
-            
+
             this.mediatorMock.Verify(x => x.Send(It.IsAny<OpenWikiCommand>(), It.IsAny<CancellationToken>()));
             keyEventArgs.Reserved.Should().Be(EventReservedValueMask.SuppressEvent);
         }
-        
+
         [Test]
         public void OpenWikiKeyCombinationShouldNotSendOpenWikiCommandIfPathOfExileIsNotActiveWindow()
         {
@@ -177,7 +176,7 @@ namespace POETradeHelper.Common.Tests
             });
 
             this.keyPressed.OnNext(keyEventArgs);
-            
+
             this.mediatorMock.Verify(x => x.Send(It.IsAny<OpenWikiCommand>(), It.IsAny<CancellationToken>()), Times.Never);
             keyEventArgs.Reserved.Should().BeNull();
         }

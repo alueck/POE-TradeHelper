@@ -1,14 +1,13 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
-using DynamicData;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 {
     public class ItemStatsParser : ItemStatsParserBase, IItemStatsParser<ItemWithStats>
     {
@@ -28,7 +27,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
             var statTexts = itemStringLines.Skip(statsStartIndex).Where(s => s != ParserConstants.PropertyGroupSeparator);
 
-            var itemStats = statTexts.Select(s => ParseStatText(s, preferLocalStats)).Where(x => x != null).ToList();
+            var itemStats = statTexts.Select(s => this.ParseStatText(s, preferLocalStats)).Where(x => x != null).ToList();
             var pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
             result.AllStats.AddRange(itemStats);
@@ -37,11 +36,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return result;
         }
 
-        private ItemStat ParseStatText(string statText, bool preferLocalStats)
+        private ItemStat? ParseStatText(string statText, bool preferLocalStats)
         {
-            ItemStat result;
-
-            if (!TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out result)
+            if (!TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out ItemStat? result)
                 && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
                 && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result)
                 && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Fractured, out result))
@@ -52,12 +49,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 };
             }
 
-            result = this.GetCompleteItemStat(result, preferLocalStats);
-
-            return result;
+            return this.GetCompleteItemStat(result, preferLocalStats);
         }
 
-        private bool TryGetItemStatForCategoryByMarker(string statText, StatCategory statCategory, out ItemStat itemStat)
+        private static bool TryGetItemStatForCategoryByMarker(string statText, StatCategory statCategory, [NotNullWhen(returnValue: true)] out ItemStat? itemStat)
         {
             itemStat = null;
 
@@ -77,9 +72,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return false;
         }
 
-        protected override ItemStat GetCompleteItemStat(ItemStat itemStat, bool preferLocalStats)
+        protected override ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
         {
-            ItemStat result = base.GetCompleteItemStat(itemStat, preferLocalStats);
+            ItemStat? result = base.GetCompleteItemStat(itemStat, preferLocalStatData);
 
             var placeholderCount = result?.TextWithPlaceholders?.Count(c => c == Placeholder);
             if (placeholderCount == 1)
@@ -96,7 +91,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private static ItemStat GetSingleValueItemStat(ItemStat itemStat)
         {
-            decimal? value = GetFirstNumericValue(itemStat.Text.Substring(itemStat.TextWithPlaceholders.IndexOf(Placeholder)));
+            decimal? value = GetFirstNumericValue(itemStat.Text[itemStat.TextWithPlaceholders.IndexOf(Placeholder)..]);
 
             return value.HasValue
                 ? new SingleValueItemStat(itemStat)
@@ -113,13 +108,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             int maxValueIndex = itemStat.TextWithPlaceholders.LastIndexOf(Placeholder);
             if (maxValueIndex >= 0)
             {
-                result.MaxValue = GetFirstNumericValue(itemStat.Text.Substring(maxValueIndex)).GetValueOrDefault();
+                result.MaxValue = GetFirstNumericValue(itemStat.Text[maxValueIndex..]).GetValueOrDefault();
             }
 
             int minValueIndex = GetMinValueIndex(itemStat, maxValueIndex);
             if (minValueIndex >= 0)
             {
-                result.MinValue = GetFirstNumericValue(itemStat.Text.Substring(minValueIndex)).GetValueOrDefault();
+                result.MinValue = GetFirstNumericValue(itemStat.Text[minValueIndex..]).GetValueOrDefault();
             }
 
             return result;
@@ -140,7 +135,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
             if (maxValueIndex >= 0)
             {
-                minValueIndex = itemStat.TextWithPlaceholders.Substring(0, maxValueIndex).IndexOf(Placeholder);
+                minValueIndex = itemStat.TextWithPlaceholders.IndexOf(Placeholder, 0, maxValueIndex);
 
                 if (minValueIndex < 0)
                 {

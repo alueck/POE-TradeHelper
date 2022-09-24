@@ -1,17 +1,17 @@
 ﻿using NUnit.Framework;
-using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
+
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     internal class CurrencyItemParserTests : ItemParserTestsBase
     {
         private const string Currency = "Scroll of Wisdom";
-        private ItemStringBuilder itemStringBuilder;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public CurrencyItemParserTests()
         {
             this.ItemParser = new CurrencyItemParser();
             this.itemStringBuilder = new ItemStringBuilder().WithRarity(ItemRarity.Currency);

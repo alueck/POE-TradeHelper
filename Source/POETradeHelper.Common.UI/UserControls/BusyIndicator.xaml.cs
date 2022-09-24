@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -8,7 +9,7 @@ namespace POETradeHelper.Common.UI.UserControls
 {
     public class BusyIndicator : UserControl
     {
-        private readonly DispatcherTimer displayAfterTimer = new DispatcherTimer();
+        private readonly DispatcherTimer displayAfterTimer = new();
 
         public BusyIndicator()
         {

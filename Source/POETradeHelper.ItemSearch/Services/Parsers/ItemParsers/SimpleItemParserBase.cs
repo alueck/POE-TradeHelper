@@ -1,6 +1,6 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public abstract class SimpleItemParserBase<TItemType> : ItemParserBase
         where TItemType : Item, new()

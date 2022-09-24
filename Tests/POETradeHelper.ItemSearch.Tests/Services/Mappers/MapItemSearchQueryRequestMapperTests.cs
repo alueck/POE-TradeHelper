@@ -10,12 +10,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class MapItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<MapItem>
     {
-        private MapItemSearchQueryRequestMapper mapItemSearchQueryRequestMapper;
+        private readonly MapItemSearchQueryRequestMapper mapItemSearchQueryRequestMapper;
 
-        [SetUp]
-        public override void Setup()
+        public MapItemSearchQueryRequestMapperTests()
         {
-            base.Setup();
             this.ItemSearchQueryRequestMapper = this.mapItemSearchQueryRequestMapper = new MapItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
@@ -28,7 +26,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Type = expected
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.Query.Type, Is.EqualTo(expected));
         }
@@ -43,7 +41,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 IsIdentified = true
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.Query.Name, Is.EqualTo(expected));
         }
@@ -57,7 +55,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Name = expected,
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Name);
         }
@@ -70,7 +68,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Name = "Pillars of Arun"
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Name);
         }
@@ -84,9 +82,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 IsIdentified = identified
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.MiscFilters.Identified.Option, Is.EqualTo(identified));
+            Assert.That(result.Query.Filters.MiscFilters.Identified!.Option, Is.EqualTo(identified));
         }
 
         [Test]
@@ -94,10 +92,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             var item = new MapItem(ItemRarity.Unique);
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result.Query.Filters.TypeFilters);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
+            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
         }
 
         [TestCaseSource(nameof(NonUniqueItemRarities))]
@@ -105,10 +103,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             var item = new MapItem(itemRarity);
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result.Query.Filters.TypeFilters);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
+            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
         }
 
         [TestCase(10)]
@@ -120,11 +118,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Tier = mapTier
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            MinMaxFilter mapTierFilter = result.Query.Filters.MapFilters.MapTier;
+            MinMaxFilter? mapTierFilter = result.Query.Filters.MapFilters.MapTier;
             Assert.NotNull(mapTierFilter);
-            Assert.That(mapTierFilter.Min, Is.EqualTo(mapTier));
+            Assert.That(mapTierFilter!.Min, Is.EqualTo(mapTier));
             Assert.That(mapTierFilter.Max, Is.EqualTo(mapTier));
         }
 
@@ -137,11 +135,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 IsBlighted = isBlighted
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            BoolOptionFilter blightedFilter = result.Query.Filters.MapFilters.MapBlighted;
+            BoolOptionFilter? blightedFilter = result.Query.Filters.MapFilters.MapBlighted;
             Assert.NotNull(blightedFilter);
-            Assert.That(blightedFilter.Option, Is.EqualTo(isBlighted));
+            Assert.That(blightedFilter!.Option, Is.EqualTo(isBlighted));
         }
 
         [TestCase(true)]
@@ -153,11 +151,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 IsBlightRavaged = isBlightRavaged
             };
 
-            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            BoolOptionFilter blightRavaged = result.Query.Filters.MapFilters.MapBlightRavaged;
+            BoolOptionFilter? blightRavaged = result.Query.Filters.MapFilters.MapBlightRavaged;
             Assert.NotNull(blightRavaged);
-            Assert.That(blightRavaged.Option, Is.EqualTo(isBlightRavaged));
+            Assert.That(blightRavaged!.Option, Is.EqualTo(isBlightRavaged));
         }
     }
 }

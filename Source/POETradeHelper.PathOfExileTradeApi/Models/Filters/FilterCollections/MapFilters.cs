@@ -9,63 +9,63 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
         private const string MapBlightRavagedFilterName = "map_uberblighted";
 
         [JsonIgnore]
-        public MinMaxFilter MapTier
+        public MinMaxFilter? MapTier
         {
             get => this.GetFilter<MinMaxFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public MinMaxFilter MapPacksize
+        public MinMaxFilter? MapPacksize
         {
             get => this.GetFilter<MinMaxFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public MinMaxFilter MapIncreasedItemQuantity
+        public MinMaxFilter? MapIncreasedItemQuantity
         {
             get => this.GetFilter<MinMaxFilter>(MapIncreasedItemQuantityFilterName);
             set => this.SetFilter(value, MapIncreasedItemQuantityFilterName);
         }
 
         [JsonIgnore]
-        public MinMaxFilter MapIncreasedItemRarity
+        public MinMaxFilter? MapIncreasedItemRarity
         {
             get => this.GetFilter<MinMaxFilter>(MapIncreasedItemRarityFilterName);
             set => this.SetFilter(value, MapIncreasedItemRarityFilterName);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter MapShaped
+        public BoolOptionFilter? MapShaped
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter MapElder
+        public BoolOptionFilter? MapElder
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter MapBlighted
+        public BoolOptionFilter? MapBlighted
         {
             get => this.GetFilter<BoolOptionFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public BoolOptionFilter MapBlightRavaged
+        public BoolOptionFilter? MapBlightRavaged
         {
             get => this.GetFilter<BoolOptionFilter>(MapBlightRavagedFilterName);
             set => this.SetFilter(value, MapBlightRavagedFilterName);
         }
 
         [JsonIgnore]
-        public OptionFilter MapSeries
+        public OptionFilter? MapSeries
         {
             get => this.GetFilter<OptionFilter>();
             set => this.SetFilter(value);

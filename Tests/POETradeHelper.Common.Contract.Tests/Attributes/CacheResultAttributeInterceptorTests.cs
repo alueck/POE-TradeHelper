@@ -50,7 +50,7 @@ public class CacheResultAttributeInterceptorTests
         this.valueProviderMock
             .Verify(x => x.GetValue(), Times.Once);
     }
-    
+
     [Test]
     public void SyncMethodValueProviderShouldBeCalledTwiceForTwoDifferentRequests()
     {
@@ -72,10 +72,10 @@ public class CacheResultAttributeInterceptorTests
             .SetupSequence(x => x.GetValue())
             .Returns((string)null)
             .Returns("Test");
-        
+
         this.testInstance.MethodWithReturnValue(new Request(1));
         this.testInstance.MethodWithReturnValue(new Request(1));
-        
+
         this.valueProviderMock
             .Verify(x => x.GetValue(), Times.Exactly(2));
     }
@@ -84,7 +84,7 @@ public class CacheResultAttributeInterceptorTests
     public void SyncMethodWithoutReturnValuesShouldBeExecuted()
     {
         this.testInstance.MethodWithoutReturnValue(new Request(1));
-        
+
         this.valueProviderMock
             .Verify(x => x.GetValue(), Times.Once);
     }
@@ -102,7 +102,7 @@ public class CacheResultAttributeInterceptorTests
         this.valueProviderMock
             .Verify(x => x.GetValueAsync(), Times.Once);
     }
-    
+
     [Test]
     public async Task AsyncMethodValueProviderShouldBeCalledTwiceForTwoDifferentRequests()
     {
@@ -116,7 +116,7 @@ public class CacheResultAttributeInterceptorTests
         this.valueProviderMock
             .Verify(x => x.GetValueAsync(), Times.Exactly(2));
     }
-    
+
     [Test]
     public async Task AsyncMethodNullResultsShouldNotBeCached()
     {
@@ -124,20 +124,20 @@ public class CacheResultAttributeInterceptorTests
             .SetupSequence(x => x.GetValueAsync())
             .ReturnsAsync((string)null)
             .ReturnsAsync("Test");
-        
+
         await this.testInstance.MethodWithReturnValueAsync(new Request(1));
         await this.testInstance.MethodWithReturnValueAsync(new Request(1));
-        
+
         this.valueProviderMock
             .Verify(x => x.GetValueAsync(), Times.Exactly(2));
     }
-    
+
     [Test]
     public async Task AsyncMethodWithoutReturnValueShouldNotBeCached()
     {
         await this.testInstance.MethodWithoutReturnValueAsync(new Request(1));
         await this.testInstance.MethodWithoutReturnValueAsync(new Request(1));
-        
+
         this.valueProviderMock
             .Verify(x => x.GetValueAsync(), Times.Exactly(2));
     }
@@ -180,11 +180,11 @@ public class CacheResultAttributeInterceptorTests
     public interface ITestInterface
     {
         string MethodWithReturnValue(Request request);
-        
+
         void MethodWithoutReturnValue(Request request);
-        
+
         Task<string> MethodWithReturnValueAsync(Request request, CancellationToken cancellationToken = default);
-        
+
         Task MethodWithoutReturnValueAsync(Request request, CancellationToken cancellationToken = default);
     }
 

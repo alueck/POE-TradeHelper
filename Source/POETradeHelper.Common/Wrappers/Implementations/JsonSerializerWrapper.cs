@@ -6,12 +6,12 @@ namespace POETradeHelper.Common.Wrappers.Implementations
     [ExcludeFromCodeCoverage]
     public class JsonSerializerWrapper : IJsonSerializerWrapper
     {
-        public T Deserialize<T>(string json, JsonSerializerOptions options = null)
+        public T? Deserialize<T>(string json, JsonSerializerOptions? options = null)
         {
             return System.Text.Json.JsonSerializer.Deserialize<T>(json, options);
         }
 
-        public string Serialize(object value, JsonSerializerOptions options = null)
+        public string Serialize(object value, JsonSerializerOptions? options = null)
         {
             return System.Text.Json.JsonSerializer.Serialize(value, options);
         }

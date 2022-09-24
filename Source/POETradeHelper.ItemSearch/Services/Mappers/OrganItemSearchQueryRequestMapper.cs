@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -7,7 +8,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class OrganItemSearchQueryRequestMapper : IItemSearchQueryRequestMapper
     {
-        private IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
+        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
 
         public OrganItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {

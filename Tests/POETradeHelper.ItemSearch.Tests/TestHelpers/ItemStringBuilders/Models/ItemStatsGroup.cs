@@ -1,7 +1,8 @@
-﻿using POETradeHelper.ItemSearch.Contract.Properties;
-using System.Text;
+﻿using System.Text;
 
-namespace POETradeHelper.ItemSearch.Tests.TestHelpers
+using POETradeHelper.ItemSearch.Contract.Properties;
+
+namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models
 {
     public class ItemStatsGroup : ItemStatsGroupBase
     {
@@ -10,7 +11,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             var stringBuilder = new StringBuilder();
 
             stringBuilder
-                .AppendLine($"{Resources.QualityDescriptor} +{Quality}% {Resources.AugmentedDescriptor}", () => Quality > 0);
+                .AppendLine($"{Resources.QualityDescriptor} +{this.Quality}% {Resources.AugmentedDescriptor}", () => this.Quality > 0);
 
             return stringBuilder.ToString();
         }

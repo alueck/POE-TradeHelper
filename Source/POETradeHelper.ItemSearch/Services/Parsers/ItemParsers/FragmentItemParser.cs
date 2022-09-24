@@ -1,7 +1,7 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
-using System.Linq;
+using POETradeHelper.ItemSearch.Contract.Properties;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public class FragmentItemParser : SimpleItemParserBase<FragmentItem>
     {
@@ -13,8 +13,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private static bool ContainsItemLevelOrProphecy(string line)
         {
-            return line.Contains(POETradeHelper.ItemSearch.Contract.Properties.Resources.ItemLevelDescriptor)
-                || line.Contains(POETradeHelper.ItemSearch.Contract.Properties.Resources.ProphecyKeyword);
+            return line.Contains(Resources.ItemLevelDescriptor)
+                || line.Contains(Resources.ProphecyKeyword);
         }
     }
 }

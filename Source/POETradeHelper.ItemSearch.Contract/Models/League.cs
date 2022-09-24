@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace POETradeHelper.ItemSearch.Contract
+﻿namespace POETradeHelper.ItemSearch.Contract
 {
     public class League
     {

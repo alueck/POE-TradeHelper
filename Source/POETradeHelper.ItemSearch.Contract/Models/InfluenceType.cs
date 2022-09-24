@@ -1,4 +1,5 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Properties;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace POETradeHelper.ItemSearch.Contract.Models

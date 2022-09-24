@@ -1,13 +1,13 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
+
 using Microsoft.Extensions.Logging;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PricePrediction.Models;
@@ -17,12 +17,11 @@ namespace POETradeHelper.PricePrediction.Tests.Services
 {
     public class PoePricesInfoClientTests
     {
-        private Mock<IHttpClientWrapper> httpClientMock;
-        private Mock<IJsonSerializerWrapper> jsonSerializerMock;
-        private PoePricesInfoClient poePricesInfoClient;
+        private readonly Mock<IHttpClientWrapper> httpClientMock;
+        private readonly Mock<IJsonSerializerWrapper> jsonSerializerMock;
+        private readonly PoePricesInfoClient poePricesInfoClient;
 
-        [SetUp]
-        public void Setup()
+        public PoePricesInfoClientTests()
         {
             this.httpClientMock = new Mock<IHttpClientWrapper>();
 
@@ -62,7 +61,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         public async Task GetPricePredictionAsyncShouldCallDeserializeOnJsonSerializerWithHttpContent()
         {
             // arrange
-            string json = "{ \"result\": [ ] }";
+            const string json = "{ \"result\": [ ] }";
 
             this.httpClientMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage
@@ -74,7 +73,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
-            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoPrediction>(json, It.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy.GetType() == typeof(JsonSnakeCaseNamingPolicy))));
+            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoPrediction>(json, It.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy!.GetType() == typeof(JsonSnakeCaseNamingPolicy))));
         }
 
         [Test]
@@ -110,7 +109,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 .Returns(expected);
 
             // act
-            PoePricesInfoPrediction result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            PoePricesInfoPrediction? result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
             Assert.That(result, Is.EqualTo(expected));
@@ -125,7 +124,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 .Throws<Exception>();
 
             // act
-            PoePricesInfoPrediction result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            PoePricesInfoPrediction? result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
             Assert.IsNull(result);
@@ -150,7 +149,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         public async Task GetPricePredictionAsyncShouldReturnNullIf(string league, string itemText)
         {
             // act
-            PoePricesInfoPrediction result = await this.poePricesInfoClient.GetPricePredictionAsync(league, itemText);
+            PoePricesInfoPrediction? result = await this.poePricesInfoClient.GetPricePredictionAsync(league, itemText);
 
             // assert
             Assert.IsNull(result);

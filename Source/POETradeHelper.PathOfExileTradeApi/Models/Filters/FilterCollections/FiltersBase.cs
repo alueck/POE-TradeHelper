@@ -1,4 +1,5 @@
 ﻿using POETradeHelper.Common;
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -8,9 +9,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
     public abstract class FiltersBase<TType> : ICloneable
         where TType : FiltersBase<TType>, new()
     {
-        private static readonly JsonSnakeCaseNamingPolicy snakeCaseNamingPolicy = new JsonSnakeCaseNamingPolicy();
+        private static readonly JsonSnakeCaseNamingPolicy snakeCaseNamingPolicy = new();
 
-        protected void SetFilter(IFilter filter, [CallerMemberName] string filterName = null)
+        protected void SetFilter(IFilter? filter, [CallerMemberName] string? filterName = null)
         {
             if (string.IsNullOrWhiteSpace(filterName))
             {
@@ -19,7 +20,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 
             if (filter == null)
             {
-                this.filters.Remove(filterName);
+                this.filters.Remove(snakeCaseNamingPolicy.ConvertName(filterName));
             }
             else
             {
@@ -27,7 +28,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
             }
         }
 
-        protected TFilter GetFilter<TFilter>([CallerMemberName] string filterName = null)
+        protected TFilter? GetFilter<TFilter>([CallerMemberName] string? filterName = null)
             where TFilter : IFilter
         {
             if (string.IsNullOrWhiteSpace(filterName))
@@ -35,7 +36,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
                 throw new ArgumentNullException(nameof(filterName));
             }
 
-            return this.filters.TryGetValue(snakeCaseNamingPolicy.ConvertName(filterName), out object filter) ? (TFilter)filter : default;
+            return this.filters.TryGetValue(snakeCaseNamingPolicy.ConvertName(filterName), out object? filter) ? (TFilter)filter : default;
         }
 
         public object Clone()
@@ -50,13 +51,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
             return result;
         }
 
-        private readonly Dictionary<string, object> filters = new Dictionary<string, object>();
+        private readonly Dictionary<string, object> filters = new();
 
         /// <summary>
         /// This should only be used for JSON serialization and not accessed otherwise.
         /// System.Text.Json can only access public properties at the moment. The type needs to be object,
         /// so the JSON serializer from System.Text.Json handles each object as the derived and not the base type.
         /// </summary>
-        public IReadOnlyDictionary<string, object> Filters => this.filters.Count > 0 ? this.filters : null;
+        public IReadOnlyDictionary<string, object>? Filters => this.filters.Count > 0 ? this.filters : null;
     }
 }

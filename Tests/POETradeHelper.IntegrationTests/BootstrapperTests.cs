@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Linq;
 
 using NUnit.Framework;
 
-using POETradeHelper.Common.Contract;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.Services;
+
 using Splat;
 
 namespace POETradeHelper.IntegrationTests
@@ -17,7 +16,7 @@ namespace POETradeHelper.IntegrationTests
         {
             Bootstrapper.Configure();
         }
-        
+
         [Test]
         public void AllPoeWikiUrlProvidersRegistered()
         {

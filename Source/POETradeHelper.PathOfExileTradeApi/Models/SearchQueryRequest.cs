@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+
 using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
@@ -19,7 +20,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         public string Endpoint => Resources.PoeTradeApiSearchEndpoint;
 
         [JsonIgnore]
-        public string League { get; set; }
+        public string League { get; set; } = string.Empty;
 
         public object Clone()
         {

@@ -4,7 +4,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 {
     public class Data<TType>
     {
-        private string id;
+        private string? id;
 
         public string Id
         {
@@ -12,8 +12,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
             set => this.id = value;
         }
 
-        public string Label { get; set; }
+        public string Label { get; set; } = string.Empty;
 
-        public IList<TType> Entries { get; set; }
+        public IList<TType> Entries { get; set; } = new List<TType>();
     }
 }

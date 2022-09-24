@@ -1,0 +1,199 @@
+﻿<UserControl
+    x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Views.FiltersControl"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:localVMs="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+    xmlns:localViews="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Views;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Properties;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+  <UserControl.Styles>
+    <Style Selector="localViews|FilterTextBoxControl.green &gt; TextBox">
+      <Setter Property="BorderBrush" Value="Green" />
+    </Style>
+    <Style Selector="localViews|FilterTextBoxControl.red &gt; TextBox">
+      <Setter Property="BorderBrush" Value="Red" />
+    </Style>
+    <Style Selector="localViews|FilterTextBoxControl.blue &gt; TextBox">
+      <Setter Property="BorderBrush" Value="Blue" />
+    </Style>
+    <Style Selector="localViews|FilterTextBoxControl.white &gt; TextBox">
+      <Setter Property="BorderBrush" Value="White" />
+    </Style>
+  </UserControl.Styles>
+
+  <UserControl.DataTemplates>
+    <DataTemplate DataType="{x:Type localVMs:BindableSocketsFilterViewModel}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="325" MaxWidth="325" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition />
+          <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <localViews:SelectableFilterControl Grid.Column="0" Filter="{Binding .}" />
+
+        <Grid
+            Grid.Row="1"
+            Margin="25,0,0,0"
+            IsVisible="{Binding IsEnabled}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+          </Grid.ColumnDefinitions>
+
+          <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+          </Grid.RowDefinitions>
+
+          <localViews:FilterTextBoxControl
+              Grid.Column="0"
+              Watermark="{x:Static resources:Resources.Min}"
+              Value="{Binding Min}" />
+
+          <TextBlock
+              Grid.Column="1"
+              Margin="5"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Text="{Binding Current}" />
+
+          <localViews:FilterTextBoxControl
+              Grid.Column="2"
+              Watermark="{x:Static resources:Resources.Max}"
+              Value="{Binding Max}" />
+
+          <localViews:FilterTextBoxControl
+              Grid.Row="1"
+              Grid.Column="0"
+              Classes="red"
+              Watermark="{x:Static resources:Resources.Red}"
+              Value="{Binding Red}" />
+
+          <localViews:FilterTextBoxControl
+              Grid.Row="1"
+              Grid.Column="1"
+              Classes="green"
+              Watermark="{x:Static resources:Resources.Green}"
+              Value="{Binding Green}" />
+
+          <localViews:FilterTextBoxControl
+              Grid.Row="1"
+              Grid.Column="2"
+              Classes="blue"
+              Watermark="{x:Static resources:Resources.Blue}"
+              Value="{Binding Blue}" />
+
+          <localViews:FilterTextBoxControl
+              Grid.Row="1"
+              Grid.Column="3"
+              Classes="white"
+              Watermark="{x:Static resources:Resources.White}"
+              Value="{Binding White}" />
+        </Grid>
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type localVMs:IMinMaxFilterViewModel}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="325" MaxWidth="325" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition />
+          <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <localViews:SelectableFilterControl Grid.Column="0" Filter="{Binding .}" />
+
+        <Grid
+            Grid.Row="1"
+            Margin="25,0,0,0"
+            IsVisible="{Binding IsEnabled}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+          </Grid.ColumnDefinitions>
+
+          <localViews:FilterTextBoxControl
+              Grid.Column="0"
+              Watermark="{x:Static resources:Resources.Min}"
+              Value="{Binding Min}" />
+
+          <TextBlock
+              Grid.Column="1"
+              Margin="5"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Text="{Binding Current}" />
+
+          <localViews:FilterTextBoxControl
+              Grid.Column="2"
+              Watermark="{x:Static resources:Resources.Max}"
+              Value="{Binding Max}" />
+        </Grid>
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type localVMs:FilterViewModelBase}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="325" MaxWidth="325" />
+        </Grid.ColumnDefinitions>
+
+        <localViews:SelectableFilterControl
+            Grid.Column="0"
+            Filter="{Binding .}"
+            IsThreeState="True" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.DataTemplates>
+
+  <Grid DataContext="{Binding $parent[UserControl]}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition />
+    </Grid.RowDefinitions>
+
+    <Grid IsVisible="{Binding !!Items.Count}">
+
+      <Grid IsVisible="{Binding Header, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="15" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Separator
+            Grid.Column="0"
+            Width="{Binding $parent.Width}"
+            Margin="0,2,0,0" />
+        <TextBlock
+            Grid.Column="1"
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            FontWeight="SemiBold"
+            Text="{Binding Header}" />
+        <Separator
+            Grid.Column="2"
+            Width="{Binding $parent.Width}"
+            Margin="0,2,0,0" />
+      </Grid>
+
+      <Separator Margin="0,2,0,0" IsVisible="{Binding Header, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
+    </Grid>
+
+    <ItemsControl Grid.Row="1" Items="{Binding Items}" />
+  </Grid>
+</UserControl>

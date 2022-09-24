@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using POETradeHelper.Common.Extensions;
+﻿using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public class GemItemParser : ItemParserBase
     {
@@ -34,8 +30,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 Name = name,
                 Type = name,
                 IsCorrupted = this.IsCorrupted(itemStringLines),
-                Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
-                Level = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.LevelDescriptor),
+                Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
+                Level = GetIntegerFromFirstStringContaining(itemStringLines, Resources.LevelDescriptor),
                 ExperiencePercent = GetExperiencePercent(itemStringLines),
                 IsVaalVersion = !string.IsNullOrEmpty(vaalName),
                 QualityType = GetQualityType(itemStringLines)
@@ -47,7 +43,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         private static int GetExperiencePercent(string[] itemStringLines)
         {
             int experiencePercent = 0;
-            string experienceLine = itemStringLines.FirstOrDefault(l => l.Contains(Resources.ExperienceDescriptor));
+            string? experienceLine = itemStringLines.FirstOrDefault(l => l.Contains(Resources.ExperienceDescriptor));
 
             if (experienceLine != null)
             {
@@ -56,7 +52,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                     .Replace(".", "")
                     .Trim()
                     .Split('/')
-                    .Select(s => decimal.Parse(s));
+                    .Select(decimal.Parse)
+                    .ToArray();
 
                 experiencePercent = GetIntegralPercent(experienceNumbers.First(), experienceNumbers.Last());
             }

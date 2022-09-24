@@ -1,11 +1,12 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using System.Text;
+
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
-using System.Data;
-using System.Text;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models;
 
-namespace POETradeHelper.ItemSearch.Tests.TestHelpers
+namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 {
     public class GemItemStringBuilder : ItemStringBuilderBase<GemItemStringBuilder>
     {
@@ -45,9 +46,9 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             var stringBuilder = new StringBuilder();
 
             stringBuilder
-                .Append(NameAndRarityGroup)
+                .Append(this.NameAndRarityGroup)
                 .AppendLine(ParserConstants.PropertyGroupSeparator)
-                .Append(ItemStatsGroup)
+                .Append(this.ItemStatsGroup)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => !this.IsIdentified)
                 .AppendLine(Resources.UnidentifiedKeyword, () => !this.IsIdentified)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.IsCorrupted)

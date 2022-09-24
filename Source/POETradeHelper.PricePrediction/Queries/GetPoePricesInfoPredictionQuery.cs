@@ -1,4 +1,5 @@
 ﻿using MediatR;
+
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PricePrediction.Models;
@@ -9,8 +10,8 @@ namespace POETradeHelper.PricePrediction.Queries
     {
         public GetPoePricesInfoPredictionQuery(Item item, League league)
         {
-            Item = item;
-            League = league;
+            this.Item = item;
+            this.League = league;
         }
 
         public Item Item { get; }

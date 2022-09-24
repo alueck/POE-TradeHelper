@@ -9,28 +9,28 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
         private const string EnergyShieldFilterName = "es";
 
         [JsonIgnore]
-        public MinMaxFilter Armour
+        public MinMaxFilter? Armour
         {
             get => this.GetFilter<MinMaxFilter>(ArmourFilterName);
             set => this.SetFilter(value, ArmourFilterName);
         }
 
         [JsonIgnore]
-        public MinMaxFilter Evasion
+        public MinMaxFilter? Evasion
         {
             get => this.GetFilter<MinMaxFilter>(EvasionFilterName);
             set => this.SetFilter(value, EvasionFilterName);
         }
 
         [JsonIgnore]
-        public MinMaxFilter EnergyShield
+        public MinMaxFilter? EnergyShield
         {
             get => this.GetFilter<MinMaxFilter>(EnergyShieldFilterName);
             set => this.SetFilter(value, EnergyShieldFilterName);
         }
 
         [JsonIgnore]
-        public MinMaxFilter Block
+        public MinMaxFilter? Block
         {
             get => this.GetFilter<MinMaxFilter>();
             set => this.SetFilter(value);

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+
 using MediatR;
 
 namespace POETradeHelper.Common.Commands.Handlers
@@ -16,7 +17,7 @@ namespace POETradeHelper.Common.Commands.Handlers
                 FileName = request.Url.ToString(),
                 UseShellExecute = true
             });
-            
+
             return Task.CompletedTask;
         }
     }

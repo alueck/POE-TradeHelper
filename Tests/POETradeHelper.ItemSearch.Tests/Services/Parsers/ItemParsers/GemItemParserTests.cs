@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 using Moq;
 
@@ -7,19 +6,18 @@ using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
-using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class GemItemParserTests : ItemParserTestsBase
     {
-        private Mock<IItemDataService> itemDataServiceMock;
-        private GemItemStringBuilder itemStringBuilder;
+        private readonly Mock<IItemDataService> itemDataServiceMock;
+        private readonly GemItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public GemItemParserTests()
         {
             this.itemDataServiceMock = new Mock<IItemDataService>();
             this.ItemParser = new GemItemParser(this.itemDataServiceMock.Object);
@@ -57,7 +55,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldCallGetTypeOnItemDataServiceWithGemName()
         {
-            string expected = "Flameblast";
+            const string expected = "Flameblast";
             string[] itemStringLines = this.itemStringBuilder
                 .WithName(expected)
                 .BuildLines();
@@ -79,7 +77,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemDataServiceMock.Setup(x => x.GetType(It.IsAny<string>()))
                 .Returns(expected);
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(expected));
             Assert.That(result.Type, Is.EqualTo(expected));
@@ -92,7 +90,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithCorrupted()
                 .BuildLines();
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsTrue(result.IsCorrupted);
         }
@@ -103,7 +101,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string[] itemStringLines = this.itemStringBuilder
                 .BuildLines();
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsFalse(result.IsCorrupted);
         }
@@ -111,12 +109,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldParseQuality()
         {
-            int expected = 13;
+            const int expected = 13;
             string[] itemStringLines = this.itemStringBuilder
                 .WithQuality(expected)
                 .BuildLines();
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Quality, Is.EqualTo(expected));
         }
@@ -124,11 +122,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldParseZeroQualityIfItemHasNoQuality()
         {
-            int expected = 0;
+            const int expected = 0;
             string[] itemStringLines = this.itemStringBuilder
                 .BuildLines();
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Quality, Is.EqualTo(expected));
         }
@@ -136,12 +134,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldParseGemLevel()
         {
-            int expected = 17;
+            const int expected = 17;
             string[] itemStringLines = this.itemStringBuilder
                 .WithGemLevel(expected)
                 .BuildLines();
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Level, Is.EqualTo(expected));
         }
@@ -156,7 +154,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithExperience(experience)
                 .BuildLines();
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.ExperiencePercent, Is.EqualTo(expected));
         }
@@ -168,7 +166,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithName($"{qualityTypePrefix}Flameblast")
                 .BuildLines();
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.QualityType, Is.EqualTo(expectedQualityType));
         }
@@ -192,7 +190,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .Setup(x => x.GetType("Anomalous Vaal Flameblast"))
                 .Returns("Vaal Flameblast");
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsNotNull(result);
             Assert.That(result.Name, Is.EqualTo("Vaal Flameblast"));
@@ -212,7 +210,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .Setup(x => x.GetType("Vaal Impurity of Lightning"))
                 .Returns("Vaal Impurity of Lightning");
 
-            GemItem result = this.ItemParser.Parse(itemStringLines) as GemItem;
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsNotNull(result);
             Assert.That(result.Name, Is.EqualTo("Vaal Impurity of Lightning"));

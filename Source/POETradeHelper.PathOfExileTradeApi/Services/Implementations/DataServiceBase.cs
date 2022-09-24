@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using POETradeHelper.Common;
+
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;

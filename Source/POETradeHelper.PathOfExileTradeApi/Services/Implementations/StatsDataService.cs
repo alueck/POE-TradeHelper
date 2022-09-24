@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using Microsoft.Extensions.Logging;
+
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
@@ -16,7 +18,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         private IDictionary<string, StatData> statsDataDictionary = new Dictionary<string, StatData>();
 
-        private static readonly Regex NumberRegex = new Regex(@"[\+\-]?\d+(\.\d+)?", RegexOptions.Compiled);
+        private static readonly Regex NumberRegex = new(@"[\+\-]?\d+(\.\d+)?", RegexOptions.Compiled);
         private readonly ILogger<StatsDataService> logger;
 
         public StatsDataService(IHttpClientFactoryWrapper httpclientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer, ILogger<StatsDataService> logger)
@@ -32,17 +34,17 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             this.statsDataDictionary = this.Data.SelectMany(x => x.Entries).ToDictionary(statData => statData.Id);
         }
 
-        public StatData GetStatData(string itemStatText, bool preferLocalStat, params string[] statCategoriesToSearch)
+        public StatData? GetStatData(string itemStatText, bool preferLocalStat, params string[] statCategoriesToSearch)
         {
             IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(statCategoriesToSearch);
-            StatData result = this.GetStataDataPrivate(statDataListsToSearch, itemStatText, preferLocalStat);
+            StatData? result = this.GetStataDataPrivate(statDataListsToSearch, itemStatText, preferLocalStat);
 
             return result;
         }
 
         private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params string[] statCategoriesToSearch)
         {
-            IEnumerable<Data<StatData>> result = null;
+            IEnumerable<Data<StatData>>? result = null;
 
             if (statCategoriesToSearch.Length != 0)
             {
@@ -52,11 +54,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result ?? this.Data;
         }
 
-        private StatData GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText, bool preferLocalStat)
+        private StatData? GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText, bool preferLocalStat)
         {
-            StatData result = null;
+            StatData? result = null;
 
-            StatDataTextMatchResult statDataMatch = GetStatDataMatch(statDataListsToSearch, itemStatText, preferLocalStat);
+            StatDataTextMatchResult? statDataMatch = GetStatDataMatch(statDataListsToSearch, itemStatText, preferLocalStat);
 
             if (statDataMatch == null)
             {
@@ -70,9 +72,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result;
         }
 
-        private static StatDataTextMatchResult GetStatDataMatch(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText, bool preferLocalStat)
+        private static StatDataTextMatchResult? GetStatDataMatch(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText, bool preferLocalStat)
         {
-            StatDataTextMatchResult result = null;
+            StatDataTextMatchResult? result = null;
             var statDataTextMatcher = new StatDataTextMatcher(itemStatText);
 
             foreach (var statData in statDataListsToSearch.SelectMany(x => x.Entries))
@@ -94,9 +96,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result;
         }
 
-        public StatData GetStatDataById(string itemStatId)
+        public StatData? GetStatDataById(string itemStatId)
         {
-            return !string.IsNullOrEmpty(itemStatId) && this.statsDataDictionary.TryGetValue(itemStatId, out StatData statData)
+            return !string.IsNullOrEmpty(itemStatId) && this.statsDataDictionary.TryGetValue(itemStatId, out StatData? statData)
                 ? statData
                 : null;
         }
