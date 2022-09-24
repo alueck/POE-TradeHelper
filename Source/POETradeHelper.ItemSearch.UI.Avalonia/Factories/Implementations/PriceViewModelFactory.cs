@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             this.imageService = imageService;
         }
 
-        public async Task<PriceViewModel> CreateAsync(Price price, CancellationToken cancellationToken = default)
+        public async Task<PriceViewModel?> CreateAsync(Price? price, CancellationToken cancellationToken = default)
         {
             return price != null
                 ? new PriceViewModel

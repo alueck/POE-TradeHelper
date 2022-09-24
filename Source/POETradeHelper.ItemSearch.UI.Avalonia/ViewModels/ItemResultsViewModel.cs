@@ -44,7 +44,7 @@ public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
 
     public IScreen HostScreen => this.itemSearchResultOverlayViewModel;
 
-    private Item Item { get; set; }
+    private Item? Item { get; set; }
 
     public IPricePredictionViewModel PricePrediction { get; }
 
@@ -53,31 +53,35 @@ public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
     public ReactiveCommand<Unit, Unit> ExecuteAdvancedQueryCommand { get; }
 
     [Reactive]
-    public SearchQueryRequest QueryRequest { get; set; }
+    public SearchQueryRequest? QueryRequest { get; set; }
 
     [Reactive]
-    public ItemListingsViewModel ItemListings { get; private set; }
+    public ItemListingsViewModel? ItemListings { get; private set; }
 
-    public async Task InitializeAsync(Item item, CancellationToken cancellationToken)
+    public async Task InitializeAsync(Item? item, CancellationToken cancellationToken)
     {
         this.Item = item;
-        this.QueryRequest = this.searchQueryRequestFactory.Create(this.Item);
-        ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(this.QueryRequest, cancellationToken);
-        this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item, itemListing, cancellationToken);
-        await this.AdvancedFilters.LoadAsync(this.Item, this.QueryRequest, cancellationToken);
 
-        _ = this.PricePrediction.LoadAsync(this.Item, cancellationToken);
+        if (this.Item != null)
+        {
+            this.QueryRequest = this.searchQueryRequestFactory.Create(this.Item);
+            ItemListingsQueryResult itemListing = await this.poeTradeApiClient.GetListingsAsync(this.QueryRequest, cancellationToken);
+            this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item, itemListing, cancellationToken);
+            await this.AdvancedFilters.LoadAsync(this.Item, this.QueryRequest, cancellationToken);
+
+            _ = this.PricePrediction.LoadAsync(this.Item, cancellationToken);
+        }
     }
 
     private async Task ExecuteAdvancedQueryAsync()
     {
         try
         {
-            this.QueryRequest = this.searchQueryRequestFactory.Create(this.QueryRequest, this.AdvancedFilters);
-            await this.AdvancedFilters.LoadAsync(this.Item, this.QueryRequest, default);
+            this.QueryRequest = this.searchQueryRequestFactory.Create(this.QueryRequest!, this.AdvancedFilters);
+            await this.AdvancedFilters.LoadAsync(this.Item!, this.QueryRequest, default);
 
             ItemListingsQueryResult itemListingsQueryResult = await this.poeTradeApiClient.GetListingsAsync(this.QueryRequest);
-            this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item, itemListingsQueryResult);
+            this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item!, itemListingsQueryResult);
         }
         catch (Exception exception)
         {

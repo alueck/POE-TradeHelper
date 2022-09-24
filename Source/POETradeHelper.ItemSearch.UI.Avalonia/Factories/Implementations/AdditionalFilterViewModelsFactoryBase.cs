@@ -41,7 +41,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             };
         }
 
-        protected virtual BindableMinMaxFilterViewModel CreateBindableMinMaxFilterViewModel(Expression<Func<SearchQueryRequest, IFilter>> bindingExpression, string text, int currentValue, MinMaxFilter queryRequestFilter)
+        protected virtual BindableMinMaxFilterViewModel CreateBindableMinMaxFilterViewModel(
+            Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression,
+            string text,
+            int currentValue,
+            MinMaxFilter? queryRequestFilter)
         {
             var result = new BindableMinMaxFilterViewModel(bindingExpression)
             {

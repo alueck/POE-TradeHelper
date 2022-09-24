@@ -9,7 +9,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 
 public interface IResultsViewModel : IRoutableViewModel
 {
-    ItemListingsViewModel ItemListings { get; }
+    ItemListingsViewModel? ItemListings { get; }
 
-    Task InitializeAsync(Item item, CancellationToken cancellationToken);
+    Task InitializeAsync(Item? item, CancellationToken cancellationToken);
 }

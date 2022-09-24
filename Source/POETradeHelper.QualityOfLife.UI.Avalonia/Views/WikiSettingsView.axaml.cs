@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace POETradeHelper.QualityOfLife.Views
+namespace POETradeHelper.QualityOfLife.UI.Avalonia.Views
 {
     public partial class WikiSettingsView : UserControl
     {

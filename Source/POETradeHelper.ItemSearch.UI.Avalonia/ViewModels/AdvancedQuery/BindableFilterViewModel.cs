@@ -8,11 +8,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
     public class BindableFilterViewModel : FilterViewModelBase
     {
-        public BindableFilterViewModel(Expression<Func<SearchQueryRequest, IFilter>> bindingExpression)
+        public BindableFilterViewModel(Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression)
         {
             this.BindingExpression = bindingExpression;
         }
 
-        public Expression<Func<SearchQueryRequest, IFilter>> BindingExpression { get; }
+        public Expression<Func<SearchQueryRequest, IFilter?>> BindingExpression { get; }
     }
 }

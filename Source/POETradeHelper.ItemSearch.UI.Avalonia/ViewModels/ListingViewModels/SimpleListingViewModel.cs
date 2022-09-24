@@ -9,14 +9,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
     public class SimpleListingViewModel
     {
         [Display(ShortName = nameof(Resources.AccountNameColumn), ResourceType = typeof(Resources), Order = 0)]
-        public string AccountName { get; set; }
+        public string AccountName { get; set; } = string.Empty;
 
         [Display(ShortName = nameof(Resources.PriceColumn), ResourceType = typeof(Resources), Order = 1)]
         [StyleClasses(StyleClass.DataGridCellAlignRight)]
-        public PriceViewModel Price { get; set; }
+        public PriceViewModel? Price { get; set; }
 
         [Display(ShortName = nameof(Resources.AgeColumn), ResourceType = typeof(Resources), Order = 99)]
         [StyleClasses(StyleClass.DataGridCellAlignRight)]
-        public string Age { get; set; }
+        public string Age { get; set; } = string.Empty;
     }
 }

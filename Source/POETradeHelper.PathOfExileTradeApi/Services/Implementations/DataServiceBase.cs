@@ -38,8 +38,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
             if (queryResult != null)
             {
-                this.Data = queryResult.Result;
+                this.Data = this.GetData(queryResult);
             }
+        }
+
+        protected virtual IList<TDataType> GetData(QueryResult<TDataType> queryResult)
+        {
+            return queryResult.Result;
         }
     }
 }

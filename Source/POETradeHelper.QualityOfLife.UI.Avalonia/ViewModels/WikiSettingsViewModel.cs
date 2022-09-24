@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using POETradeHelper.Common.UI;
 using POETradeHelper.Common.WritableOptions;
 using POETradeHelper.QualityOfLife.Models;
-using POETradeHelper.QualityOfLife.Properties;
+using POETradeHelper.QualityOfLife.UI.Avalonia.Properties;
 
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-namespace POETradeHelper.QualityOfLife.ViewModels
+namespace POETradeHelper.QualityOfLife.UI.Avalonia.ViewModels
 {
     public class WikiSettingsViewModel : ReactiveObject, ISettingsViewModel
     {
@@ -19,28 +19,27 @@ namespace POETradeHelper.QualityOfLife.ViewModels
         public WikiSettingsViewModel(IWritableOptions<WikiOptions> wikiOptions)
         {
             this.wikiOptions = wikiOptions;
+            this.WikiTypes = Enum.GetValues<WikiType>();
         }
 
         public string Title => Resources.WikiSettingsHeader;
 
         public bool IsBusy => false;
 
-        [Reactive]
-        public IEnumerable<WikiType> WikiTypes { get; private set; }
+        public IEnumerable<WikiType> WikiTypes { get; }
 
         [Reactive]
         public WikiType SelectedWikiType { get; private set; }
 
         public Task InitializeAsync()
         {
-            this.WikiTypes = Enum.GetValues<WikiType>();
-            this.SelectedWikiType = this.wikiOptions.Value.Wiki;
+            SelectedWikiType = wikiOptions.Value.Wiki;
             return Task.CompletedTask;
         }
 
         public void SaveSettings()
         {
-            this.wikiOptions.Update(options => options.Wiki = this.SelectedWikiType);
+            wikiOptions.Update(options => options.Wiki = SelectedWikiType);
         }
     }
 }

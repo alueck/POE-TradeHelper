@@ -39,33 +39,33 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         public RoutingState Router { get; }
 
         [Reactive]
-        public Message Message { get; private set; }
+        public Message? Message { get; private set; }
 
         [Reactive]
         public bool IsBusy { get; private set; }
 
         [Reactive]
-        public Item Item { get; private set; }
+        public Item? Item { get; private set; }
 
         [Reactive]
-        public Uri Url { get; private set; }
+        public Uri? Url { get; private set; }
 
-        public async Task SetListingForItemUnderCursorAsync(CancellationToken cancellationToken = default)
+        public async Task SetListingForItemUnderCursorAsync(CancellationToken token = default)
         {
             try
             {
                 this.IsBusy = true;
                 this.Message = null;
 
-                this.Item = await this.mediator.Send(new GetItemFromCursorQuery(), cancellationToken).ConfigureAwait(true);
+                this.Item = await this.mediator.Send(new GetItemFromCursorQuery(), token).ConfigureAwait(true);
 
                 if (this.Item is CurrencyItem or FragmentItem or DivinationCardItem)
                 {
-                    await this.GoToView(this.exchangeResultsViewModelFactory, cancellationToken);
+                    await this.GoToView(this.exchangeResultsViewModelFactory, token);
                 }
                 else
                 {
-                    await this.GoToView(this.itemResultsViewModelFactory, cancellationToken);
+                    await this.GoToView(this.itemResultsViewModelFactory, token);
                 }
             }
             catch (InvalidItemStringException exception)
@@ -81,7 +81,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             }
             finally
             {
-                if (!cancellationToken.IsCancellationRequested)
+                if (!token.IsCancellationRequested)
                 {
                     this.IsBusy = false;
                 }

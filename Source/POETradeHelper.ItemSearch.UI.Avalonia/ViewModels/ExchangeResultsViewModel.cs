@@ -35,12 +35,15 @@ public class ExchangeResultsViewModel : ReactiveObject, IExchangeResultsViewMode
     public IScreen HostScreen { get; }
 
     [Reactive]
-    public ItemListingsViewModel ItemListings { get; private set; }
+    public ItemListingsViewModel? ItemListings { get; private set; }
 
-    public async Task InitializeAsync(Item item, CancellationToken cancellationToken)
+    public async Task InitializeAsync(Item? item, CancellationToken cancellationToken)
     {
-        var request = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
-        var exchangeQueryResult = await this.poeTradeApiClient.GetListingsAsync(request, cancellationToken);
-        this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(exchangeQueryResult, cancellationToken);
+        if (item != null)
+        {
+            var request = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
+            var exchangeQueryResult = await this.poeTradeApiClient.GetListingsAsync(request, cancellationToken);
+            this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(exchangeQueryResult, cancellationToken);
+        }
     }
 }

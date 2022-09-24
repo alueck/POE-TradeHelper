@@ -6,7 +6,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
     public class ItemListingsViewModel
     {
-        public Uri ListingsUri { get; set; }
+        public Uri? ListingsUri { get; set; }
 
         public ICollection<SimpleListingViewModel> Listings { get; } = new ObservableCollection<SimpleListingViewModel>();
     }

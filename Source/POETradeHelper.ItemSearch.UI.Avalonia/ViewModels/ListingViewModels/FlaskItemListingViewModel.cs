@@ -10,6 +10,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
     {
         [Display(ShortName = nameof(Resources.QualityColumn), ResourceType = typeof(Resources), Order = 3)]
         [StyleClasses(StyleClass.DataGridCellAlignRight)]
-        public string Quality { get; set; }
+        public string Quality { get; set; } = string.Empty;
     }
 }

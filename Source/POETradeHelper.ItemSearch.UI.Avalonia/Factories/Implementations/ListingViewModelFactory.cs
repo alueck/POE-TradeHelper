@@ -38,14 +38,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         public async Task<SimpleListingViewModel> CreateAsync(ExchangeListing listing, CancellationToken cancellationToken = default)
         {
-            ExchangeOffer offer = listing.Offers.FirstOrDefault();
-            Price price = offer != null
+            ExchangeOffer? offer = listing.Offers.FirstOrDefault();
+            Price? price = offer != null
                 ? offer.Item with { Amount = offer.Item.Amount / offer.Exchange.Amount }
                 : null;
 
             return new SimpleListingViewModel
             {
-                AccountName = listing.Account?.Name,
+                AccountName = listing.Account?.Name ?? string.Empty,
                 Age = listing.AgeText,
                 Price = await this.priceViewModelFactory.CreateAsync(price, cancellationToken).ConfigureAwait(false),
             };
@@ -53,7 +53,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         private async Task SetSimpleListingViewModelProperties(SimpleListingViewModel result, ListingResult listingResult, CancellationToken cancellationToken)
         {
-            result.AccountName = listingResult.Listing.Account?.Name;
+            result.AccountName = listingResult.Listing.Account?.Name ?? string.Empty;
             result.Price = await this.priceViewModelFactory.CreateAsync(listingResult.Listing.Price, cancellationToken).ConfigureAwait(false);
             result.Age = listingResult.Listing.AgeText;
         }
@@ -91,7 +91,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
         {
             var qualityProperty = itemListing.Properties?.FirstOrDefault(p => p.Name == propertyName);
 
-            return qualityProperty?.Values[0][0].GetString();
+            return qualityProperty?.Values[0][0].GetString() ?? string.Empty;
         }
 
         private SimpleListingViewModel CreateItemListingViewModelWithItemLevel(ListingResult listingResult)

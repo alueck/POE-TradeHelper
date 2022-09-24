@@ -8,7 +8,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
     public class BindableMinMaxFilterViewModel : BindableFilterViewModel, IMinMaxFilterViewModel
     {
-        public BindableMinMaxFilterViewModel(Expression<Func<SearchQueryRequest, IFilter>> bindingExpression) : base(bindingExpression)
+        public BindableMinMaxFilterViewModel(Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression) : base(bindingExpression)
         {
             this.IsEnabled = false;
         }
@@ -17,6 +17,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 
         public decimal? Max { get; set; }
 
-        public string Current { get; set; }
+        public string Current { get; set; } = string.Empty;
     }
 }
