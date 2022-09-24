@@ -72,7 +72,7 @@ namespace POETradeHelper
             Locator.CurrentMutable.InitializeSplat();
             Locator.CurrentMutable.InitializeReactiveUI();
             Locator.CurrentMutable.InitializeAvalonia();
-            Locator.CurrentMutable.UseMicrosoftExtensionsLoggingWithWrappingFullLogger(() => Locator.Current.GetService<ILoggerFactory>());
+            Locator.CurrentMutable.UseMicrosoftExtensionsLoggingWithWrappingFullLogger(() => Locator.Current.GetService<ILoggerFactory>()!);
 
             var container = builder.Build();
             autofacResolver.SetLifetimeScope(container);

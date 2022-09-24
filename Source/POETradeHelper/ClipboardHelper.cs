@@ -15,7 +15,7 @@ namespace POETradeHelper
 
         public ClipboardHelper()
         {
-            this.clipboard = AvaloniaLocator.Current.GetService<IClipboard>();
+            this.clipboard = AvaloniaLocator.Current.GetService<IClipboard>()!;
         }
 
         public Task ClearAsync()

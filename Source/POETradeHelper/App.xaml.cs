@@ -33,7 +33,7 @@ namespace POETradeHelper
             base.OnFrameworkInitializationCompleted();
         }
 
-        private static void OnDesktopOnShutdownRequested(object sender, ShutdownRequestedEventArgs e)
+        private static void OnDesktopOnShutdownRequested(object? sender, ShutdownRequestedEventArgs e)
         {
             Bootstrapper.Shutdown();
         }

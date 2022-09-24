@@ -31,7 +31,7 @@ namespace POETradeHelper.ViewModels
                     if (success)
                     {
                         var successMessage = new Message { Type = MessageType.Success, Text = Resources.SavedMessageText };
-                        return Observable.Return(successMessage).Concat(Observable.Return((Message)null).Delay(TimeSpan.FromSeconds(3), RxApp.MainThreadScheduler));
+                        return Observable.Return(successMessage).Concat(Observable.Return((Message?)null).Delay(TimeSpan.FromSeconds(3), RxApp.MainThreadScheduler));
                     }
                     else
                     {
@@ -49,15 +49,15 @@ namespace POETradeHelper.ViewModels
         public bool IsBusy { get; private set; }
 
         [Reactive]
-        public string IsBusyText { get; private set; }
+        public string IsBusyText { get; private set; } = string.Empty;
 
         [ObservableAsProperty]
-        public Message SaveSettingsMessage { get; }
+        public Message? SaveSettingsMessage { get; }
 
         public ReactiveCommand<Unit, bool> SaveSettingsCommand { get; }
 
         [Reactive]
-        public Message ErrorMessage { get; private set; }
+        public Message? ErrorMessage { get; private set; }
 
         private async void InitializeAsync(IEnumerable<IInitializable> initializables)
         {
@@ -122,7 +122,7 @@ namespace POETradeHelper.ViewModels
         private void ResetIsBusy(bool resetTextOnly)
         {
             this.IsBusy = resetTextOnly;
-            this.IsBusyText = null;
+            this.IsBusyText = string.Empty;
         }
 
         private bool SaveSettings()
