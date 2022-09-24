@@ -35,6 +35,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         public void CreateShouldCallCanMapOnAllItemSearchQueryRequestMappers()
         {
             var item = new EquippableItem(ItemRarity.Rare) { Name = "TestItem" };
+            this.itemSearchQueryRequestMapperMocks[1].Setup(x => x.CanMap(item))
+                .Returns(true);
 
             this.searchQueryRequestFactory.Create(item);
 

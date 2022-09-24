@@ -118,9 +118,9 @@ namespace POETradeHelper.PricePrediction.Tests.ViewModels
             }, null);
 
             // assert
-            Assert.That(this.viewModel.Currency, Is.Null);
-            Assert.That(this.viewModel.Prediction, Is.Null);
-            Assert.That(this.viewModel.ConfidenceScore, Is.Null);
+            Assert.That(this.viewModel.Currency, Is.Empty);
+            Assert.That(this.viewModel.Prediction, Is.Empty);
+            Assert.That(this.viewModel.ConfidenceScore, Is.Empty);
             Assert.That(this.viewModel.CurrencyImage, Is.Null);
             Assert.That(this.viewModel.HasValue, Is.False);
         }
