@@ -14,7 +14,7 @@ namespace POETradeHelper.Common.Tests.Extensions
         [TestCase(2.6)]
         public void ToHumanReadableStringShouldReturnDays(double numberOfDays)
         {
-            this.ToHumanReadableStringShouldReturnResult(numberOfDays, TimeSpan.FromDays, Properties.Resources.Days);
+            ToHumanReadableStringShouldReturnResult(numberOfDays, TimeSpan.FromDays, Properties.Resources.Days);
         }
 
         [TestCase(1)]
@@ -23,7 +23,7 @@ namespace POETradeHelper.Common.Tests.Extensions
         [TestCase(2.6)]
         public void ToHumanReadableStringShouldReturnHours(double numberOfHours)
         {
-            this.ToHumanReadableStringShouldReturnResult(numberOfHours, TimeSpan.FromHours, Properties.Resources.Hours);
+            ToHumanReadableStringShouldReturnResult(numberOfHours, TimeSpan.FromHours, Properties.Resources.Hours);
         }
 
         [TestCase(1)]
@@ -32,7 +32,7 @@ namespace POETradeHelper.Common.Tests.Extensions
         [TestCase(2.6)]
         public void ToHumanReadableStringShouldReturnMinutes(double numberOfMinutes)
         {
-            this.ToHumanReadableStringShouldReturnResult(numberOfMinutes, TimeSpan.FromMinutes, Properties.Resources.Minutes);
+            ToHumanReadableStringShouldReturnResult(numberOfMinutes, TimeSpan.FromMinutes, Properties.Resources.Minutes);
         }
 
         [TestCase(1)]
@@ -41,7 +41,7 @@ namespace POETradeHelper.Common.Tests.Extensions
         [TestCase(2.6)]
         public void ToHumanReadableStringShouldReturnSeconds(double numberOfMinutes)
         {
-            this.ToHumanReadableStringShouldReturnResult(numberOfMinutes, TimeSpan.FromSeconds, Properties.Resources.Seconds);
+            ToHumanReadableStringShouldReturnResult(numberOfMinutes, TimeSpan.FromSeconds, Properties.Resources.Seconds);
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace POETradeHelper.Common.Tests.Extensions
             Assert.That(result, Is.EqualTo($" 1{Properties.Resources.Minutes}"));
         }
 
-        private void ToHumanReadableStringShouldReturnResult(double time, Func<double, TimeSpan> timeSpanFactory, string unit)
+        private static void ToHumanReadableStringShouldReturnResult(double time, Func<double, TimeSpan> timeSpanFactory, string unit)
         {
             TimeSpan timeSpan = timeSpanFactory(time);
 

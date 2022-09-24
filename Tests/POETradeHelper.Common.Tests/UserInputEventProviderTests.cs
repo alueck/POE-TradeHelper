@@ -107,7 +107,6 @@ namespace POETradeHelper.Common.Tests
                 .Setup(x => x.Send(It.IsAny<HideOverlayCommand>(), It.IsAny<CancellationToken>()))
                 .Callback((IRequest<Unit> command, CancellationToken _) => onHandledAction = ((HideOverlayCommand)command).OnHandled);
 
-
             this.keyPressed.OnNext(keyEventArgs);
 
             onHandledAction.Should().NotBeNull();

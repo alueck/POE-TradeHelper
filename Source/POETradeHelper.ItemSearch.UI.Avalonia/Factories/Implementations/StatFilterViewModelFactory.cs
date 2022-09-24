@@ -22,17 +22,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         public StatFilterViewModel Create(ItemStat itemStat, SearchQueryRequest queryRequest)
         {
-            StatFilterViewModel result;
-
             var matchingFilter = FindMatchingFilter(itemStat, queryRequest);
 
             (decimal minValue, decimal maxValue)? minMaxTuple = GetMinMaxTuple(itemStat);
 
-            result = minMaxTuple.HasValue
+            return minMaxTuple.HasValue
                 ? this.GetMinMaxStatFilterViewModel(itemStat, matchingFilter, minMaxTuple.Value)
                 : GetStatFilterViewModel(itemStat, matchingFilter);
-
-            return result;
         }
 
         private static StatFilter FindMatchingFilter(ItemStat itemStat, SearchQueryRequest queryRequest)

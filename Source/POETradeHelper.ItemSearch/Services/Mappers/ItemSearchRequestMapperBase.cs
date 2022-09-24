@@ -10,7 +10,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMapper
     {
-        public ItemSearchRequestMapperBase(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
+        protected ItemSearchRequestMapperBase(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {
             this.ItemSearchOptions = itemSearchOptions;
         }

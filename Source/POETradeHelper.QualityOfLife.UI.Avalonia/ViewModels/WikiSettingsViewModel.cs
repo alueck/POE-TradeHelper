@@ -40,10 +40,7 @@ namespace POETradeHelper.QualityOfLife.ViewModels
 
         public void SaveSettings()
         {
-            this.wikiOptions.Update(options =>
-            {
-                options.Wiki = this.SelectedWikiType;
-            });
+            this.wikiOptions.Update(options => options.Wiki = this.SelectedWikiType);
         }
     }
 }

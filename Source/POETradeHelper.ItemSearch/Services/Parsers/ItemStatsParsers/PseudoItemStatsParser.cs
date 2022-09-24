@@ -18,9 +18,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
         public IEnumerable<ItemStat> Parse(IEnumerable<ItemStat> itemStats)
         {
             IList<ItemStat> result = new List<ItemStat>();
-            IDictionary<StatData, IList<ItemStat>> pseudoStatDataMapping = this.GetRelevantPseudoStatDataMappings(itemStats);
-
-            foreach (var entry in pseudoStatDataMapping)
+            foreach (var entry in this.GetRelevantPseudoStatDataMappings(itemStats))
             {
                 switch (entry.Value[0])
                 {

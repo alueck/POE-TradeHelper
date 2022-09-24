@@ -55,26 +55,15 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private static SocketType GetSocketType(string socketString)
         {
-            switch (socketString)
+            return socketString switch
             {
-                case "R":
-                    return SocketType.Red;
-
-                case "B":
-                    return SocketType.Blue;
-
-                case "G":
-                    return SocketType.Green;
-
-                case "W":
-                    return SocketType.White;
-
-                case "A":
-                    return SocketType.Abyssal;
-
-                default:
-                    throw new ArgumentException($"Unknown socket type '{socketString}'.", nameof(socketString));
-            }
+                "R" => SocketType.Red,
+                "B" => SocketType.Blue,
+                "G" => SocketType.Green,
+                "W" => SocketType.White,
+                "A" => SocketType.Abyssal,
+                _ => throw new ArgumentException($"Unknown socket type '{socketString}'.", nameof(socketString)),
+            };
         }
     }
 }

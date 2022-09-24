@@ -38,12 +38,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
         private ItemStat? ParseStatText(string statText, bool preferLocalStats)
         {
-            ItemStat? result;
-
-            if (!this.TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out result)
-                && !this.TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
-                && !this.TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result)
-                && !this.TryGetItemStatForCategoryByMarker(statText, StatCategory.Fractured, out result))
+            if (!TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out ItemStat? result)
+                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
+                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result)
+                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Fractured, out result))
             {
                 result = new ItemStat(StatCategory.Unknown)
                 {
@@ -51,12 +49,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
                 };
             }
 
-            result = this.GetCompleteItemStat(result, preferLocalStats);
-
-            return result;
+            return this.GetCompleteItemStat(result, preferLocalStats);
         }
 
-        private bool TryGetItemStatForCategoryByMarker(string statText, StatCategory statCategory, [NotNullWhen(returnValue: true)] out ItemStat? itemStat)
+        private static bool TryGetItemStatForCategoryByMarker(string statText, StatCategory statCategory, [NotNullWhen(returnValue: true)] out ItemStat? itemStat)
         {
             itemStat = null;
 
@@ -76,9 +72,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return false;
         }
 
-        protected override ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStats)
+        protected override ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
         {
-            ItemStat? result = base.GetCompleteItemStat(itemStat, preferLocalStats);
+            ItemStat? result = base.GetCompleteItemStat(itemStat, preferLocalStatData);
 
             var placeholderCount = result?.TextWithPlaceholders?.Count(c => c == Placeholder);
             if (placeholderCount == 1)
@@ -95,7 +91,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
         private static ItemStat GetSingleValueItemStat(ItemStat itemStat)
         {
-            decimal? value = GetFirstNumericValue(itemStat.Text.Substring(itemStat.TextWithPlaceholders.IndexOf(Placeholder)));
+            decimal? value = GetFirstNumericValue(itemStat.Text[itemStat.TextWithPlaceholders.IndexOf(Placeholder)..]);
 
             return value.HasValue
                 ? new SingleValueItemStat(itemStat)
@@ -112,13 +108,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             int maxValueIndex = itemStat.TextWithPlaceholders.LastIndexOf(Placeholder);
             if (maxValueIndex >= 0)
             {
-                result.MaxValue = GetFirstNumericValue(itemStat.Text.Substring(maxValueIndex)).GetValueOrDefault();
+                result.MaxValue = GetFirstNumericValue(itemStat.Text[maxValueIndex..]).GetValueOrDefault();
             }
 
             int minValueIndex = GetMinValueIndex(itemStat, maxValueIndex);
             if (minValueIndex >= 0)
             {
-                result.MinValue = GetFirstNumericValue(itemStat.Text.Substring(minValueIndex)).GetValueOrDefault();
+                result.MinValue = GetFirstNumericValue(itemStat.Text[minValueIndex..]).GetValueOrDefault();
             }
 
             return result;
@@ -139,7 +135,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
             if (maxValueIndex >= 0)
             {
-                minValueIndex = itemStat.TextWithPlaceholders.Substring(0, maxValueIndex).IndexOf(Placeholder);
+                minValueIndex = itemStat.TextWithPlaceholders.IndexOf(Placeholder, 0, maxValueIndex);
 
                 if (minValueIndex < 0)
                 {

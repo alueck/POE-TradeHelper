@@ -57,7 +57,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task OnInitShouldDeserializeGetAsyncResponseAsQueryResult()
         {
-            string content = "serialized content";
+            const string content = "serialized content";
 
             this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage

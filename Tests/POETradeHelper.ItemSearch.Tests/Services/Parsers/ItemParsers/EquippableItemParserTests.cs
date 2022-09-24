@@ -339,6 +339,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
                                            .WithType("Thicket Bow")
                                            .BuildLines();
 
+            const string itemType = "parsed item type";
+            this.itemTypeParserMock.Setup(x => x.ParseType(It.IsAny<string[]>(), It.IsAny<ItemRarity>(), It.IsAny<bool>()))
+                .Returns(itemType);
             this.itemDataServiceMock.Setup(x => x.GetCategory(It.IsAny<string>()))
                 .Returns(itemCategory.GetDisplayName());
 
@@ -401,7 +404,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             // arrange
             string[] itemStringLines = this.itemStringBuilder.BuildLines();
+            const string itemType = "parsed item type";
 
+            this.itemTypeParserMock.Setup(x => x.ParseType(It.IsAny<string[]>(), It.IsAny<ItemRarity>(), It.IsAny<bool>()))
+                .Returns(itemType);
             this.itemDataServiceMock.Setup(x => x.GetCategory(It.IsAny<string>()))
                 .Returns(itemCategory?.GetDisplayName().ToLower());
 

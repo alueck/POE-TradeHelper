@@ -101,15 +101,6 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
         }
 
         [Test]
-        public async Task HandleShouldNotCallGetUrlIfItemIsNull()
-        {
-            await this.handler.Handle(new OpenWikiCommand(), default);
-
-            this.wikiUrlProviderMocks[0].Verify(x => x.GetUrl(It.IsAny<Item>()), Times.Never);
-            this.wikiUrlProviderMocks[1].Verify(x => x.GetUrl(It.IsAny<Item>()), Times.Never);
-        }
-
-        [Test]
         public async Task HandleShouldSendOpenUrlInBrowserCommand()
         {
             // arrange

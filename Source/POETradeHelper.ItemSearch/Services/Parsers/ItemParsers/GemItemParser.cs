@@ -30,8 +30,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                 Name = name,
                 Type = name,
                 IsCorrupted = this.IsCorrupted(itemStringLines),
-                Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
-                Level = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.LevelDescriptor),
+                Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
+                Level = GetIntegerFromFirstStringContaining(itemStringLines, Resources.LevelDescriptor),
                 ExperiencePercent = GetExperiencePercent(itemStringLines),
                 IsVaalVersion = !string.IsNullOrEmpty(vaalName),
                 QualityType = GetQualityType(itemStringLines)

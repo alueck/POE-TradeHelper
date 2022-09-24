@@ -55,7 +55,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         [Test]
         public void ParseShouldCallGetTypeOnItemDataServiceWithGemName()
         {
-            string expected = "Flameblast";
+            const string expected = "Flameblast";
             string[] itemStringLines = this.itemStringBuilder
                 .WithName(expected)
                 .BuildLines();
@@ -109,7 +109,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         [Test]
         public void ParseShouldParseQuality()
         {
-            int expected = 13;
+            const int expected = 13;
             string[] itemStringLines = this.itemStringBuilder
                 .WithQuality(expected)
                 .BuildLines();
@@ -122,7 +122,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         [Test]
         public void ParseShouldParseZeroQualityIfItemHasNoQuality()
         {
-            int expected = 0;
+            const int expected = 0;
             string[] itemStringLines = this.itemStringBuilder
                 .BuildLines();
 
@@ -134,7 +134,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         [Test]
         public void ParseShouldParseGemLevel()
         {
-            int expected = 17;
+            const int expected = 17;
             string[] itemStringLines = this.itemStringBuilder
                 .WithGemLevel(expected)
                 .BuildLines();

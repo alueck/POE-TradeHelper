@@ -21,16 +21,16 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
-            ItemRarity? rarity = this.GetRarity(itemStringLines);
+            ItemRarity? rarity = GetRarity(itemStringLines);
             var mapItem = new MapItem(rarity!.Value)
             {
                 Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
-                Tier = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.MapTierDescriptor),
-                ItemQuantity = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemQuantityDescriptor),
-                ItemRarity = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemRarityDescriptor),
-                MonsterPackSize = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.MonsterPackSizeDescriptor),
-                Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
+                Tier = GetIntegerFromFirstStringContaining(itemStringLines, Resources.MapTierDescriptor),
+                ItemQuantity = GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemQuantityDescriptor),
+                ItemRarity = GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemRarityDescriptor),
+                MonsterPackSize = GetIntegerFromFirstStringContaining(itemStringLines, Resources.MonsterPackSizeDescriptor),
+                Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 IsCorrupted = this.IsCorrupted(itemStringLines)
             };
 

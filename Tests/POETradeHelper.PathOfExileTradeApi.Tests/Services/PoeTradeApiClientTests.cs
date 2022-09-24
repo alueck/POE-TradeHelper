@@ -409,7 +409,7 @@ public class PoeTradeApiClientTests
 
     private async Task AssertThrowsPoeTradeApiCommunicationExceptionIfHttpResponseDoesNotReturnSuccessStatusCode(Func<Task> action, string endpoint, string jsonContent = "")
     {
-        HttpStatusCode httpStatusCode = HttpStatusCode.BadRequest;
+        const HttpStatusCode httpStatusCode = HttpStatusCode.BadRequest;
 
         HttpResponseMessage httpResponse = new()
         {

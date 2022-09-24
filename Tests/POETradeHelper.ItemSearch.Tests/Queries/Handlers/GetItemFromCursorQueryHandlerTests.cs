@@ -43,7 +43,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
         [Test]
         public async Task HandleShouldCallIsParseableOnItemParser()
         {
-            string stringToParse = "item string to parse";
+            const string stringToParse = "item string to parse";
             this.mediatorMock.Setup(x => x.Send(It.IsAny<GetItemTextFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(stringToParse);
             this.itemParserAggregatorMock
@@ -70,7 +70,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
         [Test]
         public async Task HandleShouldCallParseOnItemParserIfIsParseableReturnsTrue()
         {
-            string stringToParse = "item string to parse";
+            const string stringToParse = "item string to parse";
             this.mediatorMock.Setup(x => x.Send(It.IsAny<GetItemTextFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(stringToParse);
             this.itemParserAggregatorMock.Setup(x => x.IsParseable(It.IsAny<string>()))

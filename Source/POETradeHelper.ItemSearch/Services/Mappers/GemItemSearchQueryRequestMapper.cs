@@ -24,18 +24,19 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
             var gemItem = (GemItem)item;
 
-            this.MapGemLevel(result, gemItem);
-            this.MapQuality(result, gemItem);
-            this.MapGemQualityType(result, gemItem);
+            MapGemLevel(result, gemItem);
+            MapQuality(result, gemItem);
+            MapGemQualityType(result, gemItem);
 
             return result;
         }
 
         protected override void MapItemRarity(SearchQueryRequest result, Item item)
         {
+            // rarity is always Gem
         }
 
-        private void MapGemLevel(SearchQueryRequest result, GemItem gemItem)
+        private static void MapGemLevel(SearchQueryRequest result, GemItem gemItem)
         {
             result.Query.Filters.MiscFilters.GemLevel = new MinMaxFilter
             {
@@ -43,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             };
         }
 
-        private void MapQuality(SearchQueryRequest result, GemItem gemItem)
+        private static void MapQuality(SearchQueryRequest result, GemItem gemItem)
         {
             result.Query.Filters.MiscFilters.Quality = new MinMaxFilter
             {
@@ -51,7 +52,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             };
         }
 
-        private void MapGemQualityType(SearchQueryRequest result, GemItem gemItem)
+        private static void MapGemQualityType(SearchQueryRequest result, GemItem gemItem)
         {
             result.Query.Filters.MiscFilters.GemAlternateQuality = new OptionFilter
             {

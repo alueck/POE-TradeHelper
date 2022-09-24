@@ -50,7 +50,7 @@ namespace POETradeHelper.Common.UI.Tests.Converters
 
             Assert.That(result, Is.InstanceOf<BindingNotification>());
             var bindingNotification = (BindingNotification)result;
-            Assert.That(bindingNotification.Error, Is.InstanceOf<InvalidCastException>().And.Message.EqualTo($"'abc' is not a valid number."));
+            Assert.That(bindingNotification.Error, Is.InstanceOf<InvalidCastException>().And.Message.EqualTo("'abc' is not a valid number."));
             Assert.That(bindingNotification.ErrorType, Is.EqualTo(BindingErrorType.Error));
         }
     }

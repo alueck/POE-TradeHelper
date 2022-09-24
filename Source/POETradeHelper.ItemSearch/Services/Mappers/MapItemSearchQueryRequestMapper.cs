@@ -25,8 +25,8 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             var mapItem = (MapItem)item;
             MapIdentified(result, mapItem);
             MapTier(result, mapItem);
-            this.MapBlighted(result, mapItem);
-            this.MapBlightRavaged(result, mapItem);
+            MapBlighted(result, mapItem);
+            MapBlightRavaged(result, mapItem);
 
             return result;
         }
@@ -48,7 +48,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             };
         }
 
-        private void MapBlighted(SearchQueryRequest result, MapItem mapItem)
+        private static void MapBlighted(SearchQueryRequest result, MapItem mapItem)
         {
             result.Query.Filters.MapFilters.MapBlighted = new BoolOptionFilter
             {
@@ -56,7 +56,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             };
         }
 
-        private void MapBlightRavaged(SearchQueryRequest result, MapItem mapItem)
+        private static void MapBlightRavaged(SearchQueryRequest result, MapItem mapItem)
         {
             result.Query.Filters.MapFilters.MapBlightRavaged = new BoolOptionFilter
             {

@@ -23,11 +23,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
-            ItemRarity? rarity = this.GetRarity(itemStringLines);
+            ItemRarity? rarity = GetRarity(itemStringLines);
             var flaskItem = new FlaskItem(rarity!.Value)
             {
                 Name = itemStringLines[NameLineIndex],
-                Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
+                Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 IsIdentified = this.IsIdentified(itemStringLines),
             };
 

@@ -23,11 +23,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
         public override bool CanParse(string[] itemStringLines)
         {
-            ItemRarity? itemRarity = this.GetRarity(itemStringLines);
+            ItemRarity? itemRarity = GetRarity(itemStringLines);
             return itemRarity >= ItemRarity.Normal && itemRarity <= ItemRarity.Unique
                 && HasItemLevel(itemStringLines)
                 && !IsMapOrOrganItem(itemStringLines)
-                && !this.TypeOrNameContains(itemStringLines, Resources.FlaskKeyword, Resources.JewelKeyword);
+                && !TypeOrNameContains(itemStringLines, Resources.FlaskKeyword, Resources.JewelKeyword);
         }
 
         private static bool HasItemLevel(string[] itemStringLines)
@@ -41,22 +41,22 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                                          || l.Contains(Resources.OrganItemDescriptor));
         }
 
-        private bool TypeOrNameContains(string[] itemStringLines, params string[] keywords)
+        private static bool TypeOrNameContains(string[] itemStringLines, params string[] keywords)
         {
             return itemStringLines.Skip(2).Take(2).Any(line => keywords.Any(line.Contains));
         }
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
-            ItemRarity? itemRarity = this.GetRarity(itemStringLines);
+            ItemRarity? itemRarity = GetRarity(itemStringLines);
             var equippableItem = new EquippableItem(itemRarity!.Value)
             {
                 Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
                 IsCorrupted = this.IsCorrupted(itemStringLines),
-                ItemLevel = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemLevelDescriptor),
-                Quality = this.GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
-                Influence = this.GetInfluenceType(itemStringLines),
+                ItemLevel = GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemLevelDescriptor),
+                Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
+                Influence = GetInfluenceType(itemStringLines),
                 Sockets = this.GetSockets(itemStringLines)
             };
 
@@ -74,12 +74,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
             string? socketsLine = itemStringLines.FirstOrDefault(l => l.Contains(Resources.SocketsDescriptor));
             string? socketsString = socketsLine?.Replace(Resources.SocketsDescriptor, "").Trim();
 
-            ItemSockets itemSockets = this.socketsParser.Parse(socketsString);
-
-            return itemSockets;
+            return this.socketsParser.Parse(socketsString);
         }
 
-        private InfluenceType GetInfluenceType(string[] itemStringLines)
+        private static InfluenceType GetInfluenceType(string[] itemStringLines)
         {
             InfluenceType? influenceType = itemStringLines.Last().ParseToEnumByDisplayName<InfluenceType>();
 

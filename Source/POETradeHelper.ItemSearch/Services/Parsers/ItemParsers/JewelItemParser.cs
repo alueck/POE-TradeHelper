@@ -21,7 +21,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
-            ItemRarity? rarity = this.GetRarity(itemStringLines);
+            ItemRarity? rarity = GetRarity(itemStringLines);
             var jewelItem = new JewelItem(rarity!.Value)
             {
                 Name = itemStringLines[NameLineIndex],

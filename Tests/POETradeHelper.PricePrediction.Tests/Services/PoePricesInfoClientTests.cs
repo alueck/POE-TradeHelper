@@ -61,7 +61,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         public async Task GetPricePredictionAsyncShouldCallDeserializeOnJsonSerializerWithHttpContent()
         {
             // arrange
-            string json = "{ \"result\": [ ] }";
+            const string json = "{ \"result\": [ ] }";
 
             this.httpClientMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new HttpResponseMessage

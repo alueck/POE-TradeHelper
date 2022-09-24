@@ -35,8 +35,8 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             var result = base.MapToQueryRequest(item);
 
             var equippableItem = (EquippableItem)item;
-            this.MapItemLinks(result, equippableItem);
-            this.MapInfluence(result, equippableItem);
+            MapItemLinks(result, equippableItem);
+            MapInfluence(result, equippableItem);
             this.MapItemLevel(result, equippableItem);
 
             return result;
@@ -53,7 +53,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             }
         }
 
-        private void MapItemLinks(SearchQueryRequest result, EquippableItem equippableItem)
+        private static void MapItemLinks(SearchQueryRequest result, EquippableItem equippableItem)
         {
             if (equippableItem.Sockets?.Count == 0)
             {
@@ -72,7 +72,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             }
         }
 
-        private void MapInfluence(SearchQueryRequest result, EquippableItem equippableItem)
+        private static void MapInfluence(SearchQueryRequest result, EquippableItem equippableItem)
         {
             if (InfluenceMappings.TryGetValue(equippableItem.Influence, out var setInfluenceAction))
             {

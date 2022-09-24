@@ -11,20 +11,18 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
     {
         protected bool HasRarity(string[] itemStringLines, ItemRarity itemRarity)
         {
-            return this.GetRarity(itemStringLines) == itemRarity;
+            return GetRarity(itemStringLines) == itemRarity;
         }
 
-        protected ItemRarity? GetRarity(string[] itemStringLines)
+        protected static ItemRarity? GetRarity(string[] itemStringLines)
         {
             string rarityDescriptor = Resources.RarityDescriptor;
             string? rarityLine = itemStringLines.FirstOrDefault(line => line.Contains(rarityDescriptor));
 
-            ItemRarity? rarity = rarityLine?.Replace(rarityDescriptor, "").Trim().ParseToEnumByDisplayName<ItemRarity>();
-
-            return rarity;
+            return rarityLine?.Replace(rarityDescriptor, "").Trim().ParseToEnumByDisplayName<ItemRarity>();
         }
 
-        protected int GetIntegerFromFirstStringContaining(string[] itemStringLines, string containsString)
+        protected static int GetIntegerFromFirstStringContaining(string[] itemStringLines, string containsString)
         {
             int result = 0;
             string? matchingLine = itemStringLines.FirstOrDefault(l => l.Contains(containsString));
