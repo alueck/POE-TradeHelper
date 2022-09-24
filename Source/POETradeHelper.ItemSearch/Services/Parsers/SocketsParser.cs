@@ -8,7 +8,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
         private static readonly string[] socketGroupSeparators = new[] { " " };
         private static readonly string[] socketLinkIndicators = new[] { "-" };
 
-        public ItemSockets Parse(string socketsString)
+        public ItemSockets Parse(string? socketsString)
         {
             var itemSockets = new ItemSockets();
 

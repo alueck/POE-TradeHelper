@@ -27,7 +27,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
             var statTexts = itemStringLines.Skip(statsStartIndex).Where(s => s != ParserConstants.PropertyGroupSeparator);
 
-            var itemStats = statTexts.Select(s => this.ParseStatText(s, preferLocalStats)).Where(x => x != null).ToList();
+            var itemStats = statTexts.Select(s => this.ParseStatText(s, preferLocalStats)).OfType<ItemStat>().ToList();
             var pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
             result.AllStats.AddRange(itemStats);
@@ -59,7 +59,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             int statCategoryMarkerIndex = statText.IndexOf($"({statCategory.GetDisplayName()})", StringComparison.OrdinalIgnoreCase);
             if (statCategoryMarkerIndex >= 0)
             {
-                statText = statText.Substring(0, statCategoryMarkerIndex).Trim();
+                statText = statText[..statCategoryMarkerIndex].Trim();
 
                 itemStat = new ItemStat(statCategory)
                 {

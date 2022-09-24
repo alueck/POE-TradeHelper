@@ -14,7 +14,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             this.itemDataService = itemDataService;
         }
 
-        public string? ParseType(string[] itemStringLines, ItemRarity itemRarity, bool isIdentified)
+        public string ParseType(string[] itemStringLines, ItemRarity itemRarity, bool isIdentified)
         {
             if (itemRarity != ItemRarity.Normal && itemRarity != ItemRarity.Magic && itemRarity != ItemRarity.Rare && itemRarity != ItemRarity.Unique)
             {

@@ -7,11 +7,11 @@
             this.Rarity = rarity;
         }
 
-        public string ItemText { get; set; }
+        public string ItemText { get; set; } = string.Empty;
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         public ItemRarity Rarity { get; }
 

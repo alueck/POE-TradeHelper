@@ -15,7 +15,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         {
         }
 
-        public string? GetType(string name)
+        public string GetType(string name)
         {
             List<ItemData> matches = new();
 
@@ -30,7 +30,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
             return matches
                 .Select(x => x.Type!)
-                .MaxBy(x => x.Length);
+                .MaxBy(x => x.Length)
+                ?? string.Empty;
         }
 
         public string? GetCategory(string type)

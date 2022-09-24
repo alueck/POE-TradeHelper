@@ -17,7 +17,7 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         public int Quality { get; set; }
         public int ItemLevel { get; set; }
         public InfluenceType Influence { get; set; }
-        public ItemSockets Sockets { get; set; }
+        public ItemSockets? Sockets { get; set; }
         public bool IsCorrupted { get; set; }
         public bool IsIdentified { get; set; }
         public EquippableItemCategory Category { get; set; }

@@ -6,6 +6,6 @@
         {
         }
 
-        public ItemStats Stats { get; set; }
+        public ItemStats? Stats { get; set; }
     }
 }

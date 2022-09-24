@@ -72,7 +72,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithType(expected)
                 .BuildLines();
 
-            string? result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, true);
+            string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, true);
 
             Assert.That(result, Is.EqualTo(expected));
             this.itemDataServiceMock.Verify(x => x.GetType(It.IsAny<string>()), Times.Never);
@@ -92,7 +92,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemDataServiceMock.Setup(x => x.GetType(It.IsAny<string>()))
                 .Returns(expected);
 
-            string? result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, false);
+            string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, false);
 
             Assert.That(result, Is.EqualTo(expected));
         }

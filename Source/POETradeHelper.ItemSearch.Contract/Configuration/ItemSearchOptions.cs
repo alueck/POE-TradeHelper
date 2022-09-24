@@ -2,7 +2,7 @@
 {
     public class ItemSearchOptions
     {
-        public League League { get; set; }
+        public League League { get; set; } = null!;
 
         public int ItemLevelThreshold { get; set; } = 86;
 

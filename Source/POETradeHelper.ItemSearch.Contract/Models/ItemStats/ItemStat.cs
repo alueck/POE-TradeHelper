@@ -15,11 +15,11 @@
             this.StatCategory = itemStat.StatCategory;
         }
 
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
-        public string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
 
-        public string TextWithPlaceholders { get; set; }
+        public string TextWithPlaceholders { get; set; } = string.Empty;
 
         public StatCategory StatCategory { get; set; }
     }
