@@ -1,20 +1,21 @@
 ﻿using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class OrganItemParserTests : ItemParserTestsBase
     {
-        private Mock<IItemStatsParser<OrganItem>> itemStatsParserMock;
-        private ItemStringBuilder itemStringBuilder;
+        private readonly Mock<IItemStatsParser<OrganItem>> itemStatsParserMock;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public OrganItemParserTests()
         {
             this.itemStatsParserMock = new Mock<IItemStatsParser<OrganItem>>();
             this.ItemParser = new OrganItemParser(this.itemStatsParserMock.Object);
@@ -52,7 +53,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithType(expected)
                                             .BuildLines();
 
-            ItemWithStats result = this.ItemParser.Parse(itemStringLines) as ItemWithStats;
+            ItemWithStats result = (ItemWithStats)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(expected));
         }
@@ -65,7 +66,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithType(expected)
                                             .BuildLines();
 
-            ItemWithStats result = this.ItemParser.Parse(itemStringLines) as ItemWithStats;
+            ItemWithStats result = (ItemWithStats)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Type, Is.EqualTo(expected));
         }
@@ -80,7 +81,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                 .WithItemStat(expected, StatCategory.Monster)
                                 .BuildLines();
 
-            ItemWithStats result = this.ItemParser.Parse(itemStringLines) as ItemWithStats;
+            this.ItemParser.Parse(itemStringLines);
 
             this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false));
         }
@@ -97,7 +98,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()))
                 .Returns(expectedOrganItemStats);
 
-            ItemWithStats result = this.ItemParser.Parse(itemStringLines) as ItemWithStats;
+            ItemWithStats result = (ItemWithStats)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Stats, Is.SameAs(expectedOrganItemStats));
         }

@@ -1,9 +1,13 @@
 ﻿using System.Threading.Tasks;
+
 using MediatR;
+
 using POETradeHelper.Common.Contract.Commands;
 using POETradeHelper.Common.UI;
 using POETradeHelper.Properties;
+
 using ReactiveUI;
+
 using Unit = System.Reactive.Unit;
 
 namespace POETradeHelper.ViewModels

@@ -7,7 +7,7 @@ namespace POETradeHelper.Common.Extensions
 {
     public static class StringExtensions
     {
-        public static T? ParseToEnumByDisplayName<T>(this string displayName, StringComparison stringComparison = StringComparison.Ordinal)
+        public static T? ParseToEnumByDisplayName<T>(this string? displayName, StringComparison stringComparison = StringComparison.Ordinal)
             where T : struct, Enum
         {
             var enumType = typeof(T);
@@ -18,7 +18,7 @@ namespace POETradeHelper.Common.Extensions
 
             return matchingMemberTuple.displayNameAttribute != null
                 ? (T)Enum.Parse(enumType, matchingMemberTuple.member.Name)
-                : (T?)null;
+                : null;
         }
     }
 }

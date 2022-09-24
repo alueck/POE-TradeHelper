@@ -1,24 +1,24 @@
 ﻿using Moq;
+
 using NUnit.Framework;
-using NUnit.Framework.Internal;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Exceptions;
 using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 {
     public class ItemParserAggregatorTests
     {
-        private ItemParserAggregator itemParserAggregator;
-        private ItemStringBuilder itemStringBuilder;
+        private readonly ItemParserAggregator itemParserAggregator;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        private Mock<IItemParser> gemItemParserMock;
-        private Mock<IItemParser> currencyItemParserMock;
+        private readonly Mock<IItemParser> gemItemParserMock;
+        private readonly Mock<IItemParser> currencyItemParserMock;
 
-        [SetUp]
-        public void Setup()
+        public ItemParserAggregatorTests()
         {
             this.gemItemParserMock = new Mock<IItemParser>();
             this.currencyItemParserMock = new Mock<IItemParser>();

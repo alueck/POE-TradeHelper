@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using POETradeHelper.ItemSearch.Contract.Models;
+﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers

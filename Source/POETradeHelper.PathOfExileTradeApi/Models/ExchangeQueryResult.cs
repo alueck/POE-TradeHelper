@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 
 using POETradeHelper.Common.Extensions;
-using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models;
 
 public record ExchangeQueryResult(string Id, int Total, Dictionary<string, ExchangeQueryResultListing> Result)
 {
-    public Uri Uri { get; set; }
+    public Uri? Uri { get; set; }
 }
 
 public record ExchangeQueryResultListing(string Id, ExchangeListing Listing);

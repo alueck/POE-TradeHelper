@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -11,7 +9,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class EquippableItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
-        private static readonly IDictionary<InfluenceType, Action<MiscFilters>> InfluenceMappings = new Dictionary<InfluenceType, Action<MiscFilters>>
+        private static readonly IDictionary<InfluenceType, Action<MiscFilters>?> InfluenceMappings = new Dictionary<InfluenceType, Action<MiscFilters>?>
         {
             [InfluenceType.None] = null,
             [InfluenceType.Crusader] = (miscFilters) => miscFilters.CrusaderItem = new BoolOptionFilter { Option = true },
@@ -37,8 +35,8 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             var result = base.MapToQueryRequest(item);
 
             var equippableItem = (EquippableItem)item;
-            MapItemLinks(result, equippableItem);
-            MapInfluence(result, equippableItem);
+            this.MapItemLinks(result, equippableItem);
+            this.MapInfluence(result, equippableItem);
             this.MapItemLevel(result, equippableItem);
 
             return result;

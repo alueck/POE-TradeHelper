@@ -1,4 +1,5 @@
 ﻿using POETradeHelper.Common.Properties;
+
 using System;
 
 namespace POETradeHelper.Common.Extensions

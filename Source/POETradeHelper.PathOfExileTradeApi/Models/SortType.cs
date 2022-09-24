@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace POETradeHelper.PathOfExileTradeApi
+﻿namespace POETradeHelper.PathOfExileTradeApi
 {
     public enum SortType
     {

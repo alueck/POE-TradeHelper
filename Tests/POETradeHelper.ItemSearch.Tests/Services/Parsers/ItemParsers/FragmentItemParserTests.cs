@@ -1,18 +1,18 @@
 ﻿using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
-using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class FragmentItemParserTests : ItemParserTestsBase
     {
         private const string Fragment = "Offering to the Goddess";
-        private ItemStringBuilder itemStringBuilder;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public FragmentItemParserTests()
         {
             this.ItemParser = new FragmentItemParser();
             this.itemStringBuilder = new ItemStringBuilder();
@@ -61,7 +61,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             string[] itemStringLines = this.GetValidItemStringLines();
 
-            FragmentItem result = this.ItemParser.Parse(itemStringLines) as FragmentItem;
+            FragmentItem result = (FragmentItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(Fragment));
         }
@@ -71,7 +71,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             string[] itemStringLines = this.GetValidItemStringLines();
 
-            FragmentItem result = this.ItemParser.Parse(itemStringLines) as FragmentItem;
+            FragmentItem result = (FragmentItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Type, Is.EqualTo(Fragment));
         }

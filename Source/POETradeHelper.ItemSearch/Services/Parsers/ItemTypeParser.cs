@@ -1,6 +1,4 @@
-﻿using System;
-
-using POETradeHelper.ItemSearch.Contract.Models;
+﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers
@@ -9,14 +7,14 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
     {
         private const int NamedItemTypeIndex = 3;
 
-        private IItemDataService itemDataService;
+        private readonly IItemDataService itemDataService;
 
         public ItemTypeParser(IItemDataService itemDataService)
         {
             this.itemDataService = itemDataService;
         }
 
-        public string ParseType(string[] itemStringLines, ItemRarity itemRarity, bool isIdentified)
+        public string? ParseType(string[] itemStringLines, ItemRarity itemRarity, bool isIdentified)
         {
             if (itemRarity != ItemRarity.Normal && itemRarity != ItemRarity.Magic && itemRarity != ItemRarity.Rare && itemRarity != ItemRarity.Unique)
             {

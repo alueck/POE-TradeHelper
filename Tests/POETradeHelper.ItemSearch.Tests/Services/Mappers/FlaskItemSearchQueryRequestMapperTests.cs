@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -7,12 +8,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class FlaskItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<FlaskItem>
     {
-        private FlaskItemSearchQueryRequestMapper flaskItemSearchQueryRequestMapper;
+        private readonly FlaskItemSearchQueryRequestMapper flaskItemSearchQueryRequestMapper;
 
-        [SetUp]
-        public override void Setup()
+        public FlaskItemSearchQueryRequestMapperTests()
         {
-            base.Setup();
             this.ItemSearchQueryRequestMapper = this.flaskItemSearchQueryRequestMapper = new FlaskItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
@@ -25,7 +24,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Type = expectedType
             };
 
-            SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.Query.Type, Is.EqualTo(expectedType));
         }
@@ -40,7 +39,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 IsIdentified = true
             };
 
-            SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.Query.Name, Is.EqualTo(expected));
         }
@@ -53,7 +52,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Type = "Divine Life Flask"
             };
 
-            SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Name);
         }
@@ -66,7 +65,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Name = "Divine Life Flask"
             };
 
-            SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Name);
         }

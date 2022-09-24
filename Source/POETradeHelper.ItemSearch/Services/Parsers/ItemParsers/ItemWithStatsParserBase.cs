@@ -1,7 +1,7 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public abstract class ItemWithStatsParserBase : ItemParserBase
     {
@@ -22,16 +22,14 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         protected abstract ItemWithStats ParseItemWithoutStats(string[] itemStringLines);
 
-        private ItemStats ParseStats(ItemWithStats item, string[] itemStringLines)
+        private ItemStats? ParseStats(ItemWithStats item, string[] itemStringLines)
         {
-            if (item is IIdentifiableItem identifiableItem && !identifiableItem.IsIdentified)
+            if (item is IIdentifiableItem { IsIdentified: false })
             {
                 return null;
             }
 
-            bool shouldPreferLocalStats = item is EquippableItem equippableItem
-                                            && (equippableItem.Category == EquippableItemCategory.Armour
-                                                || equippableItem.Category == EquippableItemCategory.Weapons);
+            bool shouldPreferLocalStats = item is EquippableItem { Category: EquippableItemCategory.Armour or EquippableItemCategory.Weapons };
 
             return this.itemStatsParser.Parse(itemStringLines, shouldPreferLocalStats);
         }

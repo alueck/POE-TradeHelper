@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Services.Mappers.Implementations;
+using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 
@@ -8,12 +9,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class JewelItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<JewelItem>
     {
-        private JewelItemSearchQueryRequestMapper jewelItemSearchQueryRequestMapper;
+        private readonly JewelItemSearchQueryRequestMapper jewelItemSearchQueryRequestMapper;
 
-        [SetUp]
-        public override void Setup()
+        public JewelItemSearchQueryRequestMapperTests()
         {
-            base.Setup();
             this.ItemSearchQueryRequestMapper = this.jewelItemSearchQueryRequestMapper = new JewelItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
@@ -26,7 +25,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Type = expectedType
             };
 
-            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.Query.Type, Is.EqualTo(expectedType));
         }
@@ -41,7 +40,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 IsIdentified = true
             };
 
-            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.That(result.Query.Name, Is.EqualTo(expected));
         }
@@ -54,7 +53,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Type = "Cobalt Jewel"
             };
 
-            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Name);
         }
@@ -67,7 +66,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Name = "Dire Nock"
             };
 
-            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.IsNull(result.Query.Name);
         }
@@ -77,10 +76,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             var item = new JewelItem(ItemRarity.Unique);
 
-            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result.Query.Filters.TypeFilters);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
+            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
         }
 
         [TestCaseSource(nameof(NonUniqueItemRarities))]
@@ -88,10 +87,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             var item = new JewelItem(itemRarity);
 
-            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result.Query.Filters.TypeFilters);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
+            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
         }
     }
 }

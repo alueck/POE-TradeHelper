@@ -1,8 +1,6 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
+
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Queries;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Exceptions;
 
@@ -26,7 +24,7 @@ namespace POETradeHelper.ItemSearch.Queries.Handlers
             {
                 throw new InvalidItemStringException(itemString);
             }
-            
+
             Item item = this.itemParserAggregator.Parse(itemString);
 
             return item;

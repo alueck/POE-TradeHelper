@@ -18,7 +18,7 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
     {
         private readonly Mock<IPoePricesInfoClient> poePricesInfoClientMock;
         private readonly GetPoePricesInfoPredictionQueryHandler handler;
-        
+
         private readonly GetPoePricesInfoPredictionQuery validRequest;
 
         public GetPoePricesInfoPredictionQueryHandlerTests()
@@ -32,7 +32,7 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
             };
             this.validRequest = new GetPoePricesInfoPredictionQuery(validItem, new League { Id = "Heist" });
         }
-        
+
         [Test]
         public async Task HandleShouldCallGetPricePredictionAsyncOnPoePricesInfoClient()
         {

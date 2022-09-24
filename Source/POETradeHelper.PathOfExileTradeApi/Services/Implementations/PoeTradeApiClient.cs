@@ -44,7 +44,7 @@ public class PoeTradeApiClient : IPoeTradeApiClient
     public async Task<ExchangeQueryResult> GetListingsAsync(ExchangeQueryRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request, nameof(request));
-            
+
         StringContent content = this.GetJsonStringContent(request);
 
         string endpoint = $"{request.Endpoint}/{request.League}";
@@ -57,7 +57,7 @@ public class PoeTradeApiClient : IPoeTradeApiClient
 
         ExchangeQueryResult result = await this.ReadAsJsonAsync<ExchangeQueryResult>(response.Content).ConfigureAwait(false);
         result.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{endpoint}{result.Id}");
-            
+
         return result;
     }
 
@@ -88,7 +88,7 @@ public class PoeTradeApiClient : IPoeTradeApiClient
 
     private async Task<ItemListingsQueryResult> GetListingsQueryResult(SearchQueryResult searchQueryResult, CancellationToken cancellationToken)
     {
-        ItemListingsQueryResult itemListingsQueryResult = null;
+        ItemListingsQueryResult? itemListingsQueryResult = null;
 
         if (searchQueryResult.Total > 0)
         {
@@ -126,7 +126,13 @@ public class PoeTradeApiClient : IPoeTradeApiClient
     private async Task<TResult> ReadAsJsonAsync<TResult>(HttpContent httpContent)
     {
         string json = await httpContent.ReadAsStringAsync().ConfigureAwait(false);
+        var result = this.jsonSerializer.Deserialize<TResult>(json);
 
-        return this.jsonSerializer.Deserialize<TResult>(json);
+        if (result == null)
+        {
+            throw new PoeTradeApiCommunicationException("Deserialized null result from POE Trade API response.");
+        }
+
+        return result;
     }
 }

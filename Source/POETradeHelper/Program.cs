@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.ReactiveUI;
 
 namespace POETradeHelper
 {

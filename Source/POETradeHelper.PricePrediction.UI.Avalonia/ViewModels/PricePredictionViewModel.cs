@@ -30,7 +30,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
         private readonly IImageService imageService;
 
         private Item item;
-        
+
         public PricePredictionViewModel(
             IOptionsMonitor<ItemSearchOptions> itemSearchOptions,
             IMediator mediator,
@@ -69,7 +69,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
 
         [ObservableAsProperty]
         public bool HasValue => !string.IsNullOrEmpty(this.Prediction) && !string.IsNullOrEmpty(this.Currency);
-        
+
         public async Task LoadAsync(Item item, CancellationToken cancellationToken)
         {
             try
@@ -78,7 +78,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
                 {
                     this.item = item;
                     this.Clear();
-                    
+
                     var request = new GetPoePricesInfoPredictionQuery(item, this.itemSearchOptions.CurrentValue.League);
                     var poePricesInfoPrediction = await this.mediator.Send(request, cancellationToken).ConfigureAwait(true);
 
@@ -101,12 +101,12 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
             this.CurrencyImage = null;
             this.ConfidenceScore = null;
         }
-        
+
         private async Task MapPrediction(PoePricesInfoPrediction prediction, CancellationToken cancellationToken)
         {
             if (prediction is not { ErrorCode: 0 })
                 return;
-            
+
             this.Prediction = $"{prediction.Min:N}-{prediction.Max:N}";
             this.ConfidenceScore = $"{prediction.ConfidenceScore:N} %";
             this.Currency = this.staticDataService.GetText(prediction.Currency);
@@ -117,7 +117,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
         {
             Uri imageUrl = this.staticDataService.GetImageUrl(currency);
             IBitmap image = await this.imageService.GetImageAsync(imageUrl, cancellationToken).ConfigureAwait(false);
-            
+
             return image;
         }
     }

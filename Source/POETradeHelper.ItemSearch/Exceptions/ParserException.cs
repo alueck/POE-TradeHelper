@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace POETradeHelper.ItemSearch.Exceptions
+﻿namespace POETradeHelper.ItemSearch.Exceptions
 {
     public class ParserException : Exception
     {
@@ -14,7 +12,7 @@ namespace POETradeHelper.ItemSearch.Exceptions
         {
         }
 
-        public ParserException(string itemString, string message, Exception innerException) : base(message, innerException)
+        public ParserException(string itemString, string? message, Exception? innerException) : base(message, innerException)
         {
             this.ItemString = itemString;
         }
@@ -27,7 +25,7 @@ namespace POETradeHelper.ItemSearch.Exceptions
         {
         }
 
-        public ParserException(string[] itemStringLines, string message, Exception innerException) : base(message, innerException)
+        public ParserException(string[] itemStringLines, string? message, Exception? innerException) : base(message, innerException)
         {
             this.ItemString = string.Join(Environment.NewLine, itemStringLines);
         }

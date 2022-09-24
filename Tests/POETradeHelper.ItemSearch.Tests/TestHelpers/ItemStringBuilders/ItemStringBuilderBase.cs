@@ -1,9 +1,8 @@
-﻿using System;
-
-using POETradeHelper.Common.Extensions;
+﻿using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models;
 
-namespace POETradeHelper.ItemSearch.Tests.TestHelpers
+namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 {
     public abstract class ItemStringBuilderBase<T>
         where T : ItemStringBuilderBase<T>

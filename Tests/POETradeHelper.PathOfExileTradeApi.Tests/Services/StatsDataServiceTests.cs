@@ -3,9 +3,13 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.Extensions.Logging;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -243,10 +247,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                                     new Data<StatData>
                                     {
-                                        Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                                        Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
                                         Entries = new List<StatData>
                                         {
-                                            new StatData { Id = "random id", Text = expectedStatData.Text, Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() }
+                                            new StatData { Id = "random id", Text = expectedStatData.Text, Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() }
                                         }
                                     },
                                     new Data<StatData>
@@ -281,10 +285,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                                                 new Data<StatData>
                                                 {
-                                                    Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                                                    Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
                                                     Entries = new List<StatData>
                                                     {
-                                                        new StatData { Id = "random id", Text = expectedStatData.Text, Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() }
+                                                        new StatData { Id = "random id", Text = expectedStatData.Text, Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() }
                                                     }
                                                 },
                                                 new Data<StatData>
@@ -317,10 +321,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                         new Data<StatData>
                         {
-                            Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                            Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
                             Entries = new List<StatData>
                             {
-                                new StatData { Id = "random id", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() },
+                                new StatData { Id = "random id", Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() },
                             }
                         }
                     }
@@ -336,7 +340,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetStatDataWithIdShouldReturnCorrectStatData()
         {
-            StatData expected = new StatData { Id = "expectedId", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() };
+            StatData expected = new() { Id = "expectedId", Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StatData>>>(It.IsAny<string>()))
                 .Returns(new QueryResult<Data<StatData>>
@@ -345,10 +349,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                                     new Data<StatData>
                                     {
-                                        Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                                        Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
                                         Entries = new List<StatData>
                                         {
-                                            new StatData { Id = "random id", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() },
+                                            new StatData { Id = "random id", Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() },
                                             expected
                                         }
                                     }
@@ -375,10 +379,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     {
                                                 new Data<StatData>
                                                 {
-                                                    Id = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
+                                                    Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
                                                     Entries = new List<StatData>
                                                     {
-                                                        new StatData { Id = "random id", Type = POETradeHelper.ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower(), Text = "Enemies you Shock have #% reduced Cast Speed" }
+                                                        new StatData { Id = "random id", Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower(), Text = "Enemies you Shock have #% reduced Cast Speed" }
                                                     }
                                                 }
                     }

@@ -1,24 +1,24 @@
-﻿using System.Linq;
-using Moq;
+﻿using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
-using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 {
     public class OrganItemStatsParserTests
     {
-        private Mock<IStatsDataService> statsDataServiceMock;
-        private OrganItemStatsParser organItemStatsParser;
-        private ItemStringBuilder itemStringBuilder;
+        private readonly Mock<IStatsDataService> statsDataServiceMock;
+        private readonly OrganItemStatsParser organItemStatsParser;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public OrganItemStatsParserTests()
         {
             this.statsDataServiceMock = new Mock<IStatsDataService>();
             this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), StatCategory.Monster.GetDisplayName()))
@@ -70,7 +70,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
 
-            SingleValueItemStat stat = result.MonsterStats.First() as SingleValueItemStat;
+            SingleValueItemStat stat = (SingleValueItemStat)result.MonsterStats.First();
             Assert.NotNull(stat);
             Assert.That(stat.Value, Is.EqualTo(3));
         }

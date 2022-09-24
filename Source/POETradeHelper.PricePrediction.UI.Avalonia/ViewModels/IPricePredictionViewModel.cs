@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 
 namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels

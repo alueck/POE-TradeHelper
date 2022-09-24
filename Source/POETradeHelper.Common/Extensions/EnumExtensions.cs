@@ -16,7 +16,7 @@ namespace POETradeHelper.Common.Extensions
                 .GetCustomAttribute<DisplayAttribute>();
 
             return displayAttribute != null
-                ? displayAttribute.GetName()
+                ? displayAttribute.GetName() ?? enumType.ToString()
                 : enumType.ToString();
         }
     }

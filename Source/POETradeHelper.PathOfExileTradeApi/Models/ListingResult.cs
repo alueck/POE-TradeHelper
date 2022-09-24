@@ -2,10 +2,10 @@
 {
     public class ListingResult
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
-        public Listing Listing { get; set; }
+        public Listing Listing { get; set; } = new();
 
-        public ItemListing Item { get; set; }
+        public ItemListing Item { get; set; } = new();
     }
 }

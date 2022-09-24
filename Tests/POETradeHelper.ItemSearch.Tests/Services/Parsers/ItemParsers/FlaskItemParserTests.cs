@@ -1,20 +1,22 @@
 ﻿using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class FlaskItemParserTests : ItemParserTestsBase
     {
-        private Mock<IItemTypeParser> itemTypeParserMock;
-        private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
-        private ItemStringBuilder itemStringBuilder;
+        private readonly Mock<IItemTypeParser> itemTypeParserMock;
+        private readonly Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public FlaskItemParserTests()
         {
             this.itemTypeParserMock = new Mock<IItemTypeParser>();
             this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
@@ -69,7 +71,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithRarity(expected)
                 .BuildLines();
 
-            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Rarity, Is.EqualTo(expected));
         }
@@ -82,7 +84,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                             .WithName(expected)
                             .BuildLines();
 
-            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(expected));
         }
@@ -106,7 +108,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
                 .Returns(expected);
 
-            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Type, Is.EqualTo(expected));
         }
@@ -120,7 +122,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                             .WithQuality(expected)
                             .BuildLines();
 
-            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Quality, Is.EqualTo(expected));
         }
@@ -132,7 +134,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithName("Bubbling Divine Life Flask of Staunching")
                 .BuildLines();
 
-            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsTrue(result.IsIdentified);
         }
@@ -145,7 +147,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithUnidentified()
                 .BuildLines();
 
-            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsFalse(result.IsIdentified);
         }
@@ -178,7 +180,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldSetStatsToStatsFromStatsDataService()
         {
-            ItemStats expected = new ItemStats();
+            ItemStats expected = new();
             string[] itemStringLines = this.itemStringBuilder
                                         .WithName("Divine Life Flask")
                                         .BuildLines();
@@ -186,7 +188,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), false))
                 .Returns(expected);
 
-            FlaskItem result = this.ItemParser.Parse(itemStringLines) as FlaskItem;
+            FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Stats, Is.SameAs(expected));
         }

@@ -19,7 +19,7 @@ namespace POETradeHelper.Common.Extensions
             services.Configure<T>(section);
             services.AddTransient<IWritableOptions<T>>(provider =>
             {
-                var options = provider.GetService<IOptionsMonitor<T>>();
+                var options = provider.GetRequiredService<IOptionsMonitor<T>>();
                 return new WritableOptions<T>(options, section.Key, file);
             });
 

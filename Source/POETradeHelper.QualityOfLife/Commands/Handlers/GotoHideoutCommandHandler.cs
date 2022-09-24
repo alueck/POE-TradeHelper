@@ -1,6 +1,5 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
+
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
 
@@ -18,16 +17,16 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
 
         public async Task<Unit> Handle(GotoHideoutCommand request, CancellationToken cancellationToken)
         {
-            if (!isExecuting)
+            if (!this.isExecuting)
             {
                 try
                 {
-                    isExecuting = true;
+                    this.isExecuting = true;
                     await this.userInputSimulator.SendGotoHideoutCommand();
                 }
                 finally
                 {
-                    isExecuting = false;
+                    this.isExecuting = false;
                 }
             }
 

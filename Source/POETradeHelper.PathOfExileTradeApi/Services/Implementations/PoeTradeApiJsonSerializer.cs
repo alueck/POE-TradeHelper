@@ -1,5 +1,6 @@
 ﻿using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
+
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -23,7 +24,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             this.jsonSerializer = jsonSerializer;
         }
 
-        public T Deserialize<T>(string json)
+        public T? Deserialize<T>(string json)
         {
             return this.jsonSerializer.Deserialize<T>(json, camelCaseJsonSerializerOptions);
         }

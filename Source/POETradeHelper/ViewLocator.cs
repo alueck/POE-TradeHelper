@@ -1,6 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+
 using ReactiveUI;
+
 using System;
 
 namespace POETradeHelper

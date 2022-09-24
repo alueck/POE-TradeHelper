@@ -1,0 +1,82 @@
+﻿<Window
+    x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Views.ItemSearchResultOverlayView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Converters;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+    xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Properties;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+    xmlns:reactiveUi="http://reactiveui.net"
+    Title="Overlay"
+    MinWidth="400"
+    MinHeight="200"
+    MaxWidth="800"
+    MaxHeight="392"
+    d:DesignHeight="400"
+    d:DesignWidth="800"
+    d:DataContext="{d:DesignInstance Type=localVms:ItemSearchResultOverlayViewModel}"
+    SystemDecorations="None"
+    Topmost="True"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <localConverters:ItemRarityToBrushConverter x:Key="ItemRarityToBrushConverter" />
+        <localConverters:DoubleOffsetConverter x:Key="DoubleOffsetConverter" />
+    </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="Separator">
+            <Setter Property="Background" Value="{DynamicResource ThemeBorderLowBrush}" />
+            <Setter Property="Height" Value="5" />
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleY="0.1" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Styles>
+
+    <commonUiControls:BusyIndicator DisplayAfter="0:0:0.500" IsBusy="{Binding IsBusy}">
+
+        <Grid
+            MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource DoubleOffsetConverter}, ConverterParameter=-20}"
+            MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource DoubleOffsetConverter}, ConverterParameter=-20}"
+            Margin="10">
+
+            <commonUiControls:MessageTextBlock VerticalAlignment="Center" Message="{Binding Message}" />
+
+            <Grid IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNull}}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0,0,25,5"
+                    FontWeight="Bold"
+                    Foreground="{Binding Item.Rarity, Converter={StaticResource ItemRarityToBrushConverter}}"
+                    Text="{Binding Item.DisplayName}" />
+
+                <commonUiControls:HyperlinkButton
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="0,0,0,5"
+                    HorizontalAlignment="Right"
+                    Content="{x:Static resources:Resources.OpenInBrowser}"
+                    HideableWindow="{Binding $parent[Window]}"
+                    Uri="{Binding Url}" />
+
+                <reactiveUi:RoutedViewHost Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Router="{Binding Router}" />
+            </Grid>
+        </Grid>
+    </commonUiControls:BusyIndicator>
+</Window>

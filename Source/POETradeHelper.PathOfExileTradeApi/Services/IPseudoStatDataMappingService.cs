@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using POETradeHelper.PathOfExileTradeApi.Models;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services

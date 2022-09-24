@@ -1,8 +1,6 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
+
 using POETradeHelper.Common.Contract;
-using POETradeHelper.ItemSearch.Contract.Queries;
 
 namespace POETradeHelper.ItemSearch.Queries.Handlers
 {

@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -7,12 +10,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class OrganItemSearchQueryRequestMapperTests : ItemSearchQueryRequestMapperTestsBase<OrganItem>
     {
-        private OrganItemSearchQueryRequestMapper organItemSearchQueryRequestMapper;
+        private readonly OrganItemSearchQueryRequestMapper organItemSearchQueryRequestMapper;
 
-        [SetUp]
-        public override void Setup()
+        public OrganItemSearchQueryRequestMapperTests()
         {
-            base.Setup();
             this.ItemSearchQueryRequestMapper = this.organItemSearchQueryRequestMapper = new OrganItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
         }
 
@@ -25,12 +26,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 Name = name
             };
 
-            SearchQueryRequest result = this.organItemSearchQueryRequestMapper.MapToQueryRequest(item) as SearchQueryRequest;
+            SearchQueryRequest result = this.organItemSearchQueryRequestMapper.MapToQueryRequest(item);
+
+            result.Query.Term.Should().Be(name);
+            result.Query.Name.Should().BeNullOrEmpty();
+            result.Query.Type.Should().BeNullOrEmpty();
 
             Assert.That(result.Query.Term, Is.EqualTo(name));
-
-            Assert.That(result.Query.Name, Is.Null);
-            Assert.That(result.Query.Type, Is.Null);
         }
     }
 }

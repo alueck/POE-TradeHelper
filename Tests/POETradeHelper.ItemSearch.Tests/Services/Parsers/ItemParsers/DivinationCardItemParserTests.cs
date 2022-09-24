@@ -1,17 +1,17 @@
 ﻿using NUnit.Framework;
-using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
+
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class DivinationCardItemParserTests : ItemParserTestsBase
     {
         private const string DivinationCard = "The Fox";
-        private ItemStringBuilder itemStringBuilder;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public DivinationCardItemParserTests()
         {
             this.ItemParser = new DivinationCardItemParser();
             this.itemStringBuilder = new ItemStringBuilder().WithRarity(ItemRarity.DivinationCard);
@@ -40,7 +40,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             string[] itemStringLines = this.GetValidItemStringLines();
 
-            DivinationCardItem result = this.ItemParser.Parse(itemStringLines) as DivinationCardItem;
+            DivinationCardItem result = (DivinationCardItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(DivinationCard));
         }
@@ -50,7 +50,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             string[] itemStringLines = this.GetValidItemStringLines();
 
-            DivinationCardItem result = this.ItemParser.Parse(itemStringLines) as DivinationCardItem;
+            DivinationCardItem result = (DivinationCardItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Type, Is.EqualTo(DivinationCard));
         }

@@ -4,8 +4,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;

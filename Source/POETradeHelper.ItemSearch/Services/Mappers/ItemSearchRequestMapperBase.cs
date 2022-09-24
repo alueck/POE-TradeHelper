@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;
@@ -11,7 +12,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
     {
         public ItemSearchRequestMapperBase(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {
-            ItemSearchOptions = itemSearchOptions;
+            this.ItemSearchOptions = itemSearchOptions;
         }
 
         protected IOptionsMonitor<ItemSearchOptions> ItemSearchOptions { get; }

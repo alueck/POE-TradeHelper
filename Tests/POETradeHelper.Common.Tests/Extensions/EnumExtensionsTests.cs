@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using System;
+
 using static POETradeHelper.Common.Extensions.EnumExtensions;
 using static POETradeHelper.Common.Tests.Extensions.TestEnumWrapper;
 

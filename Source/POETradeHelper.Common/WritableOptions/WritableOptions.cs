@@ -11,7 +11,7 @@ namespace POETradeHelper.Common.WritableOptions
 {
     public class WritableOptions<TOptions> : IWritableOptions<TOptions> where TOptions : class, new()
     {
-        private static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } };
+        private static JsonSerializerOptions jsonSerializerOptions = new() { Converters = { new JsonStringEnumConverter() } };
         private readonly IOptionsMonitor<TOptions> options;
         private readonly string sectionName;
         private readonly string filePath;
@@ -31,8 +31,8 @@ namespace POETradeHelper.Common.WritableOptions
         {
             var jsonDocument = JsonDocument.Parse(File.ReadAllText(this.filePath));
             var section = jsonDocument.RootElement.TryGetProperty(this.sectionName, out JsonElement sectionElement)
-                ? JsonSerializer.Deserialize<TOptions>(sectionElement.ToString(), jsonSerializerOptions)
-                : (this.Value ?? new TOptions());
+                ? JsonSerializer.Deserialize<TOptions>(sectionElement.ToString(), jsonSerializerOptions) ?? new TOptions()
+                : this.Value;
 
             update(section);
 
@@ -46,12 +46,12 @@ namespace POETradeHelper.Common.WritableOptions
             var foundSection = false;
             var sectionsJson = new List<string>();
             var jsonBuilder = new StringBuilder();
-            
+
             foreach (var element in currentConfiguration.RootElement.EnumerateObject())
             {
                 bool isCurrentSection = element.Name == this.sectionName;
                 foundSection |= isCurrentSection;
-                
+
                 string elementJson = isCurrentSection
                    ? GetUpdatedJson(updatedSection)
                    : GetCurrentJson(element);
@@ -63,7 +63,7 @@ namespace POETradeHelper.Common.WritableOptions
             {
                 sectionsJson.Add(GetSectionJson(this.sectionName, GetUpdatedJson(updatedSection)));
             }
-            
+
             return jsonBuilder
                 .AppendLine("{")
                 .AppendJoin($",{Environment.NewLine}", sectionsJson)

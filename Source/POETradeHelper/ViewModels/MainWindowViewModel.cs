@@ -58,7 +58,7 @@ namespace POETradeHelper.ViewModels
 
         [Reactive]
         public Message ErrorMessage { get; private set; }
-        
+
         private async void InitializeAsync(IEnumerable<IInitializable> initializables)
         {
             bool success = await this.InitializeAsync(

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
-namespace POETradeHelper.ItemSearch.Tests
+namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 {
     public static class StringBuilderExtensions
     {

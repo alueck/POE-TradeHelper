@@ -1,14 +1,13 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
-using DynamicData;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 {
     public class ItemStatsParser : ItemStatsParserBase, IItemStatsParser<ItemWithStats>
     {
@@ -28,7 +27,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
             var statTexts = itemStringLines.Skip(statsStartIndex).Where(s => s != ParserConstants.PropertyGroupSeparator);
 
-            var itemStats = statTexts.Select(s => ParseStatText(s, preferLocalStats)).Where(x => x != null).ToList();
+            var itemStats = statTexts.Select(s => this.ParseStatText(s, preferLocalStats)).Where(x => x != null).ToList();
             var pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
             result.AllStats.AddRange(itemStats);
@@ -37,14 +36,14 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return result;
         }
 
-        private ItemStat ParseStatText(string statText, bool preferLocalStats)
+        private ItemStat? ParseStatText(string statText, bool preferLocalStats)
         {
-            ItemStat result;
+            ItemStat? result;
 
-            if (!TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out result)
-                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
-                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result)
-                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Fractured, out result))
+            if (!this.TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out result)
+                && !this.TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
+                && !this.TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result)
+                && !this.TryGetItemStatForCategoryByMarker(statText, StatCategory.Fractured, out result))
             {
                 result = new ItemStat(StatCategory.Unknown)
                 {
@@ -57,7 +56,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return result;
         }
 
-        private bool TryGetItemStatForCategoryByMarker(string statText, StatCategory statCategory, out ItemStat itemStat)
+        private bool TryGetItemStatForCategoryByMarker(string statText, StatCategory statCategory, [NotNullWhen(returnValue: true)] out ItemStat? itemStat)
         {
             itemStat = null;
 
@@ -77,9 +76,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return false;
         }
 
-        protected override ItemStat GetCompleteItemStat(ItemStat itemStat, bool preferLocalStats)
+        protected override ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStats)
         {
-            ItemStat result = base.GetCompleteItemStat(itemStat, preferLocalStats);
+            ItemStat? result = base.GetCompleteItemStat(itemStat, preferLocalStats);
 
             var placeholderCount = result?.TextWithPlaceholders?.Count(c => c == Placeholder);
             if (placeholderCount == 1)

@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -22,13 +20,13 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
         public override SearchQueryRequest MapToQueryRequest(Item item)
         {
-            var result = (SearchQueryRequest)base.MapToQueryRequest(item);
+            var result = base.MapToQueryRequest(item);
 
             var mapItem = (MapItem)item;
             MapIdentified(result, mapItem);
             MapTier(result, mapItem);
-            MapBlighted(result, mapItem);
-            MapBlightRavaged(result, mapItem);
+            this.MapBlighted(result, mapItem);
+            this.MapBlightRavaged(result, mapItem);
 
             return result;
         }

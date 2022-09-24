@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Avalonia.Media.Imaging;
+
 using MediatR;
+
 using Microsoft.Extensions.Options;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.UI.Services;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -25,7 +31,7 @@ namespace POETradeHelper.PricePrediction.Tests.ViewModels
 
         [SetUp]
         public void Setup()
-        {   
+        {
             this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
             this.itemSearchOptionsMock
                 .Setup(x => x.CurrentValue)
@@ -54,7 +60,7 @@ namespace POETradeHelper.PricePrediction.Tests.ViewModels
             {
                 ItemText = "abc"
             };
-            
+
             this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new ItemSearchOptions
                 {

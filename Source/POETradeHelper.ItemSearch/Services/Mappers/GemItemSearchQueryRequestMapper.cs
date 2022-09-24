@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -19,13 +20,13 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
         public override SearchQueryRequest MapToQueryRequest(Item item)
         {
-            SearchQueryRequest result = (SearchQueryRequest)base.MapToQueryRequest(item);
+            SearchQueryRequest result = base.MapToQueryRequest(item);
 
             var gemItem = (GemItem)item;
 
-            MapGemLevel(result, gemItem);
-            MapQuality(result, gemItem);
-            MapGemQualityType(result, gemItem);
+            this.MapGemLevel(result, gemItem);
+            this.MapQuality(result, gemItem);
+            this.MapGemQualityType(result, gemItem);
 
             return result;
         }

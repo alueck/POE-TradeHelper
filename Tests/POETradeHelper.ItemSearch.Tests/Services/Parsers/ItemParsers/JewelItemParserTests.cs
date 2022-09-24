@@ -1,20 +1,22 @@
 ﻿using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers;
-using POETradeHelper.ItemSearch.Tests.TestHelpers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class JewelItemParserTests : ItemParserTestsBase
     {
-        private Mock<IItemTypeParser> itemTypeParserMock;
-        private Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
-        private ItemStringBuilder itemStringBuilder;
+        private readonly Mock<IItemTypeParser> itemTypeParserMock;
+        private readonly Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
+        private readonly ItemStringBuilder itemStringBuilder;
 
-        [SetUp]
-        public void Setup()
+        public JewelItemParserTests()
         {
             this.itemTypeParserMock = new Mock<IItemTypeParser>();
             this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
@@ -72,7 +74,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithRarity(expected)
                                             .BuildLines();
 
-            JewelItem result = this.ItemParser.Parse(itemStringLines) as JewelItem;
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Rarity, Is.EqualTo(expected));
         }
@@ -83,7 +85,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string[] itemStringLines = this.itemStringBuilder
                                             .BuildLines();
 
-            JewelItem result = this.ItemParser.Parse(itemStringLines) as JewelItem;
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsTrue(result.IsIdentified);
         }
@@ -95,7 +97,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithUnidentified()
                                             .BuildLines();
 
-            JewelItem result = this.ItemParser.Parse(itemStringLines) as JewelItem;
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsFalse(result.IsIdentified);
         }
@@ -110,7 +112,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithName(expected)
                                             .BuildLines();
 
-            JewelItem result = this.ItemParser.Parse(itemStringLines) as JewelItem;
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(expected));
         }
@@ -134,7 +136,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
                 .Returns(expected);
 
-            JewelItem result = this.ItemParser.Parse(itemStringLines) as JewelItem;
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Type, Is.EqualTo(expected));
         }
@@ -151,7 +153,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithType("Cobalt Jewel")
                                             .BuildLines();
 
-            JewelItem result = this.ItemParser.Parse(itemStringLines) as JewelItem;
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Name, Is.EqualTo(expected));
         }
@@ -163,7 +165,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                                             .WithCorrupted()
                                             .BuildLines();
 
-            JewelItem result = this.ItemParser.Parse(itemStringLines) as JewelItem;
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsTrue(result.IsCorrupted);
         }
@@ -174,7 +176,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string[] itemStringLines = this.itemStringBuilder
                                             .BuildLines();
 
-            JewelItem result = this.ItemParser.Parse(itemStringLines) as JewelItem;
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.IsFalse(result.IsCorrupted);
         }

@@ -2,16 +2,20 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using MediatR;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Commands;
 using POETradeHelper.Common.Contract.Commands;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Queries;
-using POETradeHelper.QualityOfLife.Commands;
+using POETradeHelper.ItemSearch.Queries;
 using POETradeHelper.QualityOfLife.Commands.Handlers;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.Services;
@@ -33,7 +37,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             this.wikiOptionsMock.Setup(x => x.CurrentValue)
                 .Returns(new WikiOptions());
             SetupWikiUrlProviderMocks();
-            
+
             this.handler = new OpenWikiCommandHandler(
                 this.mediatorMock.Object,
                 this.wikiOptionsMock.Object,
@@ -64,9 +68,9 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
         public async Task HandleShouldSendGetItemFromCursorQuery()
         {
             var cts = new CancellationTokenSource();
-            
+
             await this.handler.Handle(new OpenWikiCommand(), cts.Token);
-            
+
             this.mediatorMock.Verify(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), cts.Token));
         }
 
@@ -80,7 +84,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             this.wikiOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(new WikiOptions { Wiki = wikiType });
-            
+
             this.mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
@@ -88,10 +92,10 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             this.wikiUrlProviderMocks[urlProviderIndex]
                 .Setup(x => x.GetUrl(It.IsAny<Item>()))
                 .Returns(new Uri("https://www.google.com"));
-            
+
             // act
             await this.handler.Handle(new OpenWikiCommand(), default);
-            
+
             // assert
             this.wikiUrlProviderMocks[urlProviderIndex].Verify(x => x.GetUrl(item));
         }
@@ -100,7 +104,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
         public async Task HandleShouldNotCallGetUrlIfItemIsNull()
         {
             await this.handler.Handle(new OpenWikiCommand(), default);
-            
+
             this.wikiUrlProviderMocks[0].Verify(x => x.GetUrl(It.IsAny<Item>()), Times.Never);
             this.wikiUrlProviderMocks[1].Verify(x => x.GetUrl(It.IsAny<Item>()), Times.Never);
         }
@@ -109,13 +113,13 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
         public async Task HandleShouldSendOpenUrlInBrowserCommand()
         {
             // arrange
-            Uri expectedUrl = new Uri("https://pathofexile.gamepedia.com");
+            Uri expectedUrl = new("https://pathofexile.gamepedia.com");
             var item = new EquippableItem(ItemRarity.Rare);
 
             this.wikiOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(new WikiOptions { Wiki = WikiType.PoeWiki });
-            
+
             this.mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
@@ -123,10 +127,10 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             this.wikiUrlProviderMocks[0]
                 .Setup(x => x.GetUrl(It.IsAny<Item>()))
                 .Returns(expectedUrl);
-            
+
             // act
             await this.handler.Handle(new OpenWikiCommand(), default);
-            
+
             // assert
             this.mediatorMock.Verify(x => x.Send(
                 It.Is<OpenUrlInBrowserCommand>(c => c.Url == expectedUrl),
@@ -139,7 +143,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             this.mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
-            
+
             await this.handler.Handle(new OpenWikiCommand(), default);
         }
     }

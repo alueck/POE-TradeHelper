@@ -11,42 +11,42 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
         private const string ElementalDamagePerSecondFilterName = "edps";
 
         [JsonIgnore]
-        public MinMaxFilter Damage
+        public MinMaxFilter? Damage
         {
             get => this.GetFilter<MinMaxFilter>();
             set => this.SetFilter(value);
         }
 
         [JsonIgnore]
-        public MinMaxFilter AttacksPerSecond
+        public MinMaxFilter? AttacksPerSecond
         {
             get => this.GetFilter<MinMaxFilter>(AttacksPerSecondFilterName);
             set => this.SetFilter(value, AttacksPerSecondFilterName);
         }
 
         [JsonIgnore]
-        public MinMaxFilter CriticalChance
+        public MinMaxFilter? CriticalChance
         {
             get => this.GetFilter<MinMaxFilter>(CriticalChanceFilterName);
             set => this.SetFilter(value, CriticalChanceFilterName);
         }
 
         [JsonIgnore]
-        public MinMaxFilter DamagePerSecond
+        public MinMaxFilter? DamagePerSecond
         {
             get => this.GetFilter<MinMaxFilter>(DamagePerSecondFilterName);
             set => this.SetFilter(value, DamagePerSecondFilterName);
         }
 
         [JsonIgnore]
-        public MinMaxFilter PhysicalDamagePerSecond
+        public MinMaxFilter? PhysicalDamagePerSecond
         {
             get => this.GetFilter<MinMaxFilter>(PhysicalDamagePerSecondFilterName);
             set => this.SetFilter(value, PhysicalDamagePerSecondFilterName);
         }
 
         [JsonIgnore]
-        public MinMaxFilter ElementalDamagePerSecond
+        public MinMaxFilter? ElementalDamagePerSecond
         {
             get => this.GetFilter<MinMaxFilter>(ElementalDamagePerSecondFilterName);
             set => this.SetFilter(value, ElementalDamagePerSecondFilterName);

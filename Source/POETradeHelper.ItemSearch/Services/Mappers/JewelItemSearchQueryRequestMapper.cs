@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
+
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 
-namespace POETradeHelper.ItemSearch.Services.Mappers.Implementations
+namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class JewelItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {

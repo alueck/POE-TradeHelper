@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
@@ -18,7 +19,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
         }
 
-        public string GetId(string itemName)
+        public string? GetId(string itemName)
         {
             return this.idToStaticDataMappings.Values.FirstOrDefault(entry => string.Equals(entry.Text, itemName, StringComparison.Ordinal))?.Id;
         }

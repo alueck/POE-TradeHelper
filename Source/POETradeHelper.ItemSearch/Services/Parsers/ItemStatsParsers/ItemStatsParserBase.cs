@@ -1,10 +1,9 @@
-﻿using System;
-using POETradeHelper.Common.Extensions;
+﻿using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 {
     public abstract class ItemStatsParserBase
     {
@@ -15,7 +14,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             this.statsDataService = statsDataService;
         }
 
-        protected virtual ItemStat GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
+        protected virtual ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
         {
             string statCategoryToSearch = itemStat.StatCategory != StatCategory.Unknown
                 ? itemStat.StatCategory.GetDisplayName()

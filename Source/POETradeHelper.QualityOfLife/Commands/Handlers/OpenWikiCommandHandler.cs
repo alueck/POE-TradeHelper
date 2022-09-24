@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using POETradeHelper.Common.Commands;
 using POETradeHelper.Common.Contract.Commands;
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Queries;
+using POETradeHelper.ItemSearch.Queries;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.Services;
 
@@ -36,15 +33,10 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
 
         public async Task<Unit> Handle(OpenWikiCommand request, CancellationToken cancellationToken)
         {
-            Item item = null;
+            Item? item = null;
             try
             {
-                item = await this.mediator.Send(new GetItemFromCursorQuery(), cancellationToken)
-                    .ConfigureAwait(false);
-                if (item == null)
-                {
-                    return Unit.Value;
-                }
+                item = await this.mediator.Send(new GetItemFromCursorQuery(), cancellationToken).ConfigureAwait(false);
 
                 var wikiUrlProvider = this.wikiUrlProviders.Single(x => x.HandledWikiType == this.wikiOptions.CurrentValue.Wiki);
                 var url = wikiUrlProvider.GetUrl(item);
@@ -53,7 +45,7 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
             }
             catch (Exception exception)
             {
-                this.logger.LogError(exception, "Failed to open wiki for {@item}.", item);
+                this.logger.LogError(exception, "Failed to open wiki for {@Item}", item);
             }
 
             return Unit.Value;

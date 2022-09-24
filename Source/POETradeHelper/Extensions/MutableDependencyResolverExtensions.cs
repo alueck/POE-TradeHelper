@@ -20,7 +20,7 @@ public static class MutableDependencyResolverExtensions
         resolver.RegisterConstant(new AutoDataTemplateBindingHook(), typeof(IPropertyBindingHook));
         RxApp.MainThreadScheduler = AvaloniaScheduler.Instance;
     }
-    
+
     public static void UseMicrosoftExtensionsLoggingWithWrappingFullLogger(
         this IMutableDependencyResolver instance,
         Func<ILoggerFactory> loggerFactoryGetter)

@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{E89A9F8C-C12A-45E8-8F79-42C7FC7A630F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.ItemSearch", "Source\POETradeHelper.ItemSearch\POETradeHelper.ItemSearch.csproj", "{04BDF587-9C08-4D71-A8B5-EFE404B982AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.ItemSearch.UI.Avalonia", "Source\POETradeHelper.ItemSearch.UI.Avalonia\POETradeHelper.ItemSearch.UI.Avalonia.csproj", "{04BDF587-9C08-4D71-A8B5-EFE404B982AA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{1DCB4EB6-9563-4F4C-B582-3B52D9E81CAD}"
 EndProject
@@ -25,11 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Win32", "Sou
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{3629C438-DAEB-4944-9DF4-C31F68A8A579}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Win32.Tests", "Tests\POETradeHelper.Win32.Tests\POETradeHelper.Win32.Tests.csproj", "{54F21136-3D1F-4A0B-B0C5-A11C5BB63E12}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{C49FFB24-3897-4032-A2A9-A28377B75228}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.ItemSearch.Tests", "Tests\POETradeHelper.ItemSearch.Tests\POETradeHelper.ItemSearch.Tests.csproj", "{7A4BCFD4-623D-4C2C-8E66-E5FCA17DBDB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.ItemSearch.UI.Avalonia.Tests", "Tests\POETradeHelper.ItemSearch.UI.Avalonia.Tests\POETradeHelper.ItemSearch.UI.Avalonia.Tests.csproj", "{7A4BCFD4-623D-4C2C-8E66-E5FCA17DBDB8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common", "Source\POETradeHelper.Common\POETradeHelper.Common.csproj", "{1B5DC7E8-B2FE-49CA-B174-89F7099A46D3}"
 EndProject
@@ -46,7 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common.UI.Tests", "Tests\POETradeHelper.Common.UI.Tests\POETradeHelper.Common.UI.Tests.csproj", "{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.QualityOfLife", "Source\POETradeHelper.QualityOfLife\POETradeHelper.QualityOfLife.csproj", "{F9FA9438-76E8-4D45-9F7E-C5C57120F87A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.QualityOfLife.UI.Avalonia", "Source\POETradeHelper.QualityOfLife.UI.Avalonia\POETradeHelper.QualityOfLife.UI.Avalonia.csproj", "{F9FA9438-76E8-4D45-9F7E-C5C57120F87A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.QualityOfLife.Tests", "Tests\POETradeHelper.QualityOfLife.Tests\POETradeHelper.QualityOfLife.Tests.csproj", "{9F0C9165-B154-4E22-BE73-68A7772D22DB}"
 EndProject
@@ -61,6 +59,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.PricePrediction", "Source\POETradeHelper.PricePrediction\POETradeHelper.PricePrediction.csproj", "{67D11B51-3167-454E-927A-9584427871C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.PricePrediction.Tests", "Tests\POETradeHelper.PricePrediction.Tests\POETradeHelper.PricePrediction.Tests.csproj", "{42954B0B-6477-4B0B-B064-60FB67DE667E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.ItemSearch", "Source\POETradeHelper.ItemSearch\POETradeHelper.ItemSearch.csproj", "{2F8EB24C-EDA5-401C-B477-C41EF24BE49B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.ItemSearch.Tests", "Tests\POETradeHelper.ItemSearch.Tests\POETradeHelper.ItemSearch.Tests.csproj", "{EE941FA9-D53B-4012-B89F-46E860BA48C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.QualityOfLife", "Source\POETradeHelper.QualityOfLife\POETradeHelper.QualityOfLife.csproj", "{1FEEEBC0-D669-470B-B4EB-D940E3F7C93F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,10 +96,6 @@ Global
 		{3615D4B9-C5A9-4CED-8422-323CFF4637D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3615D4B9-C5A9-4CED-8422-323CFF4637D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3615D4B9-C5A9-4CED-8422-323CFF4637D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54F21136-3D1F-4A0B-B0C5-A11C5BB63E12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54F21136-3D1F-4A0B-B0C5-A11C5BB63E12}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54F21136-3D1F-4A0B-B0C5-A11C5BB63E12}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54F21136-3D1F-4A0B-B0C5-A11C5BB63E12}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A4BCFD4-623D-4C2C-8E66-E5FCA17DBDB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A4BCFD4-623D-4C2C-8E66-E5FCA17DBDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A4BCFD4-623D-4C2C-8E66-E5FCA17DBDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -152,6 +152,18 @@ Global
 		{42954B0B-6477-4B0B-B064-60FB67DE667E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42954B0B-6477-4B0B-B064-60FB67DE667E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42954B0B-6477-4B0B-B064-60FB67DE667E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F8EB24C-EDA5-401C-B477-C41EF24BE49B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F8EB24C-EDA5-401C-B477-C41EF24BE49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F8EB24C-EDA5-401C-B477-C41EF24BE49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F8EB24C-EDA5-401C-B477-C41EF24BE49B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE941FA9-D53B-4012-B89F-46E860BA48C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE941FA9-D53B-4012-B89F-46E860BA48C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE941FA9-D53B-4012-B89F-46E860BA48C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE941FA9-D53B-4012-B89F-46E860BA48C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FEEEBC0-D669-470B-B4EB-D940E3F7C93F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FEEEBC0-D669-470B-B4EB-D940E3F7C93F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FEEEBC0-D669-470B-B4EB-D940E3F7C93F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FEEEBC0-D669-470B-B4EB-D940E3F7C93F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,7 +176,6 @@ Global
 		{C851A0FE-2673-484B-A593-2B3497DC76EA} = {1DCB4EB6-9563-4F4C-B582-3B52D9E81CAD}
 		{3615D4B9-C5A9-4CED-8422-323CFF4637D8} = {1DCB4EB6-9563-4F4C-B582-3B52D9E81CAD}
 		{3629C438-DAEB-4944-9DF4-C31F68A8A579} = {7BBEE127-4661-4942-9E2F-7028E2203955}
-		{54F21136-3D1F-4A0B-B0C5-A11C5BB63E12} = {3629C438-DAEB-4944-9DF4-C31F68A8A579}
 		{C49FFB24-3897-4032-A2A9-A28377B75228} = {7BBEE127-4661-4942-9E2F-7028E2203955}
 		{7A4BCFD4-623D-4C2C-8E66-E5FCA17DBDB8} = {C49FFB24-3897-4032-A2A9-A28377B75228}
 		{1B5DC7E8-B2FE-49CA-B174-89F7099A46D3} = {1DCB4EB6-9563-4F4C-B582-3B52D9E81CAD}
@@ -179,6 +190,9 @@ Global
 		{910E5298-B306-4BA2-A732-5BA4E58D3227} = {3629C438-DAEB-4944-9DF4-C31F68A8A579}
 		{67D11B51-3167-454E-927A-9584427871C9} = {E89A9F8C-C12A-45E8-8F79-42C7FC7A630F}
 		{42954B0B-6477-4B0B-B064-60FB67DE667E} = {C49FFB24-3897-4032-A2A9-A28377B75228}
+		{2F8EB24C-EDA5-401C-B477-C41EF24BE49B} = {E89A9F8C-C12A-45E8-8F79-42C7FC7A630F}
+		{EE941FA9-D53B-4012-B89F-46E860BA48C8} = {C49FFB24-3897-4032-A2A9-A28377B75228}
+		{1FEEEBC0-D669-470B-B4EB-D940E3F7C93F} = {E89A9F8C-C12A-45E8-8F79-42C7FC7A630F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BE843AD8-753C-4B98-A7B5-B8B2F7389681}

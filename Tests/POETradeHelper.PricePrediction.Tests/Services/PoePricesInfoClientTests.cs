@@ -73,7 +73,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
-            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoPrediction>(json, It.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy.GetType() == typeof(JsonSnakeCaseNamingPolicy))));
+            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoPrediction>(json, It.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy!.GetType() == typeof(JsonSnakeCaseNamingPolicy))));
         }
 
         [Test]
@@ -109,7 +109,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 .Returns(expected);
 
             // act
-            PoePricesInfoPrediction result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            PoePricesInfoPrediction? result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
             Assert.That(result, Is.EqualTo(expected));
@@ -124,7 +124,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 .Throws<Exception>();
 
             // act
-            PoePricesInfoPrediction result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            PoePricesInfoPrediction? result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
             Assert.IsNull(result);
@@ -149,7 +149,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         public async Task GetPricePredictionAsyncShouldReturnNullIf(string league, string itemText)
         {
             // act
-            PoePricesInfoPrediction result = await this.poePricesInfoClient.GetPricePredictionAsync(league, itemText);
+            PoePricesInfoPrediction? result = await this.poePricesInfoClient.GetPricePredictionAsync(league, itemText);
 
             // assert
             Assert.IsNull(result);

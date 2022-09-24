@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -14,12 +15,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
     public abstract class ItemSearchQueryRequestMapperTestsBase<TItemType>
         where TItemType : Item
     {
-        public IItemSearchQueryRequestMapper ItemSearchQueryRequestMapper { get; set; }
+        protected IItemSearchQueryRequestMapper ItemSearchQueryRequestMapper { get; set; } = null!;
 
-        public Mock<IOptionsMonitor<ItemSearchOptions>> ItemSearchOptionsMock { get; private set; }
+        public Mock<IOptionsMonitor<ItemSearchOptions>> ItemSearchOptionsMock { get; }
 
-        [SetUp]
-        public virtual void Setup()
+        protected ItemSearchQueryRequestMapperTestsBase()
         {
             this.ItemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
             this.ItemSearchOptionsMock.Setup(x => x.CurrentValue)

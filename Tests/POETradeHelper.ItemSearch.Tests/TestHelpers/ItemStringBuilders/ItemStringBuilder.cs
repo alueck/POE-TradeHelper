@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models;
 
-namespace POETradeHelper.ItemSearch.Tests.TestHelpers
+namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 {
     public class ItemStringBuilder : ItemStringBuilderBase<ItemStringBuilder>
     {
@@ -21,7 +20,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 
         public InfluenceType InfluenceType { get; private set; }
 
-        public string SocketsString { get; private set; }
+        public string SocketsString { get; private set; } = string.Empty;
 
         public ItemStringBuilder WithQuality(int quality)
         {
@@ -70,7 +69,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             stringBuilder
                 .Append(this.NameAndRarityGroup)
                 .AppendLine(ParserConstants.PropertyGroupSeparator)
-                .Append(ItemStatsGroup)
+                .Append(this.ItemStatsGroup)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => !string.IsNullOrEmpty(this.SocketsString))
                 .AppendLine($"{Resources.SocketsDescriptor} {this.SocketsString}", () => !string.IsNullOrEmpty(this.SocketsString))
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.ItemLevel > 0)

@@ -1,8 +1,10 @@
-﻿using POETradeHelper.ItemSearch.Contract.Properties;
-using POETradeHelper.ItemSearch.Services.Parsers;
-using System.Text;
+﻿using System.Text;
 
-namespace POETradeHelper.ItemSearch.Tests.TestHelpers
+using POETradeHelper.ItemSearch.Contract.Properties;
+using POETradeHelper.ItemSearch.Services.Parsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models;
+
+namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 {
     public class MapItemStringBuilder : ItemStringBuilderBase<MapItemStringBuilder>
     {
@@ -47,7 +49,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
             stringBuilder
                 .Append(this.NameAndRarityGroup)
                 .AppendLine(ParserConstants.PropertyGroupSeparator)
-                .Append(ItemStatsGroup)
+                .Append(this.ItemStatsGroup)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => !this.IsIdentified)
                 .AppendLine(Resources.UnidentifiedKeyword, () => !this.IsIdentified)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.IsCorrupted)

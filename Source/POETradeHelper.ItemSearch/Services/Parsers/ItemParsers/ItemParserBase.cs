@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public abstract class ItemParserBase : IItemParser
     {
@@ -16,18 +16,18 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         protected ItemRarity? GetRarity(string[] itemStringLines)
         {
-            string rarityDescriptor = POETradeHelper.ItemSearch.Contract.Properties.Resources.RarityDescriptor;
-            string rarityLine = itemStringLines.FirstOrDefault(line => line.Contains(rarityDescriptor));
+            string rarityDescriptor = Resources.RarityDescriptor;
+            string? rarityLine = itemStringLines.FirstOrDefault(line => line.Contains(rarityDescriptor));
 
-            ItemRarity? rarity = rarityLine.Replace(rarityDescriptor, "").Trim().ParseToEnumByDisplayName<ItemRarity>();
+            ItemRarity? rarity = rarityLine?.Replace(rarityDescriptor, "").Trim().ParseToEnumByDisplayName<ItemRarity>();
 
-            return rarity.Value;
+            return rarity;
         }
 
         protected int GetIntegerFromFirstStringContaining(string[] itemStringLines, string containsString)
         {
             int result = 0;
-            string matchingLine = itemStringLines.FirstOrDefault(l => l.Contains(containsString));
+            string? matchingLine = itemStringLines.FirstOrDefault(l => l.Contains(containsString));
 
             if (matchingLine != null)
             {
@@ -44,12 +44,12 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         protected bool IsCorrupted(string[] lines)
         {
-            return lines.Any(l => l == POETradeHelper.ItemSearch.Contract.Properties.Resources.CorruptedKeyword);
+            return lines.Any(l => l == Resources.CorruptedKeyword);
         }
 
         protected bool IsIdentified(string[] itemStringLines)
         {
-            return !itemStringLines.Any(l => l.Contains(POETradeHelper.ItemSearch.Contract.Properties.Resources.UnidentifiedKeyword));
+            return !itemStringLines.Any(l => l.Contains(Resources.UnidentifiedKeyword));
         }
 
         public Item Parse(string[] itemStringLines)

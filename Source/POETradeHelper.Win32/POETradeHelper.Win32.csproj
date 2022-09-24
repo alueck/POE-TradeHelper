@@ -11,6 +11,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\POETradeHelper.Common.Contract\POETradeHelper.Common.Contract.csproj" />
-    <ProjectReference Include="..\POETradeHelper.QualityOfLife\POETradeHelper.QualityOfLife.csproj" />
   </ItemGroup>
 </Project>

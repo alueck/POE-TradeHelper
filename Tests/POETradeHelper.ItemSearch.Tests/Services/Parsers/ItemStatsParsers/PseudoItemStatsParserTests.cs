@@ -1,22 +1,23 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using FluentAssertions;
+
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Services.Parsers;
+using POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
+namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 {
     public class PseudoItemStatsParserTests
     {
-        private Mock<IPseudoStatDataMappingService> pseudoStatsDataMappingServiceMock;
-        private PseudoItemStatsParser pseudoItemStatsParser;
+        private readonly Mock<IPseudoStatDataMappingService> pseudoStatsDataMappingServiceMock;
+        private readonly PseudoItemStatsParser pseudoItemStatsParser;
 
-        [SetUp]
-        public void Setup()
+        public PseudoItemStatsParserTests()
         {
             this.pseudoStatsDataMappingServiceMock = new Mock<IPseudoStatDataMappingService>();
             this.pseudoItemStatsParser = new PseudoItemStatsParser(this.pseudoStatsDataMappingServiceMock.Object);
@@ -52,9 +53,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.IsAny<string>()))
                 .Returns(new[] { pseudoStatData });
 
-            IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats)?.ToList();
+            IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats).ToList();
 
-            Assert.That(result, Has.Count.EqualTo(1));
+            result.Should().HaveCount(1);
         }
 
         [Test]

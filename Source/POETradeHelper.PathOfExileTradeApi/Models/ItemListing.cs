@@ -1,6 +1,4 @@
-﻿using POETradeHelper.PathOfExileTradeApi.JsonConverters;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
@@ -14,8 +12,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         [JsonPropertyName("ilvl")]
         public byte ItemLevel { get; set; }
 
-        public IList<Property> Properties { get; set; }
+        public IList<Property> Properties { get; set; } = new List<Property>();
 
-        public IList<Property> AdditionalProperties { get; set; }
+        public IList<Property> AdditionalProperties { get; set; } = new List<Property>();
     }
 }

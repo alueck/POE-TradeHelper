@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+
 using POETradeHelper.Common.UI.Models;
 
 namespace POETradeHelper.Common.UI.UserControls

@@ -4,6 +4,6 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public interface IItemTypeParser
     {
-        string ParseType(string[] itemStringLines, ItemRarity itemRarity, bool isIdentified);
+        string? ParseType(string[] itemStringLines, ItemRarity itemRarity, bool isIdentified);
     }
 }

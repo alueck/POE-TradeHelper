@@ -1,20 +1,20 @@
-﻿using System.Threading.Tasks;
 using Moq;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Contract;
-using POETradeHelper.ItemSearch.Contract.Queries;
+using POETradeHelper.ItemSearch.Queries;
 using POETradeHelper.ItemSearch.Queries.Handlers;
 
 namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
 {
     public class GetItemTextFromCursorQueryHandlerTests
     {
-        private Mock<IClipboardHelper> clipboardHelperMock;
-        private Mock<IUserInputSimulator> userInputSimulatorMock;
-        private GetItemTextFromCursorQueryHandler handler;
+        private readonly Mock<IClipboardHelper> clipboardHelperMock;
+        private readonly Mock<IUserInputSimulator> userInputSimulatorMock;
+        private readonly GetItemTextFromCursorQueryHandler handler;
 
-        [SetUp]
-        public void Setup()
+        public GetItemTextFromCursorQueryHandlerTests()
         {
             this.clipboardHelperMock = new Mock<IClipboardHelper>();
             this.userInputSimulatorMock = new Mock<IUserInputSimulator>();
@@ -62,7 +62,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
             this.userInputSimulatorMock.Setup(x => x.SendCopyCommand())
                 .Callback(() => this.clipboardHelperMock.Setup(x => x.GetTextAsync()).ReturnsAsync(expected));
 
-            string result = await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
+            await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
             this.clipboardHelperMock.Verify(x => x.SetTextAsync(expected));
         }
@@ -71,10 +71,10 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
         public async Task HandleShouldClearClipboardIfItWasEmpty()
         {
             this.clipboardHelperMock.SetupSequence(x => x.GetTextAsync())
-                .ReturnsAsync((string)null)
+                .ReturnsAsync(string.Empty)
                 .ReturnsAsync("itemString");
 
-            string result = await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
+            await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
             this.clipboardHelperMock.Verify(x => x.ClearAsync());
         }

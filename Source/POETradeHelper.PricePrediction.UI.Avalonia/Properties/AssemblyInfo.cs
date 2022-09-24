@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly:InternalsVisibleTo("POETradeHelper.PricePrediction.UI.Avalonia.Tests")]
+[assembly: InternalsVisibleTo("POETradeHelper.PricePrediction.UI.Avalonia.Tests")]

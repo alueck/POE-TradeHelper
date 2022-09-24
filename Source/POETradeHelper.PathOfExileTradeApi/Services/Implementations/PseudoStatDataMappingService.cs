@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
 
@@ -18,21 +19,21 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         public IEnumerable<StatData> GetPseudoStatData(string itemStatId)
         {
-            IEnumerable<StatData> result = Enumerable.Empty<StatData>();
+            IEnumerable<StatData?> result = Enumerable.Empty<StatData>();
 
-            var indexOfDot = itemStatId?.IndexOf('.');
+            var indexOfDot = itemStatId.IndexOf('.');
 
             if (indexOfDot >= 0)
             {
-                var key = itemStatId.Substring(indexOfDot.Value + 1);
+                var key = itemStatId[(indexOfDot + 1)..];
 
-                if (this.mappings.TryGetValue(key, out IReadOnlyCollection<string> pseudoStatIds))
+                if (this.mappings.TryGetValue(key, out IReadOnlyCollection<string>? pseudoStatIds))
                 {
                     result = pseudoStatIds.Select(this.statsDataService.GetStatDataById);
                 }
             }
 
-            return result;
+            return result.OfType<StatData>();
         }
 
         private readonly IReadOnlyDictionary<string, IReadOnlyCollection<string>> mappings = new Dictionary<string, IReadOnlyCollection<string>>

@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using DynamicData;
+﻿using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
-namespace POETradeHelper.ItemSearch.Services.Parsers
+namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 {
     public class OrganItemStatsParser : ItemStatsParserBase, IItemStatsParser<OrganItem>
     {
@@ -37,6 +35,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 Value = group.Count()
             })
             .Select(s => this.GetCompleteItemStat(s, false))
+            .OfType<ItemStat>()
             .ToList();
 
             return itemStats;
