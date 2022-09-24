@@ -18,7 +18,7 @@ using POETradeHelper.PathOfExileTradeApi.Services;
 
 using ReactiveUI;
 
-namespace POETradeHelper.ItemSearch.Tests.ViewModels;
+namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels;
 
 public class ExchangeResultsViewModelTests
 {
@@ -30,14 +30,14 @@ public class ExchangeResultsViewModelTests
     [SetUp]
     public void Setup()
     {
-        this.poeTradeApiClientMock = new Mock<IPoeTradeApiClient>();
-        this.itemToExchangeQueryRequestMapperMock = new Mock<IItemToExchangeQueryRequestMapper>();
-        this.itemListingsViewModelFactoryMock = new Mock<IItemListingsViewModelFactory>();
-        this.viewModel = new ExchangeResultsViewModel(
+        poeTradeApiClientMock = new Mock<IPoeTradeApiClient>();
+        itemToExchangeQueryRequestMapperMock = new Mock<IItemToExchangeQueryRequestMapper>();
+        itemListingsViewModelFactoryMock = new Mock<IItemListingsViewModelFactory>();
+        viewModel = new ExchangeResultsViewModel(
             Mock.Of<IScreen>(),
-            this.poeTradeApiClientMock.Object,
-            this.itemToExchangeQueryRequestMapperMock.Object,
-            this.itemListingsViewModelFactoryMock.Object);
+            poeTradeApiClientMock.Object,
+            itemToExchangeQueryRequestMapperMock.Object,
+            itemListingsViewModelFactoryMock.Object);
     }
 
     [Test]
@@ -45,9 +45,9 @@ public class ExchangeResultsViewModelTests
     {
         CurrencyItem item = new();
 
-        await this.viewModel.InitializeAsync(item, default);
+        await viewModel.InitializeAsync(item, default);
 
-        this.itemToExchangeQueryRequestMapperMock
+        itemToExchangeQueryRequestMapperMock
             .Verify(x => x.MapToQueryRequest(item));
     }
 
@@ -55,14 +55,14 @@ public class ExchangeResultsViewModelTests
     public async Task InitializeCallsGetListingsAsyncOnPoeTradeApiClient()
     {
         ExchangeQueryRequest expectedRequest = new() { Query = { Have = { "exalted" } } };
-        this.itemToExchangeQueryRequestMapperMock
+        itemToExchangeQueryRequestMapperMock
             .Setup(x => x.MapToQueryRequest(It.IsAny<Item>()))
             .Returns(expectedRequest);
         CancellationTokenSource cts = new();
 
-        await this.viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
+        await viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
 
-        this.poeTradeApiClientMock
+        poeTradeApiClientMock
             .Verify(x => x.GetListingsAsync(expectedRequest, cts.Token));
     }
 
@@ -70,15 +70,15 @@ public class ExchangeResultsViewModelTests
     public async Task InitializeCallsCreateAsyncOnItemListingsViewModelFactory()
     {
         ExchangeQueryResult expectedQueryResult = new("a", 1, new Dictionary<string, ExchangeQueryResultListing>());
-        this.poeTradeApiClientMock
+        poeTradeApiClientMock
             .Setup(x => x.GetListingsAsync(It.IsAny<ExchangeQueryRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedQueryResult);
 
         CancellationTokenSource cts = new();
 
-        await this.viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
+        await viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
 
-        this.itemListingsViewModelFactoryMock
+        itemListingsViewModelFactoryMock
             .Verify(x => x.CreateAsync(expectedQueryResult, cts.Token));
     }
 
@@ -86,12 +86,12 @@ public class ExchangeResultsViewModelTests
     public async Task InitializeSetsItemListings()
     {
         ItemListingsViewModel expected = new() { ListingsUri = new Uri("https://exchange.results") };
-        this.itemListingsViewModelFactoryMock
+        itemListingsViewModelFactoryMock
             .Setup(x => x.CreateAsync(It.IsAny<ExchangeQueryResult>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        await this.viewModel.InitializeAsync(new CurrencyItem(), default);
+        await viewModel.InitializeAsync(new CurrencyItem(), default);
 
-        this.viewModel.ItemListings.Should().Be(expected);
+        viewModel.ItemListings.Should().Be(expected);
     }
 }

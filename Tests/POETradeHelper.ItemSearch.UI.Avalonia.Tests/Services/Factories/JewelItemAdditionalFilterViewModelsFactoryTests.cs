@@ -11,20 +11,20 @@ using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Factories
+namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class JewelItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
         [SetUp]
         public void Setup()
         {
-            this.AdditionalFilterViewModelsFactory = new JewelItemAdditionalFilterViewModelsFactory();
+            AdditionalFilterViewModelsFactory = new JewelItemAdditionalFilterViewModelsFactory();
         }
 
         [TestCaseSource(nameof(NonJewelItems))]
         public void CreateShouldReturnEmptyEnumerableForNonJewelItems(Item item)
         {
-            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             Assert.IsNotNull(result);
             Assert.That(result, Is.Empty);
@@ -40,7 +40,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 IsIdentified = value
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, jewelItem, null, Resources.Identified);
+            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, jewelItem, null, Resources.Identified);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Option = false
             };
 
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, jewelItem, Resources.Identified, queryRequestFilter);
+            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, jewelItem, Resources.Identified, queryRequestFilter);
         }
 
         [TestCase(true)]
@@ -70,7 +70,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 IsCorrupted = value
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, jewelItem, null, Resources.Corrupted);
+            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, jewelItem, null, Resources.Corrupted);
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Option = false
             };
 
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, jewelItem, Resources.Corrupted, queryRequestFilter);
+            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, jewelItem, Resources.Corrupted, queryRequestFilter);
         }
 
         private static IEnumerable<Item> NonJewelItems

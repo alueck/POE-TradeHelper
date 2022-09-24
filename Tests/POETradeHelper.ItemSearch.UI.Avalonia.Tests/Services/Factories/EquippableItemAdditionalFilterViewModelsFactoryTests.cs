@@ -13,20 +13,20 @@ using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Factories
+namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class EquippableItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
         [SetUp]
         public void Setup()
         {
-            this.AdditionalFilterViewModelsFactory = new EquippableItemAdditionalFilterViewModelsFactory();
+            AdditionalFilterViewModelsFactory = new EquippableItemAdditionalFilterViewModelsFactory();
         }
 
         [TestCaseSource(nameof(NonEquippableItems))]
         public void CreateShouldReturnEmptyEnumerableForNonEquippableItems(Item item)
         {
-            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             Assert.IsNotNull(result);
             Assert.That(result, Is.Empty);
@@ -59,7 +59,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.Quality, Resources.QualityColumn);
+            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.Quality, Resources.QualityColumn);
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.Quality, Resources.QualityColumn, queryRequestFilter);
+            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.Quality, Resources.QualityColumn, queryRequestFilter);
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.ItemLevel, Resources.ItemLevelColumn);
+            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.ItemLevel, Resources.ItemLevelColumn);
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.ItemLevel, Resources.ItemLevelColumn, queryRequestFilter);
+            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.ItemLevel, Resources.ItemLevelColumn, queryRequestFilter);
         }
 
         [TestCaseSource(nameof(InfluenceFilterViewModelTestData))]
@@ -126,7 +126,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, null, equippableItem.Influence.GetDisplayName());
+            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, null, equippableItem.Influence.GetDisplayName());
         }
 
         [TestCaseSource(nameof(InfluenceFilterViewModelTestData))]
@@ -144,7 +144,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.Influence.GetDisplayName(), queryRequestFilter);
+            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.Influence.GetDisplayName(), queryRequestFilter);
         }
 
         private static IEnumerable InfluenceFilterViewModelTestData
@@ -183,7 +183,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableSocketsFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.Sockets.Count, Resources.Sockets);
+            CreateShouldReturnBindableSocketsFilterViewModel(expectedBindingExpression, equippableItem, equippableItem.Sockets.Count, Resources.Sockets);
         }
 
         [Test]
@@ -219,7 +219,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableSocketsFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.Sockets.Count, Resources.Sockets, queryRequestFilter);
+            CreateShouldReturnBindableSocketsFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, equippableItem.Sockets.Count, Resources.Sockets, queryRequestFilter);
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.SocketFilters.Sockets;
             var equippableItem = new EquippableItem(ItemRarity.Rare);
 
-            var result = this.AdditionalFilterViewModelsFactory.Create(equippableItem, new SearchQueryRequest());
+            var result = AdditionalFilterViewModelsFactory.Create(equippableItem, new SearchQueryRequest());
 
             Assert.That(result, Has.None.Matches<FilterViewModelBase>(x => x.Text == Resources.Sockets));
         }
@@ -257,7 +257,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, equippableItem, 0, Resources.Links);
+            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, equippableItem, 0, Resources.Links);
         }
 
         [Test]
@@ -300,7 +300,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, equippableItem, 3, Resources.Links);
+            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, equippableItem, 3, Resources.Links);
         }
 
         [Test]
@@ -332,7 +332,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, 0, Resources.Links, queryRequestFilter);
+            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, equippableItem, 0, Resources.Links, queryRequestFilter);
         }
 
         [Test]
@@ -342,7 +342,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.SocketFilters.Links;
             var equippableItem = new EquippableItem(ItemRarity.Rare);
 
-            var result = this.AdditionalFilterViewModelsFactory.Create(equippableItem, new SearchQueryRequest());
+            var result = AdditionalFilterViewModelsFactory.Create(equippableItem, new SearchQueryRequest());
 
             Assert.That(result, Has.None.Matches<FilterViewModelBase>(x => x.Text == Resources.Links));
         }
@@ -357,7 +357,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 IsIdentified = value
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, null, Resources.Identified);
+            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, null, Resources.Identified);
         }
 
         [Test]
@@ -374,7 +374,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Option = false
             };
 
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, equippableItem, Resources.Identified, queryRequestFilter);
+            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, equippableItem, Resources.Identified, queryRequestFilter);
         }
 
         [TestCase(true)]
@@ -387,7 +387,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 IsCorrupted = value
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, null, Resources.Corrupted);
+            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, equippableItem, null, Resources.Corrupted);
         }
 
         [Test]
@@ -404,7 +404,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Option = false
             };
 
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, equippableItem, Resources.Corrupted, queryRequestFilter);
+            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, equippableItem, Resources.Corrupted, queryRequestFilter);
         }
     }
 }

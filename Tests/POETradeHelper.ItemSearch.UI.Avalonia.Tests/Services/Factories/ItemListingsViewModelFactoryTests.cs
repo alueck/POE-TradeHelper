@@ -16,7 +16,7 @@ using POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 
-namespace POETradeHelper.ItemSearch.Tests.Services.Factories
+namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class ItemListingsViewModelFactoryTests
     {
@@ -26,8 +26,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
         [SetUp]
         public void Setup()
         {
-            this.listingViewModelFactoryMock = new Mock<IListingViewModelFactory>();
-            this.itemListingsViewModelFactory = new ItemListingsViewModelFactory(this.listingViewModelFactoryMock.Object);
+            listingViewModelFactoryMock = new Mock<IListingViewModelFactory>();
+            itemListingsViewModelFactory = new ItemListingsViewModelFactory(listingViewModelFactoryMock.Object);
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Uri = new Uri("http://www.google.de")
             };
 
-            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(new EquippableItem(ItemRarity.Rare), itemListingsQueryResult);
+            ItemListingsViewModel result = await itemListingsViewModelFactory.CreateAsync(new EquippableItem(ItemRarity.Rare), itemListingsQueryResult);
 
             result.ListingsUri.Should().Be(itemListingsQueryResult.Uri);
         }
@@ -61,11 +61,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             var cancellationToken = cancellationTokenSource.Token;
 
             // act
-            await this.itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult, cancellationToken);
+            await itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult, cancellationToken);
 
             // assert
-            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[0], item, cancellationToken));
-            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[1], item, cancellationToken));
+            listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[0], item, cancellationToken));
+            listingViewModelFactoryMock.Verify(x => x.CreateAsync(itemListingsQueryResult.Result[1], item, cancellationToken));
         }
 
         [Test]
@@ -85,15 +85,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             var cancellationTokenSource = new CancellationTokenSource();
             var cancellationToken = cancellationTokenSource.Token;
 
-            this.listingViewModelFactoryMock.Setup(x => x.CreateAsync(itemListingsQueryResult.Result[0], It.IsAny<Item>(), It.IsAny<CancellationToken>()))
+            listingViewModelFactoryMock.Setup(x => x.CreateAsync(itemListingsQueryResult.Result[0], It.IsAny<Item>(), It.IsAny<CancellationToken>()))
                 .Callback(() => cancellationTokenSource.Cancel());
 
             // act
-            Func<Task> action = () => this.itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult, cancellationToken);
+            Func<Task> action = () => itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult, cancellationToken);
 
             // assert
             await action.Should().ThrowAsync<OperationCanceledException>();
-            this.listingViewModelFactoryMock.Verify(x => x.CreateAsync(It.IsAny<ListingResult>(), It.IsAny<Item>(), It.IsAny<CancellationToken>()), Times.Once);
+            listingViewModelFactoryMock.Verify(x => x.CreateAsync(It.IsAny<ListingResult>(), It.IsAny<Item>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -113,13 +113,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 new() { AccountName = "Test" },
                 new() { AccountName = "Test1" },
             };
-            this.listingViewModelFactoryMock
+            listingViewModelFactoryMock
                 .SetupSequence(x => x.CreateAsync(It.IsAny<ListingResult>(), It.IsAny<Item>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expected[0])
                 .ReturnsAsync(expected[1]);
 
             // act
-            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(new EquippableItem(ItemRarity.Rare), itemListingsQueryResult);
+            ItemListingsViewModel result = await itemListingsViewModelFactory.CreateAsync(new EquippableItem(ItemRarity.Rare), itemListingsQueryResult);
 
             // assert
             result.Listings.Should().BeEquivalentTo(expected);
@@ -133,7 +133,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 Uri = new Uri("https://result.link"),
             };
 
-            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(exchangeQueryResult);
+            ItemListingsViewModel result = await itemListingsViewModelFactory.CreateAsync(exchangeQueryResult);
 
             result.ListingsUri.Should().Be(exchangeQueryResult.Uri);
         }
@@ -152,12 +152,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             CancellationTokenSource cts = new();
 
             // act
-            await this.itemListingsViewModelFactory.CreateAsync(exchangeQueryResult, cts.Token);
+            await itemListingsViewModelFactory.CreateAsync(exchangeQueryResult, cts.Token);
 
             // assert
-            this.listingViewModelFactoryMock
+            listingViewModelFactoryMock
                 .Verify(x => x.CreateAsync(exchangeListing1, cts.Token));
-            this.listingViewModelFactoryMock
+            listingViewModelFactoryMock
                 .Verify(x => x.CreateAsync(exchangeListing2, cts.Token));
         }
 
@@ -174,16 +174,16 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
             });
             CancellationTokenSource cts = new();
 
-            this.listingViewModelFactoryMock
+            listingViewModelFactoryMock
                 .Setup(x => x.CreateAsync(exchangeQueryResult.Result.Values.First().Listing, It.IsAny<CancellationToken>()))
                 .Callback(() => cts.Cancel());
 
             // act
-            Func<Task> action = () => this.itemListingsViewModelFactory.CreateAsync(exchangeQueryResult, cts.Token);
+            Func<Task> action = () => itemListingsViewModelFactory.CreateAsync(exchangeQueryResult, cts.Token);
 
             // assert
             await action.Should().ThrowAsync<OperationCanceledException>();
-            this.listingViewModelFactoryMock
+            listingViewModelFactoryMock
                 .Verify(x => x.CreateAsync(It.IsAny<ExchangeListing>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -204,13 +204,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Factories
                 new() { AccountName = "a" },
                 new() { AccountName = "b" },
             };
-            this.listingViewModelFactoryMock
+            listingViewModelFactoryMock
                 .SetupSequence(x => x.CreateAsync(It.IsAny<ExchangeListing>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expected[0])
                 .ReturnsAsync(expected[1]);
 
             // act
-            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(exchangeQueryResult);
+            ItemListingsViewModel result = await itemListingsViewModelFactory.CreateAsync(exchangeQueryResult);
 
             // assert
             result.Listings.Should().BeEquivalentTo(expected);

@@ -21,7 +21,7 @@ using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 
 using ReactiveUI;
 
-namespace POETradeHelper.ItemSearch.Tests.ViewModels
+namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 {
     public class ItemSearchOverlayViewModelTests
     {
@@ -33,20 +33,20 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         [SetUp]
         public void Setup()
         {
-            this.mediatorMock = new Mock<IMediator>();
-            this.itemResultsViewModelFactoryMock = new Mock<Func<IScreen, IItemResultsViewModel>>();
-            this.itemResultsViewModelFactoryMock
+            mediatorMock = new Mock<IMediator>();
+            itemResultsViewModelFactoryMock = new Mock<Func<IScreen, IItemResultsViewModel>>();
+            itemResultsViewModelFactoryMock
                 .Setup(x => x.Invoke(It.IsAny<IScreen>()))
                 .Returns(Mock.Of<IItemResultsViewModel>());
-            this.exchangeResultsViewModelFactoryMock = new Mock<Func<IScreen, IExchangeResultsViewModel>>();
-            this.exchangeResultsViewModelFactoryMock
+            exchangeResultsViewModelFactoryMock = new Mock<Func<IScreen, IExchangeResultsViewModel>>();
+            exchangeResultsViewModelFactoryMock
                 .Setup(x => x.Invoke(It.IsAny<IScreen>()))
                 .Returns(Mock.Of<IExchangeResultsViewModel>());
 
-            this.itemSearchOverlayViewModel = new ItemSearchResultOverlayViewModel(
-                this.mediatorMock.Object,
-                this.itemResultsViewModelFactoryMock.Object,
-                this.exchangeResultsViewModelFactoryMock.Object);
+            itemSearchOverlayViewModel = new ItemSearchResultOverlayViewModel(
+                mediatorMock.Object,
+                itemResultsViewModelFactoryMock.Object,
+                exchangeResultsViewModelFactoryMock.Object);
         }
 
         [Test]
@@ -54,38 +54,38 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         {
             CancellationTokenSource cts = new();
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(cts.Token);
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(cts.Token);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), cts.Token));
+            mediatorMock.Verify(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), cts.Token));
         }
 
         [Test]
         public async Task SetListingForItemUnderCursorAsyncShouldSetItem()
         {
             EquippableItem item = new(ItemRarity.Magic);
-            this.mediatorMock
+            mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            this.itemSearchOverlayViewModel.Item.Should().Be(item);
+            itemSearchOverlayViewModel.Item.Should().Be(item);
         }
 
         [TestCaseSource(nameof(GetExchangeResultsViewModelItems))]
         public async Task SetListingForItemUnderCursorAsyncShouldNavigateToExchangeResultsView(Item item)
         {
-            this.mediatorMock
+            mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
             IExchangeResultsViewModel expectedViewModel = Mock.Of<IExchangeResultsViewModel>();
-            this.exchangeResultsViewModelFactoryMock
-                .Setup(x => x.Invoke(this.itemSearchOverlayViewModel))
+            exchangeResultsViewModelFactoryMock
+                .Setup(x => x.Invoke(itemSearchOverlayViewModel))
                 .Returns(expectedViewModel);
 
-            using var observer = this.itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
+            using var observer = itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             await observer.Should().PushMatchAsync(x => x == expectedViewModel);
         }
@@ -93,17 +93,17 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         [TestCaseSource(nameof(GetExchangeResultsViewModelItems))]
         public async Task SetListingForItemUnderCursorAsyncShouldInitializeExchangeResultsView(Item item)
         {
-            this.mediatorMock
+            mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
             Mock<IExchangeResultsViewModel> exchangeResultsViewModelMock = new();
-            this.exchangeResultsViewModelFactoryMock
-                .Setup(x => x.Invoke(this.itemSearchOverlayViewModel))
+            exchangeResultsViewModelFactoryMock
+                .Setup(x => x.Invoke(itemSearchOverlayViewModel))
                 .Returns(exchangeResultsViewModelMock.Object);
 
             CancellationToken token = new();
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(token);
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(token);
 
             exchangeResultsViewModelMock
                 .Verify(x => x.InitializeAsync(item, token));
@@ -112,35 +112,35 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         [TestCaseSource(nameof(GetExchangeResultsViewModelItems))]
         public async Task SetListingForItemUnderCursorAsyncShouldUseExistingExchangeResultsViewModelFromNavigationStack(Item item)
         {
-            this.mediatorMock
+            mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
             IExchangeResultsViewModel expectedViewModel = Mock.Of<IExchangeResultsViewModel>();
-            this.itemSearchOverlayViewModel.Router.NavigationStack.Add(expectedViewModel);
+            itemSearchOverlayViewModel.Router.NavigationStack.Add(expectedViewModel);
 
-            using var observer = this.itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
+            using var observer = itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             observer.Should().NotPush();
-            this.exchangeResultsViewModelFactoryMock
+            exchangeResultsViewModelFactoryMock
                 .Verify(x => x.Invoke(It.IsAny<IScreen>()), Times.Never);
         }
 
         [TestCaseSource(nameof(GetItemResultsViewModelItems))]
         public async Task SetListingForItemUnderCursorAsyncShouldNavigateToItemResultsView(Item item)
         {
-            this.mediatorMock
+            mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
             IItemResultsViewModel expectedViewModel = Mock.Of<IItemResultsViewModel>();
-            this.itemResultsViewModelFactoryMock
-                .Setup(x => x.Invoke(this.itemSearchOverlayViewModel))
+            itemResultsViewModelFactoryMock
+                .Setup(x => x.Invoke(itemSearchOverlayViewModel))
                 .Returns(expectedViewModel);
 
-            using var observer = this.itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
+            using var observer = itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             await observer.Should().PushMatchAsync(x => x == expectedViewModel);
         }
@@ -148,17 +148,17 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         [TestCaseSource(nameof(GetItemResultsViewModelItems))]
         public async Task SetListingForItemUnderCursorAsyncShouldInitializeItemResultsView(Item item)
         {
-            this.mediatorMock
+            mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
             Mock<IItemResultsViewModel> itemResultsViewModelMock = new();
-            this.itemResultsViewModelFactoryMock
-                .Setup(x => x.Invoke(this.itemSearchOverlayViewModel))
+            itemResultsViewModelFactoryMock
+                .Setup(x => x.Invoke(itemSearchOverlayViewModel))
                 .Returns(itemResultsViewModelMock.Object);
 
             CancellationToken token = new();
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(token);
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(token);
 
             itemResultsViewModelMock
                 .Verify(x => x.InitializeAsync(item, token));
@@ -167,18 +167,18 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         [TestCaseSource(nameof(GetItemResultsViewModelItems))]
         public async Task SetListingForItemUnderCursorAsyncShouldUseExistingItemsResultsViewModelFromNavigationStack(Item item)
         {
-            this.mediatorMock
+            mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(item);
             IItemResultsViewModel expectedViewModel = Mock.Of<IItemResultsViewModel>();
-            this.itemSearchOverlayViewModel.Router.NavigationStack.Add(expectedViewModel);
+            itemSearchOverlayViewModel.Router.NavigationStack.Add(expectedViewModel);
 
-            using var observer = this.itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
+            using var observer = itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             observer.Should().NotPush();
-            this.itemResultsViewModelFactoryMock
+            itemResultsViewModelFactoryMock
                 .Verify(x => x.Invoke(It.IsAny<IScreen>()), Times.Never);
         }
 
@@ -187,15 +187,15 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         {
             Exception exception = new("Exception text");
 
-            this.mediatorMock
+            mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .Throws(exception);
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            this.itemSearchOverlayViewModel.Message.Should().NotBeNull();
-            this.itemSearchOverlayViewModel.Message.Type.Should().Be(MessageType.Error);
-            this.itemSearchOverlayViewModel.Message.Text.Should().NotBeNullOrEmpty();
+            itemSearchOverlayViewModel.Message.Should().NotBeNull();
+            itemSearchOverlayViewModel.Message.Type.Should().Be(MessageType.Error);
+            itemSearchOverlayViewModel.Message.Text.Should().NotBeNullOrEmpty();
         }
 
         [Test]
@@ -203,28 +203,28 @@ namespace POETradeHelper.ItemSearch.Tests.ViewModels
         {
             var exception = new InvalidItemStringException("invalid item string");
 
-            this.mediatorMock
+            mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .Throws(exception);
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            this.itemSearchOverlayViewModel.Message.Should().BeNull();
+            itemSearchOverlayViewModel.Message.Should().BeNull();
         }
 
         [Test]
         public async Task SetListingForItemUnderCursorAsyncShouldSetMessageToNull()
         {
-            this.mediatorMock
+            mediatorMock
                 .SetupSequence(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromException<Item>(new Exception()))
                 .ReturnsAsync(new CurrencyItem());
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
-            this.itemSearchOverlayViewModel.Message.Should().NotBeNull();
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            itemSearchOverlayViewModel.Message.Should().NotBeNull();
 
-            await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
+            await itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            this.itemSearchOverlayViewModel.Message.Should().BeNull();
+            itemSearchOverlayViewModel.Message.Should().BeNull();
         }
 
         private static IEnumerable GetExchangeResultsViewModelItems()

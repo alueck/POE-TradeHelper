@@ -4,8 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
-
-    <RootNamespace>POETradeHelper.PricePrediction.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,11 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\POETradeHelper.PricePrediction.UI.Avalonia\POETradeHelper.PricePrediction.UI.Avalonia.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Queries\Handlers" />
-    <Folder Include="Services" />
   </ItemGroup>
 
 </Project>
