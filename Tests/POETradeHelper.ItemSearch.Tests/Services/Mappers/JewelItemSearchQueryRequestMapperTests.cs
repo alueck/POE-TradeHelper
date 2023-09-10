@@ -13,7 +13,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public JewelItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.jewelItemSearchQueryRequestMapper = new JewelItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
+            this.ItemSearchQueryRequestMapper = this.jewelItemSearchQueryRequestMapper = new JewelItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [Test]

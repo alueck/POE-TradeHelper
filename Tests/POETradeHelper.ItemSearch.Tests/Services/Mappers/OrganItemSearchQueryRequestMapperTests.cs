@@ -14,7 +14,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public OrganItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.organItemSearchQueryRequestMapper = new OrganItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
+            this.ItemSearchQueryRequestMapper = this.organItemSearchQueryRequestMapper = new OrganItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [Test]

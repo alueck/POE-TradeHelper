@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 
 using NUnit.Framework;
 
@@ -15,14 +15,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         private readonly ItemParserAggregator itemParserAggregator;
         private readonly ItemStringBuilder itemStringBuilder;
 
-        private readonly Mock<IItemParser> gemItemParserMock;
-        private readonly Mock<IItemParser> currencyItemParserMock;
+        private readonly IItemParser gemItemParserMock;
+        private readonly IItemParser currencyItemParserMock;
 
         public ItemParserAggregatorTests()
         {
-            this.gemItemParserMock = new Mock<IItemParser>();
-            this.currencyItemParserMock = new Mock<IItemParser>();
-            this.itemParserAggregator = new ItemParserAggregator(new[] { this.gemItemParserMock.Object, this.currencyItemParserMock.Object });
+            this.gemItemParserMock = Substitute.For<IItemParser>();
+            this.currencyItemParserMock = Substitute.For<IItemParser>();
+            this.itemParserAggregator = new ItemParserAggregator(new[] { this.gemItemParserMock, this.currencyItemParserMock });
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -41,21 +41,25 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             var itemString = this.itemStringBuilder.Build();
             var expectedItemStringLines = this.itemStringBuilder.BuildLines();
 
-            this.gemItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
+            this.gemItemParserMock.CanParse(Arg.Any<string[]>())
                 .Returns(true);
 
             this.itemParserAggregator.Parse(itemString);
 
-            this.gemItemParserMock.Verify(x => x.CanParse(expectedItemStringLines));
-            this.currencyItemParserMock.Verify(x => x.CanParse(expectedItemStringLines));
+            this.gemItemParserMock
+                .Received()
+                .CanParse(Arg.Is<string[]>(s => s.SequenceEqual(expectedItemStringLines)));
+            this.currencyItemParserMock
+                .Received()
+                .CanParse(Arg.Is<string[]>(s => s.SequenceEqual(expectedItemStringLines)));
         }
 
         [Test]
         public void ParseShouldThrowExceptionIfMoreThanOneMatchingParserIsFound()
         {
-            this.gemItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
+            this.gemItemParserMock.CanParse(Arg.Any<string[]>())
                 .Returns(true);
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
+            this.currencyItemParserMock.CanParse(Arg.Any<string[]>())
                 .Returns(true);
 
             TestDelegate testDelegate = () => this.itemParserAggregator.Parse("");
@@ -77,12 +81,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             var itemString = this.itemStringBuilder.WithRarity("Currency").Build();
             var expectedItemStringLines = this.itemStringBuilder.BuildLines();
 
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
+            this.currencyItemParserMock.CanParse(Arg.Any<string[]>())
                 .Returns(true);
 
             this.itemParserAggregator.Parse(itemString);
 
-            this.currencyItemParserMock.Verify(x => x.Parse(expectedItemStringLines));
+            this.currencyItemParserMock
+                .Received()
+                .Parse(Arg.Is<string[]>(s => s.SequenceEqual(expectedItemStringLines)));
         }
 
         [Test]
@@ -90,9 +96,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             var item = new CurrencyItem { Name = "Scroll of Wisdom" };
 
-            this.currencyItemParserMock.Setup(x => x.CanParse(It.IsAny<string[]>()))
+            this.currencyItemParserMock.CanParse(Arg.Any<string[]>())
                 .Returns(true);
-            this.currencyItemParserMock.Setup(x => x.Parse(It.IsAny<string[]>()))
+            this.currencyItemParserMock.Parse(Arg.Any<string[]>())
                 .Returns(item);
 
             Item result = this.itemParserAggregator.Parse("");

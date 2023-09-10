@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -22,27 +21,27 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class ItemDataServiceTests
     {
-        private Mock<IPoeTradeApiJsonSerializer> poeTradeApiJsonSerializerMock;
+        private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
         private ItemDataService itemDataService;
-        private Mock<IHttpClientWrapper> httpClientWrapperMock;
+        private IHttpClientWrapper httpClientWrapperMock;
 
         [SetUp]
         public void Setup()
         {
-            this.httpClientWrapperMock = new Mock<IHttpClientWrapper>();
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
+            this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     Content = new StringContent("")
                 });
 
-            var httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
-            httpClientFactoryWrapperMock.Setup(x => x.CreateClient(Constants.HttpClientNames.PoeTradeApiDataClient))
-                .Returns(this.httpClientWrapperMock.Object);
+            var httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
+            httpClientFactoryWrapperMock.CreateClient(Constants.HttpClientNames.PoeTradeApiDataClient)
+                .Returns(this.httpClientWrapperMock);
 
-            this.poeTradeApiJsonSerializerMock = new Mock<IPoeTradeApiJsonSerializer>();
+            this.poeTradeApiJsonSerializerMock = Substitute.For<IPoeTradeApiJsonSerializer>();
 
-            this.itemDataService = new ItemDataService(httpClientFactoryWrapperMock.Object, this.poeTradeApiJsonSerializerMock.Object);
+            this.itemDataService = new ItemDataService(httpClientFactoryWrapperMock, this.poeTradeApiJsonSerializerMock);
         }
 
         [Test]
@@ -50,7 +49,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             await this.itemDataService.OnInitAsync();
 
-            this.httpClientWrapperMock.Verify(x => x.GetAsync(Resources.PoeTradeApiItemDataEndpoint, It.IsAny<CancellationToken>()));
+            await this.httpClientWrapperMock
+                .Received()
+                .GetAsync(Resources.PoeTradeApiItemDataEndpoint, Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -58,22 +59,24 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             const string content = "serialized content";
 
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     Content = new StringContent(content)
                 });
 
             await this.itemDataService.OnInitAsync();
 
-            this.poeTradeApiJsonSerializerMock.Verify(x => x.Deserialize<QueryResult<Data<ItemData>>>(content));
+            this.poeTradeApiJsonSerializerMock
+                .Received()
+                .Deserialize<QueryResult<Data<ItemData>>>(content);
         }
 
         [Test]
         public void OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
         {
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.BadRequest
                 });
@@ -89,7 +92,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         public async Task GetTypeShouldReturnCorrectTypeForItemName(string name)
         {
             const string expectedType = "Leather Belt";
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                .Returns(new QueryResult<Data<ItemData>>
                {
                    Result = new List<Data<ItemData>>
@@ -117,7 +120,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         public async Task GetTypeShouldReturnCorrectTypeForMap()
         {
             const string expectedType = "Primordial Pool Map";
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                .Returns(new QueryResult<Data<ItemData>>
                {
                    Result = new List<Data<ItemData>>
@@ -151,7 +154,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetTypeShouldReturnEmptyStringIfNoMatchFound()
         {
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                .Returns(new QueryResult<Data<ItemData>>
                {
                    Result = new List<Data<ItemData>>
@@ -181,7 +184,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             const string expectedCategory = "Weapons";
             const string itemType = "Elegant Sword";
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                .Returns(new QueryResult<Data<ItemData>>
                {
                    Result = new List<Data<ItemData>>
@@ -216,7 +219,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetCategoryShouldReturnNullIfNoMatchFound()
         {
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<ItemData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                .Returns(new QueryResult<Data<ItemData>>
                {
                    Result = new List<Data<ItemData>>

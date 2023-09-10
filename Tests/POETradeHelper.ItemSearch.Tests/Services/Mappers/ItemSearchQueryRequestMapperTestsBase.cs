@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -17,12 +17,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
     {
         protected IItemSearchQueryRequestMapper ItemSearchQueryRequestMapper { get; set; } = null!;
 
-        public Mock<IOptionsMonitor<ItemSearchOptions>> ItemSearchOptionsMock { get; }
+        public IOptionsMonitor<ItemSearchOptions> ItemSearchOptionsMock { get; }
 
         protected ItemSearchQueryRequestMapperTestsBase()
         {
-            this.ItemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
-            this.ItemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.ItemSearchOptionsMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
+            this.ItemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     League = new League()
@@ -34,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             const string expectedLeague = "TestLeague";
             var item = Items.First(item => item.GetType() == typeof(TItemType));
-            this.ItemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.ItemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     League = new League

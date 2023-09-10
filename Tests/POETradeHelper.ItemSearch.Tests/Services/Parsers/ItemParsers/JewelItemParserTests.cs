@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 
 using NUnit.Framework;
 
@@ -12,15 +12,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class JewelItemParserTests : ItemParserTestsBase
     {
-        private readonly Mock<IItemTypeParser> itemTypeParserMock;
-        private readonly Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
+        private readonly IItemTypeParser itemTypeParserMock;
+        private readonly IItemStatsParser<ItemWithStats> itemStatsParserMock;
         private readonly ItemStringBuilder itemStringBuilder;
 
         public JewelItemParserTests()
         {
-            this.itemTypeParserMock = new Mock<IItemTypeParser>();
-            this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
-            this.ItemParser = new JewelItemParser(this.itemTypeParserMock.Object, this.itemStatsParserMock.Object);
+            this.itemTypeParserMock = Substitute.For<IItemTypeParser>();
+            this.itemStatsParserMock = Substitute.For<IItemStatsParser<ItemWithStats>>();
+            this.ItemParser = new JewelItemParser(this.itemTypeParserMock, this.itemStatsParserMock);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -133,7 +133,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
                                 .WithName("Cobalt Jewel")
                                 .BuildLines();
 
-            this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
+            this.itemTypeParserMock.ParseType(itemStringLines, itemRarity, isIdentified)
                 .Returns(expected);
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
@@ -189,7 +189,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             this.ItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false));
+            this.itemStatsParserMock
+                .Received()
+                .Parse(itemStringLines, false);
         }
 
         [Test]
@@ -201,7 +203,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             this.ItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false), Times.Never);
+            this.itemStatsParserMock
+                .DidNotReceive()
+                .Parse(itemStringLines, false);
         }
 
         protected override string[] GetValidItemStringLines()

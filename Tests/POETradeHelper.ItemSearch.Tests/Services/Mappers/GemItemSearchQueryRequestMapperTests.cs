@@ -13,7 +13,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public GemItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.gemItemSearchQueryRequestMapper = new GemItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
+            this.ItemSearchQueryRequestMapper = this.gemItemSearchQueryRequestMapper = new GemItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [TestCase("Vaal Flameblast")]

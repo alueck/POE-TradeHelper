@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -19,27 +19,27 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class StaticDataServiceTests
     {
-        private Mock<IPoeTradeApiJsonSerializer> poeTradeApiJsonSerializerMock;
+        private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
         private StaticDataService staticDataService;
-        private Mock<IHttpClientWrapper> httpClientWrapperMock;
+        private IHttpClientWrapper httpClientWrapperMock;
 
         [SetUp]
         public void Setup()
         {
-            this.httpClientWrapperMock = new Mock<IHttpClientWrapper>();
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
+            this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     Content = new StringContent("")
                 });
 
-            var httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
-            httpClientFactoryWrapperMock.Setup(x => x.CreateClient(Constants.HttpClientNames.PoeTradeApiDataClient))
-                .Returns(this.httpClientWrapperMock.Object);
+            var httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
+            httpClientFactoryWrapperMock.CreateClient(Constants.HttpClientNames.PoeTradeApiDataClient)
+                .Returns(this.httpClientWrapperMock);
 
-            this.poeTradeApiJsonSerializerMock = new Mock<IPoeTradeApiJsonSerializer>();
+            this.poeTradeApiJsonSerializerMock = Substitute.For<IPoeTradeApiJsonSerializer>();
 
-            this.staticDataService = new StaticDataService(httpClientFactoryWrapperMock.Object, this.poeTradeApiJsonSerializerMock.Object);
+            this.staticDataService = new StaticDataService(httpClientFactoryWrapperMock, this.poeTradeApiJsonSerializerMock);
         }
 
         [Test]
@@ -47,7 +47,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             await this.staticDataService.OnInitAsync();
 
-            this.httpClientWrapperMock.Verify(x => x.GetAsync(Resources.PoeTradeApiStaticDataEndpoint, It.IsAny<CancellationToken>()));
+            await this.httpClientWrapperMock
+                .Received()
+                .GetAsync(Resources.PoeTradeApiStaticDataEndpoint, Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -55,22 +57,24 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             const string content = "serialized content";
 
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     Content = new StringContent(content)
                 });
 
             await this.staticDataService.OnInitAsync();
 
-            this.poeTradeApiJsonSerializerMock.Verify(x => x.Deserialize<QueryResult<Data<StaticData>>>(content));
+            this.poeTradeApiJsonSerializerMock
+                .Received()
+                .Deserialize<QueryResult<Data<StaticData>>>(content);
         }
 
         [Test]
         public void OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
         {
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.BadRequest
                 });
@@ -87,7 +91,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             const string expected = "wis";
             const string itemName = "Scroll of Wisdom";
 
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
                     Result = new List<Data<StaticData>>
@@ -125,7 +129,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             const string expected = "Scroll of Wisdom";
             const string id = "wis";
 
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
                     Result = new List<Data<StaticData>>
@@ -152,7 +156,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetTextShouldThrowKeyNotFoundExceptionIfEntryIsNotFound()
         {
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
                     Result = new List<Data<StaticData>>()
@@ -172,7 +176,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             string expected = Resources.PoeCdnUrl + entryUrl;
             const string id = "wis";
 
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
                     Result = new List<Data<StaticData>>
@@ -199,7 +203,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetImageUrlShouldThrowKeyNotFoundExceptionIfEntryIsNotFound()
         {
-            this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<QueryResult<Data<StaticData>>>(It.IsAny<string>()))
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
                     Result = new List<Data<StaticData>>()

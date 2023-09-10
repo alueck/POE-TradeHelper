@@ -12,7 +12,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public FlaskItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.flaskItemSearchQueryRequestMapper = new FlaskItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
+            this.ItemSearchQueryRequestMapper = this.flaskItemSearchQueryRequestMapper = new FlaskItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [Test]

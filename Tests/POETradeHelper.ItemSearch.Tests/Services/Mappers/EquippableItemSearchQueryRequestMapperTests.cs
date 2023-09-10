@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 
+using NSubstitute;
+
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract;
@@ -18,7 +20,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public EquippableItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.ItemSearchOptionsMock.Object);
+            this.ItemSearchQueryRequestMapper = this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [Test]
@@ -146,7 +148,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 ItemLevel = itemLevel
             };
 
-            this.ItemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.ItemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     ItemLevelThreshold = itemLevel,
@@ -170,7 +172,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 ItemLevel = itemLevel - 1
             };
 
-            this.ItemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.ItemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     ItemLevelThreshold = itemLevel,

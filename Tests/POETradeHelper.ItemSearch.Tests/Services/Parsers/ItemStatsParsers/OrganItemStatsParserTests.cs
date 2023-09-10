@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 
 using NUnit.Framework;
 
@@ -14,21 +14,21 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 {
     public class OrganItemStatsParserTests
     {
-        private readonly Mock<IStatsDataService> statsDataServiceMock;
+        private readonly IStatsDataService statsDataServiceMock;
         private readonly OrganItemStatsParser organItemStatsParser;
         private readonly ItemStringBuilder itemStringBuilder;
 
         public OrganItemStatsParserTests()
         {
-            this.statsDataServiceMock = new Mock<IStatsDataService>();
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), StatCategory.Monster.GetDisplayName()))
-                .Returns((string itemStatText, bool preferLocal, string[] _) => new StatData
+            this.statsDataServiceMock = Substitute.For<IStatsDataService>();
+            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
+                .Returns(ctx => new StatData
                 {
                     Type = StatCategory.Monster.GetDisplayName().ToLower(),
-                    Text = itemStatText
+                    Text = ctx.Arg<string>(),
                 });
 
-            this.organItemStatsParser = new OrganItemStatsParser(this.statsDataServiceMock.Object);
+            this.organItemStatsParser = new OrganItemStatsParser(this.statsDataServiceMock);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -92,7 +92,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             foreach (ItemStat stat in result.MonsterStats)
             {
-                this.statsDataServiceMock.Verify(x => x.GetStatData(stat.Text, false, StatCategory.Monster.GetDisplayName()));
+                this.statsDataServiceMock
+                .Received()
+                .GetStatData(stat.Text, false, StatCategory.Monster.GetDisplayName());
             }
         }
 
@@ -107,7 +109,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                     .WithDescription(Resources.OrganItemDescriptor)
                     .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), StatCategory.Monster.GetDisplayName()))
+            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
                 .Returns(new StatData
                 {
                     Id = expected,
@@ -134,7 +136,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                     .WithDescription(Resources.OrganItemDescriptor)
                     .BuildLines();
 
-            this.statsDataServiceMock.Setup(x => x.GetStatData(It.IsAny<string>(), It.IsAny<bool>(), StatCategory.Monster.GetDisplayName()))
+            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
                 .Returns(new StatData
                 {
                     Text = expected,

@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 
 using NUnit.Framework;
 
@@ -12,14 +12,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
     public class ItemTypeParserTests
     {
         private readonly ItemStringBuilder itemStringBuilder;
-        private readonly Mock<IItemDataService> itemDataServiceMock;
+        private readonly IItemDataService itemDataServiceMock;
         private readonly ItemTypeParser itemTypeParser;
 
         public ItemTypeParserTests()
         {
             this.itemStringBuilder = new ItemStringBuilder();
-            this.itemDataServiceMock = new Mock<IItemDataService>();
-            this.itemTypeParser = new ItemTypeParser(this.itemDataServiceMock.Object);
+            this.itemDataServiceMock = Substitute.For<IItemDataService>();
+            this.itemTypeParser = new ItemTypeParser(this.itemDataServiceMock);
         }
 
         [TestCase(ItemRarity.Currency)]
@@ -44,7 +44,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.itemTypeParser.ParseType(itemStringLines, ItemRarity.Magic, true);
 
-            this.itemDataServiceMock.Verify(x => x.GetType(Name));
+            this.itemDataServiceMock
+                .Received()
+                .GetType(Name);
         }
 
         [TestCase(ItemRarity.Normal)]
@@ -59,7 +61,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             this.itemTypeParser.ParseType(itemStringLines, itemRarity, false);
 
-            this.itemDataServiceMock.Verify(x => x.GetType(Type));
+            this.itemDataServiceMock
+                .Received()
+                .GetType(Type);
         }
 
         [TestCase(ItemRarity.Rare)]
@@ -75,7 +79,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, true);
 
             Assert.That(result, Is.EqualTo(expected));
-            this.itemDataServiceMock.Verify(x => x.GetType(It.IsAny<string>()), Times.Never);
+            this.itemDataServiceMock
+                .DidNotReceive()
+                .GetType(Arg.Any<string>());
         }
 
         [TestCase(ItemRarity.Normal)]
@@ -89,7 +95,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .WithType("Item type")
                 .BuildLines();
 
-            this.itemDataServiceMock.Setup(x => x.GetType(It.IsAny<string>()))
+            this.itemDataServiceMock.GetType(Arg.Any<string>())
                 .Returns(expected);
 
             string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, false);

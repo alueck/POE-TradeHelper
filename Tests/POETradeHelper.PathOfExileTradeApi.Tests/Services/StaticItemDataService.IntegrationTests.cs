@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -20,24 +20,24 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
     public class StaticItemDataServiceIntegrationTests
     {
         private StaticDataService staticDataService;
-        private Mock<IHttpClientWrapper> httpClientWrapperMock;
+        private IHttpClientWrapper httpClientWrapperMock;
 
         [SetUp]
         public void Setup()
         {
-            this.httpClientWrapperMock = new Mock<IHttpClientWrapper>();
-            var httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
-            httpClientFactoryWrapperMock.Setup(x => x.CreateClient(Constants.HttpClientNames.PoeTradeApiDataClient))
-                .Returns(this.httpClientWrapperMock.Object);
+            this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
+            var httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
+            httpClientFactoryWrapperMock.CreateClient(Constants.HttpClientNames.PoeTradeApiDataClient)
+                .Returns(this.httpClientWrapperMock);
 
-            this.staticDataService = new StaticDataService(httpClientFactoryWrapperMock.Object, new PoeTradeApiJsonSerializer(new JsonSerializerWrapper()));
+            this.staticDataService = new StaticDataService(httpClientFactoryWrapperMock, new PoeTradeApiJsonSerializer(new JsonSerializerWrapper()));
         }
 
         [Test]
         public async Task OnInitShouldNotCauseAnyExceptions()
         {
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     Content = new StringContent(Resources.StaticDataJson)
                 });

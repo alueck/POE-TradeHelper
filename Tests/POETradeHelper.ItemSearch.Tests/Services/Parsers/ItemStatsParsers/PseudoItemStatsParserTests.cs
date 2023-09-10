@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -14,13 +14,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 {
     public class PseudoItemStatsParserTests
     {
-        private readonly Mock<IPseudoStatDataMappingService> pseudoStatsDataMappingServiceMock;
+        private readonly IPseudoStatDataMappingService pseudoStatsDataMappingServiceMock;
         private readonly PseudoItemStatsParser pseudoItemStatsParser;
 
         public PseudoItemStatsParserTests()
         {
-            this.pseudoStatsDataMappingServiceMock = new Mock<IPseudoStatDataMappingService>();
-            this.pseudoItemStatsParser = new PseudoItemStatsParser(this.pseudoStatsDataMappingServiceMock.Object);
+            this.pseudoStatsDataMappingServiceMock = Substitute.For<IPseudoStatDataMappingService>();
+            this.pseudoItemStatsParser = new PseudoItemStatsParser(this.pseudoStatsDataMappingServiceMock);
         }
 
         [Test]
@@ -34,8 +34,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             this.pseudoItemStatsParser.Parse(itemStats);
 
-            this.pseudoStatsDataMappingServiceMock.Verify(x => x.GetPseudoStatData(itemStats[0].Id));
-            this.pseudoStatsDataMappingServiceMock.Verify(x => x.GetPseudoStatData(itemStats[1].Id));
+            this.pseudoStatsDataMappingServiceMock
+                .Received()
+                .GetPseudoStatData(itemStats[0].Id);
+            this.pseudoStatsDataMappingServiceMock
+                .Received()
+                .GetPseudoStatData(itemStats[1].Id);
         }
 
         [TestCase(2)]
@@ -50,7 +54,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             }
 
             var pseudoStatData = new StatData { Id = "test stat data" };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.IsAny<string>()))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Any<string>())
                 .Returns(new[] { pseudoStatData });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats).ToList();
@@ -64,7 +68,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             IList<ItemStat> itemStats = new List<ItemStat> { new ItemStat(StatCategory.Explicit) };
 
             var pseudoStatData = new StatData { Id = "test stat data" };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.IsAny<string>()))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Any<string>())
                 .Returns(new[] { pseudoStatData });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -82,7 +86,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             };
 
             var pseudoStatData = new StatData { Id = "test stat data" };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.IsAny<string>()))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Any<string>())
                 .Returns(new[] { pseudoStatData });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -104,7 +108,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             };
 
             var pseudoStatData = new StatData { Id = expected };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.IsAny<string>()))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Any<string>())
                 .Returns(new[] { pseudoStatData });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -124,7 +128,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             };
 
             var pseudoStatData = new StatData { Id = "test stat data", Text = expected };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.IsAny<string>()))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Any<string>())
                 .Returns(new[] { pseudoStatData });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -144,10 +148,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             };
 
             var pseudoStatData = new StatData { Id = "test stat data" };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => !string.IsNullOrEmpty(s))))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => !string.IsNullOrEmpty(s)))
                 .Returns(new[] { pseudoStatData });
 
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => string.IsNullOrEmpty(s))))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => string.IsNullOrEmpty(s)))
                 .Returns(new[] { new StatData { Id = "other stat data " } });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -166,7 +170,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             };
 
             var pseudoStatData = new StatData { Id = "test stat data" };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.IsAny<string>()))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Any<string>())
                 .Returns(new[] { pseudoStatData });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -188,7 +192,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             };
 
             var pseudoStatData = new StatData { Id = expected };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.IsAny<string>()))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Any<string>())
                 .Returns(new[] { pseudoStatData });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -208,7 +212,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             };
 
             var pseudoStatData = new StatData { Id = "test stat data", Text = expected };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.IsAny<string>()))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Any<string>())
                 .Returns(new[] { pseudoStatData });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -228,10 +232,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             };
 
             var pseudoStatData = new StatData { Id = "test stat data" };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => !string.IsNullOrEmpty(s))))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => !string.IsNullOrEmpty(s)))
                 .Returns(new[] { pseudoStatData });
 
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => string.IsNullOrEmpty(s))))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => string.IsNullOrEmpty(s)))
                 .Returns(new[] { new StatData { Id = "other stat data " } });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -252,10 +256,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             };
 
             var pseudoStatData = new StatData { Id = "test stat data" };
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => !string.IsNullOrEmpty(s))))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => !string.IsNullOrEmpty(s)))
                 .Returns(new[] { pseudoStatData });
 
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => string.IsNullOrEmpty(s))))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => string.IsNullOrEmpty(s)))
                 .Returns(new[] { new StatData { Id = "other stat data " } });
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
@@ -305,18 +309,18 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             var totalElementalResistanceStatData = new StatData { Id = PseudoStatId.TotalElementalResistance };
             var totalResistanceStatData = new StatData { Id = PseudoStatId.TotalResistance };
 
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => s == StatId.FireAndColdResistance)))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => s == StatId.FireAndColdResistance))
                 .Returns(new[] { totalFireResistanceStatData, totalColdResistanceStatData, totalElementalResistanceStatData, totalResistanceStatData });
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => s == StatId.FireAndLightningResistance)))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => s == StatId.FireAndLightningResistance))
                 .Returns(new[] { totalFireResistanceStatData, totalLightningResistanceStatData, totalElementalResistanceStatData, totalResistanceStatData });
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => s == StatId.ColdAndLightningResistance)))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => s == StatId.ColdAndLightningResistance))
                 .Returns(new[] { totalColdResistanceStatData, totalLightningResistanceStatData, totalElementalResistanceStatData, totalResistanceStatData });
 
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => s == StatId.FireResistance)))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => s == StatId.FireResistance))
                 .Returns(new[] { totalFireResistanceStatData, totalElementalResistanceStatData, totalResistanceStatData });
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => s == StatId.LightningResistance)))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => s == StatId.LightningResistance))
                 .Returns(new[] { totalLightningResistanceStatData, totalElementalResistanceStatData, totalResistanceStatData });
-            this.pseudoStatsDataMappingServiceMock.Setup(x => x.GetPseudoStatData(It.Is<string>(s => s == StatId.ColdResistance)))
+            this.pseudoStatsDataMappingServiceMock.GetPseudoStatData(Arg.Is<string>(s => s == StatId.ColdResistance))
                             .Returns(new[] { totalColdResistanceStatData, totalElementalResistanceStatData, totalResistanceStatData });
         }
     }

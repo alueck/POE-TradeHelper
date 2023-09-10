@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -22,22 +22,19 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels;
 
 public class ExchangeResultsViewModelTests
 {
-    private Mock<IPoeTradeApiClient> poeTradeApiClientMock;
-    private Mock<IItemToExchangeQueryRequestMapper> itemToExchangeQueryRequestMapperMock;
-    private Mock<IItemListingsViewModelFactory> itemListingsViewModelFactoryMock;
+    private IPoeTradeApiClient poeTradeApiClientMock;
+    private IItemToExchangeQueryRequestMapper itemToExchangeQueryRequestMapperMock;
+    private IItemListingsViewModelFactory itemListingsViewModelFactoryMock;
     private ExchangeResultsViewModel viewModel;
 
     [SetUp]
     public void Setup()
     {
-        poeTradeApiClientMock = new Mock<IPoeTradeApiClient>();
-        itemToExchangeQueryRequestMapperMock = new Mock<IItemToExchangeQueryRequestMapper>();
-        itemListingsViewModelFactoryMock = new Mock<IItemListingsViewModelFactory>();
-        viewModel = new ExchangeResultsViewModel(
-            Mock.Of<IScreen>(),
-            poeTradeApiClientMock.Object,
-            itemToExchangeQueryRequestMapperMock.Object,
-            itemListingsViewModelFactoryMock.Object);
+        this.poeTradeApiClientMock = Substitute.For<IPoeTradeApiClient>();
+        this.itemToExchangeQueryRequestMapperMock = Substitute.For<IItemToExchangeQueryRequestMapper>();
+        this.itemListingsViewModelFactoryMock = Substitute.For<IItemListingsViewModelFactory>();
+        this.viewModel = new ExchangeResultsViewModel(
+            Substitute.For<IScreen>(), this.poeTradeApiClientMock, this.itemToExchangeQueryRequestMapperMock, this.itemListingsViewModelFactoryMock);
     }
 
     [Test]
@@ -45,53 +42,57 @@ public class ExchangeResultsViewModelTests
     {
         CurrencyItem item = new();
 
-        await viewModel.InitializeAsync(item, default);
+        await this.viewModel.InitializeAsync(item, default);
 
-        itemToExchangeQueryRequestMapperMock
-            .Verify(x => x.MapToQueryRequest(item));
+        this.itemToExchangeQueryRequestMapperMock
+            
+                .Received()
+                .MapToQueryRequest(item);
     }
 
     [Test]
     public async Task InitializeCallsGetListingsAsyncOnPoeTradeApiClient()
     {
         ExchangeQueryRequest expectedRequest = new() { Query = { Have = { "exalted" } } };
-        itemToExchangeQueryRequestMapperMock
-            .Setup(x => x.MapToQueryRequest(It.IsAny<Item>()))
+        this.itemToExchangeQueryRequestMapperMock
+            .MapToQueryRequest(Arg.Any<Item>())
             .Returns(expectedRequest);
         CancellationTokenSource cts = new();
 
-        await viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
+        await this.viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
 
-        poeTradeApiClientMock
-            .Verify(x => x.GetListingsAsync(expectedRequest, cts.Token));
+        await this.poeTradeApiClientMock
+                .Received()
+                .GetListingsAsync(expectedRequest, cts.Token);
     }
 
     [Test]
     public async Task InitializeCallsCreateAsyncOnItemListingsViewModelFactory()
     {
         ExchangeQueryResult expectedQueryResult = new("a", 1, new Dictionary<string, ExchangeQueryResultListing>());
-        poeTradeApiClientMock
-            .Setup(x => x.GetListingsAsync(It.IsAny<ExchangeQueryRequest>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedQueryResult);
+        this.poeTradeApiClientMock
+            .GetListingsAsync(Arg.Any<ExchangeQueryRequest>(), Arg.Any<CancellationToken>())
+            .Returns(expectedQueryResult);
 
         CancellationTokenSource cts = new();
 
-        await viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
+        await this.viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
 
-        itemListingsViewModelFactoryMock
-            .Verify(x => x.CreateAsync(expectedQueryResult, cts.Token));
+        await this.itemListingsViewModelFactoryMock
+                .Received()
+                .CreateAsync(expectedQueryResult, cts.Token);
     }
 
     [Test]
     public async Task InitializeSetsItemListings()
     {
         ItemListingsViewModel expected = new() { ListingsUri = new Uri("https://exchange.results") };
-        itemListingsViewModelFactoryMock
-            .Setup(x => x.CreateAsync(It.IsAny<ExchangeQueryResult>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expected);
+        this.itemListingsViewModelFactoryMock
+            .CreateAsync(Arg.Any<ExchangeQueryResult>(), Arg.Any<CancellationToken>())
+            .Returns(expected);
 
-        await viewModel.InitializeAsync(new CurrencyItem(), default);
+        await this.viewModel.InitializeAsync(new CurrencyItem(), default);
 
-        viewModel.ItemListings.Should().Be(expected);
+        this.viewModel.ItemListings.Should().Be(expected);
     }
 }

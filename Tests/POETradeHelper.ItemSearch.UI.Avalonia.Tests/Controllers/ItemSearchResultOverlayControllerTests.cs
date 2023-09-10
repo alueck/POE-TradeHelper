@@ -6,7 +6,8 @@ using Avalonia.Threading;
 
 using FluentAssertions;
 
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
@@ -21,41 +22,43 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
 {
     public class ItemSearchResultOverlayControllerTests
     {
-        private Mock<IItemSearchResultOverlayView> viewMock;
-        private Mock<IItemSearchResultOverlayViewModel> viewModelMock;
-        private Mock<IViewLocator> viewLocatorMock;
-        private Mock<IUiThreadDispatcher> uiThreadDispatcherMock;
+        private IItemSearchResultOverlayView viewMock;
+        private IItemSearchResultOverlayViewModel viewModelMock;
+        private IViewLocator viewLocatorMock;
+        private IUiThreadDispatcher uiThreadDispatcherMock;
         private ItemSearchResultOverlayController overlayController;
 
         [SetUp]
         public void Setup()
         {
-            viewMock = new Mock<IItemSearchResultOverlayView>();
-            viewModelMock = new Mock<IItemSearchResultOverlayViewModel>();
-            viewLocatorMock = new Mock<IViewLocator>();
-            viewLocatorMock.Setup(x => x.GetView(It.IsAny<IItemSearchResultOverlayViewModel>()))
-                .Returns(viewMock.Object);
-            uiThreadDispatcherMock = new Mock<IUiThreadDispatcher>();
-            overlayController = new ItemSearchResultOverlayController(viewModelMock.Object, viewLocatorMock.Object, uiThreadDispatcherMock.Object);
+            this.viewMock = Substitute.For<IItemSearchResultOverlayView>();
+            this.viewModelMock = Substitute.For<IItemSearchResultOverlayViewModel>();
+            this.viewLocatorMock = Substitute.For<IViewLocator>();
+            this.viewLocatorMock.GetView(Arg.Any<IItemSearchResultOverlayViewModel>())
+                .Returns(this.viewMock);
+            this.uiThreadDispatcherMock = Substitute.For<IUiThreadDispatcher>();
+            this.overlayController = new ItemSearchResultOverlayController(this.viewModelMock, this.viewLocatorMock, this.uiThreadDispatcherMock);
         }
 
         [Test]
         public async Task HandleHideOverlayQueryShouldCallHideOnOverlayIfOverlayIsVisible()
         {
-            viewMock.Setup(x => x.IsVisible).Returns(true);
+            this.viewMock.IsVisible.Returns(true);
 
-            await ExecuteHideOverlayCommand(new HideOverlayCommand(() => { }));
+            await this.ExecuteHideOverlayCommand(new HideOverlayCommand(() => { }));
 
-            viewMock.Verify(x => x.Hide());
+            this.viewMock
+                .Received()
+                .Hide();
         }
 
         [Test]
         public async Task HandleHideOverlayQueryShouldInvokeOnHandledActionIfOverlayIsVisible()
         {
             bool handled = false;
-            viewMock.Setup(x => x.IsVisible).Returns(true);
+            this.viewMock.IsVisible.Returns(true);
 
-            await ExecuteHideOverlayCommand(new HideOverlayCommand(() => handled = true));
+            await this.ExecuteHideOverlayCommand(new HideOverlayCommand(() => handled = true));
 
             handled.Should().BeTrue();
         }
@@ -63,56 +66,62 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
         [Test]
         public async Task HandleHideOverlayQueryShouldNotCallHideOnOverlayIfOverlayIsNotVisible()
         {
-            await ExecuteHideOverlayCommand(new HideOverlayCommand(() => { }));
+            await this.ExecuteHideOverlayCommand(new HideOverlayCommand(() => { }));
 
-            viewMock.Verify(x => x.Hide(), Times.Never);
+            this.viewMock
+                .DidNotReceive()
+                .Hide();
         }
 
         [Test]
         public async Task HandleSearchItemQueryShouldCallSetListingForItemUnderCursorAsyncOnViewModel()
         {
-            await ExecuteSearchItemCommand(new SearchItemCommand());
+            await this.ExecuteSearchItemCommand(new SearchItemCommand());
 
-            viewModelMock.Verify(x => x.SetListingForItemUnderCursorAsync(It.Is<CancellationToken>(c => c != CancellationToken.None)));
+            await this.viewModelMock
+                .Received()
+                .SetListingForItemUnderCursorAsync(Arg.Is<CancellationToken>(c => c != CancellationToken.None));
         }
 
         [Test]
         public async Task HandleSearchItemQueryShouldOpenOverlay()
         {
-            await ExecuteSearchItemCommand(new SearchItemCommand());
+            await this.ExecuteSearchItemCommand(new SearchItemCommand());
 
-            viewMock.Verify(x => x.Show());
+            this.viewMock
+                .Received()
+                .Show();
         }
 
         [Test]
         public async Task HandleSearchItemQueryShouldCatchOperationCancelledException()
         {
-            viewModelMock
-                .Setup(x => x.SetListingForItemUnderCursorAsync(It.IsAny<CancellationToken>()))
+            this.viewModelMock
+                .SetListingForItemUnderCursorAsync(Arg.Any<CancellationToken>())
                 .Throws<OperationCanceledException>();
 
-            await ExecuteSearchItemCommand(new SearchItemCommand());
+            await this.ExecuteSearchItemCommand(new SearchItemCommand());
         }
 
         private async Task ExecuteHideOverlayCommand(HideOverlayCommand command)
         {
             Action action = null;
-            uiThreadDispatcherMock
-                .Setup(x => x.InvokeAsync(It.IsAny<Action>(), It.IsAny<DispatcherPriority>()))
-                .Callback((Action func, DispatcherPriority _) => action = func);
+            this.uiThreadDispatcherMock
+                .When(x => x.InvokeAsync(Arg.Any<Action>(), Arg.Any<DispatcherPriority>()))
+                .Do(ctx => action = ctx.Arg<Action>());
 
-            await overlayController.Handle(command, default);
+            await this.overlayController.Handle(command, default);
             action();
         }
 
         private async Task ExecuteSearchItemCommand(SearchItemCommand command)
         {
             Func<Task> action = null;
-            uiThreadDispatcherMock
-                .Setup(x => x.InvokeAsync(It.IsAny<Func<Task>>(), It.IsAny<DispatcherPriority>()))
-                .Callback((Func<Task> func, DispatcherPriority _) => action = func);
+            this.uiThreadDispatcherMock
+                .When(x => x.InvokeAsync(Arg.Any<Func<Task>>(), Arg.Any<DispatcherPriority>()))
+                .Do(ctx => action = ctx.Arg<Func<Task>>());
 
-            await overlayController.Handle(command, default);
+            await this.overlayController.Handle(command, default);
             await action();
         }
     }

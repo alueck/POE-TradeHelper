@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,7 +7,8 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
@@ -24,37 +24,37 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
 {
     public class OpenWikiCommandHandlerTests
     {
-        private Mock<IMediator> mediatorMock;
-        private Mock<IWikiUrlProvider>[] wikiUrlProviderMocks;
-        private Mock<IOptionsMonitor<WikiOptions>> wikiOptionsMock;
+        private IMediator mediatorMock;
+        private IWikiUrlProvider[] wikiUrlProviderMocks;
+        private IOptionsMonitor<WikiOptions> wikiOptionsMock;
         private OpenWikiCommandHandler handler;
 
         [SetUp]
         public void Setup()
         {
-            this.mediatorMock = new Mock<IMediator>();
-            this.wikiOptionsMock = new Mock<IOptionsMonitor<WikiOptions>>();
-            this.wikiOptionsMock.Setup(x => x.CurrentValue)
+            this.mediatorMock = Substitute.For<IMediator>();
+            this.wikiOptionsMock = Substitute.For<IOptionsMonitor<WikiOptions>>();
+            this.wikiOptionsMock.CurrentValue
                 .Returns(new WikiOptions());
-            SetupWikiUrlProviderMocks();
+            this.SetupWikiUrlProviderMocks();
 
             this.handler = new OpenWikiCommandHandler(
-                this.mediatorMock.Object,
-                this.wikiOptionsMock.Object,
-                this.wikiUrlProviderMocks.Select(x => x.Object),
-                Mock.Of<ILogger<OpenWikiCommandHandler>>());
+                this.mediatorMock,
+                this.wikiOptionsMock,
+                this.wikiUrlProviderMocks,
+                Substitute.For<ILogger<OpenWikiCommandHandler>>());
         }
 
         private void SetupWikiUrlProviderMocks()
         {
-            var poeWikiWikiUrlProviderMock = new Mock<IWikiUrlProvider>();
+            var poeWikiWikiUrlProviderMock = Substitute.For<IWikiUrlProvider>();
             poeWikiWikiUrlProviderMock
-                .SetupGet(x => x.HandledWikiType)
+                .HandledWikiType
                 .Returns(WikiType.PoeWiki);
 
-            var poeDbWikiUrlProviderMock = new Mock<IWikiUrlProvider>();
+            var poeDbWikiUrlProviderMock = Substitute.For<IWikiUrlProvider>();
             poeDbWikiUrlProviderMock
-                .SetupGet(x => x.HandledWikiType)
+                .HandledWikiType
                 .Returns(WikiType.PoeDb);
 
             this.wikiUrlProviderMocks = new[]
@@ -71,7 +71,9 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
 
             await this.handler.Handle(new OpenWikiCommand(), cts.Token);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), cts.Token));
+            await this.mediatorMock
+                .Received()
+                .Send(Arg.Any<GetItemFromCursorQuery>(), cts.Token);
         }
 
         [TestCase(WikiType.PoeWiki, 0)]
@@ -82,22 +84,24 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             var item = new EquippableItem(ItemRarity.Rare);
 
             this.wikiOptionsMock
-                .Setup(x => x.CurrentValue)
+                .CurrentValue
                 .Returns(new WikiOptions { Wiki = wikiType });
 
             this.mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(item);
+                .Send(Arg.Any<GetItemFromCursorQuery>(), Arg.Any<CancellationToken>())
+                .Returns(item);
 
             this.wikiUrlProviderMocks[urlProviderIndex]
-                .Setup(x => x.GetUrl(It.IsAny<Item>()))
+                .GetUrl(Arg.Any<Item>())
                 .Returns(new Uri("https://www.google.com"));
 
             // act
             await this.handler.Handle(new OpenWikiCommand(), default);
 
             // assert
-            this.wikiUrlProviderMocks[urlProviderIndex].Verify(x => x.GetUrl(item));
+            this.wikiUrlProviderMocks[urlProviderIndex]
+                .Received()
+                .GetUrl(item);
         }
 
         [Test]
@@ -108,31 +112,33 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             var item = new EquippableItem(ItemRarity.Rare);
 
             this.wikiOptionsMock
-                .Setup(x => x.CurrentValue)
+                .CurrentValue
                 .Returns(new WikiOptions { Wiki = WikiType.PoeWiki });
 
             this.mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(item);
+                .Send(Arg.Any<GetItemFromCursorQuery>(), Arg.Any<CancellationToken>())
+                .Returns(item);
 
             this.wikiUrlProviderMocks[0]
-                .Setup(x => x.GetUrl(It.IsAny<Item>()))
+                .GetUrl(Arg.Any<Item>())
                 .Returns(expectedUrl);
 
             // act
             await this.handler.Handle(new OpenWikiCommand(), default);
 
             // assert
-            this.mediatorMock.Verify(x => x.Send(
-                It.Is<OpenUrlInBrowserCommand>(c => c.Url == expectedUrl),
-                It.IsAny<CancellationToken>()));
+            await this.mediatorMock
+                .Received()
+                .Send(
+                    Arg.Is<OpenUrlInBrowserCommand>(c => c.Url == expectedUrl),
+                    Arg.Any<CancellationToken>());
         }
 
         [Test]
         public async Task HandleShouldCatchExceptions()
         {
             this.mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetItemFromCursorQuery>(), It.IsAny<CancellationToken>()))
+                .Send(Arg.Any<GetItemFromCursorQuery>(), Arg.Any<CancellationToken>())
                 .Throws<Exception>();
 
             await this.handler.Handle(new OpenWikiCommand(), default);

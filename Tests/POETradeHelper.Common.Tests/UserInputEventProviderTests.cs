@@ -7,7 +7,7 @@ using FluentAssertions;
 
 using MediatR;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -23,30 +23,30 @@ namespace POETradeHelper.Common.Tests
     public class UserInputEventProviderTests
     {
         private Subject<KeyboardHookEventArgs> keyPressed;
-        private Mock<IReactiveGlobalHook> hookMock;
-        private Mock<IPathOfExileProcessHelper> pathOfExileProcessHelperMock;
-        private Mock<IMediator> mediatorMock;
+        private IReactiveGlobalHook hookMock;
+        private IPathOfExileProcessHelper pathOfExileProcessHelperMock;
+        private IMediator mediatorMock;
         private IUserInputEventProvider userInputEventProvider;
 
         [SetUp]
         public async Task Setup()
         {
             this.keyPressed = new Subject<KeyboardHookEventArgs>();
-            this.hookMock = new Mock<IReactiveGlobalHook>();
+            this.hookMock = Substitute.For<IReactiveGlobalHook>();
             this.hookMock
-                .Setup(x => x.KeyPressed)
+                .KeyPressed
                 .Returns(this.keyPressed);
-            this.pathOfExileProcessHelperMock = new Mock<IPathOfExileProcessHelper>();
-            this.mediatorMock = new Mock<IMediator>();
+            this.pathOfExileProcessHelperMock = Substitute.For<IPathOfExileProcessHelper>();
+            this.mediatorMock = Substitute.For<IMediator>();
             this.userInputEventProvider = new UserInputEventProvider(
-                this.hookMock.Object,
-                this.pathOfExileProcessHelperMock.Object,
-                this.mediatorMock.Object);
+                this.hookMock,
+                this.pathOfExileProcessHelperMock,
+                this.mediatorMock);
             await this.userInputEventProvider.OnInitAsync();
         }
 
         [Test]
-        public void SearchItemKeyCombinationShouldSendSearchItemCommandIfPathOfExileIsActiveWindow()
+        public async Task SearchItemKeyCombinationShouldSendSearchItemCommandIfPathOfExileIsActiveWindow()
         {
             var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
             {
@@ -54,17 +54,19 @@ namespace POETradeHelper.Common.Tests
                 Mask = ModifierMask.Ctrl,
                 Type = EventType.KeyPressed
             });
-            this.pathOfExileProcessHelperMock.Setup(x => x.IsPathOfExileActiveWindow())
+            this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
                 .Returns(true);
 
             this.keyPressed.OnNext(keyEventArgs);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<SearchItemCommand>(), It.IsAny<CancellationToken>()));
+            await this.mediatorMock
+                .Received()
+                .Send(Arg.Any<SearchItemCommand>(), Arg.Any<CancellationToken>());
             keyEventArgs.Reserved.Should().Be(EventReservedValueMask.SuppressEvent);
         }
 
         [Test]
-        public void SearchItemKeyCombinationShouldNotSendSearchItemCommandIfPathOfExileIsNotActiveWindow()
+        public async Task SearchItemKeyCombinationShouldNotSendSearchItemCommandIfPathOfExileIsNotActiveWindow()
         {
             var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
             {
@@ -75,12 +77,14 @@ namespace POETradeHelper.Common.Tests
 
             this.keyPressed.OnNext(keyEventArgs);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<SearchItemCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+            await this.mediatorMock
+                .DidNotReceive()
+                .Send(Arg.Any<SearchItemCommand>(), Arg.Any<CancellationToken>());
             keyEventArgs.Reserved.Should().BeNull();
         }
 
         [Test]
-        public void HideOverlayKeyCombinationShouldSendHideOverlayQuery()
+        public async Task HideOverlayKeyCombinationShouldSendHideOverlayQuery()
         {
             var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
             {
@@ -90,7 +94,9 @@ namespace POETradeHelper.Common.Tests
 
             this.keyPressed.OnNext(keyEventArgs);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<HideOverlayCommand>(), It.IsAny<CancellationToken>()));
+            await this.mediatorMock
+                .Received()
+                .Send(Arg.Any<HideOverlayCommand>(), Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -104,8 +110,8 @@ namespace POETradeHelper.Common.Tests
 
             Action onHandledAction = null;
             this.mediatorMock
-                .Setup(x => x.Send(It.IsAny<HideOverlayCommand>(), It.IsAny<CancellationToken>()))
-                .Callback((IRequest<Unit> command, CancellationToken _) => onHandledAction = ((HideOverlayCommand)command).OnHandled);
+                .When(x => x.Send(Arg.Any<HideOverlayCommand>(), Arg.Any<CancellationToken>()))
+                .Do(ctx => onHandledAction = (ctx.Arg<HideOverlayCommand>()).OnHandled);
 
             this.keyPressed.OnNext(keyEventArgs);
 
@@ -116,24 +122,26 @@ namespace POETradeHelper.Common.Tests
         }
 
         [Test]
-        public void GotoHideoutKeyCombinationShouldSendGotoHideoutCommandIfPathOfExileIsActiveWindow()
+        public async Task GotoHideoutKeyCombinationShouldSendGotoHideoutCommandIfPathOfExileIsActiveWindow()
         {
             var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcF5 },
                 Type = EventType.KeyPressed
             });
-            this.pathOfExileProcessHelperMock.Setup(x => x.IsPathOfExileActiveWindow())
+            this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
                 .Returns(true);
 
             this.keyPressed.OnNext(keyEventArgs);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<GotoHideoutCommand>(), It.IsAny<CancellationToken>()));
+            await this.mediatorMock
+                .Received()
+                .Send(Arg.Any<GotoHideoutCommand>(), Arg.Any<CancellationToken>());
             keyEventArgs.Reserved.Should().Be(EventReservedValueMask.SuppressEvent);
         }
 
         [Test]
-        public void GotoHideoutKeyCombinationShouldNotSendGotoHideoutCommandIfPathOfExileIsNotActiveWindow()
+        public async Task GotoHideoutKeyCombinationShouldNotSendGotoHideoutCommandIfPathOfExileIsNotActiveWindow()
         {
             var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
             {
@@ -143,12 +151,14 @@ namespace POETradeHelper.Common.Tests
 
             this.keyPressed.OnNext(keyEventArgs);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<GotoHideoutCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+            await this.mediatorMock
+                .DidNotReceive()
+                .Send(Arg.Any<GotoHideoutCommand>(), Arg.Any<CancellationToken>());
             keyEventArgs.Reserved.Should().BeNull();
         }
 
         [Test]
-        public void OpenWikiKeyCombinationShouldSendOpenWikiCommandIfPathOfExileIsActiveWindow()
+        public async Task OpenWikiKeyCombinationShouldSendOpenWikiCommandIfPathOfExileIsActiveWindow()
         {
             var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
             {
@@ -156,17 +166,19 @@ namespace POETradeHelper.Common.Tests
                 Mask = ModifierMask.Alt,
                 Type = EventType.KeyPressed
             });
-            this.pathOfExileProcessHelperMock.Setup(x => x.IsPathOfExileActiveWindow())
+            this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
                 .Returns(true);
 
             this.keyPressed.OnNext(keyEventArgs);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<OpenWikiCommand>(), It.IsAny<CancellationToken>()));
+            await this.mediatorMock
+                .Received()
+                .Send(Arg.Any<OpenWikiCommand>(), Arg.Any<CancellationToken>());
             keyEventArgs.Reserved.Should().Be(EventReservedValueMask.SuppressEvent);
         }
 
         [Test]
-        public void OpenWikiKeyCombinationShouldNotSendOpenWikiCommandIfPathOfExileIsNotActiveWindow()
+        public async Task OpenWikiKeyCombinationShouldNotSendOpenWikiCommandIfPathOfExileIsNotActiveWindow()
         {
             var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
             {
@@ -177,7 +189,9 @@ namespace POETradeHelper.Common.Tests
 
             this.keyPressed.OnNext(keyEventArgs);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<OpenWikiCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+            await this.mediatorMock
+                .DidNotReceive()
+                .Send(Arg.Any<OpenWikiCommand>(), Arg.Any<CancellationToken>());
             keyEventArgs.Reserved.Should().BeNull();
         }
     }

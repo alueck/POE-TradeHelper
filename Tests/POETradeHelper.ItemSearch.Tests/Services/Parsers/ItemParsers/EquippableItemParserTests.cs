@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 
 using NUnit.Framework;
 
@@ -15,23 +15,23 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class EquippableItemParserTests : ItemParserTestsBase
     {
-        private readonly Mock<ISocketsParser> socketsParserMock;
-        private readonly Mock<IItemTypeParser> itemTypeParserMock;
-        private readonly Mock<IItemStatsParser<ItemWithStats>> itemStatsParserMock;
-        private readonly Mock<IItemDataService> itemDataServiceMock;
+        private readonly ISocketsParser socketsParserMock;
+        private readonly IItemTypeParser itemTypeParserMock;
+        private readonly IItemStatsParser<ItemWithStats> itemStatsParserMock;
+        private readonly IItemDataService itemDataServiceMock;
         private readonly ItemStringBuilder itemStringBuilder;
 
         public EquippableItemParserTests()
         {
-            this.socketsParserMock = new Mock<ISocketsParser>();
-            this.itemTypeParserMock = new Mock<IItemTypeParser>();
-            this.itemStatsParserMock = new Mock<IItemStatsParser<ItemWithStats>>();
-            this.itemDataServiceMock = new Mock<IItemDataService>();
+            this.socketsParserMock = Substitute.For<ISocketsParser>();
+            this.itemTypeParserMock = Substitute.For<IItemTypeParser>();
+            this.itemStatsParserMock = Substitute.For<IItemStatsParser<ItemWithStats>>();
+            this.itemDataServiceMock = Substitute.For<IItemDataService>();
             this.ItemParser = new EquippableItemParser(
-                this.socketsParserMock.Object,
-                this.itemTypeParserMock.Object,
-                this.itemStatsParserMock.Object,
-                this.itemDataServiceMock.Object);
+                this.socketsParserMock,
+                this.itemTypeParserMock,
+                this.itemStatsParserMock,
+                this.itemDataServiceMock);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -207,7 +207,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
                                 .WithName("Cutthroat's Garb")
                                 .BuildLines();
 
-            this.itemTypeParserMock.Setup(x => x.ParseType(itemStringLines, itemRarity, isIdentified))
+            this.itemTypeParserMock.ParseType(itemStringLines, itemRarity, isIdentified)
                 .Returns(expected);
 
             var result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
@@ -288,7 +288,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             this.ItemParser.Parse(itemStringLines);
 
-            this.socketsParserMock.Verify(x => x.Parse(socketsString));
+            this.socketsParserMock
+                .Received()
+                .Parse(socketsString);
         }
 
         [Test]
@@ -309,7 +311,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
                 }
             };
 
-            this.socketsParserMock.Setup(x => x.Parse(It.IsAny<string>()))
+            this.socketsParserMock.Parse(Arg.Any<string>())
                 .Returns(expected);
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
@@ -326,7 +328,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             this.ItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, It.IsAny<bool>()));
+            this.itemStatsParserMock
+                .Received()
+                .Parse(itemStringLines, Arg.Any<bool>());
         }
 
         [TestCase(EquippableItemCategory.Unknown, false)]
@@ -340,14 +344,16 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
                                            .BuildLines();
 
             const string itemType = "parsed item type";
-            this.itemTypeParserMock.Setup(x => x.ParseType(It.IsAny<string[]>(), It.IsAny<ItemRarity>(), It.IsAny<bool>()))
+            this.itemTypeParserMock.ParseType(Arg.Any<string[]>(), Arg.Any<ItemRarity>(), Arg.Any<bool>())
                 .Returns(itemType);
-            this.itemDataServiceMock.Setup(x => x.GetCategory(It.IsAny<string>()))
+            this.itemDataServiceMock.GetCategory(Arg.Any<string>())
                 .Returns(itemCategory.GetDisplayName());
 
             this.ItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, expectedPreferLocalStats));
+            this.itemStatsParserMock
+                .Received()
+                .Parse(itemStringLines, expectedPreferLocalStats);
         }
 
         [Test]
@@ -360,7 +366,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             this.ItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()), Times.Never);
+            this.itemStatsParserMock
+                .DidNotReceive()
+                .Parse(Arg.Any<string[]>(), Arg.Any<bool>());
         }
 
         [Test]
@@ -371,7 +379,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
                                .WithType("Thicket Bow")
                                .BuildLines();
 
-            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()))
+            this.itemStatsParserMock.Parse(Arg.Any<string[]>(), Arg.Any<bool>())
                 .Returns(expected);
 
             EquippableItem equippableItem = (EquippableItem)this.ItemParser.Parse(itemStringLines);
@@ -386,14 +394,16 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             string[] itemStringLines = this.itemStringBuilder.BuildLines();
             const string itemType = "parsed item type";
 
-            this.itemTypeParserMock.Setup(x => x.ParseType(It.IsAny<string[]>(), It.IsAny<ItemRarity>(), It.IsAny<bool>()))
+            this.itemTypeParserMock.ParseType(Arg.Any<string[]>(), Arg.Any<ItemRarity>(), Arg.Any<bool>())
                 .Returns(itemType);
 
             // act
             this.ItemParser.Parse(itemStringLines);
 
             // assert
-            this.itemDataServiceMock.Verify(x => x.GetCategory(itemType));
+            this.itemDataServiceMock
+                .Received()
+                .GetCategory(itemType);
         }
 
         [TestCase(null, EquippableItemCategory.Unknown)]
@@ -406,9 +416,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             string[] itemStringLines = this.itemStringBuilder.BuildLines();
             const string itemType = "parsed item type";
 
-            this.itemTypeParserMock.Setup(x => x.ParseType(It.IsAny<string[]>(), It.IsAny<ItemRarity>(), It.IsAny<bool>()))
+            this.itemTypeParserMock.ParseType(Arg.Any<string[]>(), Arg.Any<ItemRarity>(), Arg.Any<bool>())
                 .Returns(itemType);
-            this.itemDataServiceMock.Setup(x => x.GetCategory(It.IsAny<string>()))
+            this.itemDataServiceMock.GetCategory(Arg.Any<string>())
                 .Returns(itemCategory?.GetDisplayName().ToLower());
 
             // act
