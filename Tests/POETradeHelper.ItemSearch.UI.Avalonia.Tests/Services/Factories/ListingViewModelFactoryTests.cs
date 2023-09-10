@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -20,14 +20,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class ListingViewModelFactoryTests
     {
-        private Mock<IPriceViewModelFactory> priceViewModelFactoryMock;
+        private IPriceViewModelFactory priceViewModelFactoryMock;
         private ListingViewModelFactory listingViewModelFactory;
 
         [SetUp]
         public void Setup()
         {
-            priceViewModelFactoryMock = new Mock<IPriceViewModelFactory>();
-            listingViewModelFactory = new ListingViewModelFactory(priceViewModelFactoryMock.Object);
+            this.priceViewModelFactoryMock = Substitute.For<IPriceViewModelFactory>();
+            this.listingViewModelFactory = new ListingViewModelFactory(this.priceViewModelFactoryMock);
         }
 
         [TestCaseSource(nameof(ListingResultItems))]
@@ -40,10 +40,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             var cancellationToken = cancellationTokenSource.Token;
 
             // act
-            await listingViewModelFactory.CreateAsync(listingResult, item, cancellationToken);
+            await this.listingViewModelFactory.CreateAsync(listingResult, item, cancellationToken);
 
             // assert
-            priceViewModelFactoryMock.Verify(x => x.CreateAsync(listingResult.Listing.Price, cancellationToken));
+            await this.priceViewModelFactoryMock
+                .Received()
+                .CreateAsync(listingResult.Listing.Price, cancellationToken);
         }
 
         [TestCaseSource(nameof(ListingResultItems))]
@@ -52,10 +54,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             var expected = new PriceViewModel { Amount = "2", Currency = "Chaos Orb" };
             ListingResult listingResult = GetListingResult();
 
-            priceViewModelFactoryMock.Setup(x => x.CreateAsync(It.IsAny<Price>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expected);
+            this.priceViewModelFactoryMock.CreateAsync(Arg.Any<Price>(), Arg.Any<CancellationToken>())
+                .Returns(expected);
 
-            SimpleListingViewModel result = await listingViewModelFactory.CreateAsync(listingResult, item);
+            SimpleListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item);
 
             result.Price.Should().Be(expected);
         }
@@ -76,7 +78,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             Item item = new GemItem();
 
-            GemItemListingViewModel result = await listingViewModelFactory.CreateAsync(listingResult, item) as GemItemListingViewModel;
+            GemItemListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item) as GemItemListingViewModel;
 
             result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
@@ -90,7 +92,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             ListingResult listingResult = GetListingResult();
 
-            ItemListingViewModelWithItemLevel result = await listingViewModelFactory.CreateAsync(listingResult, item) as ItemListingViewModelWithItemLevel;
+            ItemListingViewModelWithItemLevel result = await this.listingViewModelFactory.CreateAsync(listingResult, item) as ItemListingViewModelWithItemLevel;
 
             result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
@@ -108,7 +110,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             listingResult.Item.Properties = GetPropertiesList(propertiesJson);
             Item item = new FlaskItem(ItemRarity.Normal);
 
-            FlaskItemListingViewModel result = await listingViewModelFactory.CreateAsync(listingResult, item) as FlaskItemListingViewModel;
+            FlaskItemListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item) as FlaskItemListingViewModel;
 
             result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
@@ -120,7 +122,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             ListingResult listingResult = GetListingResult();
 
-            SimpleListingViewModel result = await listingViewModelFactory.CreateAsync(listingResult, item);
+            SimpleListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item);
 
             result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
@@ -132,7 +134,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             const string expectedName = "xXFighterXx";
             ExchangeListing exchangeListing = new(DateTime.Now, new Account { Name = expectedName }, new List<ExchangeOffer>());
 
-            SimpleListingViewModel result = await listingViewModelFactory.CreateAsync(exchangeListing);
+            SimpleListingViewModel result = await this.listingViewModelFactory.CreateAsync(exchangeListing);
 
             result.AccountName.Should().Be(expectedName);
         }
@@ -142,7 +144,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             ExchangeListing exchangeListing = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
 
-            SimpleListingViewModel result = await listingViewModelFactory.CreateAsync(exchangeListing);
+            SimpleListingViewModel result = await this.listingViewModelFactory.CreateAsync(exchangeListing);
 
             result.Age.Should().Be(exchangeListing.AgeText);
         }
@@ -157,10 +159,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             ExchangeListing exchangeListing = new(DateTime.Now, new Account(), new List<ExchangeOffer> { exchangeOffer });
             CancellationTokenSource cts = new();
 
-            await listingViewModelFactory.CreateAsync(exchangeListing, cts.Token);
+            await this.listingViewModelFactory.CreateAsync(exchangeListing, cts.Token);
 
-            priceViewModelFactoryMock
-                .Verify(x => x.CreateAsync(expectedPrice, cts.Token));
+            await this.priceViewModelFactoryMock
+                .Received()
+                .CreateAsync(expectedPrice, cts.Token);
         }
 
         [Test]
@@ -169,11 +172,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             PriceViewModel expected = new() { Currency = "chaos" };
             ExchangeListing exchangeListing = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
 
-            priceViewModelFactoryMock
-                .Setup(x => x.CreateAsync(It.IsAny<Price>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expected);
+            this.priceViewModelFactoryMock
+                .CreateAsync(Arg.Any<Price>(), Arg.Any<CancellationToken>())
+                .Returns(expected);
 
-            SimpleListingViewModel result = await listingViewModelFactory.CreateAsync(exchangeListing);
+            SimpleListingViewModel result = await this.listingViewModelFactory.CreateAsync(exchangeListing);
 
             result.Price.Should().Be(expected);
         }

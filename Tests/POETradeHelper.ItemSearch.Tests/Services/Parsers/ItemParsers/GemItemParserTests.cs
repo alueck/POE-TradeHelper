@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -14,13 +14,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class GemItemParserTests : ItemParserTestsBase
     {
-        private readonly Mock<IItemDataService> itemDataServiceMock;
+        private readonly IItemDataService itemDataServiceMock;
         private readonly GemItemStringBuilder itemStringBuilder;
 
         public GemItemParserTests()
         {
-            this.itemDataServiceMock = new Mock<IItemDataService>();
-            this.ItemParser = new GemItemParser(this.itemDataServiceMock.Object);
+            this.itemDataServiceMock = Substitute.For<IItemDataService>();
+            this.ItemParser = new GemItemParser(this.itemDataServiceMock);
             this.itemStringBuilder = new GemItemStringBuilder().WithRarity(ItemRarity.Gem);
         }
 
@@ -62,7 +62,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             this.ItemParser.Parse(itemStringLines);
 
-            this.itemDataServiceMock.Verify(x => x.GetType(expected));
+            this.itemDataServiceMock
+                .Received()
+                .GetType(expected);
         }
 
         [Test]
@@ -74,7 +76,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
                 .WithName("Flameblast")
                 .BuildLines();
 
-            this.itemDataServiceMock.Setup(x => x.GetType(It.IsAny<string>()))
+            this.itemDataServiceMock.GetType(Arg.Any<string>())
                 .Returns(expected);
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
@@ -187,7 +189,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             string[] itemStringLines = Properties.Resources.AnomalousVaalFlameblast.Split(Environment.NewLine);
             this.itemDataServiceMock
-                .Setup(x => x.GetType("Anomalous Vaal Flameblast"))
+                .GetType("Anomalous Vaal Flameblast")
                 .Returns("Vaal Flameblast");
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
@@ -207,7 +209,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             string[] itemStringLines = Properties.Resources.VaalImpurityOfLightning.Split(Environment.NewLine);
             this.itemDataServiceMock
-                .Setup(x => x.GetType("Vaal Impurity of Lightning"))
+                .GetType("Vaal Impurity of Lightning")
                 .Returns("Vaal Impurity of Lightning");
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);

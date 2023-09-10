@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 
 using NUnit.Framework;
 
@@ -12,13 +12,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class OrganItemParserTests : ItemParserTestsBase
     {
-        private readonly Mock<IItemStatsParser<OrganItem>> itemStatsParserMock;
+        private readonly IItemStatsParser<OrganItem> itemStatsParserMock;
         private readonly ItemStringBuilder itemStringBuilder;
 
         public OrganItemParserTests()
         {
-            this.itemStatsParserMock = new Mock<IItemStatsParser<OrganItem>>();
-            this.ItemParser = new OrganItemParser(this.itemStatsParserMock.Object);
+            this.itemStatsParserMock = Substitute.For<IItemStatsParser<OrganItem>>();
+            this.ItemParser = new OrganItemParser(this.itemStatsParserMock);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -83,7 +83,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             this.ItemParser.Parse(itemStringLines);
 
-            this.itemStatsParserMock.Verify(x => x.Parse(itemStringLines, false));
+            this.itemStatsParserMock
+                .Received()
+                .Parse(itemStringLines, false);
         }
 
         [Test]
@@ -95,7 +97,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             var expectedOrganItemStats = new ItemStats();
 
-            this.itemStatsParserMock.Setup(x => x.Parse(It.IsAny<string[]>(), It.IsAny<bool>()))
+            this.itemStatsParserMock.Parse(Arg.Any<string[]>(), Arg.Any<bool>())
                 .Returns(expectedOrganItemStats);
 
             ItemWithStats result = (ItemWithStats)this.ItemParser.Parse(itemStringLines);

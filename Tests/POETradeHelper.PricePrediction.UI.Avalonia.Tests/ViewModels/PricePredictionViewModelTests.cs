@@ -8,7 +8,8 @@ using MediatR;
 
 using Microsoft.Extensions.Options;
 
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
@@ -23,33 +24,29 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
 {
     public class PricePredictionViewModelTests
     {
-        private Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
-        private Mock<IMediator> mediatorMock;
-        private Mock<IStaticDataService> staticDataServiceMock;
-        private Mock<IImageService> imageServiceMock;
+        private IOptionsMonitor<ItemSearchOptions> itemSearchOptionsMock;
+        private IMediator mediatorMock;
+        private IStaticDataService staticDataServiceMock;
+        private IImageService imageServiceMock;
         private PricePredictionViewModel viewModel;
 
         [SetUp]
         public void Setup()
         {
-            itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
-            itemSearchOptionsMock
-                .Setup(x => x.CurrentValue)
+            this.itemSearchOptionsMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
+            this.itemSearchOptionsMock
+                .CurrentValue
                 .Returns(new ItemSearchOptions());
-            mediatorMock = new Mock<IMediator>();
-            staticDataServiceMock = new Mock<IStaticDataService>();
-            imageServiceMock = new Mock<IImageService>();
+            this.mediatorMock = Substitute.For<IMediator>();
+            this.staticDataServiceMock = Substitute.For<IStaticDataService>();
+            this.imageServiceMock = Substitute.For<IImageService>();
 
-            viewModel = CreateViewModel();
+            this.viewModel = this.CreateViewModel();
         }
 
         private PricePredictionViewModel CreateViewModel()
         {
-            return new PricePredictionViewModel(
-                itemSearchOptionsMock.Object,
-                mediatorMock.Object,
-                staticDataServiceMock.Object,
-                imageServiceMock.Object);
+            return new PricePredictionViewModel(this.itemSearchOptionsMock, this.mediatorMock, this.staticDataServiceMock, this.imageServiceMock);
         }
 
         [Test]
@@ -61,17 +58,19 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
                 ItemText = "abc"
             };
 
-            itemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.itemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     PricePredictionEnabled = false
                 });
 
             // act
-            await viewModel.LoadAsync(item, default);
+            await this.viewModel.LoadAsync(item, default);
 
             // assert
-            mediatorMock.Verify(x => x.Send(It.IsAny<GetPoePricesInfoPredictionQuery>(), It.IsAny<CancellationToken>()), Times.Never);
+            await this.mediatorMock
+                .DidNotReceive()
+                .Send(Arg.Any<GetPoePricesInfoPredictionQuery>(), Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -83,18 +82,20 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
                 ItemText = "text"
             };
 
-            itemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.itemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     PricePredictionEnabled = true
                 });
 
             // act
-            await viewModel.LoadAsync(item, default);
-            await viewModel.LoadAsync(item, default);
+            await this.viewModel.LoadAsync(item, default);
+            await this.viewModel.LoadAsync(item, default);
 
             // assert
-            mediatorMock.Verify(x => x.Send(It.IsAny<GetPoePricesInfoPredictionQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+            await this.mediatorMock
+                .Received(1)
+                .Send(Arg.Any<GetPoePricesInfoPredictionQuery>(), Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -102,14 +103,15 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
         {
             // arrange
             Action<ItemSearchOptions, string> listener = null;
-            itemSearchOptionsMock.Setup(x => x.OnChange(It.IsAny<Action<ItemSearchOptions, string>>()))
-                .Callback<Action<ItemSearchOptions, string>>(l => listener = l);
+            this.itemSearchOptionsMock
+                .When(x => x.OnChange(Arg.Any<Action<ItemSearchOptions, string>>()))
+                .Do(ctx => listener = ctx.Arg<Action<ItemSearchOptions, string>>());
 
-            viewModel = CreateViewModel();
-            viewModel.Currency = "chaos";
-            viewModel.Prediction = "0.25 - 0.33";
-            viewModel.ConfidenceScore = "89 %";
-            viewModel.CurrencyImage = Mock.Of<IBitmap>();
+            this.viewModel = this.CreateViewModel();
+            this.viewModel.Currency = "chaos";
+            this.viewModel.Prediction = "0.25 - 0.33";
+            this.viewModel.ConfidenceScore = "89 %";
+            this.viewModel.CurrencyImage = Substitute.For<IBitmap>();
 
             // act
             listener(new ItemSearchOptions
@@ -118,11 +120,11 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
             }, null);
 
             // assert
-            Assert.That(viewModel.Currency, Is.Empty);
-            Assert.That(viewModel.Prediction, Is.Empty);
-            Assert.That(viewModel.ConfidenceScore, Is.Empty);
-            Assert.That(viewModel.CurrencyImage, Is.Null);
-            Assert.That(viewModel.HasValue, Is.False);
+            Assert.That(this.viewModel.Currency, Is.Empty);
+            Assert.That(this.viewModel.Prediction, Is.Empty);
+            Assert.That(this.viewModel.ConfidenceScore, Is.Empty);
+            Assert.That(this.viewModel.CurrencyImage, Is.Null);
+            Assert.That(this.viewModel.HasValue, Is.False);
         }
 
         [Test]
@@ -134,17 +136,17 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
                 ItemText = "text"
             };
 
-            itemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.itemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     PricePredictionEnabled = true
                 });
 
-            mediatorMock.Setup(x => x.Send(It.IsAny<GetPoePricesInfoPredictionQuery>(), It.IsAny<CancellationToken>()))
+            this.mediatorMock.Send(Arg.Any<GetPoePricesInfoPredictionQuery>(), Arg.Any<CancellationToken>())
                 .Throws<Exception>();
 
             // act
-            await viewModel.LoadAsync(item, default);
+            await this.viewModel.LoadAsync(item, default);
         }
     }
 }

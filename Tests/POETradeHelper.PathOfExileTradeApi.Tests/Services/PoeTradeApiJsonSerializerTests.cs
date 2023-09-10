@@ -1,6 +1,4 @@
-﻿using Moq;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
@@ -11,18 +9,20 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using NSubstitute;
+
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class PoeTradeApiJsonSerializerTests
     {
-        private Mock<IJsonSerializerWrapper> jsonSerializerWrapperMock;
+        private IJsonSerializerWrapper jsonSerializerWrapperMock;
         private PoeTradeApiJsonSerializer poeTradeApiJsonSerializer;
 
         [SetUp]
         public void Setup()
         {
-            this.jsonSerializerWrapperMock = new Mock<IJsonSerializerWrapper>();
-            this.poeTradeApiJsonSerializer = new PoeTradeApiJsonSerializer(this.jsonSerializerWrapperMock.Object);
+            this.jsonSerializerWrapperMock = Substitute.For<IJsonSerializerWrapper>();
+            this.poeTradeApiJsonSerializer = new PoeTradeApiJsonSerializer(this.jsonSerializerWrapperMock);
         }
 
         [Test]
@@ -32,7 +32,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.poeTradeApiJsonSerializer.Deserialize<object>(json);
 
-            this.jsonSerializerWrapperMock.Verify(x => x.Deserialize<object>(json, It.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy == JsonNamingPolicy.CamelCase)));
+            this.jsonSerializerWrapperMock
+                .Received()
+                .Deserialize<object>(json, Arg.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy == JsonNamingPolicy.CamelCase));
         }
 
         [Test]
@@ -42,7 +44,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.poeTradeApiJsonSerializer.Serialize(obj);
 
-            this.jsonSerializerWrapperMock.Verify(x => x.Serialize(obj, It.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy is JsonSnakeCaseNamingPolicy)));
+            this.jsonSerializerWrapperMock
+                .Received()
+                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy is JsonSnakeCaseNamingPolicy));
         }
 
         [Test]
@@ -52,7 +56,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.poeTradeApiJsonSerializer.Serialize(obj);
 
-            this.jsonSerializerWrapperMock.Verify(x => x.Serialize(obj, It.Is<JsonSerializerOptions>(o => o.Converters.OfType<JsonStringEnumConverter>().Any())));
+            this.jsonSerializerWrapperMock
+                .Received()
+                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o.Converters.OfType<JsonStringEnumConverter>().Any()));
         }
 
         [Test]
@@ -62,7 +68,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.poeTradeApiJsonSerializer.Serialize(obj);
 
-            this.jsonSerializerWrapperMock.Verify(x => x.Serialize(obj, It.Is<JsonSerializerOptions>(o => o.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull)));
+            this.jsonSerializerWrapperMock
+                .Received()
+                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull));
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -15,21 +15,21 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
     public class ItemToExchangeQueryRequestMapperTests
     {
-        private readonly Mock<IStaticDataService> staticDataServiceMock;
-        private readonly Mock<IOptionsMonitor<ItemSearchOptions>> itemSearchOptionsMock;
+        private readonly IStaticDataService staticDataServiceMock;
+        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptionsMock;
         private readonly ItemToExchangeQueryRequestMapper itemToExchangeQueryRequestMapper;
 
         public ItemToExchangeQueryRequestMapperTests()
         {
-            this.staticDataServiceMock = new Mock<IStaticDataService>();
-            this.itemSearchOptionsMock = new Mock<IOptionsMonitor<ItemSearchOptions>>();
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.staticDataServiceMock = Substitute.For<IStaticDataService>();
+            this.itemSearchOptionsMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
+            this.itemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     League = new League()
                 });
 
-            this.itemToExchangeQueryRequestMapper = new ItemToExchangeQueryRequestMapper(this.staticDataServiceMock.Object, this.itemSearchOptionsMock.Object);
+            this.itemToExchangeQueryRequestMapper = new ItemToExchangeQueryRequestMapper(this.staticDataServiceMock, this.itemSearchOptionsMock);
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             const string expected = "TestLeague";
             var item = new CurrencyItem();
 
-            this.itemSearchOptionsMock.Setup(x => x.CurrentValue)
+            this.itemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     League = new League
@@ -62,7 +62,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
-            this.staticDataServiceMock.Verify(x => x.GetId(item.Name));
+            this.staticDataServiceMock
+                .Received()
+                .GetId(item.Name);
         }
 
         [Test]
@@ -71,7 +73,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             const string expected = "item-id";
             var item = new CurrencyItem();
 
-            this.staticDataServiceMock.Setup(x => x.GetId(It.IsAny<string>()))
+            this.staticDataServiceMock.GetId(Arg.Any<string>())
                 .Returns(expected);
 
             var result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);

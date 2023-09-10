@@ -13,7 +13,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public ProphecyItemSearchRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.prophecyItemSearchRequestMapper = new ProphecyItemSearchRequestMapper(this.ItemSearchOptionsMock.Object);
+            this.ItemSearchQueryRequestMapper = this.prophecyItemSearchRequestMapper = new ProphecyItemSearchRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [Test]

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -12,14 +12,14 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
 {
     public class GotoHideoutCommandHandlerTests
     {
-        private Mock<IUserInputSimulator> userInputSimulatorMock;
+        private IUserInputSimulator userInputSimulatorMock;
         private GotoHideoutCommandHandler goToHideoutCommandHandler;
 
         [SetUp]
         public void Setup()
         {
-            this.userInputSimulatorMock = new Mock<IUserInputSimulator>();
-            this.goToHideoutCommandHandler = new GotoHideoutCommandHandler(this.userInputSimulatorMock.Object);
+            this.userInputSimulatorMock = Substitute.For<IUserInputSimulator>();
+            this.goToHideoutCommandHandler = new GotoHideoutCommandHandler(this.userInputSimulatorMock);
         }
 
         [Test]
@@ -27,7 +27,9 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
         {
             await this.goToHideoutCommandHandler.Handle(new GotoHideoutCommand(), default);
 
-            this.userInputSimulatorMock.Verify(x => x.SendGotoHideoutCommand());
+            await this.userInputSimulatorMock
+                .Received()
+                .SendGotoHideoutCommand();
         }
     }
 }

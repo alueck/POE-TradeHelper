@@ -4,7 +4,7 @@ using Autofac.Extras.DynamicProxy;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Moq;
+using NSubstitute;
 
 using POETradeHelper.Common.Contract.Attributes;
 
@@ -12,15 +12,15 @@ namespace POETradeHelper.Common.Contract.Tests.Attributes;
 
 public class CacheResultAttributeInterceptorTests
 {
-    private Mock<ITestValueProvider> valueProviderMock;
+    private ITestValueProvider valueProviderMock;
     private ITestInterface testInstance;
 
     [SetUp]
     public void Setup()
     {
-        this.valueProviderMock = new Mock<ITestValueProvider>();
+        this.valueProviderMock = Substitute.For<ITestValueProvider>();
         ContainerBuilder builder = new();
-        builder.RegisterInstance(this.valueProviderMock.Object);
+        builder.RegisterInstance(this.valueProviderMock);
         builder
             .RegisterType<TestClass>()
             .AsImplementedInterfaces()
@@ -41,43 +41,45 @@ public class CacheResultAttributeInterceptorTests
     public void SyncMethodValueProviderShouldOnlyBeCalledOnceForSameRequest()
     {
         this.valueProviderMock
-            .Setup(x => x.GetValue())
+            .GetValue()
             .Returns("Test");
 
         this.testInstance.MethodWithReturnValue(new Request(1));
         this.testInstance.MethodWithReturnValue(new Request(1));
 
         this.valueProviderMock
-            .Verify(x => x.GetValue(), Times.Once);
+            .Received(1)
+            .GetValue();
     }
 
     [Test]
     public void SyncMethodValueProviderShouldBeCalledTwiceForTwoDifferentRequests()
     {
         this.valueProviderMock
-            .Setup(x => x.GetValue())
+            .GetValue()
             .Returns("Test");
 
         this.testInstance.MethodWithReturnValue(new Request(1));
         this.testInstance.MethodWithReturnValue(new Request(2));
 
         this.valueProviderMock
-            .Verify(x => x.GetValue(), Times.Exactly(2));
+            .Received(2)
+            .GetValue();
     }
 
     [Test]
     public void SyncMethodNullResultsShouldNotBeCached()
     {
         this.valueProviderMock
-            .SetupSequence(x => x.GetValue())
-            .Returns((string)null)
-            .Returns("Test");
+            .GetValue()
+            .Returns(null, "Test");
 
         this.testInstance.MethodWithReturnValue(new Request(1));
         this.testInstance.MethodWithReturnValue(new Request(1));
 
         this.valueProviderMock
-            .Verify(x => x.GetValue(), Times.Exactly(2));
+            .Received(2)
+            .GetValue();
     }
 
     [Test]
@@ -86,50 +88,53 @@ public class CacheResultAttributeInterceptorTests
         this.testInstance.MethodWithoutReturnValue(new Request(1));
 
         this.valueProviderMock
-            .Verify(x => x.GetValue(), Times.Once);
+            .Received(1)
+            .GetValue();
     }
 
     [Test]
     public async Task AsyncMethodValueProviderShouldOnlyBeCalledOnceForSameRequest()
     {
         this.valueProviderMock
-            .Setup(x => x.GetValueAsync())
-            .ReturnsAsync("Test");
+            .GetValueAsync()
+            .Returns("Test");
 
         await this.testInstance.MethodWithReturnValueAsync(new Request(1));
         await this.testInstance.MethodWithReturnValueAsync(new Request(1));
 
-        this.valueProviderMock
-            .Verify(x => x.GetValueAsync(), Times.Once);
+        await this.valueProviderMock
+            .Received(1)
+            .GetValueAsync();
     }
 
     [Test]
     public async Task AsyncMethodValueProviderShouldBeCalledTwiceForTwoDifferentRequests()
     {
         this.valueProviderMock
-            .Setup(x => x.GetValueAsync())
-            .ReturnsAsync("Test");
+            .GetValueAsync()
+            .Returns("Test");
 
         await this.testInstance.MethodWithReturnValueAsync(new Request(1));
         await this.testInstance.MethodWithReturnValueAsync(new Request(2));
 
-        this.valueProviderMock
-            .Verify(x => x.GetValueAsync(), Times.Exactly(2));
+        await this.valueProviderMock
+                .Received(2)
+                .GetValueAsync();
     }
 
     [Test]
     public async Task AsyncMethodNullResultsShouldNotBeCached()
     {
         this.valueProviderMock
-            .SetupSequence(x => x.GetValueAsync())
-            .ReturnsAsync((string)null)
-            .ReturnsAsync("Test");
+            .GetValueAsync()
+            .Returns(null, "Test");
 
         await this.testInstance.MethodWithReturnValueAsync(new Request(1));
         await this.testInstance.MethodWithReturnValueAsync(new Request(1));
 
-        this.valueProviderMock
-            .Verify(x => x.GetValueAsync(), Times.Exactly(2));
+        await this.valueProviderMock
+            .Received(2)
+            .GetValueAsync();
     }
 
     [Test]
@@ -138,8 +143,9 @@ public class CacheResultAttributeInterceptorTests
         await this.testInstance.MethodWithoutReturnValueAsync(new Request(1));
         await this.testInstance.MethodWithoutReturnValueAsync(new Request(1));
 
-        this.valueProviderMock
-            .Verify(x => x.GetValueAsync(), Times.Exactly(2));
+        await this.valueProviderMock
+            .Received(2)
+            .GetValueAsync();
     }
 
     [Intercept(typeof(CacheResultAttributeInterceptor))]

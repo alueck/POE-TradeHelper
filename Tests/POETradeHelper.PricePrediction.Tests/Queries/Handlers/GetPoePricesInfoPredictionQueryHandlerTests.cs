@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -16,15 +16,15 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
     [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     public class GetPoePricesInfoPredictionQueryHandlerTests
     {
-        private readonly Mock<IPoePricesInfoClient> poePricesInfoClientMock;
+        private readonly IPoePricesInfoClient poePricesInfoClientMock;
         private readonly GetPoePricesInfoPredictionQueryHandler handler;
 
         private readonly GetPoePricesInfoPredictionQuery validRequest;
 
         public GetPoePricesInfoPredictionQueryHandlerTests()
         {
-            this.poePricesInfoClientMock = new Mock<IPoePricesInfoClient>();
-            this.handler = new GetPoePricesInfoPredictionQueryHandler(this.poePricesInfoClientMock.Object);
+            this.poePricesInfoClientMock = Substitute.For<IPoePricesInfoClient>();
+            this.handler = new GetPoePricesInfoPredictionQueryHandler(this.poePricesInfoClientMock);
 
             var validItem = new EquippableItem(ItemRarity.Rare)
             {
@@ -43,7 +43,9 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
             await this.handler.Handle(this.validRequest, cancellationToken);
 
             // assert
-            this.poePricesInfoClientMock.Verify(x => x.GetPricePredictionAsync(this.validRequest.League.Id, this.validRequest.Item.ItemText, cancellationToken));
+            await this.poePricesInfoClientMock
+                .Received()
+                .GetPricePredictionAsync(this.validRequest.League.Id, this.validRequest.Item.ItemText, cancellationToken);
         }
 
         [Test]
@@ -52,8 +54,8 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
             // arrange
             PoePricesInfoPrediction expected = GetPoePricesInfoItem();
             this.poePricesInfoClientMock
-                .Setup(x => x.GetPricePredictionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expected);
+                .GetPricePredictionAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(expected);
             // act
             PoePricesInfoPrediction? result = await this.handler.Handle(this.validRequest, default);
 

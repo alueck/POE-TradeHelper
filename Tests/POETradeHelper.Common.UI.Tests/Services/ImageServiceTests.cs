@@ -12,7 +12,8 @@ using Avalonia.Platform;
 using Avalonia.Utilities;
 using Avalonia.Visuals.Media.Imaging;
 
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
@@ -23,8 +24,8 @@ namespace POETradeHelper.Common.UI.Tests.Services
 {
     public class ImageServiceTests
     {
-        private Mock<IHttpClientWrapper> httpClientWrapperMock;
-        private Mock<IBitmapFactory> bitmapFactoryMock;
+        private IHttpClientWrapper httpClientWrapperMock;
+        private IBitmapFactory bitmapFactoryMock;
         private ImageService imageService;
 
         private static readonly Uri uri = new("http://www.google.de");
@@ -32,22 +33,22 @@ namespace POETradeHelper.Common.UI.Tests.Services
         [SetUp]
         public void Setup()
         {
-            this.httpClientWrapperMock = new Mock<IHttpClientWrapper>();
-            this.bitmapFactoryMock = new Mock<IBitmapFactory>();
+            this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
+            this.bitmapFactoryMock = Substitute.For<IBitmapFactory>();
 
-            var httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
-            httpClientFactoryWrapperMock.Setup(x => x.CreateClient())
-                .Returns(this.httpClientWrapperMock.Object);
+            var httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
+            httpClientFactoryWrapperMock.CreateClient()
+                .Returns(this.httpClientWrapperMock);
 
-            this.imageService = new ImageService(httpClientFactoryWrapperMock.Object, this.bitmapFactoryMock.Object);
+            this.imageService = new ImageService(httpClientFactoryWrapperMock, this.bitmapFactoryMock);
         }
 
         [Test]
         public async Task GetImageAsyncShouldCallGetAsyncOnHttpClient()
         {
             // arrange
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientWrapperMock.GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.BadRequest
                 });
@@ -59,7 +60,9 @@ namespace POETradeHelper.Common.UI.Tests.Services
             await this.imageService.GetImageAsync(uri, cancellationToken);
 
             // assert
-            this.httpClientWrapperMock.Verify(x => x.GetAsync(uri, cancellationToken));
+            await this.httpClientWrapperMock
+                .Received()
+                .GetAsync(uri, cancellationToken);
         }
 
         [Test]
@@ -73,7 +76,9 @@ namespace POETradeHelper.Common.UI.Tests.Services
 
             // assert
             var stream = await httpResponse.Content.ReadAsStreamAsync();
-            this.bitmapFactoryMock.Verify(x => x.Create(stream));
+            this.bitmapFactoryMock
+                .Received()
+                .Create(stream);
         }
 
         [Test]
@@ -82,7 +87,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             // arrange
             IBitmap expected = new TestBitmap();
             this.MockHttpClientGetAsyncSuccessResponse();
-            this.bitmapFactoryMock.Setup(x => x.Create(It.IsAny<Stream>()))
+            this.bitmapFactoryMock.Create(Arg.Any<Stream>())
                 .Returns(expected);
 
             // act
@@ -100,8 +105,8 @@ namespace POETradeHelper.Common.UI.Tests.Services
                 StatusCode = HttpStatusCode.BadRequest
             };
 
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(httpResponse);
+            this.httpClientWrapperMock.GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
+                .Returns(httpResponse);
 
             IBitmap result = await this.imageService.GetImageAsync(uri);
 
@@ -117,7 +122,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             var cancellationToken = cancellationTokenSource.Token;
 
             this.httpClientWrapperMock
-                .Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+                .GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
                 .ThrowsAsync((Exception)Activator.CreateInstance(exceptionType));
 
             // act
@@ -135,8 +140,8 @@ namespace POETradeHelper.Common.UI.Tests.Services
                 Content = new StreamContent(stream ?? new MemoryStream())
             };
 
-            this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(httpResponse);
+            this.httpClientWrapperMock.GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
+                .Returns(httpResponse);
             return httpResponse;
         }
 

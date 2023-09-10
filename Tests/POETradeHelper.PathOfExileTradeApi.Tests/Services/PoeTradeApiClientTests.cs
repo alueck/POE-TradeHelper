@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
@@ -22,35 +23,35 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services;
 
 public class PoeTradeApiClientTests
 {
-    private Mock<IHttpClientWrapper> httpClientWrapperMock;
-    private Mock<IHttpClientFactoryWrapper> httpClientFactoryWrapperMock;
-    private Mock<IPoeTradeApiJsonSerializer> poeTradeApiJsonSerializerMock;
+    private IHttpClientWrapper httpClientWrapperMock;
+    private IHttpClientFactoryWrapper httpClientFactoryWrapperMock;
+    private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
     private PoeTradeApiClient poeTradeApiClient;
 
     [SetUp]
     public void Setup()
     {
-        this.httpClientWrapperMock = new Mock<IHttpClientWrapper>();
-        this.httpClientWrapperMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage
+        this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
+        this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(new HttpResponseMessage
             {
                 Content = new StringContent("")
             });
-        this.httpClientWrapperMock.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage
+        this.httpClientWrapperMock.PostAsync(Arg.Any<string>(), Arg.Any<HttpContent>(), Arg.Any<CancellationToken>())
+            .Returns(new HttpResponseMessage
             {
                 Content = new StringContent("")
             });
 
-        this.httpClientFactoryWrapperMock = new Mock<IHttpClientFactoryWrapper>();
-        this.httpClientFactoryWrapperMock.Setup(x => x.CreateClient(Constants.HttpClientNames.PoeTradeApiItemSearchClient))
-            .Returns(this.httpClientWrapperMock.Object);
+        this.httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
+        this.httpClientFactoryWrapperMock.CreateClient(Constants.HttpClientNames.PoeTradeApiItemSearchClient)
+            .Returns(this.httpClientWrapperMock);
 
-        this.poeTradeApiJsonSerializerMock = new Mock<IPoeTradeApiJsonSerializer>();
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Serialize(It.IsAny<object>()))
+        this.poeTradeApiJsonSerializerMock = Substitute.For<IPoeTradeApiJsonSerializer>();
+        this.poeTradeApiJsonSerializerMock.Serialize(Arg.Any<object>())
             .Returns("");
 
-        this.poeTradeApiClient = new PoeTradeApiClient(this.httpClientFactoryWrapperMock.Object, this.poeTradeApiJsonSerializerMock.Object);
+        this.poeTradeApiClient = new PoeTradeApiClient(this.httpClientFactoryWrapperMock, this.poeTradeApiJsonSerializerMock);
     }
 
     [Test]
@@ -68,23 +69,25 @@ public class PoeTradeApiClientTests
         CancellationTokenSource cts = new();
         const string expected = "serialized query request";
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Serialize(It.IsAny<object>()))
+        this.poeTradeApiJsonSerializerMock.Serialize(Arg.Any<object>())
             .Returns(expected);
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult());
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(new ItemListingsQueryResult());
 
         // act
         await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest(), cts.Token);
 
         // assert
-        this.httpClientWrapperMock.Verify(x => x.PostAsync(
-            It.IsAny<string>(),
-            It.Is<StringContent>(s => s.ReadAsStringAsync().GetAwaiter().GetResult() == expected),
-            cts.Token));
+        await this.httpClientWrapperMock
+            .Received()
+            .PostAsync(
+                Arg.Any<string>(),
+                Arg.Is<StringContent>(s => s.ReadAsStringAsync().GetAwaiter().GetResult() == expected),
+                cts.Token);
     }
 
     [Test]
@@ -97,28 +100,30 @@ public class PoeTradeApiClientTests
             Content = new StringContent(expected)
         };
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult());
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(new ItemListingsQueryResult());
 
-        this.httpClientWrapperMock.Setup(x => x.PostAsync(It.Is<string>(s => s.StartsWith(Resources.PoeTradeApiSearchEndpoint)), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(httpResponse);
+        this.httpClientWrapperMock.PostAsync(Arg.Is<string>(s => s.StartsWith(Resources.PoeTradeApiSearchEndpoint)), Arg.Any<HttpContent>(), Arg.Any<CancellationToken>())
+            .Returns(httpResponse);
 
         // act
         await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest());
 
         // assert
-        this.poeTradeApiJsonSerializerMock.Verify(x => x.Deserialize<SearchQueryResult>(expected));
+        this.poeTradeApiJsonSerializerMock
+                .Received()
+                .Deserialize<SearchQueryResult>(expected);
     }
 
     [Test]
     public async Task GetListingsAsyncWithSearchQueryRequestShouldSetRequestOnResult()
     {
         SearchQueryRequest searchQueryRequest = new() { League = "Heist" };
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult());
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(new ItemListingsQueryResult());
 
         ItemListingsQueryResult result = await this.poeTradeApiClient.GetListingsAsync(searchQueryRequest);
@@ -139,29 +144,33 @@ public class PoeTradeApiClientTests
         string expectedUri = $"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(',', searchQueryResult.Result.Take(10))}";
 
         this.poeTradeApiJsonSerializerMock
-            .Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+            .Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(searchQueryResult);
         this.poeTradeApiJsonSerializerMock
-            .Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+            .Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(new ItemListingsQueryResult());
 
         // act
         await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest());
 
         // assert
-        this.httpClientWrapperMock.Verify(x => x.GetAsync(expectedUri, It.IsAny<CancellationToken>()));
+        await this.httpClientWrapperMock
+            .Received()
+            .GetAsync(expectedUri, Arg.Any<CancellationToken>());
     }
 
     [Test]
     public async Task GetListingsAsyncWithSearchQueryRequestShouldNotFetchItemsIfSearchQueryResultIsEmpty()
     {
         this.poeTradeApiJsonSerializerMock
-            .Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+            .Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult());
 
         await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest());
 
-        this.httpClientWrapperMock.Verify(x => x.GetAsync(It.Is<string>(s => s.Contains(Resources.PoeTradeApiFetchEndpoint)), It.IsAny<CancellationToken>()), Times.Never);
+        await this.httpClientWrapperMock
+            .DidNotReceive()
+            .GetAsync(Arg.Is<string>(s => s.Contains(Resources.PoeTradeApiFetchEndpoint)), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -169,18 +178,18 @@ public class PoeTradeApiClientTests
     {
         // arrange
         const string expected = "serialized item listings";
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult
             {
                 Result = new List<string> { "123" },
                 Total = 1
             });
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(new ItemListingsQueryResult());
 
-        this.httpClientWrapperMock.Setup(x => x.GetAsync(It.Is<string>(s => s.StartsWith(Resources.PoeTradeApiFetchEndpoint)), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage
+        this.httpClientWrapperMock.GetAsync(Arg.Is<string>(s => s.StartsWith(Resources.PoeTradeApiFetchEndpoint)), Arg.Any<CancellationToken>())
+            .Returns(new HttpResponseMessage
             {
                 Content = new StringContent(expected)
             });
@@ -189,7 +198,9 @@ public class PoeTradeApiClientTests
         await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest());
 
         // assert
-        this.poeTradeApiJsonSerializerMock.Verify(x => x.Deserialize<QueryResult<ListingResult>>(expected));
+        this.poeTradeApiJsonSerializerMock
+                .Received()
+                .Deserialize<ItemListingsQueryResult>(expected);
     }
 
     [Test]
@@ -204,14 +215,14 @@ public class PoeTradeApiClientTests
             }
         };
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult
             {
                 Result = new List<string> { "123" },
                 Total = 1
             });
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(expected);
 
         // act
@@ -230,14 +241,14 @@ public class PoeTradeApiClientTests
             League = "TestLeague"
         };
         const string expectedId = "abdef";
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult
             {
                 Id = expectedId,
                 Request = queryRequest
             });
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(new ItemListingsQueryResult());
         Uri expectedUri = new($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{queryRequest.League}/{expectedId}");
 
@@ -252,13 +263,13 @@ public class PoeTradeApiClientTests
     public async Task GetListingsAsyncWithSearchQueryRequestShouldReturnResultWithTotalCount()
     {
         const int expectedCount = 100;
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult
             {
                 Total = expectedCount
             });
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ItemListingsQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(new ItemListingsQueryResult());
 
         ItemListingsQueryResult result = await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest());
@@ -269,7 +280,7 @@ public class PoeTradeApiClientTests
     [Test]
     public async Task GetListingsAsyncWithSearchQueryRequestShouldThrowExceptionIfFetchResponseStatusCodeDoesNotIndicateSuccess()
     {
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult
             {
                 Result = new List<string> { "123" },
@@ -284,7 +295,7 @@ public class PoeTradeApiClientTests
     [Test]
     public async Task GetListingsAsyncWithSearchQueryRequestShouldThrowExceptionIfSearchRequestStatusCodeDoesNotIndicateSuccess()
     {
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult());
 
         Func<Task> action = () => this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest());
@@ -296,7 +307,8 @@ public class PoeTradeApiClientTests
     public async Task GetListingsAsyncWithSearchQueryRequestShouldThrowPoeTradeApiCommunicationExceptionIfAnyExceptionOccurs()
     {
         Exception expectedInnerException = new();
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<SearchQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock
+            .Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Throws(expectedInnerException);
 
         Func<Task> action = () => this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest());
@@ -320,20 +332,22 @@ public class PoeTradeApiClientTests
         CancellationTokenSource cts = new();
         const string expected = "serialized query request";
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Serialize(It.IsAny<object>()))
+        this.poeTradeApiJsonSerializerMock.Serialize(Arg.Any<object>())
             .Returns(expected);
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Deserialize<ExchangeQueryResult>(It.IsAny<string>()))
+        this.poeTradeApiJsonSerializerMock.Deserialize<ExchangeQueryResult>(Arg.Any<string>())
             .Returns(new ExchangeQueryResult("a", 1, new Dictionary<string, ExchangeQueryResultListing>()));
 
         // act
         await this.poeTradeApiClient.GetListingsAsync(new ExchangeQueryRequest(), cts.Token);
 
         // assert
-        this.httpClientWrapperMock.Verify(x => x.PostAsync(
-            It.IsAny<string>(),
-            It.Is<StringContent>(s => s.ReadAsStringAsync().GetAwaiter().GetResult() == expected),
-            cts.Token));
+        await this.httpClientWrapperMock
+            .Received()
+            .PostAsync(
+                Arg.Any<string>(),
+                Arg.Is<StringContent>(s => s.ReadAsStringAsync().GetAwaiter().GetResult() == expected),
+                cts.Token);
     }
 
     [Test]
@@ -349,11 +363,11 @@ public class PoeTradeApiClientTests
         };
 
         this.poeTradeApiJsonSerializerMock
-            .Setup(x => x.Serialize(It.IsAny<ExchangeQueryRequest>()))
+            .Serialize(Arg.Any<ExchangeQueryRequest>())
             .Returns(jsonContent);
         this.httpClientWrapperMock
-            .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(httpResponse);
+            .PostAsync(Arg.Any<string>(), Arg.Any<HttpContent>(), Arg.Any<CancellationToken>())
+            .Returns(httpResponse);
 
         Func<Task> action = () => this.poeTradeApiClient.GetListingsAsync(exchangeQueryRequest);
 
@@ -375,18 +389,20 @@ public class PoeTradeApiClientTests
         };
 
         this.poeTradeApiJsonSerializerMock
-            .Setup(x => x.Deserialize<ExchangeQueryResult>(It.IsAny<string>()))
+            .Deserialize<ExchangeQueryResult>(Arg.Any<string>())
             .Returns(new ExchangeQueryResult("a", 1, new Dictionary<string, ExchangeQueryResultListing>()));
 
         this.httpClientWrapperMock
-            .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(httpResponse);
+            .PostAsync(Arg.Any<string>(), Arg.Any<HttpContent>(), Arg.Any<CancellationToken>())
+            .Returns(httpResponse);
 
         // act
         await this.poeTradeApiClient.GetListingsAsync(new ExchangeQueryRequest());
 
         // assert
-        this.poeTradeApiJsonSerializerMock.Verify(x => x.Deserialize<ExchangeQueryResult>(expected));
+        this.poeTradeApiJsonSerializerMock
+                .Received()
+                .Deserialize<ExchangeQueryResult>(expected);
     }
 
     [Test]
@@ -396,7 +412,7 @@ public class PoeTradeApiClientTests
         var queryRequest = new ExchangeQueryRequest();
         const string expectedId = "abdef";
         this.poeTradeApiJsonSerializerMock
-            .Setup(x => x.Deserialize<ExchangeQueryResult>(It.IsAny<string>()))
+            .Deserialize<ExchangeQueryResult>(Arg.Any<string>())
             .Returns(new ExchangeQueryResult(expectedId, 1, new Dictionary<string, ExchangeQueryResultListing>()));
         Uri expectedUri = new($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiExchangeEndpoint}{queryRequest.League}/{expectedId}");
 
@@ -417,12 +433,12 @@ public class PoeTradeApiClientTests
             StatusCode = httpStatusCode
         };
 
-        this.poeTradeApiJsonSerializerMock.Setup(x => x.Serialize(It.IsAny<SearchQueryRequest>()))
+        this.poeTradeApiJsonSerializerMock.Serialize(Arg.Any<SearchQueryRequest>())
             .Returns(jsonContent);
-        this.httpClientWrapperMock.Setup(x => x.GetAsync(It.Is<string>(s => s.Contains(endpoint)), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(httpResponse);
-        this.httpClientWrapperMock.Setup(x => x.PostAsync(It.Is<string>(s => s.Contains(endpoint)), It.IsAny<HttpContent>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(httpResponse);
+        this.httpClientWrapperMock.GetAsync(Arg.Is<string>(s => s.Contains(endpoint)), Arg.Any<CancellationToken>())
+            .Returns(httpResponse);
+        this.httpClientWrapperMock.PostAsync(Arg.Is<string>(s => s.Contains(endpoint)), Arg.Any<HttpContent>(), Arg.Any<CancellationToken>())
+            .Returns(httpResponse);
 
         var exceptionAssertions = await action.Should().ThrowAsync<PoeTradeApiCommunicationException>()
             .Where(ex => ex.Message.Contains(httpStatusCode.ToString()) && ex.Message.Contains(endpoint));

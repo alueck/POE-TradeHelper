@@ -2,7 +2,7 @@
 
 using MediatR;
 
-using Moq;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -16,15 +16,15 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
 {
     public class GetItemFromCursorQueryHandlerTests
     {
-        private readonly Mock<IMediator> mediatorMock;
-        private readonly Mock<IItemParserAggregator> itemParserAggregatorMock;
+        private readonly IMediator mediatorMock;
+        private readonly IItemParserAggregator itemParserAggregatorMock;
         private readonly GetItemFromCursorQueryHandler handler;
 
         public GetItemFromCursorQueryHandlerTests()
         {
-            this.mediatorMock = new Mock<IMediator>();
-            this.itemParserAggregatorMock = new Mock<IItemParserAggregator>();
-            this.handler = new GetItemFromCursorQueryHandler(this.mediatorMock.Object, this.itemParserAggregatorMock.Object);
+            this.mediatorMock = Substitute.For<IMediator>();
+            this.itemParserAggregatorMock = Substitute.For<IItemParserAggregator>();
+            this.handler = new GetItemFromCursorQueryHandler(this.mediatorMock, this.itemParserAggregatorMock);
         }
 
         [Test]
@@ -32,34 +32,38 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
         {
             var cancellationToken = new CancellationToken();
             this.itemParserAggregatorMock
-                .Setup(x => x.IsParseable(It.IsAny<string>()))
+                .IsParseable(Arg.Any<string>())
                 .Returns(true);
 
             await this.handler.Handle(new GetItemFromCursorQuery(), cancellationToken);
 
-            this.mediatorMock.Verify(x => x.Send(It.IsAny<GetItemTextFromCursorQuery>(), cancellationToken));
+            await this.mediatorMock
+                .Received()
+                .Send(Arg.Any<GetItemTextFromCursorQuery>(), cancellationToken);
         }
 
         [Test]
         public async Task HandleShouldCallIsParseableOnItemParser()
         {
             const string stringToParse = "item string to parse";
-            this.mediatorMock.Setup(x => x.Send(It.IsAny<GetItemTextFromCursorQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(stringToParse);
+            this.mediatorMock.Send(Arg.Any<GetItemTextFromCursorQuery>(), Arg.Any<CancellationToken>())
+                .Returns(stringToParse);
             this.itemParserAggregatorMock
-                .Setup(x => x.IsParseable(It.IsAny<string>()))
+                .IsParseable(Arg.Any<string>())
                 .Returns(true);
 
             await this.handler.Handle(new GetItemFromCursorQuery(), default);
 
-            this.itemParserAggregatorMock.Verify(x => x.IsParseable(stringToParse));
+            this.itemParserAggregatorMock
+                .Received()
+                .IsParseable(stringToParse);
         }
 
         [Test]
         public void HandleShouldThrowInvalidItemStringExceptionIfIsParseableFromItemParserReturnsFalse()
         {
             this.itemParserAggregatorMock
-                .Setup(x => x.IsParseable(It.IsAny<string>()))
+                .IsParseable(Arg.Any<string>())
                 .Returns(false);
 
             async Task Action() => await this.handler.Handle(new GetItemFromCursorQuery(), default);
@@ -71,23 +75,25 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
         public async Task HandleShouldCallParseOnItemParserIfIsParseableReturnsTrue()
         {
             const string stringToParse = "item string to parse";
-            this.mediatorMock.Setup(x => x.Send(It.IsAny<GetItemTextFromCursorQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(stringToParse);
-            this.itemParserAggregatorMock.Setup(x => x.IsParseable(It.IsAny<string>()))
+            this.mediatorMock.Send(Arg.Any<GetItemTextFromCursorQuery>(), Arg.Any<CancellationToken>())
+                .Returns(stringToParse);
+            this.itemParserAggregatorMock.IsParseable(Arg.Any<string>())
                 .Returns(true);
 
             await this.handler.Handle(new GetItemFromCursorQuery(), default);
 
-            this.itemParserAggregatorMock.Verify(x => x.Parse(stringToParse));
+            this.itemParserAggregatorMock
+                .Received()
+                .Parse(stringToParse);
         }
 
         [Test]
         public async Task HandleShouldReturnParseResult()
         {
             var expected = new EquippableItem(ItemRarity.Normal) { Name = "TestItem" };
-            this.itemParserAggregatorMock.Setup(x => x.IsParseable(It.IsAny<string>()))
+            this.itemParserAggregatorMock.IsParseable(Arg.Any<string>())
                 .Returns(true);
-            this.itemParserAggregatorMock.Setup(x => x.Parse(It.IsAny<string>()))
+            this.itemParserAggregatorMock.Parse(Arg.Any<string>())
                 .Returns(expected);
 
             Item result = await this.handler.Handle(new GetItemFromCursorQuery(), default);

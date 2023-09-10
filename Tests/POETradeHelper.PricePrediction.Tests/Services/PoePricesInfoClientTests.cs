@@ -4,7 +4,8 @@ using System.Text.Json;
 
 using Microsoft.Extensions.Logging;
 
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
@@ -17,27 +18,27 @@ namespace POETradeHelper.PricePrediction.Tests.Services
 {
     public class PoePricesInfoClientTests
     {
-        private readonly Mock<IHttpClientWrapper> httpClientMock;
-        private readonly Mock<IJsonSerializerWrapper> jsonSerializerMock;
+        private readonly IHttpClientWrapper httpClientMock;
+        private readonly IJsonSerializerWrapper jsonSerializerMock;
         private readonly PoePricesInfoClient poePricesInfoClient;
 
         public PoePricesInfoClientTests()
         {
-            this.httpClientMock = new Mock<IHttpClientWrapper>();
+            this.httpClientMock = Substitute.For<IHttpClientWrapper>();
 
-            this.httpClientMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     Content = new StringContent("")
                 });
 
-            var httpClientFactoryMock = new Mock<IHttpClientFactoryWrapper>();
-            httpClientFactoryMock.Setup(x => x.CreateClient())
-                .Returns(this.httpClientMock.Object);
+            var httpClientFactoryMock = Substitute.For<IHttpClientFactoryWrapper>();
+            httpClientFactoryMock.CreateClient()
+                .Returns(this.httpClientMock);
 
-            this.jsonSerializerMock = new Mock<IJsonSerializerWrapper>();
+            this.jsonSerializerMock = Substitute.For<IJsonSerializerWrapper>();
 
-            this.poePricesInfoClient = new PoePricesInfoClient(httpClientFactoryMock.Object, this.jsonSerializerMock.Object, Mock.Of<ILogger<PoePricesInfoClient>>());
+            this.poePricesInfoClient = new PoePricesInfoClient(httpClientFactoryMock, this.jsonSerializerMock, Substitute.For<ILogger<PoePricesInfoClient>>());
         }
 
         [Test]
@@ -54,7 +55,9 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             await this.poePricesInfoClient.GetPricePredictionAsync(league, itemText, cancellationToken);
 
             // assert
-            this.httpClientMock.Verify(x => x.GetAsync(expectedUrl, cancellationToken));
+            await this.httpClientMock
+                .Received()
+                .GetAsync(expectedUrl, cancellationToken);
         }
 
         [Test]
@@ -63,8 +66,8 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             // arrange
             const string json = "{ \"result\": [ ] }";
 
-            this.httpClientMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     Content = new StringContent(json, Encoding.UTF8, "application/json")
                 });
@@ -73,15 +76,17 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
-            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoPrediction>(json, It.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy!.GetType() == typeof(JsonSnakeCaseNamingPolicy))));
+            this.jsonSerializerMock
+                .Received()
+                .Deserialize<PoePricesInfoPrediction>(json, Arg.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy!.GetType() == typeof(JsonSnakeCaseNamingPolicy)));
         }
 
         [Test]
         public async Task GetPricePredictionAsyncShouldNotCallDeserializeOnJsonSerializerForNonSuccessResponse()
         {
             // arrange
-            this.httpClientMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new HttpResponseMessage
+            this.httpClientMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.BadRequest
                 });
@@ -90,7 +95,9 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
-            this.jsonSerializerMock.Verify(x => x.Deserialize<PoePricesInfoPrediction>(It.IsAny<string>(), It.IsAny<JsonSerializerOptions>()), Times.Never);
+            this.jsonSerializerMock
+                .DidNotReceive()
+                .Deserialize<PoePricesInfoPrediction>(Arg.Any<string>(), Arg.Any<JsonSerializerOptions>());
         }
 
         [Test]
@@ -105,7 +112,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 ConfidenceScore = 0.89744m
             };
 
-            this.jsonSerializerMock.Setup(x => x.Deserialize<PoePricesInfoPrediction>(It.IsAny<string>(), It.IsAny<JsonSerializerOptions>()))
+            this.jsonSerializerMock.Deserialize<PoePricesInfoPrediction>(Arg.Any<string>(), Arg.Any<JsonSerializerOptions>())
                 .Returns(expected);
 
             // act
@@ -120,7 +127,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         {
             // arrange
             this.httpClientMock
-                .Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Throws<Exception>();
 
             // act
@@ -134,7 +141,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         public void GetPricePredictionAsyncShouldNotCatchOperationCanceledException()
         {
             this.httpClientMock
-                .Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Throws<OperationCanceledException>();
 
             async Task Action() => await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
