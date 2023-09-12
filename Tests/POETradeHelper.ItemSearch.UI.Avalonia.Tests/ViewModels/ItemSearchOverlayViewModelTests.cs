@@ -234,7 +234,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
         {
             yield return new CurrencyItem();
             yield return new FragmentItem();
-            yield return new DivinationCardItem();
         }
 
         private static IEnumerable GetItemResultsViewModelItems()
@@ -246,6 +245,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             yield return new MapItem(ItemRarity.Rare);
             yield return new OrganItem();
             yield return new ProphecyItem();
+            yield return new DivinationCardItem();
         }
     }
 }

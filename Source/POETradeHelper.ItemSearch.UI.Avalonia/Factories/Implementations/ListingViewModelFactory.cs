@@ -28,9 +28,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
         {
             SimpleListingViewModel result = item switch
             {
-                GemItem => this.CreateGemItemListingViewModel(listingResult),
+                GemItem => CreateGemItemListingViewModel(listingResult),
                 EquippableItem or OrganItem => CreateItemListingViewModelWithItemLevel(listingResult),
-                FlaskItem => this.CreateFlaskItemViewModel(listingResult),
+                FlaskItem => CreateFlaskItemViewModel(listingResult),
+                DivinationCardItem => CreateDivinationCardItemViewModel(listingResult),
                 _ => new SimpleListingViewModel(),
             };
 
@@ -67,9 +68,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             result.Age = listingResult.Listing.AgeText;
         }
 
-        private SimpleListingViewModel CreateGemItemListingViewModel(ListingResult listingResult)
+        private static SimpleListingViewModel CreateGemItemListingViewModel(ListingResult listingResult)
         {
-            GemItemListingViewModel result = new GemItemListingViewModel
+            GemItemListingViewModel result = new()
             {
                 Level = GetPropertyStringValue(listingResult.Item, GemLevelPropertyName),
                 Quality = GetPropertyStringValue(listingResult.Item, QualityPropertyName),
@@ -89,10 +90,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return result;
         }
 
-        private SimpleListingViewModel CreateFlaskItemViewModel(ListingResult listingResult) =>
+        private static SimpleListingViewModel CreateFlaskItemViewModel(ListingResult listingResult) =>
             new FlaskItemListingViewModel
             {
                 Quality = GetPropertyStringValue(listingResult.Item, QualityPropertyName),
+            };
+
+        private static SimpleListingViewModel CreateDivinationCardItemViewModel(ListingResult listingResult) =>
+            new DivinationCardListingViewModel
+            {
+                StackSize = listingResult.Item.StackSize.GetValueOrDefault(),
             };
 
         private static string GetPropertyStringValue(ItemListing itemListing, string propertyName)

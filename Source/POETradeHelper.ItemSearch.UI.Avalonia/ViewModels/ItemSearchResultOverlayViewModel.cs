@@ -59,7 +59,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 
                 this.Item = await this.mediator.Send(new GetItemFromCursorQuery(), token).ConfigureAwait(true);
 
-                if (this.Item is CurrencyItem or FragmentItem or DivinationCardItem)
+                if (this.Item is CurrencyItem or FragmentItem)
                 {
                     await this.GoToView(this.exchangeResultsViewModelFactory, token);
                 }

@@ -234,4 +234,7 @@
   <data name="MapBlightRavaged" xml:space="preserve">
     <value>Blight-ravaged</value>
   </data>
+  <data name="StackSize" xml:space="preserve">
+    <value>Stack Size</value>
+  </data>
 </root>

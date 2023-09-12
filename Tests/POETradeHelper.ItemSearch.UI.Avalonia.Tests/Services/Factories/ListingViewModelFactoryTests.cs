@@ -36,7 +36,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             // arrange
             ListingResult listingResult = GetListingResult();
 
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationTokenSource cancellationTokenSource = new();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             // act
@@ -51,7 +51,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetListingResultItems))]
         public async Task CreateShouldSetPriceViewModel(Item item)
         {
-            PriceViewModel expected = new PriceViewModel { Amount = "2", Currency = "Chaos Orb" };
+            PriceViewModel expected = new() { Amount = "2", Currency = "Chaos Orb" };
             ListingResult listingResult = GetListingResult();
 
             this.priceViewModelFactoryMock.CreateAsync(Arg.Any<Price>(), Arg.Any<CancellationToken>())
@@ -118,6 +118,21 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
             result.Quality.Should().Be(quality);
+        }
+
+        [Test]
+        public async Task CreateShouldReturnDivinationCardItemListingViewModelForDivinationCardItem()
+        {
+            const int stackSize = 12;
+            ListingResult listingResult = GetListingResult();
+            listingResult.Item.StackSize = stackSize;
+            Item item = new DivinationCardItem();
+
+            DivinationCardListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item) as DivinationCardListingViewModel;
+
+            result.Should().NotBeNull();
+            AssertSimpleListingViewModelProperties(result, listingResult);
+            result.StackSize.Should().Be(stackSize);
         }
 
         [TestCaseSource(nameof(SimpleListingViewModelItems))]
@@ -204,6 +219,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             yield return new ProphecyItem();
             yield return new JewelItem(ItemRarity.Magic);
             yield return new EquippableItem(ItemRarity.Magic);
+            yield return new DivinationCardItem();
         }
 
         private static ListingResult GetListingResult() =>
