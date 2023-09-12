@@ -44,8 +44,6 @@ public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
 
     public IScreen HostScreen => this.itemSearchResultOverlayViewModel;
 
-    private Item? Item { get; set; }
-
     public IPricePredictionViewModel PricePrediction { get; }
 
     public IAdvancedFiltersViewModel AdvancedFilters { get; }
@@ -57,6 +55,8 @@ public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
 
     [Reactive]
     public ItemListingsViewModel? ItemListings { get; private set; }
+
+    private Item? Item { get; set; }
 
     public async Task InitializeAsync(Item? item, CancellationToken cancellationToken)
     {

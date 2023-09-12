@@ -7,13 +7,13 @@
              x:Class="POETradeHelper.Common.UI.UserControls.MessageTextBlock">
 
   <UserControl.Resources>
-    <commonUiConverters:MessageTypeToBrushConverter x:Key="messageTypeToBrushConverter" />
+    <commonUiConverters:MessageTypeToBrushConverter x:Key="MessageTypeToBrushConverter" />
   </UserControl.Resources>
 
   <TextBlock
          DataContext="{Binding $parent[UserControl]}"
          Text="{Binding Message.Text}"
-         Foreground="{Binding Message.Type, Converter={StaticResource messageTypeToBrushConverter}}"
+         Foreground="{Binding Message.Type, Converter={StaticResource MessageTypeToBrushConverter}}"
          IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}"
          TextWrapping="Wrap" />
 </UserControl>

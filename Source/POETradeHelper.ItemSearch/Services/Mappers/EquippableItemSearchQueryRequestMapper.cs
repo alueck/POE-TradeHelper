@@ -9,32 +9,30 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class EquippableItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
-        private static readonly IDictionary<InfluenceType, Action<MiscFilters>?> InfluenceMappings = new Dictionary<InfluenceType, Action<MiscFilters>?>
-        {
-            [InfluenceType.None] = null,
-            [InfluenceType.Crusader] = (miscFilters) => miscFilters.CrusaderItem = new BoolOptionFilter { Option = true },
-            [InfluenceType.Elder] = (miscFilters) => miscFilters.ElderItem = new BoolOptionFilter { Option = true },
-            [InfluenceType.Hunter] = (miscFilters) => miscFilters.HunterItem = new BoolOptionFilter { Option = true },
-            [InfluenceType.Redeemer] = (miscFilters) => miscFilters.RedeemerItem = new BoolOptionFilter { Option = true },
-            [InfluenceType.Shaper] = (miscFilters) => miscFilters.ShaperItem = new BoolOptionFilter { Option = true },
-            [InfluenceType.Warlord] = (miscFilters) => miscFilters.WarlordItem = new BoolOptionFilter { Option = true }
-        };
+        private static readonly IDictionary<InfluenceType, Action<MiscFilters>?> InfluenceMappings =
+            new Dictionary<InfluenceType, Action<MiscFilters>?>
+            {
+                [InfluenceType.None] = null,
+                [InfluenceType.Crusader] = miscFilters => miscFilters.CrusaderItem = new BoolOptionFilter { Option = true },
+                [InfluenceType.Elder] = miscFilters => miscFilters.ElderItem = new BoolOptionFilter { Option = true },
+                [InfluenceType.Hunter] = miscFilters => miscFilters.HunterItem = new BoolOptionFilter { Option = true },
+                [InfluenceType.Redeemer] = miscFilters => miscFilters.RedeemerItem = new BoolOptionFilter { Option = true },
+                [InfluenceType.Shaper] = miscFilters => miscFilters.ShaperItem = new BoolOptionFilter { Option = true },
+                [InfluenceType.Warlord] = miscFilters => miscFilters.WarlordItem = new BoolOptionFilter { Option = true },
+            };
 
         public EquippableItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
             : base(itemSearchOptions)
         {
         }
 
-        public override bool CanMap(Item item)
-        {
-            return item is EquippableItem;
-        }
+        public override bool CanMap(Item item) => item is EquippableItem;
 
         public override SearchQueryRequest MapToQueryRequest(Item item)
         {
-            var result = base.MapToQueryRequest(item);
+            SearchQueryRequest result = base.MapToQueryRequest(item);
 
-            var equippableItem = (EquippableItem)item;
+            EquippableItem equippableItem = (EquippableItem)item;
             MapItemLinks(result, equippableItem);
             MapInfluence(result, equippableItem);
             this.MapItemLevel(result, equippableItem);
@@ -48,7 +46,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             {
                 result.Query.Filters.MiscFilters.ItemLevel = new MinMaxFilter
                 {
-                    Min = equippableItem.ItemLevel
+                    Min = equippableItem.ItemLevel,
                 };
             }
         }
@@ -67,14 +65,14 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
                 result.Query.Filters.SocketFilters.Links = new SocketsFilter
                 {
                     Min = maxLinks,
-                    Max = maxLinks
+                    Max = maxLinks,
                 };
             }
         }
 
         private static void MapInfluence(SearchQueryRequest result, EquippableItem equippableItem)
         {
-            if (InfluenceMappings.TryGetValue(equippableItem.Influence, out var setInfluenceAction))
+            if (InfluenceMappings.TryGetValue(equippableItem.Influence, out Action<MiscFilters>? setInfluenceAction))
             {
                 setInfluenceAction?.Invoke(result.Query.Filters.MiscFilters);
             }

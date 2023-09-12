@@ -18,7 +18,8 @@ public class PoeTradeApiClient : IPoeTradeApiClient
     private readonly IHttpClientWrapper httpClient;
     private readonly IPoeTradeApiJsonSerializer jsonSerializer;
 
-    public PoeTradeApiClient(IHttpClientFactoryWrapper httpClientFactory,
+    public PoeTradeApiClient(
+        IHttpClientFactoryWrapper httpClientFactory,
         IPoeTradeApiJsonSerializer jsonSerializer)
     {
         this.httpClient = httpClientFactory.CreateClient(HttpClientNames.PoeTradeApiItemSearchClient);
@@ -27,8 +28,6 @@ public class PoeTradeApiClient : IPoeTradeApiClient
 
     public async Task<ItemListingsQueryResult> GetListingsAsync(SearchQueryRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request, nameof(request));
-
         try
         {
             SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(request, cancellationToken).ConfigureAwait(false);
@@ -43,8 +42,6 @@ public class PoeTradeApiClient : IPoeTradeApiClient
 
     public async Task<ExchangeQueryResult> GetListingsAsync(ExchangeQueryRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request, nameof(request));
-
         StringContent content = this.GetJsonStringContent(request);
 
         string endpoint = $"{request.Endpoint}/{request.League}";

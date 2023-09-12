@@ -22,11 +22,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         {
             this.statsDataServiceMock = Substitute.For<IStatsDataService>();
             this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
-                .Returns(ctx => new StatData
-                {
-                    Type = StatCategory.Monster.GetDisplayName().ToLower(),
-                    Text = ctx.Arg<string>(),
-                });
+                .Returns(
+                    ctx => new StatData
+                    {
+                        Type = StatCategory.Monster.GetDisplayName().ToLower(),
+                        Text = ctx.Arg<string>(),
+                    });
 
             this.organItemStatsParser = new OrganItemStatsParser(this.statsDataServiceMock);
             this.itemStringBuilder = new ItemStringBuilder();
@@ -37,11 +38,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         {
             const string expected = "Drops additional Currency Items";
             string[] itemStringLines = this.itemStringBuilder
-                                .WithType("Oriath's Virtue's Eye")
-                                .WithItemLevel(73)
-                                .WithItemStat(expected, StatCategory.Monster)
-                                .WithDescription(Resources.OrganItemDescriptor)
-                                .BuildLines();
+                .WithType("Oriath's Virtue's Eye")
+                .WithItemLevel(73)
+                .WithItemStat(expected, StatCategory.Monster)
+                .WithDescription(Resources.OrganItemDescriptor)
+                .BuildLines();
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
@@ -57,13 +58,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         {
             const string statText = "Drops additional Currency Items";
             string[] itemStringLines = this.itemStringBuilder
-                                .WithType("Oriath's Virtue's Eye")
-                                .WithItemLevel(73)
-                                .WithItemStat(statText, StatCategory.Monster)
-                                .WithItemStat(statText, StatCategory.Monster)
-                                .WithItemStat(statText, StatCategory.Monster)
-                                .WithDescription(Resources.OrganItemDescriptor)
-                                .BuildLines();
+                .WithType("Oriath's Virtue's Eye")
+                .WithItemLevel(73)
+                .WithItemStat(statText, StatCategory.Monster)
+                .WithItemStat(statText, StatCategory.Monster)
+                .WithItemStat(statText, StatCategory.Monster)
+                .WithDescription(Resources.OrganItemDescriptor)
+                .BuildLines();
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
@@ -79,11 +80,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         public void ParseShouldCallGetStatDataOnStatDataService()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                .WithType("Oriath's Virtue's Eye")
-                                .WithItemLevel(73)
-                                .WithItemStat("Drops additional Currency Items", StatCategory.Monster)
-                                .WithDescription(Resources.OrganItemDescriptor)
-                                .BuildLines();
+                .WithType("Oriath's Virtue's Eye")
+                .WithItemLevel(73)
+                .WithItemStat("Drops additional Currency Items", StatCategory.Monster)
+                .WithDescription(Resources.OrganItemDescriptor)
+                .BuildLines();
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
@@ -93,8 +94,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             foreach (ItemStat stat in result.MonsterStats)
             {
                 this.statsDataServiceMock
-                .Received()
-                .GetStatData(stat.Text, false, StatCategory.Monster.GetDisplayName());
+                    .Received()
+                    .GetStatData(stat.Text, false, StatCategory.Monster.GetDisplayName());
             }
         }
 
@@ -103,18 +104,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         {
             const string expected = "item stat id";
             string[] itemStringLines = this.itemStringBuilder
-                    .WithType("Oriath's Virtue's Eye")
-                    .WithItemLevel(73)
-                    .WithItemStat("Drops additional Currency Items", StatCategory.Monster)
-                    .WithDescription(Resources.OrganItemDescriptor)
-                    .BuildLines();
+                .WithType("Oriath's Virtue's Eye")
+                .WithItemLevel(73)
+                .WithItemStat("Drops additional Currency Items", StatCategory.Monster)
+                .WithDescription(Resources.OrganItemDescriptor)
+                .BuildLines();
 
             this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
-                .Returns(new StatData
-                {
-                    Id = expected,
-                    Type = StatCategory.Monster.GetDisplayName()
-                });
+                .Returns(
+                    new StatData
+                    {
+                        Id = expected,
+                        Type = StatCategory.Monster.GetDisplayName(),
+                    });
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
@@ -130,18 +132,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         {
             const string expected = "Stat text with placeholders";
             string[] itemStringLines = this.itemStringBuilder
-                    .WithType("Oriath's Virtue's Eye")
-                    .WithItemLevel(73)
-                    .WithItemStat("Drops additional Currency Items", StatCategory.Monster)
-                    .WithDescription(Resources.OrganItemDescriptor)
-                    .BuildLines();
+                .WithType("Oriath's Virtue's Eye")
+                .WithItemLevel(73)
+                .WithItemStat("Drops additional Currency Items", StatCategory.Monster)
+                .WithDescription(Resources.OrganItemDescriptor)
+                .BuildLines();
 
             this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
-                .Returns(new StatData
-                {
-                    Text = expected,
-                    Type = StatCategory.Monster.GetDisplayName()
-                });
+                .Returns(
+                    new StatData
+                    {
+                        Text = expected,
+                        Type = StatCategory.Monster.GetDisplayName(),
+                    });
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 

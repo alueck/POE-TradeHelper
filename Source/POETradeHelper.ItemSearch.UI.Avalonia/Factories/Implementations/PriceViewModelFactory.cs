@@ -26,7 +26,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 {
                     Amount = price.Amount.ToString("0.##").PadLeft(6),
                     Currency = this.staticDataService.GetText(price.Currency),
-                    Image = await this.imageService.GetImageAsync(this.staticDataService.GetImageUrl(price.Currency), cancellationToken).ConfigureAwait(false)
+                    Image = await this.imageService.GetImageAsync(this.staticDataService.GetImageUrl(price.Currency), cancellationToken).ConfigureAwait(false),
                 }
                 : null;
         }

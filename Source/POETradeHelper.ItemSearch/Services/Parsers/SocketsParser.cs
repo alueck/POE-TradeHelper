@@ -5,12 +5,12 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class SocketsParser : ISocketsParser
     {
-        private static readonly string[] socketGroupSeparators = new[] { " " };
-        private static readonly string[] socketLinkIndicators = new[] { "-" };
+        private static readonly string[] SocketGroupSeparators = { " " };
+        private static readonly string[] SocketLinkIndicators = { "-" };
 
         public ItemSockets Parse(string? socketsString)
         {
-            var itemSockets = new ItemSockets();
+            ItemSockets itemSockets = new();
 
             if (!string.IsNullOrWhiteSpace(socketsString))
             {
@@ -20,42 +20,35 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             return itemSockets;
         }
 
-        private static void AddSocketGroups(ItemSockets itemSockets, string socketsString)
-        {
-            socketsString.Split(socketGroupSeparators, StringSplitOptions.RemoveEmptyEntries)
-                            .Select(GetSocketGroup)
-                            .ToList()
-                            .ForEach(itemSockets.SocketGroups.Add);
-        }
+        private static void AddSocketGroups(ItemSockets itemSockets, string socketsString) =>
+            socketsString.Split(SocketGroupSeparators, StringSplitOptions.RemoveEmptyEntries)
+                .Select(GetSocketGroup)
+                .ToList()
+                .ForEach(itemSockets.SocketGroups.Add);
 
         private static SocketGroup GetSocketGroup(string socketGroupString)
         {
-            var socketGroup = new SocketGroup();
+            SocketGroup socketGroup = new();
 
             AddSockets(socketGroup, socketGroupString);
 
             return socketGroup;
         }
 
-        private static void AddSockets(SocketGroup socketGroup, string socketGroupString)
-        {
-            socketGroupString.Split(socketLinkIndicators, StringSplitOptions.RemoveEmptyEntries)
-                            .Select(GetSocket)
-                            .ToList()
-                            .ForEach(socketGroup.Sockets.Add);
-        }
+        private static void AddSockets(SocketGroup socketGroup, string socketGroupString) =>
+            socketGroupString.Split(SocketLinkIndicators, StringSplitOptions.RemoveEmptyEntries)
+                .Select(GetSocket)
+                .ToList()
+                .ForEach(socketGroup.Sockets.Add);
 
-        private static Socket GetSocket(string socketString)
-        {
-            return new Socket
+        private static Socket GetSocket(string socketString) =>
+            new()
             {
-                SocketType = GetSocketType(socketString)
+                SocketType = GetSocketType(socketString),
             };
-        }
 
-        private static SocketType GetSocketType(string socketString)
-        {
-            return socketString switch
+        private static SocketType GetSocketType(string socketString) =>
+            socketString switch
             {
                 "R" => SocketType.Red,
                 "B" => SocketType.Blue,
@@ -64,6 +57,5 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
                 "A" => SocketType.Abyssal,
                 _ => throw new ArgumentException($"Unknown socket type '{socketString}'.", nameof(socketString)),
             };
-        }
     }
 }

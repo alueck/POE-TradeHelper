@@ -12,9 +12,9 @@ namespace POETradeHelper.Common.Extensions
         {
             var enumType = typeof(T);
             var matchingMemberTuple = enumType
-                                    .GetMembers()
-                                    .Select(member => (member, displayNameAttribute: member.GetCustomAttribute<DisplayAttribute>()))
-                                    .FirstOrDefault(tuple => string.Equals(tuple.displayNameAttribute?.GetName(), displayName, stringComparison));
+                .GetMembers()
+                .Select(member => (member, displayNameAttribute: member.GetCustomAttribute<DisplayAttribute>()))
+                .FirstOrDefault(tuple => string.Equals(tuple.displayNameAttribute?.GetName(), displayName, stringComparison));
 
             return matchingMemberTuple.displayNameAttribute != null
                 ? (T)Enum.Parse(enumType, matchingMemberTuple.member.Name)

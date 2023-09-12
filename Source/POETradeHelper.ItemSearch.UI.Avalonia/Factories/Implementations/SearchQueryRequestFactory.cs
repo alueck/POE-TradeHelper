@@ -32,7 +32,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         public SearchQueryRequest Create(SearchQueryRequest originalRequest, IAdvancedFiltersViewModel advancedFiltersViewModel)
         {
-            var searchQueryRequest = new SearchQueryRequest
+            SearchQueryRequest searchQueryRequest = new()
             {
                 League = originalRequest.League,
                 Query =
@@ -45,10 +45,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                         TypeFilters =
                         {
                             Category = (OptionFilter?)originalRequest.Query.Filters.TypeFilters.Category?.Clone(),
-                            Rarity = (OptionFilter?)originalRequest.Query.Filters.TypeFilters.Rarity?.Clone()
-                        }
-                    }
-                }
+                            Rarity = (OptionFilter?)originalRequest.Query.Filters.TypeFilters.Rarity?.Clone(),
+                        },
+                    },
+                },
             };
 
             SetStatFilters(advancedFiltersViewModel, searchQueryRequest);
@@ -59,11 +59,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         private static void SetStatFilters(IAdvancedFiltersViewModel advancedFiltersViewModel, SearchQueryRequest searchQueryRequest)
         {
-            var enabledStatFilterViewModels = advancedFiltersViewModel.AllStatFilters.Where(f => f.IsEnabled == true);
+            IEnumerable<StatFilterViewModel> enabledStatFilterViewModels =
+                advancedFiltersViewModel.AllStatFilters.Where(f => f.IsEnabled == true);
 
-            var statFilters = new StatFilters();
+            StatFilters statFilters = new();
 
-            foreach (var enabledStatFilterViewModel in enabledStatFilterViewModels)
+            foreach (StatFilterViewModel enabledStatFilterViewModel in enabledStatFilterViewModels)
             {
                 StatFilter statFilter = CreateStatFilter(enabledStatFilterViewModel);
 
@@ -76,7 +77,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         private static StatFilter CreateStatFilter(StatFilterViewModel statFilterViewModel)
         {
-            var statFilter = new StatFilter
+            StatFilter statFilter = new()
             {
                 Id = statFilterViewModel.Id,
                 Text = statFilterViewModel.Text,
@@ -87,7 +88,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 statFilter.Value = new MinMaxFilter
                 {
                     Min = minMaxStatFilterViewModel.Min,
-                    Max = GetMaxValue(minMaxStatFilterViewModel)
+                    Max = GetMaxValue(minMaxStatFilterViewModel),
                 };
             }
 
@@ -96,20 +97,24 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         private static void SetAdditionalFilters(IAdvancedFiltersViewModel advancedFiltersViewModel, SearchQueryRequest searchQueryRequest)
         {
-            foreach (var filterViewModel in advancedFiltersViewModel.AdditionalFilters.OfType<BindableFilterViewModel>())
+            foreach (BindableFilterViewModel filterViewModel in advancedFiltersViewModel.AdditionalFilters
+                         .OfType<BindableFilterViewModel>())
             {
                 SetValueByExpression(filterViewModel.BindingExpression, searchQueryRequest, filterViewModel);
             }
         }
 
-        private static void SetValueByExpression(Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression, SearchQueryRequest searchQueryRequest, BindableFilterViewModel bindableFilterViewModel)
+        private static void SetValueByExpression(
+            Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression,
+            SearchQueryRequest searchQueryRequest,
+            BindableFilterViewModel bindableFilterViewModel)
         {
-            var expressions = bindingExpression.Body.GetExpressionChain().ToList();
+            List<Expression> expressions = bindingExpression.Body.GetExpressionChain().ToList();
             object? parent = searchQueryRequest;
 
             foreach (MemberExpression expression in expressions.OfType<MemberExpression>())
             {
-                PropertyInfo property = ((PropertyInfo)expression.Member)!;
+                PropertyInfo property = (PropertyInfo)expression.Member;
                 if (expression == expressions.Last())
                 {
                     IFilter? filter = GetFilter(bindableFilterViewModel);
@@ -136,7 +141,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                         Red = socketsFilterViewModel.Red,
                         Green = socketsFilterViewModel.Green,
                         Blue = socketsFilterViewModel.Blue,
-                        White = socketsFilterViewModel.White
+                        White = socketsFilterViewModel.White,
                     };
                 }
             }
@@ -147,7 +152,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                     filter = new MinMaxFilter
                     {
                         Min = minMaxFilterViewModel.Min,
-                        Max = GetMaxValue(minMaxFilterViewModel)
+                        Max = GetMaxValue(minMaxFilterViewModel),
                     };
                 }
             }
@@ -157,7 +162,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 {
                     filter = new BoolOptionFilter
                     {
-                        Option = filterViewModel.IsEnabled.Value
+                        Option = filterViewModel.IsEnabled.Value,
                     };
                 }
             }
@@ -165,11 +170,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return filter;
         }
 
-        private static decimal? GetMaxValue(IMinMaxFilterViewModel minMaxFilterViewModel)
-        {
-            return minMaxFilterViewModel.Max.HasValue
+        private static decimal? GetMaxValue(IMinMaxFilterViewModel minMaxFilterViewModel) =>
+            minMaxFilterViewModel.Max.HasValue
                 ? Math.Max(minMaxFilterViewModel.Min.GetValueOrDefault(), minMaxFilterViewModel.Max.Value)
                 : default(decimal?);
-        }
     }
 }

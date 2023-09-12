@@ -22,8 +22,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnTrueIfItemStringContainsProphecyKeyword()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithDescription($"Right-click to add this {Resources.ProphecyKeyword} to your character.")
-                                            .BuildLines();
+                .WithDescription($"Right-click to add this {Resources.ProphecyKeyword} to your character.")
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -34,8 +34,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseIfItemStringDoesNotContainProphecyKeyword()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithDescription("Random description")
-                                            .BuildLines();
+                .WithDescription("Random description")
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -65,9 +65,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         protected override string[] GetValidItemStringLines()
         {
             return this.itemStringBuilder
-                        .WithName(Prophecy)
-                        .WithDescription("Random description")
-                        .BuildLines();
+                .WithName(Prophecy)
+                .WithDescription("Random description")
+                .BuildLines();
         }
     }
 }

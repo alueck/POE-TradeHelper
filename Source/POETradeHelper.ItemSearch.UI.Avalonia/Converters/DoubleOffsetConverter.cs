@@ -1,7 +1,7 @@
-﻿using Avalonia.Data.Converters;
-
-using System;
+﻿using System;
 using System.Globalization;
+
+using Avalonia.Data.Converters;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Converters
 {
@@ -17,9 +17,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Converters
             return value;
         }
 
-        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
             throw new NotImplementedException();
-        }
     }
 }

@@ -6,6 +6,6 @@
         Blue,
         Green,
         White,
-        Abyssal
+        Abyssal,
     }
 }

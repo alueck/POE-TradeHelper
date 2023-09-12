@@ -25,14 +25,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             this.itemSearchOptionsMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
             this.itemSearchOptionsMock.CurrentValue
-                .Returns(new ItemSearchOptions
-                {
-                    AdvancedQueryOptions = new AdvancedQueryOptions
+                .Returns(
+                    new ItemSearchOptions
                     {
-                        MinValuePercentageOffset = 0,
-                        MaxValuePercentageOffset = 0
-                    }
-                });
+                        AdvancedQueryOptions = new AdvancedQueryOptions
+                        {
+                            MinValuePercentageOffset = 0,
+                            MaxValuePercentageOffset = 0,
+                        },
+                    });
 
             this.statFilterViewModelFactory = new StatFilterViewModelFactory(this.itemSearchOptionsMock);
         }
@@ -41,7 +42,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnStatFilterViewModelWithId()
         {
             const string expected = "item stat id";
-            var itemStat = GetItemStat(expected);
+            ItemStat itemStat = GetItemStat(expected);
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
@@ -52,7 +53,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldReturnMinMaxStatFilterViewModelIfItemStatIsSingleValueItemStat()
         {
-            var itemStat = new SingleValueItemStat(StatCategory.Explicit);
+            SingleValueItemStat itemStat = new(StatCategory.Explicit);
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
@@ -62,7 +63,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldReturnMinMaxStatFilterViewModelIfItemStatIsMinMaxValueItemStat()
         {
-            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit);
+            MinMaxValueItemStat itemStat = new(StatCategory.Explicit);
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
@@ -71,7 +72,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
         public void CreateShouldNotReturnStatFilterViewModelIfItemStatIsItemStatWithoutValue()
         {
-            var itemStat = new ItemStat(StatCategory.Explicit);
+            ItemStat itemStat = new(StatCategory.Explicit);
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
@@ -83,7 +84,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnStatFilterViewModelWithText()
         {
             const string expected = "# to Maximum Life";
-            var itemStat = new SingleValueItemStat(GetItemStat(textWithPlaceholders: expected));
+            SingleValueItemStat itemStat = new(GetItemStat(textWithPlaceholders: expected));
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
@@ -97,12 +98,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCase(0.30, "0.3")]
         public void CreateShouldReturnStatFilterViewModelWithCurrentValueForSingleValueItemStat(decimal value, string expected)
         {
-            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            SingleValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                Value = value
+                Value = value,
             };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Current, Is.EqualTo(expected));
@@ -111,178 +113,128 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [SetCulture("")]
         [TestCase(10.00, 20.00, "10", "20")]
         [TestCase(0.23, 0.30, "0.23", "0.3")]
-        public void CreateShouldReturnStatFilterViewModelWithCurrentValueForMinMaxValueItemStat(decimal minValue, decimal maxValue, string expectedMinValue, string expectedMaxValue)
+        public void CreateShouldReturnStatFilterViewModelWithCurrentValueForMinMaxValueItemStat(
+            decimal minValue,
+            decimal maxValue,
+            string expectedMinValue,
+            string expectedMaxValue)
         {
-            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            MinMaxValueItemStat itemStat = new(StatCategory.Explicit)
             {
                 MinValue = minValue,
-                MaxValue = maxValue
+                MaxValue = maxValue,
             };
             string expected = $"{expectedMinValue} - {expectedMaxValue}";
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Current, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(nameof(DecimalValueRoundingTestCases))]
+        [TestCaseSource(nameof(GetDecimalValueRoundingTestCases))]
         public void CreateShouldReturnStatFilterViewModelWithMinValueForSingleValueItemStat(decimal value, decimal expected)
         {
-            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            SingleValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                Value = value
+                Value = value,
             };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Min, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(nameof(DecimalValueRoundingTestCases))]
+        [TestCaseSource(nameof(GetDecimalValueRoundingTestCases))]
         public void CreateShouldReturnStatFilterViewModelWithMaxValueForSingleValueItemStat(decimal value, decimal expected)
         {
-            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            SingleValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                Value = value
+                Value = value,
             };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Max, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(nameof(DecimalValueRoundingTestCases))]
+        [TestCaseSource(nameof(GetDecimalValueRoundingTestCases))]
         public void CreateShouldReturnStatFilterViewModelWithMinValueForMinMaxValueItemStat(decimal value, decimal expected)
         {
-            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            MinMaxValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                MinValue = value
+                MinValue = value,
             };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Min, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(nameof(DecimalValueRoundingTestCases))]
+        [TestCaseSource(nameof(GetDecimalValueRoundingTestCases))]
         public void CreateShouldReturnStatFilterViewModelWithMaxValueForMinMaxValueItemStat(decimal value, decimal expected)
         {
-            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            MinMaxValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                MaxValue = value
+                MaxValue = value,
             };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.NotNull(result);
             Assert.That(result.Max, Is.EqualTo(expected));
         }
 
-        public static IEnumerable<object> DecimalValueRoundingTestCases
-        {
-            get
-            {
-                yield return new object[] { 15m, 15m };
-                yield return new object[] { 0.123m, 0.12m };
-                yield return new object[] { 0.125m, 0.13m };
-                yield return new object[] { -0.125m, -0.13m };
-            }
-        }
-
-        [TestCaseSource(nameof(DecimalValueOffsetTestCases))]
+        [TestCaseSource(nameof(GetDecimalValueOffsetTestCases))]
         public void CreateShouldConsiderMinValuePercentageOffsetForSingleValueItemStat(decimal offset, decimal value, decimal expected)
         {
-            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            SingleValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                Value = value
+                Value = value,
             };
 
             this.CreateShouldConsiderMinValuePercentageOffsetForItemStat(itemStat, offset, expected);
         }
 
-        [TestCaseSource(nameof(DecimalValueOffsetTestCases))]
+        [TestCaseSource(nameof(GetDecimalValueOffsetTestCases))]
         public void CreateShouldConsiderMinValuePercentageOffsetForMinMaxValueItemStat(decimal offset, decimal minValue, decimal expected)
         {
-            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            MinMaxValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                MinValue = minValue
+                MinValue = minValue,
             };
 
             this.CreateShouldConsiderMinValuePercentageOffsetForItemStat(itemStat, offset, expected);
         }
 
-        private void CreateShouldConsiderMinValuePercentageOffsetForItemStat(ItemStat itemStat, decimal percentageOffset, decimal expected)
-        {
-            this.itemSearchOptionsMock.CurrentValue
-                .Returns(new ItemSearchOptions
-                {
-                    AdvancedQueryOptions = new AdvancedQueryOptions
-                    {
-                        MinValuePercentageOffset = percentageOffset,
-                        MaxValuePercentageOffset = 0
-                    }
-                });
-
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
-
-            Assert.NotNull(result);
-            Assert.That(result.Min, Is.EqualTo(expected));
-        }
-
-        [TestCaseSource(nameof(DecimalValueOffsetTestCases))]
+        [TestCaseSource(nameof(GetDecimalValueOffsetTestCases))]
         public void CreateShouldConsiderMaxValuePercentageOffsetForSingleValueItemStat(decimal offset, decimal value, decimal expected)
         {
-            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            SingleValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                Value = value
+                Value = value,
             };
 
             this.CreateShouldConsiderMaxValuePercentageOffsetForItemStat(itemStat, offset, expected);
         }
 
-        [TestCaseSource(nameof(DecimalValueOffsetTestCases))]
+        [TestCaseSource(nameof(GetDecimalValueOffsetTestCases))]
         public void CreateShouldConsiderMaxValuePercentageOffsetForMinMaxValueItemStat(decimal offset, decimal maxValue, decimal expected)
         {
-            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            MinMaxValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                MaxValue = maxValue
+                MaxValue = maxValue,
             };
 
             this.CreateShouldConsiderMaxValuePercentageOffsetForItemStat(itemStat, offset, expected);
-        }
-
-        private void CreateShouldConsiderMaxValuePercentageOffsetForItemStat(ItemStat itemStat, decimal percentageOffset, decimal expected)
-        {
-            this.itemSearchOptionsMock.CurrentValue
-                .Returns(new ItemSearchOptions
-                {
-                    AdvancedQueryOptions = new AdvancedQueryOptions
-                    {
-                        MinValuePercentageOffset = 0,
-                        MaxValuePercentageOffset = percentageOffset
-                    }
-                });
-
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
-
-            Assert.NotNull(result);
-            Assert.That(result.Max, Is.EqualTo(expected));
-        }
-
-        public static IEnumerable<object> DecimalValueOffsetTestCases
-        {
-            get
-            {
-                yield return new object[] { -0.1m, 10m, 9m };
-                yield return new object[] { -0.15m, 10m, 8m };
-                yield return new object[] { 0.1m, 10m, 11m };
-                yield return new object[] { 0.1m, 1.235m, 1.36m };
-                yield return new object[] { -0.1m, -1.34m, -1.21m };
-            }
         }
 
         [Test]
@@ -291,10 +243,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             const string textWithPlaceholders = "#% chance to Trigger Edict of Frost on Kill";
             const string statText = "Trigger Edict of Frost on Kill";
 
-            var itemStat = new ItemStat(StatCategory.Enchant)
+            ItemStat itemStat = new(StatCategory.Enchant)
             {
                 Text = statText,
-                TextWithPlaceholders = textWithPlaceholders
+                TextWithPlaceholders = textWithPlaceholders,
             };
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
@@ -309,9 +261,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCase(10.111)]
         public void CreateShouldTakeMinValueFromQueryRequestForSingleValueItemStat(decimal? expected)
         {
-            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            SingleValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                Value = 10
+                Value = 10,
             };
 
             this.CreateShouldTakeMinValueFromQueryRequest(itemStat, expected);
@@ -323,30 +275,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCase(10.111)]
         public void CreateShouldTakeMinValueFromQueryRequestForMinMaxValueItemStat(decimal? expected)
         {
-            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            MinMaxValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                MinValue = 10
+                MinValue = 10,
             };
 
             this.CreateShouldTakeMinValueFromQueryRequest(itemStat, expected);
-        }
-
-        private void CreateShouldTakeMinValueFromQueryRequest(ItemStat itemStat, decimal? expected)
-        {
-            this.itemSearchOptionsMock.CurrentValue
-                .Returns(new ItemSearchOptions
-                {
-                    AdvancedQueryOptions = new AdvancedQueryOptions
-                    {
-                        MinValuePercentageOffset = -0.1m
-                    }
-                });
-
-            itemStat.Id = "item stat id";
-            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Min = expected });
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest) as MinMaxStatFilterViewModel;
-
-            Assert.That(result.Min, Is.EqualTo(expected));
         }
 
         [TestCase(null)]
@@ -355,9 +289,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCase(20.222)]
         public void CreateShouldTakeMaxValueFromQueryRequestForSingleValueItemStat(decimal? expected)
         {
-            var itemStat = new SingleValueItemStat(StatCategory.Explicit)
+            SingleValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                Value = 10
+                Value = 10,
             };
 
             this.CreateShouldTakeMaxValueFromQueryRequest(itemStat, expected);
@@ -369,34 +303,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCase(20.222)]
         public void CreateShouldTakeMaxValueFromQueryRequestForMinMaxValueItemStat(decimal? expected)
         {
-            var itemStat = new MinMaxValueItemStat(StatCategory.Explicit)
+            MinMaxValueItemStat itemStat = new(StatCategory.Explicit)
             {
-                MaxValue = 20
+                MaxValue = 20,
             };
 
             this.CreateShouldTakeMaxValueFromQueryRequest(itemStat, expected);
         }
 
-        private void CreateShouldTakeMaxValueFromQueryRequest(ItemStat itemStat, decimal? expected)
-        {
-            this.itemSearchOptionsMock.CurrentValue
-                .Returns(new ItemSearchOptions
-                {
-                    AdvancedQueryOptions = new AdvancedQueryOptions
-                    {
-                        MaxValuePercentageOffset = 0.1m
-                    }
-                });
-
-            itemStat.Id = "item stat id";
-            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Max = expected });
-
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest) as MinMaxStatFilterViewModel;
-
-            Assert.That(result.Max, Is.EqualTo(expected));
-        }
-
-        [TestCaseSource(nameof(ItemStatsWithIds))]
+        [TestCaseSource(nameof(GetItemStatsWithIds))]
         public void CreateShouldSetIsEnabledTrueIfQueryRequestContainsFilter(ItemStat itemStat)
         {
             SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter());
@@ -406,7 +321,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             Assert.That(result.IsEnabled, Is.True);
         }
 
-        [TestCaseSource(nameof(ItemStatsWithIds))]
+        [TestCaseSource(nameof(GetItemStatsWithIds))]
         public void CreateShouldNotSetIsEnabledTrueIfQueryRequestDoesNotContainFilter(ItemStat itemStat)
         {
             SearchQueryRequest queryRequest = new();
@@ -420,48 +335,143 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldMapValueOfSingleValueItemStatToMinValue()
         {
             const int expected = 2;
-            var itemStat = new SingleValueItemStat(StatCategory.Monster) { Value = expected };
+            SingleValueItemStat itemStat = new(StatCategory.Monster) { Value = expected };
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.That(result.Min, Is.EqualTo(expected));
-        }
-
-        private static IEnumerable<ItemStat> ItemStatsWithIds
-        {
-            get
-            {
-                yield return new ItemStat(StatCategory.Explicit) { Id = "item stat id" };
-                yield return new SingleValueItemStat(StatCategory.Explicit) { Id = "single value item stat id" };
-                yield return new MinMaxValueItemStat(StatCategory.Enchant) { Id = "min max value item stat id" };
-            }
         }
 
         [Test]
         public void CreateShouldIgnoreConfigurationForMonsterItemStat()
         {
             const int expected = 3;
-            var itemStat = new SingleValueItemStat(StatCategory.Monster) { Id = "monsterItemStat", Value = expected };
+            SingleValueItemStat itemStat = new(StatCategory.Monster) { Id = "monsterItemStat", Value = expected };
 
             this.itemSearchOptionsMock.CurrentValue
-                .Returns(new ItemSearchOptions
-                {
-                    AdvancedQueryOptions = new AdvancedQueryOptions
+                .Returns(
+                    new ItemSearchOptions
                     {
-                        MinValuePercentageOffset = -0.1m,
-                        MaxValuePercentageOffset = 0.1m
-                    }
-                });
+                        AdvancedQueryOptions = new AdvancedQueryOptions
+                        {
+                            MinValuePercentageOffset = -0.1m,
+                            MaxValuePercentageOffset = 0.1m,
+                        },
+                    });
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
 
             Assert.That(result.Min, Is.EqualTo(expected));
             Assert.That(result.Max, Is.EqualTo(expected));
         }
 
-        private static SearchQueryRequest GetQueryRequestWithStatFilter(string statId, MinMaxFilter value)
+        private void CreateShouldConsiderMinValuePercentageOffsetForItemStat(ItemStat itemStat, decimal percentageOffset, decimal expected)
         {
-            return new SearchQueryRequest
+            this.itemSearchOptionsMock.CurrentValue
+                .Returns(
+                    new ItemSearchOptions
+                    {
+                        AdvancedQueryOptions = new AdvancedQueryOptions
+                        {
+                            MinValuePercentageOffset = percentageOffset,
+                            MaxValuePercentageOffset = 0,
+                        },
+                    });
+
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+
+            Assert.NotNull(result);
+            Assert.That(result.Min, Is.EqualTo(expected));
+        }
+
+        private void CreateShouldTakeMinValueFromQueryRequest(ItemStat itemStat, decimal? expected)
+        {
+            this.itemSearchOptionsMock.CurrentValue
+                .Returns(
+                    new ItemSearchOptions
+                    {
+                        AdvancedQueryOptions = new AdvancedQueryOptions
+                        {
+                            MinValuePercentageOffset = -0.1m,
+                        },
+                    });
+
+            itemStat.Id = "item stat id";
+            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Min = expected });
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest) as MinMaxStatFilterViewModel;
+
+            Assert.That(result.Min, Is.EqualTo(expected));
+        }
+
+        private void CreateShouldConsiderMaxValuePercentageOffsetForItemStat(ItemStat itemStat, decimal percentageOffset, decimal expected)
+        {
+            this.itemSearchOptionsMock.CurrentValue
+                .Returns(
+                    new ItemSearchOptions
+                    {
+                        AdvancedQueryOptions = new AdvancedQueryOptions
+                        {
+                            MinValuePercentageOffset = 0,
+                            MaxValuePercentageOffset = percentageOffset,
+                        },
+                    });
+
+            MinMaxStatFilterViewModel result =
+                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+
+            Assert.NotNull(result);
+            Assert.That(result.Max, Is.EqualTo(expected));
+        }
+
+        private void CreateShouldTakeMaxValueFromQueryRequest(ItemStat itemStat, decimal? expected)
+        {
+            this.itemSearchOptionsMock.CurrentValue
+                .Returns(
+                    new ItemSearchOptions
+                    {
+                        AdvancedQueryOptions = new AdvancedQueryOptions
+                        {
+                            MaxValuePercentageOffset = 0.1m,
+                        },
+                    });
+
+            itemStat.Id = "item stat id";
+            SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Max = expected });
+
+            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest) as MinMaxStatFilterViewModel;
+
+            Assert.That(result.Max, Is.EqualTo(expected));
+        }
+
+        private static IEnumerable<object> GetDecimalValueRoundingTestCases()
+        {
+            yield return new object[] { 15m, 15m };
+            yield return new object[] { 0.123m, 0.12m };
+            yield return new object[] { 0.125m, 0.13m };
+            yield return new object[] { -0.125m, -0.13m };
+        }
+
+        private static IEnumerable<object> GetDecimalValueOffsetTestCases()
+        {
+            yield return new object[] { -0.1m, 10m, 9m };
+            yield return new object[] { -0.15m, 10m, 8m };
+            yield return new object[] { 0.1m, 10m, 11m };
+            yield return new object[] { 0.1m, 1.235m, 1.36m };
+            yield return new object[] { -0.1m, -1.34m, -1.21m };
+        }
+
+        private static IEnumerable<ItemStat> GetItemStatsWithIds()
+        {
+            yield return new ItemStat(StatCategory.Explicit) { Id = "item stat id" };
+            yield return new SingleValueItemStat(StatCategory.Explicit) { Id = "single value item stat id" };
+            yield return new MinMaxValueItemStat(StatCategory.Enchant) { Id = "min max value item stat id" };
+        }
+
+        private static SearchQueryRequest GetQueryRequestWithStatFilter(string statId, MinMaxFilter value) =>
+            new()
             {
                 Query =
                 {
@@ -474,18 +484,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                                 new StatFilter
                                 {
                                     Id = statId,
-                                    Value = value
-                                }
-                            }
-                        }
-                    }
-                }
+                                    Value = value,
+                                },
+                            },
+                        },
+                    },
+                },
             };
-        }
 
-        private static ItemStat GetItemStat(string id = "", string textWithPlaceholders = "", string statText = "")
-        {
-            return new ItemStat(StatCategory.Unknown) { Id = id, TextWithPlaceholders = textWithPlaceholders, Text = statText };
-        }
+        private static ItemStat GetItemStat(string id = "", string textWithPlaceholders = "", string statText = "") => new(StatCategory.Unknown)
+            { Id = id, TextWithPlaceholders = textWithPlaceholders, Text = statText };
     }
 }

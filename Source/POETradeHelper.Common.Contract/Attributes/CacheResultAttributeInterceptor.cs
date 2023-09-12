@@ -17,7 +17,7 @@ namespace POETradeHelper.Common.Contract.Attributes;
 
 public class CacheResultAttributeInterceptor : IInterceptor
 {
-    private static readonly IDictionary<MethodInfo, CacheResultAttribute?> attributeCache = new ConcurrentDictionary<MethodInfo, CacheResultAttribute?>();
+    private static readonly IDictionary<MethodInfo, CacheResultAttribute?> AttributeCache = new ConcurrentDictionary<MethodInfo, CacheResultAttribute?>();
 
     private readonly IMemoryCache memoryCache;
 
@@ -65,14 +65,16 @@ public class CacheResultAttributeInterceptor : IInterceptor
     {
         invocation.Proceed();
         Task task = (Task)invocation.ReturnValue;
-        task.ContinueWith(t =>
-        {
-            var taskType = t.GetType();
-            if (!taskType.IsGenericType || ((dynamic)t).Result != null)
+        task.ContinueWith(
+            t =>
             {
-                this.CreateCacheEntry(cacheKey, t, cacheDurationSeconds);
-            }
-        }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
+                var taskType = t.GetType();
+                if (!taskType.IsGenericType || ((dynamic)t).Result != null)
+                {
+                    this.CreateCacheEntry(cacheKey, t!, cacheDurationSeconds);
+                }
+            },
+            TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
     }
 
     private void CreateCacheEntry(string cacheKey, object value, int cacheDurationSeconds)
@@ -87,7 +89,8 @@ public class CacheResultAttributeInterceptor : IInterceptor
 
     private static string GetCacheKey(IInvocation invocation)
     {
-        string methodKey = string.Join('-',
+        string methodKey = string.Join(
+            '-',
             invocation.TargetType.FullName,
             invocation.MethodInvocationTarget.Name,
             JsonSerializer.Serialize(invocation.Arguments.Where(a => a is not CancellationToken)));
@@ -100,9 +103,9 @@ public class CacheResultAttributeInterceptor : IInterceptor
 
     private static CacheResultAttribute? GetAttribute(IInvocation invocation)
     {
-        if (!attributeCache.TryGetValue(invocation.MethodInvocationTarget, out var attribute))
+        if (!AttributeCache.TryGetValue(invocation.MethodInvocationTarget, out var attribute))
         {
-            attributeCache[invocation.MethodInvocationTarget] = attribute = invocation.MethodInvocationTarget.GetCustomAttribute<CacheResultAttribute>();
+            AttributeCache[invocation.MethodInvocationTarget] = attribute = invocation.MethodInvocationTarget.GetCustomAttribute<CacheResultAttribute>();
         }
 
         return attribute;

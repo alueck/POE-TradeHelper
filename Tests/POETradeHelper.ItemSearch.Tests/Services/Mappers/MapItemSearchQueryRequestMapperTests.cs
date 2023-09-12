@@ -14,16 +14,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public MapItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.mapItemSearchQueryRequestMapper = new MapItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
+            this.ItemSearchQueryRequestMapper = this.mapItemSearchQueryRequestMapper =
+                new MapItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [Test]
         public void MapToQueryRequestShouldParseType()
         {
             const string expected = "Strand Map";
-            var item = new MapItem(ItemRarity.Normal)
+            MapItem item = new(ItemRarity.Normal)
             {
-                Type = expected
+                Type = expected,
             };
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -35,10 +36,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         public void MapToQueryRequestShouldMapNameOfIdentifiedUniqueMap()
         {
             const string expected = "Pillars of Arun";
-            var item = new MapItem(ItemRarity.Unique)
+            MapItem item = new(ItemRarity.Unique)
             {
                 Name = expected,
-                IsIdentified = true
+                IsIdentified = true,
             };
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -50,7 +51,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         public void MapToQueryRequestShouldNotMapNameOfUnidentifiedUniqueMap()
         {
             const string expected = "Pillars of Arun";
-            var item = new MapItem(ItemRarity.Unique)
+            MapItem item = new(ItemRarity.Unique)
             {
                 Name = expected,
             };
@@ -60,12 +61,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             Assert.IsNull(result.Query.Name);
         }
 
-        [TestCaseSource(nameof(NonUniqueItemRarities))]
+        [TestCaseSource(nameof(GetNonUniqueItemRarities))]
         public void MapToQueryRequestShouldNotMapNameOfNonUniqueItems(ItemRarity itemRarity)
         {
-            var item = new MapItem(itemRarity)
+            MapItem item = new(itemRarity)
             {
-                Name = "Pillars of Arun"
+                Name = "Pillars of Arun",
             };
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -77,9 +78,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCase(false)]
         public void MapToQueryRequestShouldMapIdentified(bool identified)
         {
-            var item = new MapItem(ItemRarity.Rare)
+            MapItem item = new(ItemRarity.Rare)
             {
-                IsIdentified = identified
+                IsIdentified = identified,
             };
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -90,7 +91,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [Test]
         public void MapToQueryItemShouldMapItemRarityForUniqueItems()
         {
-            var item = new MapItem(ItemRarity.Unique);
+            MapItem item = new(ItemRarity.Unique);
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
@@ -98,10 +99,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
         }
 
-        [TestCaseSource(nameof(NonUniqueItemRarities))]
+        [TestCaseSource(nameof(GetNonUniqueItemRarities))]
         public void MapToQueryItemShouldMapItemRarityForNonUniqueItems(ItemRarity itemRarity)
         {
-            var item = new MapItem(itemRarity);
+            MapItem item = new(itemRarity);
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
@@ -113,9 +114,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCase(15)]
         public void MapToQueryItemShouldMapMapTier(int mapTier)
         {
-            var item = new MapItem(ItemRarity.Normal)
+            MapItem item = new(ItemRarity.Normal)
             {
-                Tier = mapTier
+                Tier = mapTier,
             };
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -130,9 +131,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCase(false)]
         public void MapToQueryItemShouldMapBlighted(bool isBlighted)
         {
-            var item = new MapItem(ItemRarity.Normal)
+            MapItem item = new(ItemRarity.Normal)
             {
-                IsBlighted = isBlighted
+                IsBlighted = isBlighted,
             };
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -146,9 +147,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCase(false)]
         public void MapToQueryItemShouldMapBlightRavaged(bool isBlightRavaged)
         {
-            var item = new MapItem(ItemRarity.Normal)
+            MapItem item = new(ItemRarity.Normal)
             {
-                IsBlightRavaged = isBlightRavaged
+                IsBlightRavaged = isBlightRavaged,
             };
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);

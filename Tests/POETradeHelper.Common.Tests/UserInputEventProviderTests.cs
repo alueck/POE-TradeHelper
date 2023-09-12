@@ -48,11 +48,11 @@ namespace POETradeHelper.Common.Tests
         [Test]
         public async Task SearchItemKeyCombinationShouldSendSearchItemCommandIfPathOfExileIsActiveWindow()
         {
-            var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
+            KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcD },
                 Mask = ModifierMask.Ctrl,
-                Type = EventType.KeyPressed
+                Type = EventType.KeyPressed,
             });
             this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
                 .Returns(true);
@@ -68,11 +68,11 @@ namespace POETradeHelper.Common.Tests
         [Test]
         public async Task SearchItemKeyCombinationShouldNotSendSearchItemCommandIfPathOfExileIsNotActiveWindow()
         {
-            var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
+            KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcD },
                 Mask = ModifierMask.Ctrl,
-                Type = EventType.KeyPressed
+                Type = EventType.KeyPressed,
             });
 
             this.keyPressed.OnNext(keyEventArgs);
@@ -86,10 +86,10 @@ namespace POETradeHelper.Common.Tests
         [Test]
         public async Task HideOverlayKeyCombinationShouldSendHideOverlayQuery()
         {
-            var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
+            KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcEscape },
-                Type = EventType.KeyPressed
+                Type = EventType.KeyPressed,
             });
 
             this.keyPressed.OnNext(keyEventArgs);
@@ -102,16 +102,16 @@ namespace POETradeHelper.Common.Tests
         [Test]
         public void ShouldSetEventArgsHandledFromHideOverlayQueryWithOnHandledAction()
         {
-            var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
+            KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcEscape },
-                Type = EventType.KeyPressed
+                Type = EventType.KeyPressed,
             });
 
             Action onHandledAction = null;
             this.mediatorMock
                 .When(x => x.Send(Arg.Any<HideOverlayCommand>(), Arg.Any<CancellationToken>()))
-                .Do(ctx => onHandledAction = (ctx.Arg<HideOverlayCommand>()).OnHandled);
+                .Do(ctx => onHandledAction = ctx.Arg<HideOverlayCommand>().OnHandled);
 
             this.keyPressed.OnNext(keyEventArgs);
 
@@ -124,10 +124,10 @@ namespace POETradeHelper.Common.Tests
         [Test]
         public async Task GotoHideoutKeyCombinationShouldSendGotoHideoutCommandIfPathOfExileIsActiveWindow()
         {
-            var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
+            KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcF5 },
-                Type = EventType.KeyPressed
+                Type = EventType.KeyPressed,
             });
             this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
                 .Returns(true);
@@ -143,10 +143,10 @@ namespace POETradeHelper.Common.Tests
         [Test]
         public async Task GotoHideoutKeyCombinationShouldNotSendGotoHideoutCommandIfPathOfExileIsNotActiveWindow()
         {
-            var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
+            KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcF5 },
-                Type = EventType.KeyPressed
+                Type = EventType.KeyPressed,
             });
 
             this.keyPressed.OnNext(keyEventArgs);
@@ -160,11 +160,11 @@ namespace POETradeHelper.Common.Tests
         [Test]
         public async Task OpenWikiKeyCombinationShouldSendOpenWikiCommandIfPathOfExileIsActiveWindow()
         {
-            var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
+            KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcW },
                 Mask = ModifierMask.Alt,
-                Type = EventType.KeyPressed
+                Type = EventType.KeyPressed,
             });
             this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
                 .Returns(true);
@@ -180,11 +180,11 @@ namespace POETradeHelper.Common.Tests
         [Test]
         public async Task OpenWikiKeyCombinationShouldNotSendOpenWikiCommandIfPathOfExileIsNotActiveWindow()
         {
-            var keyEventArgs = new KeyboardHookEventArgs(new UioHookEvent
+            KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcW },
                 Mask = ModifierMask.Alt,
-                Type = EventType.KeyPressed
+                Type = EventType.KeyPressed,
             });
 
             this.keyPressed.OnNext(keyEventArgs);

@@ -11,12 +11,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Converters
 {
     public class ItemRarityToBrushConverter : IValueConverter
     {
-        private static readonly IDictionary<ItemRarity, IBrush> itemRarityColorMappings = new Dictionary<ItemRarity, IBrush>
+        private static readonly IDictionary<ItemRarity, IBrush> ItemRarityColorMappings = new Dictionary<ItemRarity, IBrush>
         {
             [ItemRarity.Normal] = new SolidColorBrush(Color.FromRgb(200, 200, 200)),
             [ItemRarity.Magic] = new SolidColorBrush(Color.FromRgb(136, 136, 255)),
             [ItemRarity.Rare] = new SolidColorBrush(Color.FromRgb(255, 255, 119)),
-            [ItemRarity.Unique] = new SolidColorBrush(Color.FromRgb(175, 96, 37))
+            [ItemRarity.Unique] = new SolidColorBrush(Color.FromRgb(175, 96, 37)),
         };
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -25,7 +25,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Converters
 
             if (typeof(IBrush).IsAssignableFrom(targetType)
                 && value is ItemRarity itemRarity
-                && !itemRarityColorMappings.TryGetValue(itemRarity, out result))
+                && !ItemRarityColorMappings.TryGetValue(itemRarity, out result))
             {
                 result = new SolidColorBrush(Color.FromRgb(170, 158, 130));
             }
@@ -33,9 +33,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Converters
             return result;
         }
 
-        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
             throw new NotImplementedException();
-        }
     }
 }

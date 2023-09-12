@@ -24,7 +24,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
         {
             var matchingFilter = FindMatchingFilter(itemStat, queryRequest);
 
-            (decimal minValue, decimal maxValue)? minMaxTuple = GetMinMaxTuple(itemStat);
+            (decimal MinValue, decimal MaxValue)? minMaxTuple = GetMinMaxTuple(itemStat);
 
             return minMaxTuple.HasValue
                 ? this.GetMinMaxStatFilterViewModel(itemStat, matchingFilter, minMaxTuple.Value)
@@ -36,9 +36,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return queryRequest.Query.Stats.SelectMany(s => s.Filters).FirstOrDefault(filter => string.Equals(filter.Id, itemStat.Id, StringComparison.Ordinal));
         }
 
-        private static (decimal minValue, decimal maxValue)? GetMinMaxTuple(ItemStat itemStat)
+        private static (decimal MinValue, decimal MaxValue)? GetMinMaxTuple(ItemStat itemStat)
         {
-            (decimal minValue, decimal maxValue)? minMaxTuple = null;
+            (decimal MinValue, decimal MaxValue)? minMaxTuple = null;
 
             if (itemStat is SingleValueItemStat singleValueItemStat)
             {
@@ -52,7 +52,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return minMaxTuple;
         }
 
-        private StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilter? matchingFilter, (decimal minValue, decimal maxValue) minMaxTuple)
+        private StatFilterViewModel GetMinMaxStatFilterViewModel(ItemStat itemStat, StatFilter? matchingFilter, (decimal MinValue, decimal MaxValue) minMaxTuple)
         {
             decimal minValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MinValuePercentageOffset;
             decimal maxValuePercentageOffset = this.itemSearchOptions.CurrentValue.AdvancedQueryOptions.MaxValuePercentageOffset;
@@ -67,10 +67,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             {
                 Id = itemStat.Id,
                 IsEnabled = matchingFilter != null,
-                Min = matchingFilter != null ? matchingFilter.Value.Min : GetValueWithOffset(minMaxTuple.minValue, minValuePercentageOffset),
-                Max = matchingFilter != null ? matchingFilter.Value.Max : GetValueWithOffset(minMaxTuple.maxValue, maxValuePercentageOffset),
-                Current = GetCurrent(minMaxTuple.minValue, minMaxTuple.maxValue),
-                Text = itemStat.TextWithPlaceholders
+                Min = matchingFilter != null ? matchingFilter.Value.Min : GetValueWithOffset(minMaxTuple.MinValue, minValuePercentageOffset),
+                Max = matchingFilter != null ? matchingFilter.Value.Max : GetValueWithOffset(minMaxTuple.MaxValue, maxValuePercentageOffset),
+                Current = GetCurrent(minMaxTuple.MinValue, minMaxTuple.MaxValue),
+                Text = itemStat.TextWithPlaceholders,
             };
         }
 
@@ -107,7 +107,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             {
                 Id = itemStat.Id,
                 IsEnabled = matchingFilter != null,
-                Text = itemStat.Text
+                Text = itemStat.Text,
             };
         }
     }

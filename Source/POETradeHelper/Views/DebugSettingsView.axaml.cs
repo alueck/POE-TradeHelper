@@ -7,7 +7,7 @@ namespace POETradeHelper.Views
     {
         public DebugSettingsView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void InitializeComponent()

@@ -33,13 +33,13 @@ namespace POETradeHelper.QualityOfLife.UI.Avalonia.ViewModels
 
         public Task InitializeAsync()
         {
-            SelectedWikiType = wikiOptions.Value.Wiki;
+            this.SelectedWikiType = this.wikiOptions.Value.Wiki;
             return Task.CompletedTask;
         }
 
         public void SaveSettings()
         {
-            wikiOptions.Update(options => options.Wiki = SelectedWikiType);
+            this.wikiOptions.Update(options => options.Wiki = this.SelectedWikiType);
         }
     }
 }

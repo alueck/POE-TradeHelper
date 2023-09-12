@@ -7,9 +7,10 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
     public abstract class ItemStringBuilderBase<T>
         where T : ItemStringBuilderBase<T>
     {
-        public NameAndRarityGroup NameAndRarityGroup { get; } = new NameAndRarityGroup { Rarity = "Normal", Type = "TestType" };
+        public NameAndRarityGroup NameAndRarityGroup { get; } = new() { Rarity = "Normal", Type = "TestType" };
 
         public bool IsCorrupted { get; protected set; }
+
         public bool IsIdentified { get; protected set; } = true;
 
         public T WithRarity(string rarity)
@@ -54,10 +55,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
             return (T)this;
         }
 
-        public string[] BuildLines()
-        {
-            return this.Build().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-        }
+        public string[] BuildLines() => this.Build().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
         public abstract string Build();
     }

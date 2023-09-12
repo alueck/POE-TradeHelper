@@ -88,6 +88,17 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             }
         }
 
+        public void HandleException(Exception exception)
+        {
+            this.Message = new Message
+            {
+                Text = $"An error occurred. Please try again.{Environment.NewLine}If the error persists, check the logs and create an issue on GitHub.",
+                Type = MessageType.Error,
+            };
+
+            this.Log().Error(exception);
+        }
+
         private async Task GoToView<T>(Func<IScreen, T> factory, CancellationToken cancellationToken)
             where T : IResultsViewModel
         {
@@ -104,17 +115,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 
             await viewModel.InitializeAsync(this.Item, cancellationToken);
             this.Url = viewModel.ItemListings?.ListingsUri;
-        }
-
-        public void HandleException(Exception exception)
-        {
-            this.Message = new Message
-            {
-                Text = $"An error occurred. Please try again.{Environment.NewLine}If the error persists, check the logs and create an issue on GitHub.",
-                Type = MessageType.Error
-            };
-
-            this.Log().Error(exception);
         }
     }
 }

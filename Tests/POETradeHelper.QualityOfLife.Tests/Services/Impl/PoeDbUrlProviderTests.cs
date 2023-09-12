@@ -16,63 +16,49 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
         private PoeDbUrlProvider wikiUrlProvider;
 
         [SetUp]
-        public void Setup()
-        {
-            this.wikiUrlProvider = new PoeDbUrlProvider();
-        }
+        public void Setup() => this.wikiUrlProvider = new PoeDbUrlProvider();
 
         [Test]
         public void WikiTyperReturnsPoeDb()
         {
-            var result = this.wikiUrlProvider.HandledWikiType;
+            WikiType result = this.wikiUrlProvider.HandledWikiType;
 
             Assert.That(result, Is.EqualTo(WikiType.PoeDb));
         }
 
-        [TestCaseSource(nameof(NonUniqueItems))]
+        [TestCaseSource(nameof(GetNonUniqueItems))]
         public void GetUrlReturnsCorrectUrlForNonUniqueItems(Item item)
         {
-            var expected = new Uri(RootUrl + item.Type.Replace(' ', '_').Replace("'", ""));
+            Uri expected = new(RootUrl + item.Type.Replace(' ', '_').Replace("'", string.Empty));
 
-            var result = this.wikiUrlProvider.GetUrl(item);
+            Uri result = this.wikiUrlProvider.GetUrl(item);
 
             Assert.That(result, Is.EqualTo(expected));
-        }
-
-        public static IEnumerable<Item> NonUniqueItems
-        {
-            get
-            {
-                yield return new EquippableItem(ItemRarity.Normal) { Type = "Soldier's Brigandine" };
-                yield return new EquippableItem(ItemRarity.Magic) { Type = "Soldier's Brigandine" };
-                yield return new EquippableItem(ItemRarity.Rare) { Type = "Soldier's Brigandine" };
-                yield return new CurrencyItem { Type = "Scroll of Wisdom" };
-                yield return new GemItem { Type = "Portal" };
-                yield return new FragmentItem { Type = "Sacrifice at Dusk" };
-                yield return new DivinationCardItem { Type = "The Summoner" };
-            }
         }
 
         [Test]
         public void GetUrlReturnsCorrectUrlForUniqueItem()
         {
-            var item = new EquippableItem(ItemRarity.Unique)
+            EquippableItem item = new(ItemRarity.Unique)
             {
-                Name = "Thousand Ribbons"
+                Name = "Thousand Ribbons",
             };
-            var expected = new Uri(RootUrl + item.Name.Replace(' ', '_').Replace("'", ""));
+            Uri expected = new(RootUrl + item.Name.Replace(' ', '_').Replace("'", string.Empty));
 
-            var result = this.wikiUrlProvider.GetUrl(item);
+            Uri result = this.wikiUrlProvider.GetUrl(item);
 
             Assert.That(result, Is.EqualTo(expected));
         }
 
-        [Test]
-        public void GetUrlThrowsArgumentNullExceptionIfItemIsNull()
+        private static IEnumerable<Item> GetNonUniqueItems()
         {
-            void Action() => this.wikiUrlProvider.GetUrl(null);
-
-            Assert.Throws<ArgumentNullException>(Action);
+            yield return new EquippableItem(ItemRarity.Normal) { Type = "Soldier's Brigandine" };
+            yield return new EquippableItem(ItemRarity.Magic) { Type = "Soldier's Brigandine" };
+            yield return new EquippableItem(ItemRarity.Rare) { Type = "Soldier's Brigandine" };
+            yield return new CurrencyItem { Type = "Scroll of Wisdom" };
+            yield return new GemItem { Type = "Portal" };
+            yield return new FragmentItem { Type = "Sacrifice at Dusk" };
+            yield return new DivinationCardItem { Type = "The Summoner" };
         }
     }
 }

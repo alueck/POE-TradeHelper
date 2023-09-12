@@ -13,7 +13,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         private readonly IItemTypeParser itemTypeParser;
         private readonly IItemDataService itemDataService;
 
-        public EquippableItemParser(ISocketsParser socketsParser, IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser, IItemDataService itemDataService)
+        public EquippableItemParser(
+            ISocketsParser socketsParser,
+            IItemTypeParser itemTypeParser,
+            IItemStatsParser<ItemWithStats> itemStatsParser,
+            IItemDataService itemDataService)
             : base(itemStatsParser)
         {
             this.socketsParser = socketsParser;
@@ -24,32 +28,16 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         public override bool CanParse(string[] itemStringLines)
         {
             ItemRarity? itemRarity = GetRarity(itemStringLines);
-            return itemRarity >= ItemRarity.Normal && itemRarity <= ItemRarity.Unique
-                && HasItemLevel(itemStringLines)
-                && !IsMapOrOrganItem(itemStringLines)
-                && !TypeOrNameContains(itemStringLines, Resources.FlaskKeyword, Resources.JewelKeyword);
-        }
-
-        private static bool HasItemLevel(string[] itemStringLines)
-        {
-            return itemStringLines.Any(l => l.Contains(Resources.ItemLevelDescriptor));
-        }
-
-        private static bool IsMapOrOrganItem(string[] itemStringLines)
-        {
-            return itemStringLines.Any(l => l.Contains(Resources.MapTierDescriptor)
-                                         || l.Contains(Resources.OrganItemDescriptor));
-        }
-
-        private static bool TypeOrNameContains(string[] itemStringLines, params string[] keywords)
-        {
-            return itemStringLines.Skip(2).Take(2).Any(line => keywords.Any(line.Contains));
+            return itemRarity is >= ItemRarity.Normal and <= ItemRarity.Unique
+                   && HasItemLevel(itemStringLines)
+                   && !IsMapOrOrganItem(itemStringLines)
+                   && !TypeOrNameContains(itemStringLines, Resources.FlaskKeyword, Resources.JewelKeyword);
         }
 
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
             ItemRarity? itemRarity = GetRarity(itemStringLines);
-            var equippableItem = new EquippableItem(itemRarity!.Value)
+            EquippableItem equippableItem = new(itemRarity!.Value)
             {
                 Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
@@ -57,22 +45,36 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                 ItemLevel = GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemLevelDescriptor),
                 Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 Influence = GetInfluenceType(itemStringLines),
-                Sockets = this.GetSockets(itemStringLines)
+                Sockets = this.GetSockets(itemStringLines),
             };
 
-            equippableItem.Type = this.itemTypeParser.ParseType(itemStringLines, equippableItem.Rarity, equippableItem.IsIdentified);
+            equippableItem.Type =
+                this.itemTypeParser.ParseType(itemStringLines, equippableItem.Rarity, equippableItem.IsIdentified);
             if (!string.IsNullOrEmpty(equippableItem.Type))
             {
-                equippableItem.Category = this.itemDataService.GetCategory(equippableItem.Type).ParseToEnumByDisplayName<EquippableItemCategory>(StringComparison.OrdinalIgnoreCase) ?? EquippableItemCategory.Unknown;
+                equippableItem.Category =
+                    this.itemDataService.GetCategory(equippableItem.Type)
+                        .ParseToEnumByDisplayName<EquippableItemCategory>(StringComparison.OrdinalIgnoreCase) ??
+                    EquippableItemCategory.Unknown;
             }
 
             return equippableItem;
         }
 
+        private static bool HasItemLevel(string[] itemStringLines) =>
+            itemStringLines.Any(l => l.Contains(Resources.ItemLevelDescriptor));
+
+        private static bool IsMapOrOrganItem(string[] itemStringLines) =>
+            itemStringLines.Any(l => l.Contains(Resources.MapTierDescriptor)
+                                     || l.Contains(Resources.OrganItemDescriptor));
+
+        private static bool TypeOrNameContains(string[] itemStringLines, params string[] keywords) =>
+            itemStringLines.Skip(2).Take(2).Any(line => keywords.Any(line.Contains));
+
         private ItemSockets GetSockets(string[] itemStringLines)
         {
             string? socketsLine = itemStringLines.FirstOrDefault(l => l.Contains(Resources.SocketsDescriptor));
-            string? socketsString = socketsLine?.Replace(Resources.SocketsDescriptor, "").Trim();
+            string? socketsString = socketsLine?.Replace(Resources.SocketsDescriptor, string.Empty).Trim();
 
             return this.socketsParser.Parse(socketsString);
         }

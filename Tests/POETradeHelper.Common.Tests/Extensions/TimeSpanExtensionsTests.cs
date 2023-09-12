@@ -1,8 +1,9 @@
-﻿using NUnit.Framework;
+﻿using System;
+
+using NUnit.Framework;
 
 using POETradeHelper.Common.Extensions;
-
-using System;
+using POETradeHelper.Common.Properties;
 
 namespace POETradeHelper.Common.Tests.Extensions
 {
@@ -12,37 +13,29 @@ namespace POETradeHelper.Common.Tests.Extensions
         [TestCase(2)]
         [TestCase(2.5)]
         [TestCase(2.6)]
-        public void ToHumanReadableStringShouldReturnDays(double numberOfDays)
-        {
-            ToHumanReadableStringShouldReturnResult(numberOfDays, TimeSpan.FromDays, Properties.Resources.Days);
-        }
+        public void ToHumanReadableStringShouldReturnDays(double numberOfDays) =>
+            ToHumanReadableStringShouldReturnResult(numberOfDays, TimeSpan.FromDays, Resources.Days);
 
         [TestCase(1)]
         [TestCase(2)]
         [TestCase(2.5)]
         [TestCase(2.6)]
-        public void ToHumanReadableStringShouldReturnHours(double numberOfHours)
-        {
-            ToHumanReadableStringShouldReturnResult(numberOfHours, TimeSpan.FromHours, Properties.Resources.Hours);
-        }
+        public void ToHumanReadableStringShouldReturnHours(double numberOfHours) =>
+            ToHumanReadableStringShouldReturnResult(numberOfHours, TimeSpan.FromHours, Resources.Hours);
 
         [TestCase(1)]
         [TestCase(2)]
         [TestCase(2.5)]
         [TestCase(2.6)]
-        public void ToHumanReadableStringShouldReturnMinutes(double numberOfMinutes)
-        {
-            ToHumanReadableStringShouldReturnResult(numberOfMinutes, TimeSpan.FromMinutes, Properties.Resources.Minutes);
-        }
+        public void ToHumanReadableStringShouldReturnMinutes(double numberOfMinutes) =>
+            ToHumanReadableStringShouldReturnResult(numberOfMinutes, TimeSpan.FromMinutes, Resources.Minutes);
 
         [TestCase(1)]
         [TestCase(2)]
         [TestCase(2.5)]
         [TestCase(2.6)]
-        public void ToHumanReadableStringShouldReturnSeconds(double numberOfMinutes)
-        {
-            ToHumanReadableStringShouldReturnResult(numberOfMinutes, TimeSpan.FromSeconds, Properties.Resources.Seconds);
-        }
+        public void ToHumanReadableStringShouldReturnSeconds(double numberOfMinutes) =>
+            ToHumanReadableStringShouldReturnResult(numberOfMinutes, TimeSpan.FromSeconds, Resources.Seconds);
 
         [Test]
         public void ToHumanReadableStringShouldReturnDayIfHoursWouldRoundTo24()
@@ -51,7 +44,7 @@ namespace POETradeHelper.Common.Tests.Extensions
 
             string result = timeSpan.ToHumanReadableString();
 
-            Assert.That(result, Is.EqualTo($" 1{Properties.Resources.Days}"));
+            Assert.That(result, Is.EqualTo($" 1{Resources.Days}"));
         }
 
         [Test]
@@ -61,7 +54,7 @@ namespace POETradeHelper.Common.Tests.Extensions
 
             string result = timeSpan.ToHumanReadableString();
 
-            Assert.That(result, Is.EqualTo($" 1{Properties.Resources.Hours}"));
+            Assert.That(result, Is.EqualTo($" 1{Resources.Hours}"));
         }
 
         [Test]
@@ -71,10 +64,13 @@ namespace POETradeHelper.Common.Tests.Extensions
 
             string result = timeSpan.ToHumanReadableString();
 
-            Assert.That(result, Is.EqualTo($" 1{Properties.Resources.Minutes}"));
+            Assert.That(result, Is.EqualTo($" 1{Resources.Minutes}"));
         }
 
-        private static void ToHumanReadableStringShouldReturnResult(double time, Func<double, TimeSpan> timeSpanFactory, string unit)
+        private static void ToHumanReadableStringShouldReturnResult(
+            double time,
+            Func<double, TimeSpan> timeSpanFactory,
+            string unit)
         {
             TimeSpan timeSpan = timeSpanFactory(time);
 

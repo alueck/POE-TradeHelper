@@ -14,21 +14,18 @@ namespace POETradeHelper.ViewModels
 {
     public class DebugSettingsViewModel : ReactiveObject, ISettingsViewModel
     {
-        public ReactiveCommand<Unit, MediatR.Unit> SearchItemFromClipboardCommand { get; }
-
         public DebugSettingsViewModel(IMediator mediator)
         {
             this.SearchItemFromClipboardCommand = ReactiveCommand.CreateFromTask(() => mediator.Send(new SearchItemCommand()));
         }
 
+        public ReactiveCommand<Unit, MediatR.Unit> SearchItemFromClipboardCommand { get; }
+
         public string Title => Resources.DebugSettingsHeader;
 
         public bool IsBusy => false;
 
-        public Task InitializeAsync()
-        {
-            return Task.CompletedTask;
-        }
+        public Task InitializeAsync() => Task.CompletedTask;
 
         public void SaveSettings()
         {

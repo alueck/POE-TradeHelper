@@ -26,9 +26,9 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
             this.poePricesInfoClientMock = Substitute.For<IPoePricesInfoClient>();
             this.handler = new GetPoePricesInfoPredictionQueryHandler(this.poePricesInfoClientMock);
 
-            var validItem = new EquippableItem(ItemRarity.Rare)
+            EquippableItem? validItem = new EquippableItem(ItemRarity.Rare)
             {
-                ItemText = "abc"
+                ItemText = "abc",
             };
             this.validRequest = new GetPoePricesInfoPredictionQuery(validItem, new League { Id = "Heist" });
         }
@@ -37,7 +37,7 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
         public async Task HandleShouldCallGetPricePredictionAsyncOnPoePricesInfoClient()
         {
             // arrange
-            var cancellationToken = new CancellationToken();
+            CancellationToken cancellationToken = CancellationToken.None;
 
             // act
             await this.handler.Handle(this.validRequest, cancellationToken);
@@ -56,6 +56,7 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
             this.poePricesInfoClientMock
                 .GetPricePredictionAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(expected);
+
             // act
             PoePricesInfoPrediction? result = await this.handler.Handle(this.validRequest, default);
 
@@ -63,15 +64,13 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
             result.Should().BeEquivalentTo(expected);
         }
 
-        private static PoePricesInfoPrediction GetPoePricesInfoItem()
-        {
-            return new PoePricesInfoPrediction
+        private static PoePricesInfoPrediction GetPoePricesInfoItem() =>
+            new()
             {
                 Min = 0.15m,
                 Max = 0.25m,
                 Currency = "chaos",
-                ConfidenceScore = 85.978m
+                ConfidenceScore = 85.978m,
             };
-        }
     }
 }

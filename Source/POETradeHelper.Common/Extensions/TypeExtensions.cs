@@ -10,7 +10,7 @@ namespace POETradeHelper.Common.Extensions
         public static bool HasSingletonAttribute(this Type type)
         {
             return type.GetCustomAttributes(true).Any(attribute => attribute is SingletonAttribute)
-                || type.GetInterfaces().Any(HasSingletonAttribute);
+                   || type.GetInterfaces().Any(HasSingletonAttribute);
         }
     }
 }

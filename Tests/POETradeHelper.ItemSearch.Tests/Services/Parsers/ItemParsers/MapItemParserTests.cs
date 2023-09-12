@@ -225,9 +225,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldCallParseOnMapItemStatsParserIfMapIsIdentified()
         {
             string[] itemStringLines = this.mapItemStringBuilder
-                                        .WithRarity(ItemRarity.Normal)
-                                        .WithType("Thicket Map")
-                                        .BuildLines();
+                .WithRarity(ItemRarity.Normal)
+                .WithType("Thicket Map")
+                .BuildLines();
 
             this.ItemParser.Parse(itemStringLines);
 
@@ -240,10 +240,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldNotCallParseOnMapItemStatsParserIfMapIsUnidentified()
         {
             string[] itemStringLines = this.mapItemStringBuilder
-                                        .WithRarity(ItemRarity.Normal)
-                                        .WithType("Thicket Map")
-                                        .WithUnidentified()
-                                        .BuildLines();
+                .WithRarity(ItemRarity.Normal)
+                .WithType("Thicket Map")
+                .WithUnidentified()
+                .BuildLines();
 
             this.ItemParser.Parse(itemStringLines);
 
@@ -257,9 +257,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             ItemStats expected = new();
             string[] itemStringLines = this.mapItemStringBuilder
-                            .WithRarity(ItemRarity.Normal)
-                            .WithType("Thicket Map")
-                            .BuildLines();
+                .WithRarity(ItemRarity.Normal)
+                .WithType("Thicket Map")
+                .BuildLines();
 
             this.itemStatsParserMock.Parse(Arg.Any<string[]>(), Arg.Any<bool>())
                 .Returns(expected);
@@ -272,10 +272,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         protected override string[] GetValidItemStringLines()
         {
             return this.mapItemStringBuilder
-                        .WithRarity(ItemRarity.Normal)
-                        .WithType("Thicket Map")
-                        .WithUnidentified()
-                        .BuildLines();
+                .WithRarity(ItemRarity.Normal)
+                .WithType("Thicket Map")
+                .WithUnidentified()
+                .BuildLines();
         }
     }
 }

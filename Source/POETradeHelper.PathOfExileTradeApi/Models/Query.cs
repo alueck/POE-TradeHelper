@@ -1,8 +1,8 @@
-﻿using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
@@ -20,17 +20,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 
         public OptionFilter Status { get; private set; } = new() { Option = "online" };
 
-        public object Clone()
-        {
-            return new Query
+        public object Clone() =>
+            new Query
             {
                 Name = this.Name,
                 Type = this.Type,
                 Term = this.Term,
                 Filters = (QueryFilters)this.Filters.Clone(),
                 Stats = this.Stats.Select(s => (StatFilters)s.Clone()).ToList(),
-                Status = (OptionFilter)this.Status.Clone()
+                Status = (OptionFilter)this.Status.Clone(),
             };
-        }
     }
 }

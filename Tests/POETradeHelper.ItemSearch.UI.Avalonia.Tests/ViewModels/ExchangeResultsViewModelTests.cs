@@ -45,9 +45,8 @@ public class ExchangeResultsViewModelTests
         await this.viewModel.InitializeAsync(item, default);
 
         this.itemToExchangeQueryRequestMapperMock
-            
-                .Received()
-                .MapToQueryRequest(item);
+            .Received()
+            .MapToQueryRequest(item);
     }
 
     [Test]
@@ -62,8 +61,8 @@ public class ExchangeResultsViewModelTests
         await this.viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
 
         await this.poeTradeApiClientMock
-                .Received()
-                .GetListingsAsync(expectedRequest, cts.Token);
+            .Received()
+            .GetListingsAsync(expectedRequest, cts.Token);
     }
 
     [Test]
@@ -79,8 +78,8 @@ public class ExchangeResultsViewModelTests
         await this.viewModel.InitializeAsync(new CurrencyItem(), cts.Token);
 
         await this.itemListingsViewModelFactoryMock
-                .Received()
-                .CreateAsync(expectedQueryResult, cts.Token);
+            .Received()
+            .CreateAsync(expectedQueryResult, cts.Token);
     }
 
     [Test]

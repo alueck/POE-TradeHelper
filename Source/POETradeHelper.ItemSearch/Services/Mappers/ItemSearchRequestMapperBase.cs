@@ -21,9 +21,9 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
         public virtual SearchQueryRequest MapToQueryRequest(Item item)
         {
-            var result = new SearchQueryRequest
+            SearchQueryRequest result = new()
             {
-                League = this.ItemSearchOptions.CurrentValue.League.Id
+                League = this.ItemSearchOptions.CurrentValue.League.Id,
             };
 
             this.MapItemName(result, item);
@@ -44,20 +44,15 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             }
         }
 
-        protected virtual void MapItemType(SearchQueryRequest result, Item item)
-        {
-            result.Query.Type = item.Type;
-        }
+        protected virtual void MapItemType(SearchQueryRequest result, Item item) => result.Query.Type = item.Type;
 
-        protected virtual void MapItemRarity(SearchQueryRequest result, Item item)
-        {
+        protected virtual void MapItemRarity(SearchQueryRequest result, Item item) =>
             result.Query.Filters.TypeFilters.Rarity = new OptionFilter
             {
                 Option = item.Rarity == ItemRarity.Unique
-                                ? ItemRarityFilterOptions.Unique
-                                : ItemRarityFilterOptions.NonUnique
+                    ? ItemRarityFilterOptions.Unique
+                    : ItemRarityFilterOptions.NonUnique,
             };
-        }
 
         protected virtual void MapCorrupted(SearchQueryRequest result, Item item)
         {
@@ -65,7 +60,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             {
                 result.Query.Filters.MiscFilters.Corrupted = new BoolOptionFilter
                 {
-                    Option = corruptableItem.IsCorrupted
+                    Option = corruptableItem.IsCorrupted,
                 };
             }
         }

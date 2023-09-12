@@ -11,7 +11,7 @@ namespace POETradeHelper.Common.Tests.Extensions
             [Display(Name = DisplayName)]
             TestValue,
 
-            TestValue1
+            TestValue1,
         }
     }
 }

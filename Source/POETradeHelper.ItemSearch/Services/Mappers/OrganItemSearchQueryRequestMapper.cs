@@ -15,27 +15,22 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             this.itemSearchOptions = itemSearchOptions;
         }
 
-        public bool CanMap(Item item)
-        {
-            return item is OrganItem;
-        }
+        public bool CanMap(Item item) => item is OrganItem;
 
         public SearchQueryRequest MapToQueryRequest(Item item)
         {
-            var organItem = (OrganItem)item;
+            OrganItem organItem = (OrganItem)item;
 
-            var result = new SearchQueryRequest
+            SearchQueryRequest result = new SearchQueryRequest
             {
-                League = this.itemSearchOptions.CurrentValue.League.Id
+                League = this.itemSearchOptions.CurrentValue.League.Id,
             };
             MapItemName(result, organItem);
 
             return result;
         }
 
-        private static void MapItemName(SearchQueryRequest result, OrganItem organItem)
-        {
+        private static void MapItemName(SearchQueryRequest result, OrganItem organItem) =>
             result.Query.Term = organItem.Name;
-        }
     }
 }

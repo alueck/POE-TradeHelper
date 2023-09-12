@@ -27,7 +27,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             {
                 var key = itemStatId[(indexOfDot + 1)..];
 
-                if (this.mappings.TryGetValue(key, out IReadOnlyCollection<string>? pseudoStatIds))
+                if (Mappings.TryGetValue(key, out IReadOnlyCollection<string>? pseudoStatIds))
                 {
                     result = pseudoStatIds.Select(this.statsDataService.GetStatDataById);
                 }
@@ -36,7 +36,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result.OfType<StatData>();
         }
 
-        private readonly IReadOnlyDictionary<string, IReadOnlyCollection<string>> mappings = new Dictionary<string, IReadOnlyCollection<string>>
+        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:Elements should appear in the correct order", Justification = "Readability")]
+        private static readonly IReadOnlyDictionary<string, IReadOnlyCollection<string>> Mappings = new Dictionary<string, IReadOnlyCollection<string>>
         {
             [StatId.ColdResistance] = new[] { PseudoStatId.TotalColdResistance, PseudoStatId.TotalElementalResistance, PseudoStatId.TotalResistance },
             [StatId.FireResistance] = new[] { PseudoStatId.TotalFireResistance, PseudoStatId.TotalElementalResistance, PseudoStatId.TotalResistance },

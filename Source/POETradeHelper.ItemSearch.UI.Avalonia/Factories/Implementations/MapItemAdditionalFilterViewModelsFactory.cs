@@ -11,7 +11,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
     {
         public override IEnumerable<FilterViewModelBase> Create(Item item, SearchQueryRequest searchQueryRequest)
         {
-            var result = new List<FilterViewModelBase>();
+            List<FilterViewModelBase> result = new List<FilterViewModelBase>();
 
             if (item is MapItem mapItem)
             {
@@ -29,58 +29,47 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return result;
         }
 
-        private FilterViewModelBase GetItemQuantityFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest)
-        {
-            return this.CreateBindableMinMaxFilterViewModel(
+        private FilterViewModelBase
+            GetItemQuantityFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest) =>
+            this.CreateBindableMinMaxFilterViewModel(
                 x => x.Query.Filters.MapFilters.MapIncreasedItemQuantity,
                 Resources.MapItemQuantity,
                 mapItem.ItemQuantity,
                 searchQueryRequest.Query.Filters.MapFilters.MapIncreasedItemQuantity);
-        }
 
-        private FilterViewModelBase GetItemRarityFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest)
-        {
-            return this.CreateBindableMinMaxFilterViewModel(
+        private FilterViewModelBase GetItemRarityFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest) =>
+            this.CreateBindableMinMaxFilterViewModel(
                 x => x.Query.Filters.MapFilters.MapIncreasedItemRarity,
                 Resources.MapItemRarity,
                 mapItem.ItemRarity,
                 searchQueryRequest.Query.Filters.MapFilters.MapIncreasedItemRarity);
-        }
 
-        private FilterViewModelBase GetMonsterPacksizeFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest)
-        {
-            return this.CreateBindableMinMaxFilterViewModel(
+        private FilterViewModelBase GetMonsterPacksizeFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest) =>
+            this.CreateBindableMinMaxFilterViewModel(
                 x => x.Query.Filters.MapFilters.MapPacksize,
                 Resources.MapMonsterPacksize,
                 mapItem.MonsterPackSize,
                 searchQueryRequest.Query.Filters.MapFilters.MapPacksize);
-        }
 
-        private FilterViewModelBase GetMapTierFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest)
-        {
-            return this.CreateBindableMinMaxFilterViewModel(
+        private FilterViewModelBase GetMapTierFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest) =>
+            this.CreateBindableMinMaxFilterViewModel(
                 x => x.Query.Filters.MapFilters.MapTier,
                 Resources.MapTier,
                 mapItem.Tier,
                 searchQueryRequest.Query.Filters.MapFilters.MapTier);
-        }
 
-        private FilterViewModelBase GetMapBlightedFilterViewModel(SearchQueryRequest searchQueryRequest)
-        {
-            return new BindableFilterViewModel(x => x.Query.Filters.MapFilters.MapBlighted)
+        private FilterViewModelBase GetMapBlightedFilterViewModel(SearchQueryRequest searchQueryRequest) =>
+            new BindableFilterViewModel(x => x.Query.Filters.MapFilters.MapBlighted)
             {
                 Text = Resources.MapBlighted,
-                IsEnabled = searchQueryRequest.Query.Filters.MapFilters.MapBlighted?.Option
+                IsEnabled = searchQueryRequest.Query.Filters.MapFilters.MapBlighted?.Option,
             };
-        }
 
-        private FilterViewModelBase GetMapBlightRavagedFilterViewModel(SearchQueryRequest searchQueryRequest)
-        {
-            return new BindableFilterViewModel(x => x.Query.Filters.MapFilters.MapBlightRavaged)
+        private FilterViewModelBase GetMapBlightRavagedFilterViewModel(SearchQueryRequest searchQueryRequest) =>
+            new BindableFilterViewModel(x => x.Query.Filters.MapFilters.MapBlightRavaged)
             {
                 Text = Resources.MapBlightRavaged,
-                IsEnabled = searchQueryRequest.Query.Filters.MapFilters.MapBlightRavaged?.Option
+                IsEnabled = searchQueryRequest.Query.Filters.MapFilters.MapBlightRavaged?.Option,
             };
-        }
     }
 }

@@ -33,12 +33,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public async Task CreateAsyncWithItemListingsQueryResultShouldSetUri()
         {
-            var itemListingsQueryResult = new ItemListingsQueryResult
+            ItemListingsQueryResult itemListingsQueryResult = new()
             {
-                Uri = new Uri("http://www.google.de")
+                Uri = new Uri("http://www.google.de"),
             };
 
-            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(new EquippableItem(ItemRarity.Rare), itemListingsQueryResult);
+            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(
+                new EquippableItem(ItemRarity.Rare),
+                itemListingsQueryResult);
 
             result.ListingsUri.Should().Be(itemListingsQueryResult.Uri);
         }
@@ -47,18 +49,18 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateAsyncWithItemListingsQueryResultShouldCallCreateOnListingViewModelFactory()
         {
             // arrange
-            var itemListingsQueryResult = new ItemListingsQueryResult
+            ItemListingsQueryResult itemListingsQueryResult = new()
             {
                 Result = new List<ListingResult>
                 {
                     new(),
-                    new()
+                    new(),
                 },
             };
-            var item = new EquippableItem(ItemRarity.Rare);
+            EquippableItem item = new(ItemRarity.Rare);
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
+            CancellationTokenSource cancellationTokenSource = new();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             // act
             await this.itemListingsViewModelFactory.CreateAsync(item, itemListingsQueryResult, cancellationToken);
@@ -76,18 +78,18 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateAsyncWithItemListingsQueryResultShouldThrowIfCancellationRequested()
         {
             // arrange
-            var itemListingsQueryResult = new ItemListingsQueryResult
+            ItemListingsQueryResult itemListingsQueryResult = new()
             {
                 Result = new List<ListingResult>
                 {
                     new(),
-                    new()
+                    new(),
                 },
             };
-            var item = new EquippableItem(ItemRarity.Rare);
+            EquippableItem item = new(ItemRarity.Rare);
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
+            CancellationTokenSource cancellationTokenSource = new();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             this.listingViewModelFactoryMock
                 .When(x => x.CreateAsync(itemListingsQueryResult.Result[0], Arg.Any<Item>(), Arg.Any<CancellationToken>()))
@@ -107,12 +109,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateAsyncWithItemListingsQueryResultShouldSetListingsOnResult()
         {
             // arrange
-            var itemListingsQueryResult = new ItemListingsQueryResult
+            ItemListingsQueryResult itemListingsQueryResult = new()
             {
                 Result = new List<ListingResult>
                 {
                     new(),
-                    new()
+                    new(),
                 },
             };
             SimpleListingViewModel[] expected =
@@ -125,7 +127,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 .Returns(expected[0], expected[1]);
 
             // act
-            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(new EquippableItem(ItemRarity.Rare), itemListingsQueryResult);
+            ItemListingsViewModel result = await this.itemListingsViewModelFactory.CreateAsync(
+                new EquippableItem(ItemRarity.Rare),
+                itemListingsQueryResult);
 
             // assert
             result.Listings.Should().BeEquivalentTo(expected);
@@ -134,7 +138,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public async Task CreateAsyncWithExchangeQueryResultShouldSetUri()
         {
-            ExchangeQueryResult exchangeQueryResult = new("", 1, new Dictionary<string, ExchangeQueryResultListing>())
+            ExchangeQueryResult exchangeQueryResult = new(string.Empty, 1, new Dictionary<string, ExchangeQueryResultListing>())
             {
                 Uri = new Uri("https://result.link"),
             };
@@ -150,11 +154,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             // arrange
             ExchangeListing exchangeListing1 = new(DateTime.Now, new Account { Name = "Test" }, new List<ExchangeOffer>());
             ExchangeListing exchangeListing2 = new(DateTime.Now, new Account { Name = "Test2" }, new List<ExchangeOffer>());
-            ExchangeQueryResult exchangeQueryResult = new("", 1, new Dictionary<string, ExchangeQueryResultListing>
-            {
-                ["a"] = new("a", exchangeListing1),
-                ["b"] = new("b", exchangeListing2),
-            });
+            ExchangeQueryResult exchangeQueryResult = new(
+                string.Empty,
+                1,
+                new Dictionary<string, ExchangeQueryResultListing>
+                {
+                    ["a"] = new("a", exchangeListing1),
+                    ["b"] = new("b", exchangeListing2),
+                });
             CancellationTokenSource cts = new();
 
             // act
@@ -175,11 +182,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             // arrange
             ExchangeListing exchangeListing1 = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
             ExchangeListing exchangeListing2 = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
-            ExchangeQueryResult exchangeQueryResult = new("", 1, new Dictionary<string, ExchangeQueryResultListing>
-            {
-                ["a"] = new("a", exchangeListing1),
-                ["b"] = new("b", exchangeListing2),
-            });
+            ExchangeQueryResult exchangeQueryResult = new(
+                string.Empty,
+                1,
+                new Dictionary<string, ExchangeQueryResultListing>
+                {
+                    ["a"] = new("a", exchangeListing1),
+                    ["b"] = new("b", exchangeListing2),
+                });
             CancellationTokenSource cts = new();
 
             this.listingViewModelFactoryMock
@@ -202,11 +212,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             // arrange
             ExchangeListing exchangeListing1 = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
             ExchangeListing exchangeListing2 = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
-            ExchangeQueryResult exchangeQueryResult = new("", 1, new Dictionary<string, ExchangeQueryResultListing>
-            {
-                ["a"] = new("a", exchangeListing1),
-                ["b"] = new("b", exchangeListing2),
-            });
+            ExchangeQueryResult exchangeQueryResult = new(
+                string.Empty,
+                1,
+                new Dictionary<string, ExchangeQueryResultListing>
+                {
+                    ["a"] = new("a", exchangeListing1),
+                    ["b"] = new("b", exchangeListing2),
+                });
 
             SimpleListingViewModel[] expected =
             {

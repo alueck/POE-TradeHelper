@@ -8,14 +8,11 @@ namespace POETradeHelper.Common.UI.UserControls
 {
     public class MessageTextBlock : UserControl
     {
+        public static readonly AvaloniaProperty<Message?> MessageProperty = AvaloniaProperty.Register<MessageTextBlock, Message?>(nameof(Message));
+
         public MessageTextBlock()
         {
             this.InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         public Message? Message
@@ -24,6 +21,6 @@ namespace POETradeHelper.Common.UI.UserControls
             set => this.SetValue(MessageProperty, value);
         }
 
-        public static AvaloniaProperty<Message?> MessageProperty = AvaloniaProperty.Register<MessageTextBlock, Message?>(nameof(Message));
+        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }

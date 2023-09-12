@@ -7,12 +7,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
     {
         public AdvancedFiltersView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }

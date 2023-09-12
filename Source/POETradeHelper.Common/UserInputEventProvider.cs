@@ -40,6 +40,11 @@ namespace POETradeHelper.Common
             return Task.CompletedTask;
         }
 
+        public void Dispose()
+        {
+            this.disposables.Dispose();
+        }
+
         private async Task OnKeyPressed(KeyboardHookEventArgs eventArgs)
         {
             if (eventArgs.Data.KeyCode == KeyCode.VcEscape)
@@ -76,11 +81,6 @@ namespace POETradeHelper.Common
         private static bool IsModifierPressed(HookEventArgs eventArgs, ModifierMask modifier)
         {
             return (eventArgs.RawEvent.Mask & modifier) != ModifierMask.None;
-        }
-
-        public void Dispose()
-        {
-            this.disposables.Dispose();
         }
     }
 }

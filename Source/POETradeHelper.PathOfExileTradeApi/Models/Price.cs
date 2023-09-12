@@ -8,6 +8,6 @@
 
         public string Currency { get; set; } = string.Empty;
 
-        public string PriceText => $"{Amount:0.##} {Currency}";
+        public string PriceText => $"{this.Amount:0.##} {this.Currency}";
     }
 }

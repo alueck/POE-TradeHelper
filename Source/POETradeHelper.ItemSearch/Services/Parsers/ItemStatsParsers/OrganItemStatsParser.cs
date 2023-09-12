@@ -30,13 +30,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
                 .GroupBy(x => x);
 
             var itemStats = groupedItemStatLines.Select(group => new SingleValueItemStat(StatCategory.Monster)
-            {
-                Text = group.Key,
-                Value = group.Count()
-            })
-            .Select(s => this.GetCompleteItemStat(s, false))
-            .OfType<ItemStat>()
-            .ToList();
+                {
+                    Text = group.Key,
+                    Value = group.Count(),
+                })
+                .Select(s => this.GetCompleteItemStat(s, false))
+                .OfType<ItemStat>()
+                .ToList();
 
             return itemStats;
         }

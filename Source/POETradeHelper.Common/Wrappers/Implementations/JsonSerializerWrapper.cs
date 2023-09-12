@@ -8,12 +8,12 @@ namespace POETradeHelper.Common.Wrappers.Implementations
     {
         public T? Deserialize<T>(string json, JsonSerializerOptions? options = null)
         {
-            return System.Text.Json.JsonSerializer.Deserialize<T>(json, options);
+            return JsonSerializer.Deserialize<T>(json, options);
         }
 
         public string Serialize(object value, JsonSerializerOptions? options = null)
         {
-            return System.Text.Json.JsonSerializer.Serialize(value, options);
+            return JsonSerializer.Serialize(value, options);
         }
     }
 }

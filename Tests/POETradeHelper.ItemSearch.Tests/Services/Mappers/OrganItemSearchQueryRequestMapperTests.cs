@@ -14,16 +14,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public OrganItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.organItemSearchQueryRequestMapper = new OrganItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
+            this.ItemSearchQueryRequestMapper = this.organItemSearchQueryRequestMapper =
+                new OrganItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [Test]
         public void MapToQueryRequestShouldMapItemNameToTerm()
         {
             const string name = "Oriath's Virtue's Eye";
-            var item = new OrganItem
+            OrganItem item = new()
             {
-                Name = name
+                Name = name,
             };
 
             SearchQueryRequest result = this.organItemSearchQueryRequestMapper.MapToQueryRequest(item);

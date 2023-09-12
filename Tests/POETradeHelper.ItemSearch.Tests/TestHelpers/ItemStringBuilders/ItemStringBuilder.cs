@@ -117,7 +117,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
             if (sb.Length > 0)
             {
                 stringBuilder.AppendLine(ParserConstants.PropertyGroupSeparator)
-                             .AppendLine(sb.ToString());
+                    .AppendLine(sb.ToString());
             }
         }
     }

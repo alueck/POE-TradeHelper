@@ -8,14 +8,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
 {
     public class FiltersControl : UserControl
     {
+        public static readonly AvaloniaProperty<ICollection> ItemsProperty = AvaloniaProperty.Register<FiltersControl, ICollection>(nameof(Items));
+        public static readonly AvaloniaProperty<string> HeaderProperty = AvaloniaProperty.Register<FiltersControl, string>(nameof(Header));
+
         public FiltersControl()
         {
             this.InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         public ICollection Items
@@ -24,14 +22,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
             set => this.SetValue(ItemsProperty, value);
         }
 
-        public static AvaloniaProperty<ICollection> ItemsProperty = AvaloniaProperty.Register<FiltersControl, ICollection>(nameof(Items));
-
         public string Header
         {
             get => this.GetValue<string>(HeaderProperty);
             set => this.SetValue(HeaderProperty, value);
         }
 
-        public static AvaloniaProperty<string> HeaderProperty = AvaloniaProperty.Register<FiltersControl, string>(nameof(Header));
+        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }

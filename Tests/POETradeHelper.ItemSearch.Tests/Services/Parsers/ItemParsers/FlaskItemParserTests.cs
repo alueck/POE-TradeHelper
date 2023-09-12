@@ -29,8 +29,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnTrueIfNameContainsFlask(string name)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                        .WithName(name)
-                                        .BuildLines();
+                .WithName(name)
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -41,10 +41,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnTrueIfTypeOfUniqueFlaskContainsFlask()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                        .WithRarity(ItemRarity.Unique)
-                                        .WithName("Cinderswallow Urn")
-                                        .WithType("Silver Flask")
-                                        .BuildLines();
+                .WithRarity(ItemRarity.Unique)
+                .WithName("Cinderswallow Urn")
+                .WithType("Silver Flask")
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -55,8 +55,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseIfNameDoesNotContainFlask()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                        .WithName("Scroll of Wisdom")
-                                        .BuildLines();
+                .WithName("Scroll of Wisdom")
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -81,8 +81,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             const string expected = "Bubbling Divine Life Flask of Staunching";
             string[] itemStringLines = this.itemStringBuilder
-                            .WithName(expected)
-                            .BuildLines();
+                .WithName(expected)
+                .BuildLines();
 
             FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
@@ -100,10 +100,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             const string expected = "Result from ItemTypeParser";
             string[] itemStringLines = this.itemStringBuilder
-                            .WithRarity(itemRarity)
-                            .WithIdentified(isIdentified)
-                            .WithName("Cinderswallow Urn")
-                            .BuildLines();
+                .WithRarity(itemRarity)
+                .WithIdentified(isIdentified)
+                .WithName("Cinderswallow Urn")
+                .BuildLines();
 
             this.itemTypeParserMock.ParseType(itemStringLines, itemRarity, isIdentified)
                 .Returns(expected);
@@ -118,9 +118,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             const int expected = 20;
             string[] itemStringLines = this.itemStringBuilder
-                            .WithName("Bubbling Divine Life Flask of Staunching")
-                            .WithQuality(expected)
-                            .BuildLines();
+                .WithName("Bubbling Divine Life Flask of Staunching")
+                .WithQuality(expected)
+                .BuildLines();
 
             FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
@@ -156,8 +156,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldCallParseOnFlaskItemStatsParserIfFlaskIsIdentified()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                        .WithName("Divine Life Flask")
-                                        .BuildLines();
+                .WithName("Divine Life Flask")
+                .BuildLines();
 
             this.ItemParser.Parse(itemStringLines);
 
@@ -170,9 +170,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldNotCallParseOnFlaskItemStatsParserIfFlaskIsUnidentified()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                        .WithName("Divine Life Flask")
-                                        .WithUnidentified()
-                                        .BuildLines();
+                .WithName("Divine Life Flask")
+                .WithUnidentified()
+                .BuildLines();
 
             this.ItemParser.Parse(itemStringLines);
 
@@ -186,8 +186,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             ItemStats expected = new();
             string[] itemStringLines = this.itemStringBuilder
-                                        .WithName("Divine Life Flask")
-                                        .BuildLines();
+                .WithName("Divine Life Flask")
+                .BuildLines();
 
             this.itemStatsParserMock.Parse(Arg.Any<string[]>(), false)
                 .Returns(expected);
@@ -200,10 +200,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         protected override string[] GetValidItemStringLines()
         {
             return this.itemStringBuilder
-                                        .WithRarity(ItemRarity.Unique)
-                                        .WithName("Cinderswallow Urn")
-                                        .WithType("Silver Flask")
-                                        .BuildLines();
+                .WithRarity(ItemRarity.Unique)
+                .WithName("Cinderswallow Urn")
+                .WithType("Silver Flask")
+                .BuildLines();
         }
     }
 }

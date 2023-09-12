@@ -50,7 +50,9 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
                 }
             });
 
-            this.WhenAnyValue(x => x.Prediction, x => x.Currency,
+            this.WhenAnyValue(
+                    x => x.Prediction,
+                    x => x.Currency,
                     (prediction, currency) => !string.IsNullOrEmpty(prediction) && !string.IsNullOrEmpty(currency))
                 .ToPropertyEx(this, x => x.HasValue);
         }
@@ -74,13 +76,15 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
         {
             try
             {
-                if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled && !string.Equals(this.item?.ItemText, item.ItemText))
+                if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled &&
+                    !string.Equals(this.item?.ItemText, item.ItemText))
                 {
                     this.item = item;
                     this.Clear();
 
-                    var request = new GetPoePricesInfoPredictionQuery(item!, this.itemSearchOptions.CurrentValue.League);
-                    var poePricesInfoPrediction = await this.mediator.Send(request, cancellationToken).ConfigureAwait(true);
+                    GetPoePricesInfoPredictionQuery request = new(item, this.itemSearchOptions.CurrentValue.League);
+                    PoePricesInfoPrediction poePricesInfoPrediction =
+                        await this.mediator.Send(request, cancellationToken).ConfigureAwait(true);
 
                     await this.MapPrediction(poePricesInfoPrediction, cancellationToken);
                 }
@@ -105,12 +109,14 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
         private async Task MapPrediction(PoePricesInfoPrediction prediction, CancellationToken cancellationToken)
         {
             if (prediction is not { ErrorCode: 0 })
+            {
                 return;
+            }
 
             this.Prediction = $"{prediction.Min:N}-{prediction.Max:N}";
             this.ConfidenceScore = $"{prediction.ConfidenceScore:N} %";
             this.Currency = this.staticDataService.GetText(prediction.Currency);
-            this.CurrencyImage = await GetCurrencyImage(prediction.Currency, cancellationToken).ConfigureAwait(false);
+            this.CurrencyImage = await this.GetCurrencyImage(prediction.Currency, cancellationToken).ConfigureAwait(false);
         }
 
         private async Task<IBitmap?> GetCurrencyImage(string currency, CancellationToken cancellationToken)

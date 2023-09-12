@@ -7,14 +7,7 @@ namespace POETradeHelper.QualityOfLife.Services.Impl
     {
         public WikiType HandledWikiType => WikiType.PoeWiki;
 
-        public Uri GetUrl(Item item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
-            return new Uri($"https://pathofexile.gamepedia.com/{(item.Rarity == ItemRarity.Unique ? item.Name : item.Type)}");
-        }
+        public Uri GetUrl(Item item) =>
+            new($"https://pathofexile.gamepedia.com/{(item.Rarity == ItemRarity.Unique ? item.Name : item.Type)}");
     }
 }

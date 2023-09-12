@@ -27,6 +27,6 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         Fractured,
 
         [Display(Name = nameof(Resources.StatCategoryMonster), ResourceType = typeof(Resources))]
-        Monster
+        Monster,
     }
 }

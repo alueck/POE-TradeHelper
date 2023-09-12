@@ -44,24 +44,19 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
             this.viewModel = this.CreateViewModel();
         }
 
-        private PricePredictionViewModel CreateViewModel()
-        {
-            return new PricePredictionViewModel(this.itemSearchOptionsMock, this.mediatorMock, this.staticDataServiceMock, this.imageServiceMock);
-        }
-
         [Test]
         public async Task LoadAsyncShouldNotSendGetGetPoePricesInfoPredictionQueryIfPricePredictionIsDisabled()
         {
             // arrange
-            var item = new EquippableItem(ItemRarity.Rare)
+            EquippableItem item = new EquippableItem(ItemRarity.Rare)
             {
-                ItemText = "abc"
+                ItemText = "abc",
             };
 
             this.itemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
-                    PricePredictionEnabled = false
+                    PricePredictionEnabled = false,
                 });
 
             // act
@@ -77,15 +72,15 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
         public async Task LoadAsyncShouldNotSendGetPoePricesInfoPredictionQueryIfItemTextDidNotChange()
         {
             // arrange
-            var item = new EquippableItem(ItemRarity.Rare)
+            EquippableItem item = new EquippableItem(ItemRarity.Rare)
             {
-                ItemText = "text"
+                ItemText = "text",
             };
 
             this.itemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
-                    PricePredictionEnabled = true
+                    PricePredictionEnabled = true,
                 });
 
             // act
@@ -114,10 +109,12 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
             this.viewModel.CurrencyImage = Substitute.For<IBitmap>();
 
             // act
-            listener(new ItemSearchOptions
-            {
-                PricePredictionEnabled = false
-            }, null);
+            listener(
+                new ItemSearchOptions
+                {
+                    PricePredictionEnabled = false,
+                },
+                null);
 
             // assert
             Assert.That(this.viewModel.Currency, Is.Empty);
@@ -131,15 +128,15 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
         public async Task LoadAsyncShouldCatchExceptionFromGetPoePricesInfoPredictionQuery()
         {
             // arrange
-            var item = new EquippableItem(ItemRarity.Rare)
+            EquippableItem item = new EquippableItem(ItemRarity.Rare)
             {
-                ItemText = "text"
+                ItemText = "text",
             };
 
             this.itemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
-                    PricePredictionEnabled = true
+                    PricePredictionEnabled = true,
                 });
 
             this.mediatorMock.Send(Arg.Any<GetPoePricesInfoPredictionQuery>(), Arg.Any<CancellationToken>())
@@ -148,5 +145,11 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
             // act
             await this.viewModel.LoadAsync(item, default);
         }
+
+        private PricePredictionViewModel CreateViewModel() => new(
+            this.itemSearchOptionsMock,
+            this.mediatorMock,
+            this.staticDataServiceMock,
+            this.imageServiceMock);
     }
 }

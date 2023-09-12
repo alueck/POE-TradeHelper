@@ -3,6 +3,6 @@
     public enum WikiType
     {
         PoeWiki,
-        PoeDb
+        PoeDb,
     }
 }

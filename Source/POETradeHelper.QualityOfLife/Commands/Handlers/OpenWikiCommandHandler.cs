@@ -38,8 +38,8 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
             {
                 item = await this.mediator.Send(new GetItemFromCursorQuery(), cancellationToken).ConfigureAwait(false);
 
-                var wikiUrlProvider = this.wikiUrlProviders.Single(x => x.HandledWikiType == this.wikiOptions.CurrentValue.Wiki);
-                var url = wikiUrlProvider.GetUrl(item);
+                IWikiUrlProvider wikiUrlProvider = this.wikiUrlProviders.Single(x => x.HandledWikiType == this.wikiOptions.CurrentValue.Wiki);
+                Uri url = wikiUrlProvider.GetUrl(item);
 
                 await this.mediator.Send(new OpenUrlInBrowserCommand(url), cancellationToken).ConfigureAwait(false);
             }
