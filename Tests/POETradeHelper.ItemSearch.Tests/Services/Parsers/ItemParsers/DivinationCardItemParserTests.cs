@@ -58,8 +58,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         protected override string[] GetValidItemStringLines()
         {
             return this.itemStringBuilder
-                        .WithName(DivinationCard)
-                        .BuildLines();
+                .WithName(DivinationCard)
+                .BuildLines();
         }
     }
 }

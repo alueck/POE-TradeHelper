@@ -14,32 +14,26 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
     {
         public abstract IEnumerable<FilterViewModelBase> Create(Item item, SearchQueryRequest searchQueryRequest);
 
-        protected BindableMinMaxFilterViewModel GetQualityFilterViewModel(IQualityItem qualityItem, SearchQueryRequest searchQueryRequest)
-        {
-            return this.CreateBindableMinMaxFilterViewModel(
+        protected BindableMinMaxFilterViewModel GetQualityFilterViewModel(IQualityItem qualityItem, SearchQueryRequest searchQueryRequest) =>
+            this.CreateBindableMinMaxFilterViewModel(
                 x => x.Query.Filters.MiscFilters.Quality,
                 Resources.QualityColumn,
                 qualityItem.Quality,
                 searchQueryRequest.Query.Filters.MiscFilters.Quality);
-        }
 
-        protected BindableFilterViewModel GetIdentifiedFilterViewModel(SearchQueryRequest searchQueryRequest)
-        {
-            return new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.Identified)
+        protected BindableFilterViewModel GetIdentifiedFilterViewModel(SearchQueryRequest searchQueryRequest) =>
+            new(x => x.Query.Filters.MiscFilters.Identified)
             {
                 Text = Resources.Identified,
-                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.Identified?.Option
+                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.Identified?.Option,
             };
-        }
 
-        protected FilterViewModelBase GetCorruptedFilterViewModel(SearchQueryRequest searchQueryRequest)
-        {
-            return new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.Corrupted)
+        protected FilterViewModelBase GetCorruptedFilterViewModel(SearchQueryRequest searchQueryRequest) =>
+            new BindableFilterViewModel(x => x.Query.Filters.MiscFilters.Corrupted)
             {
                 Text = Resources.Corrupted,
-                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.Corrupted?.Option
+                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.Corrupted?.Option,
             };
-        }
 
         protected virtual BindableMinMaxFilterViewModel CreateBindableMinMaxFilterViewModel(
             Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression,
@@ -47,10 +41,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             int currentValue,
             MinMaxFilter? queryRequestFilter)
         {
-            var result = new BindableMinMaxFilterViewModel(bindingExpression)
+            BindableMinMaxFilterViewModel result = new BindableMinMaxFilterViewModel(bindingExpression)
             {
                 Current = currentValue.ToString(),
-                Text = text
+                Text = text,
             };
 
             if (queryRequestFilter != null)

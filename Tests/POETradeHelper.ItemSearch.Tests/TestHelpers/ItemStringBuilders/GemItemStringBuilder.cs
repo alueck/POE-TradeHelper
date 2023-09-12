@@ -10,12 +10,12 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 {
     public class GemItemStringBuilder : ItemStringBuilderBase<GemItemStringBuilder>
     {
-        public GemItemStatsGroup ItemStatsGroup { get; } = new GemItemStatsGroup();
-
         public GemItemStringBuilder()
         {
             this.NameAndRarityGroup.Rarity = ItemRarity.Gem.GetDisplayName();
         }
+
+        public GemItemStatsGroup ItemStatsGroup { get; } = new();
 
         public GemItemStringBuilder WithGemLevel(int gemLevel)
         {
@@ -43,7 +43,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 
         public override string Build()
         {
-            var stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
 
             stringBuilder
                 .Append(this.NameAndRarityGroup)

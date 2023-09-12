@@ -1,6 +1,6 @@
-﻿using Avalonia.Media.Imaging;
+﻿using System.IO;
 
-using System.IO;
+using Avalonia.Media.Imaging;
 
 namespace POETradeHelper.Common.UI.Services
 {

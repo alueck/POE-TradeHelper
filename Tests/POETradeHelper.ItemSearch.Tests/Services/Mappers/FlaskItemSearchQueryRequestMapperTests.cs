@@ -12,16 +12,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public FlaskItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.flaskItemSearchQueryRequestMapper = new FlaskItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
+            this.ItemSearchQueryRequestMapper = this.flaskItemSearchQueryRequestMapper =
+                new FlaskItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [Test]
         public void MapToQueryItemShouldMapItemType()
         {
             const string expectedType = "Divine Life Flask";
-            var item = new FlaskItem(ItemRarity.Normal)
+            FlaskItem item = new(ItemRarity.Normal)
             {
-                Type = expectedType
+                Type = expectedType,
             };
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -33,10 +34,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         public void MapToQueryItemShouldMapItemNameForIdentfiedUniqueItem()
         {
             const string expected = "Rotgut";
-            var item = new FlaskItem(ItemRarity.Unique)
+            FlaskItem item = new(ItemRarity.Unique)
             {
                 Name = expected,
-                IsIdentified = true
+                IsIdentified = true,
             };
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -47,9 +48,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [Test]
         public void MapToQueryItemShouldNotMapItemNameForUnidentifiedUniqueItem()
         {
-            var item = new FlaskItem(ItemRarity.Unique)
+            FlaskItem item = new(ItemRarity.Unique)
             {
-                Type = "Divine Life Flask"
+                Type = "Divine Life Flask",
             };
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -57,12 +58,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             Assert.IsNull(result.Query.Name);
         }
 
-        [TestCaseSource(nameof(NonUniqueItemRarities))]
+        [TestCaseSource(nameof(GetNonUniqueItemRarities))]
         public void MapToQueryItemShouldNotMapItemNameForNonUniqueItems(ItemRarity itemRarity)
         {
-            var item = new FlaskItem(itemRarity)
+            FlaskItem item = new(itemRarity)
             {
-                Name = "Divine Life Flask"
+                Name = "Divine Life Flask",
             };
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);

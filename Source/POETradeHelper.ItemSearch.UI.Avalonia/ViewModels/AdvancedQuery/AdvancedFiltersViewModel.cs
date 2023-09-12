@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,7 +63,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 
         public Task LoadAsync(Item item, SearchQueryRequest searchQueryRequest, CancellationToken cancellationToken)
         {
-            this.IsEnabled = searchQueryRequest != null && item is ItemWithStats or GemItem;
+            this.IsEnabled = item is ItemWithStats or GemItem;
 
             if (!this.IsEnabled)
             {
@@ -74,16 +73,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 
             if (item is ItemWithStats { Stats: { } } itemWithStats)
             {
-                this.EnchantedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.EnchantedStats, searchQueryRequest!);
-                this.FracturedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.FracturedStats, searchQueryRequest!);
-                this.ImplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ImplicitStats, searchQueryRequest!);
-                this.ExplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ExplicitStats, searchQueryRequest!);
-                this.CraftedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.CraftedStats, searchQueryRequest!);
-                this.MonsterItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.MonsterStats, searchQueryRequest!);
-                this.PseudoItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.PseudoStats, searchQueryRequest!);
+                this.EnchantedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.EnchantedStats, searchQueryRequest);
+                this.FracturedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.FracturedStats, searchQueryRequest);
+                this.ImplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ImplicitStats, searchQueryRequest);
+                this.ExplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ExplicitStats, searchQueryRequest);
+                this.CraftedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.CraftedStats, searchQueryRequest);
+                this.MonsterItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.MonsterStats, searchQueryRequest);
+                this.PseudoItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.PseudoStats, searchQueryRequest);
             }
 
-            this.AdditionalFilters = this.additionalFilterViewModelsFactories.SelectMany(x => x.Create(item, searchQueryRequest!)).ToList();
+            this.AdditionalFilters = this.additionalFilterViewModelsFactories.SelectMany(x => x.Create(item, searchQueryRequest)).ToList();
 
             return Task.CompletedTask;
         }

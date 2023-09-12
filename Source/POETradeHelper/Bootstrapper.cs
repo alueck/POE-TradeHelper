@@ -158,8 +158,8 @@ namespace POETradeHelper
             CreateAppSettingsFileIfMissing();
 
             IConfiguration config = new ConfigurationBuilder()
-                          .AddJsonFile(FileConfiguration.PoeTradeHelperAppSettingsPath, false, true)
-                          .Build();
+                .AddJsonFile(FileConfiguration.PoeTradeHelperAppSettingsPath, false, true)
+                .Build();
 
             serviceCollection
                 .AddOptions()

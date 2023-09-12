@@ -9,11 +9,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 {
     public class SearchQueryRequest : ICloneable
     {
-        public Query Query { get; private set; } = new Query();
+        public Query Query { get; private set; } = new();
 
         public IDictionary<string, SortType> Sort { get; set; } = new Dictionary<string, SortType>
         {
-            ["price"] = SortType.Asc
+            ["price"] = SortType.Asc,
         };
 
         [JsonIgnore]
@@ -22,14 +22,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         [JsonIgnore]
         public string League { get; set; } = string.Empty;
 
-        public object Clone()
-        {
-            return new SearchQueryRequest
+        public object Clone() =>
+            new SearchQueryRequest
             {
                 Query = (Query)this.Query.Clone(),
                 League = this.League,
-                Sort = this.Sort.ToDictionary(entry => entry.Key, entry => entry.Value)
+                Sort = this.Sort.ToDictionary(entry => entry.Key, entry => entry.Value),
             };
-        }
     }
 }

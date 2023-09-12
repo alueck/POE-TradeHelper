@@ -29,16 +29,19 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             this.httpClientMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(new HttpResponseMessage
                 {
-                    Content = new StringContent("")
+                    Content = new StringContent(string.Empty),
                 });
 
-            var httpClientFactoryMock = Substitute.For<IHttpClientFactoryWrapper>();
+            IHttpClientFactoryWrapper? httpClientFactoryMock = Substitute.For<IHttpClientFactoryWrapper>();
             httpClientFactoryMock.CreateClient()
                 .Returns(this.httpClientMock);
 
             this.jsonSerializerMock = Substitute.For<IJsonSerializerWrapper>();
 
-            this.poePricesInfoClient = new PoePricesInfoClient(httpClientFactoryMock, this.jsonSerializerMock, Substitute.For<ILogger<PoePricesInfoClient>>());
+            this.poePricesInfoClient = new PoePricesInfoClient(
+                httpClientFactoryMock,
+                this.jsonSerializerMock,
+                Substitute.For<ILogger<PoePricesInfoClient>>());
         }
 
         [Test]
@@ -48,8 +51,9 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             const string league = "Heist";
             const string itemText = "Scroll of Wisdom\r\nRarity: Currency";
 
-            var expectedUrl = $"https://www.poeprices.info/api?i={Convert.ToBase64String(Encoding.UTF8.GetBytes(itemText))}&l={league}";
-            var cancellationToken = new CancellationTokenSource().Token;
+            string? expectedUrl =
+                $"https://www.poeprices.info/api?i={Convert.ToBase64String(Encoding.UTF8.GetBytes(itemText))}&l={league}";
+            CancellationToken cancellationToken = new CancellationTokenSource().Token;
 
             // act
             await this.poePricesInfoClient.GetPricePredictionAsync(league, itemText, cancellationToken);
@@ -69,7 +73,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             this.httpClientMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(new HttpResponseMessage
                 {
-                    Content = new StringContent(json, Encoding.UTF8, "application/json")
+                    Content = new StringContent(json, Encoding.UTF8, "application/json"),
                 });
 
             // act
@@ -78,7 +82,10 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             // assert
             this.jsonSerializerMock
                 .Received()
-                .Deserialize<PoePricesInfoPrediction>(json, Arg.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy!.GetType() == typeof(JsonSnakeCaseNamingPolicy)));
+                .Deserialize<PoePricesInfoPrediction>(
+                    json,
+                    Arg.Is<JsonSerializerOptions>(x =>
+                        x.PropertyNamingPolicy!.GetType() == typeof(JsonSnakeCaseNamingPolicy)));
         }
 
         [Test]
@@ -88,7 +95,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             this.httpClientMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(new HttpResponseMessage
                 {
-                    StatusCode = HttpStatusCode.BadRequest
+                    StatusCode = HttpStatusCode.BadRequest,
                 });
 
             // act
@@ -104,19 +111,21 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         public async Task GetPricePredictionAsyncShouldReturnResultFromJsonSerializer()
         {
             // arrange
-            var expected = new PoePricesInfoPrediction
+            PoePricesInfoPrediction? expected = new PoePricesInfoPrediction
             {
                 Min = 0.15m,
                 Max = 0.25m,
                 Currency = "chaos",
-                ConfidenceScore = 0.89744m
+                ConfidenceScore = 0.89744m,
             };
 
-            this.jsonSerializerMock.Deserialize<PoePricesInfoPrediction>(Arg.Any<string>(), Arg.Any<JsonSerializerOptions>())
+            this.jsonSerializerMock
+                .Deserialize<PoePricesInfoPrediction>(Arg.Any<string>(), Arg.Any<JsonSerializerOptions>())
                 .Returns(expected);
 
             // act
-            PoePricesInfoPrediction? result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            PoePricesInfoPrediction? result =
+                await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
             Assert.That(result, Is.EqualTo(expected));
@@ -131,7 +140,8 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 .Throws<Exception>();
 
             // act
-            PoePricesInfoPrediction? result = await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            PoePricesInfoPrediction? result =
+                await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
             Assert.IsNull(result);
@@ -144,7 +154,10 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 .GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Throws<OperationCanceledException>();
 
-            async Task Action() => await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            async Task Action()
+            {
+                await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
+            }
 
             Assert.ThrowsAsync<OperationCanceledException>(Action);
         }

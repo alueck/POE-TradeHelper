@@ -7,15 +7,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
     {
         private const int NameLineIndex = 2;
 
-        public override abstract bool CanParse(string[] itemStringLines);
+        public abstract override bool CanParse(string[] itemStringLines);
 
-        protected override Item ParseItem(string[] itemStringLines)
-        {
-            return new TItemType
+        protected override Item ParseItem(string[] itemStringLines) =>
+            new TItemType
             {
                 Name = itemStringLines[NameLineIndex],
-                Type = itemStringLines[NameLineIndex]
+                Type = itemStringLines[NameLineIndex],
             };
-        }
     }
 }

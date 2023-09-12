@@ -16,15 +16,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
     public class JewelItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
         [SetUp]
-        public void Setup()
-        {
-            AdditionalFilterViewModelsFactory = new JewelItemAdditionalFilterViewModelsFactory();
-        }
+        public void Setup() => this.AdditionalFilterViewModelsFactory = new JewelItemAdditionalFilterViewModelsFactory();
 
-        [TestCaseSource(nameof(NonJewelItems))]
+        [TestCaseSource(nameof(GetNonJewelItems))]
         public void CreateShouldReturnEmptyEnumerableForNonJewelItems(Item item)
         {
-            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result =
+                this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             Assert.IsNotNull(result);
             Assert.That(result, Is.Empty);
@@ -35,29 +33,37 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnIdentifiedFilterViewModel(bool value)
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
-            var jewelItem = new JewelItem(ItemRarity.Rare)
+            JewelItem jewelItem = new(ItemRarity.Rare)
             {
-                IsIdentified = value
+                IsIdentified = value,
             };
 
-            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, jewelItem, null, Resources.Identified);
+            this.CreateShouldReturnBindableFilterViewModel(
+                expectedBindingExpression,
+                jewelItem,
+                null,
+                Resources.Identified);
         }
 
         [Test]
         public void CreateShouldReturnIdentifiedFilterViewModelWithValueFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
-            var jewelItem = new JewelItem(ItemRarity.Rare)
+            JewelItem jewelItem = new(ItemRarity.Rare)
             {
-                IsIdentified = true
+                IsIdentified = true,
             };
 
-            var queryRequestFilter = new BoolOptionFilter
+            BoolOptionFilter queryRequestFilter = new()
             {
-                Option = false
+                Option = false,
             };
 
-            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, jewelItem, Resources.Identified, queryRequestFilter);
+            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+                expectedBindingExpression,
+                jewelItem,
+                Resources.Identified,
+                queryRequestFilter);
         }
 
         [TestCase(true)]
@@ -65,45 +71,46 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnCorruptedFilterViewModel(bool value)
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
-            var jewelItem = new JewelItem(ItemRarity.Rare)
+            JewelItem jewelItem = new(ItemRarity.Rare)
             {
-                IsCorrupted = value
+                IsCorrupted = value,
             };
 
-            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, jewelItem, null, Resources.Corrupted);
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, jewelItem, null, Resources.Corrupted);
         }
 
         [Test]
         public void CreateShouldReturnCorruptedFilterViewModelWithValueFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
-            var jewelItem = new JewelItem(ItemRarity.Rare)
+            JewelItem jewelItem = new(ItemRarity.Rare)
             {
-                IsCorrupted = true
+                IsCorrupted = true,
             };
 
-            var queryRequestFilter = new BoolOptionFilter
+            BoolOptionFilter queryRequestFilter = new()
             {
-                Option = false
+                Option = false,
             };
 
-            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, jewelItem, Resources.Corrupted, queryRequestFilter);
+            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+                expectedBindingExpression,
+                jewelItem,
+                Resources.Corrupted,
+                queryRequestFilter);
         }
 
-        private static IEnumerable<Item> NonJewelItems
+        private static IEnumerable<Item> GetNonJewelItems()
         {
-            get
-            {
-                yield return new CurrencyItem();
-                yield return new DivinationCardItem();
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new FragmentItem();
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-                yield return new MapItem(ItemRarity.Magic);
-                yield return new EquippableItem(ItemRarity.Magic);
-                yield return new GemItem();
-            }
+            yield return new CurrencyItem();
+            yield return new DivinationCardItem();
+            yield return new FlaskItem(ItemRarity.Normal);
+            yield return new FragmentItem();
+            yield return new OrganItem();
+            yield return new ProphecyItem();
+            yield return new MapItem(ItemRarity.Magic);
+            yield return new EquippableItem(ItemRarity.Magic);
+            yield return new GemItem();
         }
     }
 }

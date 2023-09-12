@@ -30,14 +30,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.listingViewModelFactory = new ListingViewModelFactory(this.priceViewModelFactoryMock);
         }
 
-        [TestCaseSource(nameof(ListingResultItems))]
+        [TestCaseSource(nameof(GetListingResultItems))]
         public async Task CreateShouldCallCreateOnPriceViewModelFactory(Item item)
         {
             // arrange
             ListingResult listingResult = GetListingResult();
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             // act
             await this.listingViewModelFactory.CreateAsync(listingResult, item, cancellationToken);
@@ -48,10 +48,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 .CreateAsync(listingResult.Listing.Price, cancellationToken);
         }
 
-        [TestCaseSource(nameof(ListingResultItems))]
+        [TestCaseSource(nameof(GetListingResultItems))]
         public async Task CreateShouldSetPriceViewModel(Item item)
         {
-            var expected = new PriceViewModel { Amount = "2", Currency = "Chaos Orb" };
+            PriceViewModel expected = new PriceViewModel { Amount = "2", Currency = "Chaos Orb" };
             ListingResult listingResult = GetListingResult();
 
             this.priceViewModelFactoryMock.CreateAsync(Arg.Any<Price>(), Arg.Any<CancellationToken>())
@@ -69,8 +69,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             const string gemLevel = "15";
             const string quality = "+13%";
 
-            const string propertiesJson = $@"[{{""name"":""Level"",""values"":[[""{gemLevel}"",0]],""displayMode"":0,""type"":5}},{{""name"":""Quality"",""values"":[[""{quality}"",1]],""displayMode"":0,""type"":6}}]";
-            const string additionalPropertiesJson = @"[{""name"":""Experience"",""values"":[[""1/15249"",0]],""displayMode"":2,""progress"":0.25,""type"":20}]";
+            const string propertiesJson =
+                $@"[{{""name"":""Level"",""values"":[[""{gemLevel}"",0]],""displayMode"":0,""type"":5}},{{""name"":""Quality"",""values"":[[""{quality}"",1]],""displayMode"":0,""type"":6}}]";
+            const string additionalPropertiesJson =
+                @"[{""name"":""Experience"",""values"":[[""1/15249"",0]],""displayMode"":2,""progress"":0.25,""type"":20}]";
 
             ListingResult listingResult = GetListingResult();
             listingResult.Item.Properties = GetPropertiesList(propertiesJson);
@@ -92,7 +94,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             ListingResult listingResult = GetListingResult();
 
-            ItemListingViewModelWithItemLevel result = await this.listingViewModelFactory.CreateAsync(listingResult, item) as ItemListingViewModelWithItemLevel;
+            ItemListingViewModelWithItemLevel result =
+                await this.listingViewModelFactory.CreateAsync(listingResult, item) as ItemListingViewModelWithItemLevel;
 
             result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
@@ -192,48 +195,42 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             yield return new MapItem(ItemRarity.Normal);
         }
 
-        public static IEnumerable<Item> ListingResultItems
+        private static IEnumerable<Item> GetListingResultItems()
         {
-            get
-            {
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new GemItem();
-                yield return new MapItem(ItemRarity.Normal);
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-                yield return new JewelItem(ItemRarity.Magic);
-                yield return new EquippableItem(ItemRarity.Magic);
-            }
+            yield return new FlaskItem(ItemRarity.Normal);
+            yield return new GemItem();
+            yield return new MapItem(ItemRarity.Normal);
+            yield return new OrganItem();
+            yield return new ProphecyItem();
+            yield return new JewelItem(ItemRarity.Magic);
+            yield return new EquippableItem(ItemRarity.Magic);
         }
 
-        private static ListingResult GetListingResult()
-        {
-            return new ListingResult
+        private static ListingResult GetListingResult() =>
+            new()
             {
                 Listing = new Listing
                 {
                     Account = new Account
                     {
-                        Name = "accountName"
+                        Name = "accountName",
                     },
                     Price = new Price
                     {
                         Amount = 1.0m,
-                        Currency = "chaos"
+                        Currency = "chaos",
                     },
                     Indexed = DateTime.UtcNow.AddDays(-3),
                 },
                 Item = new ItemListing
                 {
-                    ItemLevel = 75
-                }
+                    ItemLevel = 75,
+                },
             };
-        }
 
-        private static List<Property> GetPropertiesList(string propertiesJson)
-        {
-            return JsonSerializer.Deserialize<List<Property>>(propertiesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        }
+        private static List<Property> GetPropertiesList(string propertiesJson) => JsonSerializer.Deserialize<List<Property>>(
+            propertiesJson,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         private static void AssertSimpleListingViewModelProperties(SimpleListingViewModel result, ListingResult listingResult)
         {

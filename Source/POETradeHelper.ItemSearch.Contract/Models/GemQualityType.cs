@@ -15,6 +15,6 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         Divergent = 2,
 
         [Display(Name = nameof(Resources.GemQualityType_Phantasmal), ResourceType = typeof(Resources))]
-        Phantasmal = 3
+        Phantasmal = 3,
     }
 }

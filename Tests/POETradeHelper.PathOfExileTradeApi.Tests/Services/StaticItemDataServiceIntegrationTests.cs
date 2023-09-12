@@ -8,6 +8,7 @@ using NUnit.Framework;
 
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.Common.Wrappers.Implementations;
+using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PathOfExileTradeApi.Tests.Properties;
 
@@ -26,11 +27,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         public void Setup()
         {
             this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
-            var httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
-            httpClientFactoryWrapperMock.CreateClient(Constants.HttpClientNames.PoeTradeApiDataClient)
+            IHttpClientFactoryWrapper httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
+            httpClientFactoryWrapperMock.CreateClient(HttpClientNames.PoeTradeApiDataClient)
                 .Returns(this.httpClientWrapperMock);
 
-            this.staticDataService = new StaticDataService(httpClientFactoryWrapperMock, new PoeTradeApiJsonSerializer(new JsonSerializerWrapper()));
+            this.staticDataService = new StaticDataService(
+                httpClientFactoryWrapperMock,
+                new PoeTradeApiJsonSerializer(new JsonSerializerWrapper()));
         }
 
         [Test]
@@ -39,7 +42,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(new HttpResponseMessage
                 {
-                    Content = new StringContent(Resources.StaticDataJson)
+                    Content = new StringContent(Resources.StaticDataJson),
                 });
 
             await this.staticDataService.OnInitAsync();

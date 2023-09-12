@@ -7,12 +7,14 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models
     public class GemItemStatsGroup : ItemStatsGroupBase
     {
         public int GemLevel { get; set; }
+
         public string Tags { get; set; } = "Tag, Tag1, Tag2";
+
         public string Experience { get; set; } = string.Empty;
 
         public override string ToString()
         {
-            var stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder
                 .AppendLine(this.Tags)

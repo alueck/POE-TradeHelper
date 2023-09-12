@@ -26,19 +26,19 @@ namespace POETradeHelper.ViewModels
 
             this.SaveSettingsCommand = ReactiveCommand.Create(this.SaveSettings);
             this.SaveSettingsCommand
-                .Select(success =>
-                {
-                    if (success)
+                .Select(
+                    success =>
                     {
-                        var successMessage = new Message { Type = MessageType.Success, Text = Resources.SavedMessageText };
-                        return Observable.Return(successMessage).Concat(Observable.Return((Message?)null).Delay(TimeSpan.FromSeconds(3), RxApp.MainThreadScheduler));
-                    }
-                    else
-                    {
-                        var failedMessage = new Message { Type = MessageType.Error, Text = Resources.FailedToSaveSettingsMessageText };
+                        if (success)
+                        {
+                            Message successMessage = new() { Type = MessageType.Success, Text = Resources.SavedMessageText };
+                            return Observable.Return(successMessage).Concat(
+                                Observable.Return((Message?)null).Delay(TimeSpan.FromSeconds(3), RxApp.MainThreadScheduler));
+                        }
+
+                        Message failedMessage = new() { Type = MessageType.Error, Text = Resources.FailedToSaveSettingsMessageText };
                         return Observable.Return(failedMessage);
-                    }
-                })
+                    })
                 .Switch()
                 .ToPropertyEx(this, x => x.SaveSettingsMessage);
         }
@@ -65,7 +65,7 @@ namespace POETradeHelper.ViewModels
                 async () => await InitializeInitializablesAsync(initializables).ConfigureAwait(true),
                 Resources.RetrievingDataText,
                 Resources.ProblemCommunicatingWithPoeApi,
-                resetBusyTextOnly: true).ConfigureAwait(true);
+                true).ConfigureAwait(true);
 
             if (success)
             {
@@ -73,13 +73,13 @@ namespace POETradeHelper.ViewModels
                     this.InitializeSettingViewModelsAsync,
                     Resources.InitializingApplicationText,
                     string.Format(Resources.InitializationError, FileConfiguration.PoeTradeHelperAppDataFolder),
-                    resetBusyTextOnly: false).ConfigureAwait(true);
+                    false).ConfigureAwait(true);
             }
         }
 
         private static async Task InitializeInitializablesAsync(IEnumerable<IInitializable> initializables)
         {
-            foreach (var initializable in initializables)
+            foreach (IInitializable initializable in initializables)
             {
                 await initializable.OnInitAsync().ConfigureAwait(true);
             }
@@ -87,7 +87,7 @@ namespace POETradeHelper.ViewModels
 
         private async Task InitializeSettingViewModelsAsync()
         {
-            foreach (var settingsViewModel in this.SettingsViewModels)
+            foreach (ISettingsViewModel settingsViewModel in this.SettingsViewModels)
             {
                 await settingsViewModel.InitializeAsync().ConfigureAwait(true);
             }
@@ -108,7 +108,7 @@ namespace POETradeHelper.ViewModels
                 this.ErrorMessage = new Message
                 {
                     Text = errorText,
-                    Type = MessageType.Error
+                    Type = MessageType.Error,
                 };
 
                 this.ResetIsBusy(resetBusyTextOnly);
@@ -129,7 +129,7 @@ namespace POETradeHelper.ViewModels
         {
             try
             {
-                foreach (var settingsViewModel in this.SettingsViewModels)
+                foreach (ISettingsViewModel settingsViewModel in this.SettingsViewModels)
                 {
                     settingsViewModel.SaveSettings();
                 }

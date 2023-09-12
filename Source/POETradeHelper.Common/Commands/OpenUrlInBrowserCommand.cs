@@ -8,7 +8,7 @@ namespace POETradeHelper.Common.Commands
     {
         public OpenUrlInBrowserCommand(Uri url)
         {
-            Url = url ?? throw new ArgumentNullException(nameof(url));
+            this.Url = url ?? throw new ArgumentNullException(nameof(url));
         }
 
         public Uri Url { get; }

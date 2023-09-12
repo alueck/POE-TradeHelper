@@ -13,16 +13,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public ProphecyItemSearchRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.prophecyItemSearchRequestMapper = new ProphecyItemSearchRequestMapper(this.ItemSearchOptionsMock);
+            this.ItemSearchQueryRequestMapper = this.prophecyItemSearchRequestMapper =
+                new ProphecyItemSearchRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [Test]
         public void MapToQueryItemShouldMapItemName()
         {
             const string expected = "The Dreamer's Dream";
-            var item = new ProphecyItem
+            ProphecyItem item = new()
             {
-                Name = expected
+                Name = expected,
             };
 
             SearchQueryRequest result = this.prophecyItemSearchRequestMapper.MapToQueryRequest(item);
@@ -33,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [Test]
         public void MapToQueryRequestShouldMapItemType()
         {
-            var item = new ProphecyItem();
+            ProphecyItem item = new();
 
             SearchQueryRequest result = this.prophecyItemSearchRequestMapper.MapToQueryRequest(item);
 

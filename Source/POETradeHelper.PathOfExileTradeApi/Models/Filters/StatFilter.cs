@@ -12,14 +12,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 
         public MinMaxFilter Value { get; set; } = new();
 
-        public object Clone()
-        {
-            return new StatFilter
+        public object Clone() =>
+            new StatFilter
             {
                 Id = this.Id,
                 Text = this.Text,
-                Value = (MinMaxFilter)this.Value.Clone()
+                Value = (MinMaxFilter)this.Value.Clone(),
             };
-        }
     }
 }

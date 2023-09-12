@@ -9,8 +9,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         private const int NameLineIndex = 2;
         private readonly IItemTypeParser itemTypeParser;
 
-        public FlaskItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser) :
-            base(itemStatsParser)
+        public FlaskItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser)
+            : base(itemStatsParser)
         {
             this.itemTypeParser = itemTypeParser;
         }
@@ -24,7 +24,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
             ItemRarity? rarity = GetRarity(itemStringLines);
-            var flaskItem = new FlaskItem(rarity!.Value)
+            FlaskItem flaskItem = new FlaskItem(rarity!.Value)
             {
                 Name = itemStringLines[NameLineIndex],
                 Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
@@ -36,11 +36,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
             return flaskItem;
         }
 
-        private int GetTypeLineIndex(string[] itemStringLines)
-        {
-            return this.HasRarity(itemStringLines, ItemRarity.Unique)
+        private int GetTypeLineIndex(string[] itemStringLines) =>
+            this.HasRarity(itemStringLines, ItemRarity.Unique)
                 ? NameLineIndex + 1
                 : NameLineIndex;
-        }
     }
 }

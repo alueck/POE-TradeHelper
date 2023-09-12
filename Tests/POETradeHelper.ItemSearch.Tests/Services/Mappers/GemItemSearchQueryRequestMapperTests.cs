@@ -13,16 +13,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public GemItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.gemItemSearchQueryRequestMapper = new GemItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
+            this.ItemSearchQueryRequestMapper = this.gemItemSearchQueryRequestMapper =
+                new GemItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
 
         [TestCase("Vaal Flameblast")]
         [TestCase("Flameblast")]
         public void MapToQueryRequestShouldMapType(string expected)
         {
-            var item = new GemItem
+            GemItem item = new()
             {
-                Type = expected
+                Type = expected,
             };
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -34,9 +35,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         public void MapToQueryRequestShouldNotMapName()
         {
             const string expected = "Vaal Flameblast";
-            var item = new GemItem
+            GemItem item = new()
             {
-                Name = expected
+                Name = expected,
             };
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -47,7 +48,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [Test]
         public void MapToQueryRequestShouldNotMapRarity()
         {
-            var item = new GemItem();
+            GemItem item = new();
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
@@ -58,9 +59,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCase(20)]
         public void MapToQueryRequestShouldMapGemLevel(int expected)
         {
-            var item = new GemItem
+            GemItem item = new()
             {
-                Level = expected
+                Level = expected,
             };
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -75,9 +76,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCase(20)]
         public void MapToQueryRequestShouldMapGemQuality(int expected)
         {
-            var item = new GemItem
+            GemItem item = new()
             {
-                Quality = expected
+                Quality = expected,
             };
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -95,9 +96,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         public void MapToQueryRequestShouldMapGemQualityType(GemQualityType gemQualityType)
         {
             string expected = ((int)gemQualityType).ToString();
-            var item = new GemItem
+            GemItem item = new()
             {
-                QualityType = gemQualityType
+                QualityType = gemQualityType,
             };
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);

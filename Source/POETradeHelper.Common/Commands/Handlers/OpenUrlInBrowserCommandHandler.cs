@@ -15,7 +15,7 @@ namespace POETradeHelper.Common.Commands.Handlers
             Process.Start(new ProcessStartInfo
             {
                 FileName = request.Url.ToString(),
-                UseShellExecute = true
+                UseShellExecute = true,
             });
 
             return Task.CompletedTask;

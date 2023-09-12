@@ -7,14 +7,7 @@ namespace POETradeHelper.QualityOfLife.Services.Impl
     {
         public WikiType HandledWikiType => WikiType.PoeDb;
 
-        public Uri GetUrl(Item item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
-            return new Uri($"https://poedb.tw/us/{(item.Rarity == ItemRarity.Unique ? item.Name : item.Type).Replace(" ", "_").Replace("'", "")}");
-        }
+        public Uri GetUrl(Item item) =>
+            new($"https://poedb.tw/us/{(item.Rarity == ItemRarity.Unique ? item.Name : item.Type).Replace(" ", "_").Replace("'", string.Empty)}");
     }
 }

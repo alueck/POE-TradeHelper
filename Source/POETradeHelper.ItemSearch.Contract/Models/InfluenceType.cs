@@ -1,6 +1,6 @@
-﻿using POETradeHelper.ItemSearch.Contract.Properties;
+﻿using System.ComponentModel.DataAnnotations;
 
-using System.ComponentModel.DataAnnotations;
+using POETradeHelper.ItemSearch.Contract.Properties;
 
 namespace POETradeHelper.ItemSearch.Contract.Models
 {
@@ -24,6 +24,6 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         Redeemer,
 
         [Display(Name = nameof(Resources.WarlordItem), ResourceType = typeof(Resources))]
-        Warlord
-    };
+        Warlord,
+    }
 }

@@ -9,17 +9,25 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
     public abstract class ItemParserBase : IItemParser
     {
-        protected bool HasRarity(string[] itemStringLines, ItemRarity itemRarity)
+        public Item Parse(string[] itemStringLines)
         {
-            return GetRarity(itemStringLines) == itemRarity;
+            Item item = this.ParseItem(itemStringLines);
+            item.ItemText = string.Join(Environment.NewLine, itemStringLines);
+
+            return item;
         }
+
+        public abstract bool CanParse(string[] itemStringLines);
+
+        protected bool HasRarity(string[] itemStringLines, ItemRarity itemRarity) =>
+            GetRarity(itemStringLines) == itemRarity;
 
         protected static ItemRarity? GetRarity(string[] itemStringLines)
         {
             string rarityDescriptor = Resources.RarityDescriptor;
             string? rarityLine = itemStringLines.FirstOrDefault(line => line.Contains(rarityDescriptor));
 
-            return rarityLine?.Replace(rarityDescriptor, "").Trim().ParseToEnumByDisplayName<ItemRarity>();
+            return rarityLine?.Replace(rarityDescriptor, string.Empty).Trim().ParseToEnumByDisplayName<ItemRarity>();
         }
 
         protected static int GetIntegerFromFirstStringContaining(string[] itemStringLines, string containsString)
@@ -40,26 +48,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
             return result;
         }
 
-        protected bool IsCorrupted(string[] lines)
-        {
-            return lines.Any(l => l == Resources.CorruptedKeyword);
-        }
+        protected bool IsCorrupted(string[] lines) => lines.Any(l => l == Resources.CorruptedKeyword);
 
-        protected bool IsIdentified(string[] itemStringLines)
-        {
-            return !itemStringLines.Any(l => l.Contains(Resources.UnidentifiedKeyword));
-        }
-
-        public Item Parse(string[] itemStringLines)
-        {
-            Item item = this.ParseItem(itemStringLines);
-            item.ItemText = string.Join(Environment.NewLine, itemStringLines);
-
-            return item;
-        }
+        protected bool IsIdentified(string[] itemStringLines) => !itemStringLines.Any(l => l.Contains(Resources.UnidentifiedKeyword));
 
         protected abstract Item ParseItem(string[] itemStringLines);
-
-        public abstract bool CanParse(string[] itemStringLines);
     }
 }

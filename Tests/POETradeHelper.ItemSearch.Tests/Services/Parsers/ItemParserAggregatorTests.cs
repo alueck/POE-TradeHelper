@@ -62,7 +62,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.currencyItemParserMock.CanParse(Arg.Any<string[]>())
                 .Returns(true);
 
-            TestDelegate testDelegate = () => this.itemParserAggregator.Parse("");
+            TestDelegate testDelegate = () => this.itemParserAggregator.Parse(string.Empty);
 
             Assert.Throws<MultipleMatchingParsersFoundException>(testDelegate);
         }
@@ -70,7 +70,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         [Test]
         public void ParseShouldThrowExceptionIfNoMatchingParserIsFound()
         {
-            TestDelegate testDelegate = () => this.itemParserAggregator.Parse("");
+            TestDelegate testDelegate = () => this.itemParserAggregator.Parse(string.Empty);
 
             Assert.Throws<NoMatchingParserFoundException>(testDelegate);
         }
@@ -101,7 +101,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.currencyItemParserMock.Parse(Arg.Any<string[]>())
                 .Returns(item);
 
-            Item result = this.itemParserAggregator.Parse("");
+            Item result = this.itemParserAggregator.Parse(string.Empty);
 
             Assert.That(result, Is.EqualTo(item));
         }

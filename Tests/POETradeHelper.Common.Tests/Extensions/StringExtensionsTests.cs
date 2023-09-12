@@ -9,7 +9,8 @@ namespace POETradeHelper.Common.Tests.Extensions
         [Test]
         public void ParseToEnumByDisplayNameShouldReturnCorrectEnumValueIfDisplayNameIsFound()
         {
-            TestEnumWrapper.TestEnum? result = TestEnumWrapper.DisplayName.ParseToEnumByDisplayName<TestEnumWrapper.TestEnum>();
+            TestEnumWrapper.TestEnum? result =
+                TestEnumWrapper.DisplayName.ParseToEnumByDisplayName<TestEnumWrapper.TestEnum>();
 
             Assert.That(result, Is.EqualTo(TestEnumWrapper.TestEnum.TestValue));
         }

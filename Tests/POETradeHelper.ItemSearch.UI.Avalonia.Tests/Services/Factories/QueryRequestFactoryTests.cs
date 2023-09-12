@@ -25,7 +25,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.itemSearchQueryRequestMapperMocks = new List<IItemSearchQueryRequestMapper>
             {
                 Substitute.For<IItemSearchQueryRequestMapper>(),
-                Substitute.For<IItemSearchQueryRequestMapper>()
+                Substitute.For<IItemSearchQueryRequestMapper>(),
             };
 
             this.searchQueryRequestFactory = new SearchQueryRequestFactory(this.itemSearchQueryRequestMapperMocks);
@@ -34,7 +34,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldCallCanMapOnAllItemSearchQueryRequestMappers()
         {
-            var item = new EquippableItem(ItemRarity.Rare) { Name = "TestItem" };
+            EquippableItem item = new(ItemRarity.Rare) { Name = "TestItem" };
             this.itemSearchQueryRequestMapperMocks[1].CanMap(item)
                 .Returns(true);
 
@@ -51,7 +51,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldCallMapToQueryRequestOnFirstItemSearchQueryRequestMapper()
         {
-            var item = new EquippableItem(ItemRarity.Rare) { Name = "TestItem" };
+            EquippableItem item = new(ItemRarity.Rare) { Name = "TestItem" };
 
             this.itemSearchQueryRequestMapperMocks[0].CanMap(item)
                 .Returns(true);
@@ -71,10 +71,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldReturnResultFromItemSearchQueryRequestMapper()
         {
-            var item = new EquippableItem(ItemRarity.Rare) { Name = "TestItem" };
-            var expected = new SearchQueryRequest
+            EquippableItem item = new(ItemRarity.Rare) { Name = "TestItem" };
+            SearchQueryRequest expected = new()
             {
-                League = "Heist"
+                League = "Heist",
             };
 
             this.itemSearchQueryRequestMapperMocks[0].CanMap(item)
@@ -96,9 +96,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 Text = "# to Maximum Life",
                 Min = 50,
                 Max = 65,
-                IsEnabled = true
+                IsEnabled = true,
             };
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
             Assert.NotNull(result);
@@ -120,13 +120,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldSetGreaterValueAsMaxValueForStatFilter()
         {
             const int expectedValue = 65;
-            var statFilterViewModel = new MinMaxStatFilterViewModel
+            MinMaxStatFilterViewModel statFilterViewModel = new()
             {
                 Min = expectedValue,
                 Max = 40,
-                IsEnabled = true
+                IsEnabled = true,
             };
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
@@ -145,25 +145,25 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldCreateMultipleFilters()
         {
-            var filters = new StatFilterViewModel[]
+            StatFilterViewModel[] filters =
             {
                 new MinMaxStatFilterViewModel
                 {
                     Id = "statId1",
-                    IsEnabled = true
+                    IsEnabled = true,
                 },
                 new MinMaxStatFilterViewModel
                 {
                     Id = "statId2",
-                    IsEnabled = false
+                    IsEnabled = false,
                 },
                 new MinMaxStatFilterViewModel
                 {
                     Id = "statId3",
-                    IsEnabled = true
-                }
+                    IsEnabled = true,
+                },
             };
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(filters, null);
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(filters, null);
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
@@ -180,17 +180,17 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldClearStatsOnQueryRequestBeforeAddingNewOnes()
         {
-            var statFilterViewModel = new MinMaxStatFilterViewModel
+            MinMaxStatFilterViewModel statFilterViewModel = new()
             {
                 Id = "itemStatId",
                 Text = "# to Maximum Life",
                 Min = 50,
                 Max = 65,
-                IsEnabled = true
+                IsEnabled = true,
             };
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
 
-            var searchQueryRequest = new SearchQueryRequest
+            SearchQueryRequest searchQueryRequest = new()
             {
                 Query =
                 {
@@ -200,11 +200,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                         {
                             Filters =
                             {
-                                new StatFilter()
-                            }
-                        }
-                    }
-                }
+                                new StatFilter(),
+                            },
+                        },
+                    },
+                },
             };
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel);
@@ -217,13 +217,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldCreateStatFilters()
         {
-            var statFilterViewModel = new StatFilterViewModel
+            StatFilterViewModel statFilterViewModel = new()
             {
                 Id = "itemStatId",
                 Text = "Trigger Edict of Frost on Kill",
-                IsEnabled = true
+                IsEnabled = true,
             };
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
@@ -249,10 +249,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             {
                 Min = minValue,
                 Max = maxValue,
-                IsEnabled = true
+                IsEnabled = true,
             };
 
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
@@ -269,9 +269,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             BindableMinMaxFilterViewModel additionalFilter = new(x => x.Query.Filters.MiscFilters.Quality)
             {
-                IsEnabled = false
+                IsEnabled = false,
             };
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
@@ -285,9 +285,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             BindableFilterViewModel additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem)
             {
-                IsEnabled = value
+                IsEnabled = value,
             };
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
@@ -302,7 +302,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldNotMapAdditionalBoolFilterWithoutEnabledValueToQuery()
         {
             BindableFilterViewModel additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem);
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
@@ -315,13 +315,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             BindableFilterViewModel additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem)
             {
-                IsEnabled = true
+                IsEnabled = true,
             };
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
             const string categoryOptionValue = "axe";
             const string rarityOptionValue = "unique";
-            var searchQueryRequest = new SearchQueryRequest
+            SearchQueryRequest searchQueryRequest = new()
             {
                 Query =
                 {
@@ -329,35 +329,35 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                     {
                         ArmourFilters =
                         {
-                            Armour = new MinMaxFilter()
+                            Armour = new MinMaxFilter(),
                         },
                         MapFilters =
                         {
-                            MapTier = new MinMaxFilter()
+                            MapTier = new MinMaxFilter(),
                         },
                         MiscFilters =
                         {
-                            Corrupted = new BoolOptionFilter()
+                            Corrupted = new BoolOptionFilter(),
                         },
                         RequirementsFilters =
                         {
-                            Level = new MinMaxFilter()
+                            Level = new MinMaxFilter(),
                         },
                         SocketFilters =
                         {
-                            Links = new SocketsFilter()
+                            Links = new SocketsFilter(),
                         },
                         TypeFilters =
                         {
-                            Category = new OptionFilter{ Option = categoryOptionValue },
-                            Rarity = new OptionFilter { Option = rarityOptionValue}
+                            Category = new OptionFilter { Option = categoryOptionValue },
+                            Rarity = new OptionFilter { Option = rarityOptionValue },
                         },
                         WeaponFilters =
                         {
-                            Damage = new MinMaxFilter()
-                        }
-                    }
-                }
+                            Damage = new MinMaxFilter(),
+                        },
+                    },
+                },
             };
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel);
@@ -381,12 +381,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldMapName()
         {
             const string expected = "expected name";
-            var searchQueryRequest = new SearchQueryRequest
+            SearchQueryRequest searchQueryRequest = new()
             {
                 Query =
                 {
-                    Name = expected
-                }
+                    Name = expected,
+                },
             };
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
@@ -399,12 +399,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldMapTerm()
         {
             const string expected = "expected term";
-            var searchQueryRequest = new SearchQueryRequest
+            SearchQueryRequest searchQueryRequest = new()
             {
                 Query =
                 {
-                    Term = expected
-                }
+                    Term = expected,
+                },
             };
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
@@ -417,12 +417,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldMapType()
         {
             const string expected = "expected type";
-            var searchQueryRequest = new SearchQueryRequest
+            SearchQueryRequest searchQueryRequest = new()
             {
                 Query =
                 {
-                    Type = expected
-                }
+                    Type = expected,
+                },
             };
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
@@ -435,9 +435,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldMapLeague()
         {
             const string expected = "expected league";
-            var searchQueryRequest = new SearchQueryRequest
+            SearchQueryRequest searchQueryRequest = new()
             {
-                League = expected
+                League = expected,
             };
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
@@ -457,9 +457,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 Green = 1,
                 Blue = 2,
                 White = 2,
-                IsEnabled = true
+                IsEnabled = true,
             };
-            var advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { bindableSocketsFilterViewModel });
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { bindableSocketsFilterViewModel });
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
@@ -476,9 +476,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             Assert.That(socketsFilter.White, Is.EqualTo(bindableSocketsFilterViewModel.White));
         }
 
-        private static IAdvancedFiltersViewModel GetAdvancedFiltersViewModel(IEnumerable<StatFilterViewModel> statFilters, IEnumerable<FilterViewModelBase> additionalFilters)
+        private static IAdvancedFiltersViewModel GetAdvancedFiltersViewModel(
+            IEnumerable<StatFilterViewModel> statFilters,
+            IEnumerable<FilterViewModelBase> additionalFilters)
         {
-            var mock = Substitute.For<IAdvancedFiltersViewModel>();
+            IAdvancedFiltersViewModel mock = Substitute.For<IAdvancedFiltersViewModel>();
             mock.AllStatFilters
                 .Returns(statFilters ?? new List<StatFilterViewModel>());
             mock.AdditionalFilters

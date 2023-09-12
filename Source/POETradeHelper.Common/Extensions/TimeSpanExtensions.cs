@@ -1,6 +1,6 @@
-﻿using POETradeHelper.Common.Properties;
+﻿using System;
 
-using System;
+using POETradeHelper.Common.Properties;
 
 namespace POETradeHelper.Common.Extensions
 {
@@ -34,19 +34,13 @@ namespace POETradeHelper.Common.Extensions
             return $"{time,2:N0}{unit}";
         }
 
-        private static bool IsRoundedAtLeastOneDay(TimeSpan timeSpan)
-        {
-            return timeSpan.TotalDays >= 1 || Math.Round(timeSpan.TotalHours) == 24;
-        }
+        private static bool IsRoundedAtLeastOneDay(TimeSpan timeSpan) =>
+            timeSpan.TotalDays >= 1 || Math.Round(timeSpan.TotalHours) == 24;
 
-        private static bool IsRoundedAtLeastOneHour(TimeSpan timeSpan)
-        {
-            return timeSpan.TotalHours >= 1 || Math.Round(timeSpan.TotalMinutes) == 60;
-        }
+        private static bool IsRoundedAtLeastOneHour(TimeSpan timeSpan) =>
+            timeSpan.TotalHours >= 1 || Math.Round(timeSpan.TotalMinutes) == 60;
 
-        private static bool IsRoundedAtLeastOneMinute(TimeSpan timeSpan)
-        {
-            return timeSpan.TotalMinutes >= 1 || Math.Round(timeSpan.TotalSeconds) == 60;
-        }
+        private static bool IsRoundedAtLeastOneMinute(TimeSpan timeSpan) =>
+            timeSpan.TotalMinutes >= 1 || Math.Round(timeSpan.TotalSeconds) == 60;
     }
 }

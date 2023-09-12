@@ -9,25 +9,54 @@ namespace POETradeHelper.Common.UI.UserControls
 {
     public class BusyIndicator : UserControl
     {
+        public static readonly AvaloniaProperty<TimeSpan> DisplayAfterProperty = AvaloniaProperty.Register<BusyIndicator, TimeSpan>(nameof(DisplayAfter), TimeSpan.FromMilliseconds(100));
+        public static readonly AvaloniaProperty<bool> IsBusyProperty = AvaloniaProperty.Register<BusyIndicator, bool>(nameof(IsBusy));
+        public static readonly AvaloniaProperty<string?> TextProperty = AvaloniaProperty.Register<BusyIndicator, string?>(nameof(Text));
+        protected static readonly AvaloniaProperty<bool> IsBusyIndicatorVisibleProperty = AvaloniaProperty.Register<BusyIndicator, bool>(nameof(IsBusyIndicatorVisible));
+
         private readonly DispatcherTimer displayAfterTimer = new();
 
         public BusyIndicator()
         {
-            displayAfterTimer.Tick += DisplayAfterTimerEnded;
+            this.displayAfterTimer.Tick += this.DisplayAfterTimerEnded;
             this.InitializeComponent();
         }
 
-        private void DisplayAfterTimerEnded(object? sender, EventArgs e)
+        public TimeSpan DisplayAfter
         {
-            displayAfterTimer.Stop();
-            IsBusyIndicatorVisible = true;
+            get => this.GetValue<TimeSpan>(DisplayAfterProperty);
+            set => this.SetValue(DisplayAfterProperty, value);
+        }
+
+        public bool IsBusy
+        {
+            get => this.GetValue<bool>(IsBusyProperty);
+            set => this.SetValue(IsBusyProperty, value);
+        }
+
+        public string? Text
+        {
+            get => this.GetValue<string?>(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+
+        protected bool IsBusyIndicatorVisible
+        {
+            get => this.GetValue<bool>(IsBusyIndicatorVisibleProperty);
+            set => this.SetValue(IsBusyIndicatorVisibleProperty, value);
         }
 
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
 
-            IsBusyProperty.Changed.Subscribe(OnIsBusyChanged);
+            IsBusyProperty.Changed.Subscribe(this.OnIsBusyChanged);
+        }
+
+        private void DisplayAfterTimerEnded(object? sender, EventArgs e)
+        {
+            this.displayAfterTimer.Stop();
+            this.IsBusyIndicatorVisible = true;
         }
 
         private void OnIsBusyChanged(AvaloniaPropertyChangedEventArgs eventArgs)
@@ -39,53 +68,21 @@ namespace POETradeHelper.Common.UI.UserControls
 
             if (eventArgs.NewValue is bool newValue && newValue)
             {
-                if (DisplayAfter == TimeSpan.Zero)
+                if (this.DisplayAfter == TimeSpan.Zero)
                 {
-                    IsBusyIndicatorVisible = true;
+                    this.IsBusyIndicatorVisible = true;
                 }
                 else
                 {
-                    displayAfterTimer.Interval = DisplayAfter;
-                    displayAfterTimer.Start();
+                    this.displayAfterTimer.Interval = this.DisplayAfter;
+                    this.displayAfterTimer.Start();
                 }
             }
             else
             {
-                displayAfterTimer.Stop();
-                IsBusyIndicatorVisible = false;
+                this.displayAfterTimer.Stop();
+                this.IsBusyIndicatorVisible = false;
             }
         }
-
-        public TimeSpan DisplayAfter
-        {
-            get => this.GetValue<TimeSpan>(DisplayAfterProperty);
-            set => this.SetValue(DisplayAfterProperty, value);
-        }
-
-        public static AvaloniaProperty<TimeSpan> DisplayAfterProperty = AvaloniaProperty.Register<BusyIndicator, TimeSpan>(nameof(DisplayAfter), defaultValue: TimeSpan.FromMilliseconds(100));
-
-        public bool IsBusy
-        {
-            get => this.GetValue<bool>(IsBusyProperty);
-            set => this.SetValue(IsBusyProperty, value);
-        }
-
-        public static AvaloniaProperty<bool> IsBusyProperty = AvaloniaProperty.Register<BusyIndicator, bool>(nameof(IsBusy));
-
-        public string? Text
-        {
-            get => this.GetValue<string?>(TextProperty);
-            set => this.SetValue(TextProperty, value);
-        }
-
-        public static AvaloniaProperty<string?> TextProperty = AvaloniaProperty.Register<BusyIndicator, string?>(nameof(Text));
-
-        protected bool IsBusyIndicatorVisible
-        {
-            get => this.GetValue<bool>(IsBusyIndicatorVisibleProperty);
-            set => this.SetValue(IsBusyIndicatorVisibleProperty, value);
-        }
-
-        protected static AvaloniaProperty<bool> IsBusyIndicatorVisibleProperty = AvaloniaProperty.Register<BusyIndicator, bool>(nameof(IsBusyIndicatorVisible));
     }
 }

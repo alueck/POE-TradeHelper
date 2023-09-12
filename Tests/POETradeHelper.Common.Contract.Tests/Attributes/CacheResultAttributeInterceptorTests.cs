@@ -118,8 +118,8 @@ public class CacheResultAttributeInterceptorTests
         await this.testInstance.MethodWithReturnValueAsync(new Request(2));
 
         await this.valueProviderMock
-                .Received(2)
-                .GetValueAsync();
+            .Received(2)
+            .GetValueAsync();
     }
 
     [Test]
@@ -146,6 +146,25 @@ public class CacheResultAttributeInterceptorTests
         await this.valueProviderMock
             .Received(2)
             .GetValueAsync();
+    }
+
+#pragma warning disable SA1201
+    public interface ITestInterface
+    {
+        string MethodWithReturnValue(Request request);
+
+        void MethodWithoutReturnValue(Request request);
+
+        Task<string> MethodWithReturnValueAsync(Request request, CancellationToken cancellationToken = default);
+
+        Task MethodWithoutReturnValueAsync(Request request, CancellationToken cancellationToken = default);
+    }
+
+    public interface ITestValueProvider
+    {
+        string GetValue();
+
+        Task<string> GetValueAsync();
     }
 
     [Intercept(typeof(CacheResultAttributeInterceptor))]
@@ -183,23 +202,6 @@ public class CacheResultAttributeInterceptorTests
         }
     }
 
-    public interface ITestInterface
-    {
-        string MethodWithReturnValue(Request request);
-
-        void MethodWithoutReturnValue(Request request);
-
-        Task<string> MethodWithReturnValueAsync(Request request, CancellationToken cancellationToken = default);
-
-        Task MethodWithoutReturnValueAsync(Request request, CancellationToken cancellationToken = default);
-    }
-
-    public interface ITestValueProvider
-    {
-        string GetValue();
-
-        Task<string> GetValueAsync();
-    }
-
     public record Request(int Number);
+#pragma warning restore SA1201
 }

@@ -7,6 +7,6 @@ namespace POETradeHelper.ItemSearch.Contract.Models
     {
         public ICollection<Socket> Sockets { get; } = new Collection<Socket>();
 
-        public int Links => Sockets.Count == 1 ? 0 : Sockets.Count;
+        public int Links => this.Sockets.Count == 1 ? 0 : this.Sockets.Count;
     }
 }

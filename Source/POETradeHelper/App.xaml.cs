@@ -13,19 +13,18 @@ namespace POETradeHelper
 {
     public class App : Application
     {
-        public override void Initialize()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
         public override void OnFrameworkInitializationCompleted()
         {
             if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var viewModel = new MainWindowViewModel(Locator.Current.GetServices<ISettingsViewModel>(), Locator.Current.GetServices<IInitializable>());
+                MainWindowViewModel viewModel = new MainWindowViewModel(
+                    Locator.Current.GetServices<ISettingsViewModel>(),
+                    Locator.Current.GetServices<IInitializable>());
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = viewModel
+                    DataContext = viewModel,
                 };
                 desktop.ShutdownRequested += OnDesktopOnShutdownRequested;
             }
@@ -33,9 +32,7 @@ namespace POETradeHelper
             base.OnFrameworkInitializationCompleted();
         }
 
-        private static void OnDesktopOnShutdownRequested(object? sender, ShutdownRequestedEventArgs e)
-        {
+        private static void OnDesktopOnShutdownRequested(object? sender, ShutdownRequestedEventArgs e) =>
             Bootstrapper.Shutdown();
-        }
     }
 }

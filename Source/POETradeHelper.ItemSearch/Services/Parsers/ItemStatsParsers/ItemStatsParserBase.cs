@@ -37,7 +37,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
         protected static int GetStatsStartIndex(string[] itemStringLines)
         {
             int itemLevelLineIndex = Array.FindIndex(itemStringLines, l => l.StartsWith(Resources.ItemLevelDescriptor));
-            return itemLevelLineIndex + 2; //skip property group separator
+            return itemLevelLineIndex + 2; // skip property group separator
         }
     }
 }

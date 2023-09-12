@@ -101,7 +101,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
                 .Invoke(this.itemSearchOverlayViewModel)
                 .Returns(exchangeResultsViewModelMock);
 
-            CancellationToken token = new();
+            CancellationToken token = default;
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(token);
 
@@ -158,7 +158,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
                 .Invoke(this.itemSearchOverlayViewModel)
                 .Returns(itemResultsViewModelMock);
 
-            CancellationToken token = new();
+            CancellationToken token = default;
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync(token);
 

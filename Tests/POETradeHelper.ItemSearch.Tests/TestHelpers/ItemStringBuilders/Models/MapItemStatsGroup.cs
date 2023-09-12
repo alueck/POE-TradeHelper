@@ -7,13 +7,16 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models
     public class MapItemStatsGroup : ItemStatsGroupBase
     {
         public int MapTier { get; set; } = 1;
+
         public int ItemQuantity { get; set; }
+
         public int ItemRarity { get; set; }
+
         public int MonsterPackSize { get; set; }
 
         public override string ToString()
         {
-            var stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
 
             stringBuilder
                 .AppendLine($"{Resources.MapTierDescriptor} {this.MapTier}")

@@ -17,13 +17,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         [JsonIgnore]
         public string League { get; set; } = string.Empty;
 
-        public object Clone()
-        {
-            return new ExchangeQueryRequest
+        public object Clone() =>
+            new ExchangeQueryRequest
             {
                 Query = (Exchange)this.Query.Clone(),
-                League = this.League
+                League = this.League,
             };
-        }
     }
 }

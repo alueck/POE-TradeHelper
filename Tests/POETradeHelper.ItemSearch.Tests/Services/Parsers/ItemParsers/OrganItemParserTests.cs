@@ -26,8 +26,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnTrueIfItemDescriptionContainsOrganText()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithDescription(Resources.OrganItemDescriptor)
-                                            .BuildLines();
+                .WithDescription(Resources.OrganItemDescriptor)
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -38,7 +38,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseIfItemDescriptionDoesNotContainOrganText()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .BuildLines();
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -50,8 +50,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             const string expected = "Oriath's Virtue's Eye";
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithType(expected)
-                                            .BuildLines();
+                .WithType(expected)
+                .BuildLines();
 
             ItemWithStats result = (ItemWithStats)this.ItemParser.Parse(itemStringLines);
 
@@ -63,8 +63,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             const string expected = "Oriath's Virtue's Eye";
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithType(expected)
-                                            .BuildLines();
+                .WithType(expected)
+                .BuildLines();
 
             ItemWithStats result = (ItemWithStats)this.ItemParser.Parse(itemStringLines);
 
@@ -76,10 +76,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             const string expected = "Drops additional Currency Items";
             string[] itemStringLines = this.itemStringBuilder
-                                .WithType("Oriath's Virtue's Eye")
-                                .WithItemLevel(73)
-                                .WithItemStat(expected, StatCategory.Monster)
-                                .BuildLines();
+                .WithType("Oriath's Virtue's Eye")
+                .WithItemLevel(73)
+                .WithItemStat(expected, StatCategory.Monster)
+                .BuildLines();
 
             this.ItemParser.Parse(itemStringLines);
 
@@ -92,8 +92,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldReturnOrganItemWithStatsSetFromOrganItemStatsParser()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                .WithType("Oriath's Virtue's Eye")
-                                .BuildLines();
+                .WithType("Oriath's Virtue's Eye")
+                .BuildLines();
 
             var expectedOrganItemStats = new ItemStats();
 
@@ -108,10 +108,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         protected override string[] GetValidItemStringLines()
         {
             return this.itemStringBuilder
-                        .WithType("Oriath's Virtue's Eye")
-                        .WithItemLevel(73)
-                        .WithItemStat("Drops additional currency", StatCategory.Monster)
-                        .BuildLines();
+                .WithType("Oriath's Virtue's Eye")
+                .WithItemLevel(73)
+                .WithItemStat("Drops additional currency", StatCategory.Monster)
+                .BuildLines();
         }
     }
 }

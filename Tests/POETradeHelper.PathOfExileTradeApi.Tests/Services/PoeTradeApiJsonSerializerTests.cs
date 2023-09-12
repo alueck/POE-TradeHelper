@@ -1,15 +1,15 @@
-﻿using NUnit.Framework;
-
-using POETradeHelper.Common;
-using POETradeHelper.Common.Wrappers;
-using POETradeHelper.PathOfExileTradeApi.Services;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using NSubstitute;
+
+using NUnit.Framework;
+
+using POETradeHelper.Common;
+using POETradeHelper.Common.Wrappers;
+using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
@@ -34,7 +34,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.jsonSerializerWrapperMock
                 .Received()
-                .Deserialize<object>(json, Arg.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy == JsonNamingPolicy.CamelCase));
+                .Deserialize<object>(
+                    json,
+                    Arg.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy == JsonNamingPolicy.CamelCase));
         }
 
         [Test]
@@ -70,7 +72,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.jsonSerializerWrapperMock
                 .Received()
-                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull));
+                .Serialize(
+                    obj,
+                    Arg.Is<JsonSerializerOptions>(o => o.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull));
         }
     }
 }

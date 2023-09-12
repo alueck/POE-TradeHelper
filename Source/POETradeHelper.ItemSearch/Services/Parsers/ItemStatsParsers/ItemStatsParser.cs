@@ -14,24 +14,44 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
         private const char Placeholder = '#';
         private readonly IPseudoItemStatsParser pseudoItemStatsParser;
 
-        public ItemStatsParser(IStatsDataService statsDataService, IPseudoItemStatsParser pseudoItemStatsParser) : base(statsDataService)
+        public ItemStatsParser(IStatsDataService statsDataService, IPseudoItemStatsParser pseudoItemStatsParser) : base(
+            statsDataService)
         {
             this.pseudoItemStatsParser = pseudoItemStatsParser;
         }
 
         public ItemStats Parse(string[] itemStringLines, bool preferLocalStats)
         {
-            var result = new ItemStats();
+            ItemStats result = new ItemStats();
 
             int statsStartIndex = GetStatsStartIndex(itemStringLines);
 
-            var statTexts = itemStringLines.Skip(statsStartIndex).Where(s => s != ParserConstants.PropertyGroupSeparator);
+            IEnumerable<string> statTexts = itemStringLines.Skip(statsStartIndex)
+                .Where(s => s != ParserConstants.PropertyGroupSeparator);
 
-            var itemStats = statTexts.Select(s => this.ParseStatText(s, preferLocalStats)).OfType<ItemStat>().ToList();
-            var pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
+            List<ItemStat> itemStats =
+                statTexts.Select(s => this.ParseStatText(s, preferLocalStats)).OfType<ItemStat>().ToList();
+            IEnumerable<ItemStat> pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
             result.AllStats.AddRange(itemStats);
             result.AllStats.AddRange(pseudoItemStats);
+
+            return result;
+        }
+
+        protected override ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
+        {
+            ItemStat? result = base.GetCompleteItemStat(itemStat, preferLocalStatData);
+
+            int? placeholderCount = result?.TextWithPlaceholders.Count(c => c == Placeholder);
+            if (placeholderCount == 1)
+            {
+                result = GetSingleValueItemStat(itemStat);
+            }
+            else if (placeholderCount == 2)
+            {
+                result = GetMinMaxValueItemStat(itemStat);
+            }
 
             return result;
         }
@@ -52,41 +72,25 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return this.GetCompleteItemStat(result, preferLocalStats);
         }
 
-        private static bool TryGetItemStatForCategoryByMarker(string statText, StatCategory statCategory, [NotNullWhen(returnValue: true)] out ItemStat? itemStat)
+        private static bool TryGetItemStatForCategoryByMarker(string statText, StatCategory statCategory, [NotNullWhen(true)] out ItemStat? itemStat)
         {
             itemStat = null;
 
-            int statCategoryMarkerIndex = statText.IndexOf($"({statCategory.GetDisplayName()})", StringComparison.OrdinalIgnoreCase);
+            int statCategoryMarkerIndex =
+                statText.IndexOf($"({statCategory.GetDisplayName()})", StringComparison.OrdinalIgnoreCase);
             if (statCategoryMarkerIndex >= 0)
             {
                 statText = statText[..statCategoryMarkerIndex].Trim();
 
                 itemStat = new ItemStat(statCategory)
                 {
-                    Text = statText
+                    Text = statText,
                 };
 
                 return true;
             }
 
             return false;
-        }
-
-        protected override ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
-        {
-            ItemStat? result = base.GetCompleteItemStat(itemStat, preferLocalStatData);
-
-            var placeholderCount = result?.TextWithPlaceholders?.Count(c => c == Placeholder);
-            if (placeholderCount == 1)
-            {
-                result = GetSingleValueItemStat(itemStat);
-            }
-            else if (placeholderCount == 2)
-            {
-                result = GetMinMaxValueItemStat(itemStat);
-            }
-
-            return result;
         }
 
         private static ItemStat GetSingleValueItemStat(ItemStat itemStat)
@@ -96,14 +100,14 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return value.HasValue
                 ? new SingleValueItemStat(itemStat)
                 {
-                    Value = value.Value
+                    Value = value.Value,
                 }
                 : itemStat;
         }
 
         private static ItemStat GetMinMaxValueItemStat(ItemStat itemStat)
         {
-            var result = new MinMaxValueItemStat(itemStat);
+            MinMaxValueItemStat result = new MinMaxValueItemStat(itemStat);
 
             int maxValueIndex = itemStat.TextWithPlaceholders.LastIndexOf(Placeholder);
             if (maxValueIndex >= 0)

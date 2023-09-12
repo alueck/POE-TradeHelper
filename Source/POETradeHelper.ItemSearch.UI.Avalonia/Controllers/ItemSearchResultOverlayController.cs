@@ -22,6 +22,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
         private readonly IViewLocator viewLocator;
         private readonly IUiThreadDispatcher uiThreadDispatcher;
 
+        private IItemSearchResultOverlayView? view;
         private CancellationTokenSource searchItemCancellationTokenSource = new();
 
         public ItemSearchResultOverlayController(
@@ -34,35 +35,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
             this.uiThreadDispatcher = uiThreadDispatcher;
         }
 
-        private IItemSearchResultOverlayView? view;
-        private IItemSearchResultOverlayView View => LazyInitializer.EnsureInitialized(ref view, CreateView);
-
-        private IItemSearchResultOverlayView CreateView()
-        {
-            var view = viewLocator.GetView(itemSearchResultOverlayViewModel);
-            if (view is IItemSearchResultOverlayView itemSearchResultOverlay)
-            {
-                if (view is IControl control)
-                {
-                    control.DataContext = itemSearchResultOverlayViewModel;
-                }
-
-                return itemSearchResultOverlay;
-            }
-
-            throw new ArgumentException(
-                $"Could not find view for {nameof(IItemSearchResultOverlayViewModel)} that implements {nameof(IItemSearchResultOverlayView)}");
-        }
-
-        private void CancelSearchItemToken()
-        {
-            lock (this)
-            {
-                this.searchItemCancellationTokenSource.Cancel();
-                this.searchItemCancellationTokenSource.Dispose();
-                this.searchItemCancellationTokenSource = new CancellationTokenSource();
-            }
-        }
+        private IItemSearchResultOverlayView View => LazyInitializer.EnsureInitialized(ref this.view, this.CreateView);
 
         public async Task<Unit> Handle(SearchItemCommand request, CancellationToken cancellationToken)
         {
@@ -91,15 +64,42 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
         {
             await this.uiThreadDispatcher.InvokeAsync(() =>
             {
-                if (View.IsVisible)
+                if (this.View.IsVisible)
                 {
                     request.OnHandled();
                     this.CancelSearchItemToken();
-                    View.Hide();
+                    this.View.Hide();
                 }
             });
 
             return Unit.Value;
+        }
+
+        private IItemSearchResultOverlayView CreateView()
+        {
+            object view = this.viewLocator.GetView(this.itemSearchResultOverlayViewModel);
+            if (view is IItemSearchResultOverlayView itemSearchResultOverlay)
+            {
+                if (view is IControl control)
+                {
+                    control.DataContext = this.itemSearchResultOverlayViewModel;
+                }
+
+                return itemSearchResultOverlay;
+            }
+
+            throw new ArgumentException(
+                $"Could not find view for {nameof(IItemSearchResultOverlayViewModel)} that implements {nameof(IItemSearchResultOverlayView)}");
+        }
+
+        private void CancelSearchItemToken()
+        {
+            lock (this)
+            {
+                this.searchItemCancellationTokenSource.Cancel();
+                this.searchItemCancellationTokenSource.Dispose();
+                this.searchItemCancellationTokenSource = new CancellationTokenSource();
+            }
         }
     }
 }

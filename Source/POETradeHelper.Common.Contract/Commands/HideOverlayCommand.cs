@@ -8,7 +8,7 @@ public class HideOverlayCommand : IRequest
 {
     public HideOverlayCommand(Action onHandled)
     {
-        OnHandled = onHandled;
+        this.OnHandled = onHandled;
     }
 
     public Action OnHandled { get; }

@@ -50,9 +50,8 @@ public class ItemResultsViewModelTests
         await this.viewModel.InitializeAsync(item, default);
 
         this.searchQueryRequestFactoryMock
-            
-                .Received()
-                .Create(item);
+            .Received()
+            .Create(item);
     }
 
     [Test]
@@ -82,8 +81,8 @@ public class ItemResultsViewModelTests
         await this.viewModel.InitializeAsync(item, cts.Token);
 
         await this.poeTradeApiClientMock
-                .Received()
-                .GetListingsAsync(expected, cts.Token);
+            .Received()
+            .GetListingsAsync(expected, cts.Token);
     }
 
     [Test]
@@ -99,8 +98,8 @@ public class ItemResultsViewModelTests
         await this.viewModel.InitializeAsync(item, cts.Token);
 
         await this.itemListingsViewModelFactoryMock
-                .Received()
-                .CreateAsync(item, result, cts.Token);
+            .Received()
+            .CreateAsync(item, result, cts.Token);
     }
 
     [Test]
@@ -130,8 +129,8 @@ public class ItemResultsViewModelTests
         await this.viewModel.InitializeAsync(item, cts.Token);
 
         await this.advancedFiltersViewModelMock
-                .Received()
-                .LoadAsync(item, queryRequest, cts.Token);
+            .Received()
+            .LoadAsync(item, queryRequest, cts.Token);
     }
 
     [Test]
@@ -143,8 +142,8 @@ public class ItemResultsViewModelTests
         await this.viewModel.InitializeAsync(item, cts.Token);
 
         await this.pricePredictionViewModelMock
-                .Received()
-                .LoadAsync(item, cts.Token);
+            .Received()
+            .LoadAsync(item, cts.Token);
     }
 
     [Test]
@@ -156,9 +155,8 @@ public class ItemResultsViewModelTests
         await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
 
         this.searchQueryRequestFactoryMock
-            
-                .Received()
-                .Create(originalQueryRequest, this.advancedFiltersViewModelMock);
+            .Received()
+            .Create(originalQueryRequest, this.advancedFiltersViewModelMock);
     }
 
     [Test]
@@ -187,8 +185,8 @@ public class ItemResultsViewModelTests
         await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
 
         await this.advancedFiltersViewModelMock
-                .Received()
-                .LoadAsync(item, queryRequest, default);
+            .Received()
+            .LoadAsync(item, queryRequest, default);
     }
 
     [Test]
@@ -204,8 +202,8 @@ public class ItemResultsViewModelTests
         await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
 
         await this.poeTradeApiClientMock
-                .Received()
-                .GetListingsAsync(queryRequest, default);
+            .Received()
+            .GetListingsAsync(queryRequest, default);
     }
 
     [Test]
@@ -221,8 +219,8 @@ public class ItemResultsViewModelTests
         await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
 
         await this.itemListingsViewModelFactoryMock
-                .Received()
-                .CreateAsync(item, result, default);
+            .Received()
+            .CreateAsync(item, result, default);
     }
 
     [Test]
@@ -251,7 +249,7 @@ public class ItemResultsViewModelTests
         await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
 
         this.itemSearchResultsOverlayViewModelMock
-                .Received()
-                .HandleException(exception);
+            .Received()
+            .HandleException(exception);
     }
 }

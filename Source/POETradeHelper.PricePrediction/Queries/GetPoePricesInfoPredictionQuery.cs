@@ -15,6 +15,7 @@ namespace POETradeHelper.PricePrediction.Queries
         }
 
         public Item Item { get; }
+
         public League League { get; }
     }
 }

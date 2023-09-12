@@ -39,9 +39,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             await base.OnInitAsync();
 
             this.idToStaticDataMappings = this.Data
-                                                .Where(x => !x.Id.StartsWith("Map"))
-                                                .SelectMany(x => x.Entries)
-                                                .ToDictionary(x => x.Id);
+                .Where(x => !x.Id.StartsWith("Map"))
+                .SelectMany(x => x.Entries)
+                .ToDictionary(x => x.Id);
         }
     }
 }

@@ -50,9 +50,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCase(1.234)]
         public async Task CreateAsyncShouldSetAmount(decimal amount)
         {
-            var price = new Price
+            Price price = new()
             {
-                Amount = amount
+                Amount = amount,
             };
 
             PriceViewModel result = await this.priceViewModelFactory.CreateAsync(price);
@@ -63,9 +63,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public async Task CreateAsyncShouldCallGetTextOnStaticItemDataService()
         {
-            var price = new Price
+            Price price = new()
             {
-                Currency = "alc"
+                Currency = "alc",
             };
 
             await this.priceViewModelFactory.CreateAsync(price);
@@ -79,7 +79,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateAsyncShouldSetCurrencyOnPriceViewModel()
         {
             const string expected = "Orb of Alchemy";
-            var price = new Price();
+            Price price = new();
 
             this.staticDataServiceMock.GetText(Arg.Any<string>())
                 .Returns(expected);
@@ -92,9 +92,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public async Task CreateAsyncShouldCallGetImageUrlOnStaticItemDataService()
         {
-            var price = new Price
+            Price price = new()
             {
-                Currency = "alc"
+                Currency = "alc",
             };
 
             await this.priceViewModelFactory.CreateAsync(price);
@@ -109,13 +109,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             // arrange
             Uri expected = new("http://www.google.de");
-            var price = new Price();
+            Price price = new();
 
             this.staticDataServiceMock.GetImageUrl(Arg.Any<string>())
                 .Returns(expected);
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
+            CancellationTokenSource cancellationTokenSource = new();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             // act
             await this.priceViewModelFactory.CreateAsync(price, cancellationToken);
@@ -129,7 +129,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateAsyncShouldSetImageOnPriceViewModel()
         {
             IBitmap expected = new TestBitmap();
-            var price = new Price();
+            Price price = new();
 
             this.imageServiceMock.GetImageAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
                 .Returns(expected);
@@ -149,25 +149,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             public Size Size => throw new NotImplementedException();
 
-            public void Dispose()
-            {
-                throw new NotImplementedException();
-            }
+            public void Dispose() => throw new NotImplementedException();
 
-            public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode)
-            {
+            public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode) =>
                 throw new NotImplementedException();
-            }
 
-            public void Save(string fileName)
-            {
-                throw new NotImplementedException();
-            }
+            public void Save(string fileName) => throw new NotImplementedException();
 
-            public void Save(Stream stream)
-            {
-                throw new NotImplementedException();
-            }
+            public void Save(Stream stream) => throw new NotImplementedException();
         }
     }
 }

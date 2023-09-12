@@ -44,7 +44,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         {
             this.IsBusy = true;
             this.Leagues = this.leagueDataService.GetLeaguesData().Select(l => new League { Id = l.Id, Text = l.Text }).ToList();
-            this.SelectedLeague = this.Leagues.FirstOrDefault(league => string.Equals(this.itemSearchOptions.Value.League?.Id, league.Id, StringComparison.Ordinal)) ?? this.Leagues.FirstOrDefault();
+            this.SelectedLeague = this.Leagues.FirstOrDefault(league => string.Equals(this.itemSearchOptions.Value.League.Id, league.Id, StringComparison.Ordinal)) ?? this.Leagues.FirstOrDefault();
             this.PricePredictionEnabled = this.itemSearchOptions.Value.PricePredictionEnabled;
 
             if (this.SelectedLeague != default)

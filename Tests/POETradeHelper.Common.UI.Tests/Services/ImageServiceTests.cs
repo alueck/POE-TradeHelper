@@ -28,7 +28,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
         private IBitmapFactory bitmapFactoryMock;
         private ImageService imageService;
 
-        private static readonly Uri uri = new("http://www.google.de");
+        private static readonly Uri Uri = new("http://www.google.de");
 
         [SetUp]
         public void Setup()
@@ -36,7 +36,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
             this.bitmapFactoryMock = Substitute.For<IBitmapFactory>();
 
-            var httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
+            IHttpClientFactoryWrapper httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
             httpClientFactoryWrapperMock.CreateClient()
                 .Returns(this.httpClientWrapperMock);
 
@@ -50,19 +50,19 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.httpClientWrapperMock.GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
                 .Returns(new HttpResponseMessage
                 {
-                    StatusCode = HttpStatusCode.BadRequest
+                    StatusCode = HttpStatusCode.BadRequest,
                 });
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             // act
-            await this.imageService.GetImageAsync(uri, cancellationToken);
+            await this.imageService.GetImageAsync(Uri, cancellationToken);
 
             // assert
             await this.httpClientWrapperMock
                 .Received()
-                .GetAsync(uri, cancellationToken);
+                .GetAsync(Uri, cancellationToken);
         }
 
         [Test]
@@ -72,10 +72,10 @@ namespace POETradeHelper.Common.UI.Tests.Services
             HttpResponseMessage httpResponse = this.MockHttpClientGetAsyncSuccessResponse();
 
             // act
-            await this.imageService.GetImageAsync(uri);
+            await this.imageService.GetImageAsync(Uri);
 
             // assert
-            var stream = await httpResponse.Content.ReadAsStreamAsync();
+            Stream stream = await httpResponse.Content.ReadAsStreamAsync();
             this.bitmapFactoryMock
                 .Received()
                 .Create(stream);
@@ -91,7 +91,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
                 .Returns(expected);
 
             // act
-            IBitmap result = await this.imageService.GetImageAsync(uri);
+            IBitmap result = await this.imageService.GetImageAsync(Uri);
 
             // assert
             Assert.That(result, Is.EqualTo(expected));
@@ -102,13 +102,13 @@ namespace POETradeHelper.Common.UI.Tests.Services
         {
             HttpResponseMessage httpResponse = new()
             {
-                StatusCode = HttpStatusCode.BadRequest
+                StatusCode = HttpStatusCode.BadRequest,
             };
 
             this.httpClientWrapperMock.GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
                 .Returns(httpResponse);
 
-            IBitmap result = await this.imageService.GetImageAsync(uri);
+            IBitmap result = await this.imageService.GetImageAsync(Uri);
 
             Assert.IsNull(result);
         }
@@ -118,15 +118,18 @@ namespace POETradeHelper.Common.UI.Tests.Services
         public void GetImageAsyncShouldNotCatchException(Type exceptionType)
         {
             // arrange
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             this.httpClientWrapperMock
                 .GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
                 .ThrowsAsync((Exception)Activator.CreateInstance(exceptionType));
 
             // act
-            async Task Action() => await this.imageService.GetImageAsync(uri, cancellationToken);
+            async Task Action()
+            {
+                await this.imageService.GetImageAsync(Uri, cancellationToken);
+            }
 
             // assert
             Assert.ThrowsAsync(exceptionType, Action);
@@ -137,7 +140,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             HttpResponseMessage httpResponse = new()
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StreamContent(stream ?? new MemoryStream())
+                Content = new StreamContent(stream ?? new MemoryStream()),
             };
 
             this.httpClientWrapperMock.GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
@@ -155,25 +158,13 @@ namespace POETradeHelper.Common.UI.Tests.Services
 
             public Size Size => throw new NotImplementedException();
 
-            public void Dispose()
-            {
-                throw new NotImplementedException();
-            }
+            public void Dispose() => throw new NotImplementedException();
 
-            public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode)
-            {
-                throw new NotImplementedException();
-            }
+            public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode) => throw new NotImplementedException();
 
-            public void Save(string fileName)
-            {
-                throw new NotImplementedException();
-            }
+            public void Save(string fileName) => throw new NotImplementedException();
 
-            public void Save(Stream stream)
-            {
-                throw new NotImplementedException();
-            }
+            public void Save(Stream stream) => throw new NotImplementedException();
         }
     }
 }

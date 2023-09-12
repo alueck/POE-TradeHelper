@@ -12,11 +12,14 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
         private readonly IStaticDataService staticItemDataService;
         private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
 
-        public ItemToExchangeQueryRequestMapper(IStaticDataService staticDataService, IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
+        public ItemToExchangeQueryRequestMapper(
+            IStaticDataService staticDataService,
+            IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {
             this.staticItemDataService = staticDataService;
             this.itemSearchOptions = itemSearchOptions;
         }
+
         public ExchangeQueryRequest MapToQueryRequest(Item item)
         {
             if (item is not CurrencyItem or FragmentItem or DivinationCardItem)
@@ -24,9 +27,9 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
                 throw new ArgumentException("Item must be currency, fragment or divination card.", nameof(item));
             }
 
-            var result = new ExchangeQueryRequest
+            ExchangeQueryRequest result = new ExchangeQueryRequest
             {
-                League = this.itemSearchOptions.CurrentValue.League.Id
+                League = this.itemSearchOptions.CurrentValue.League.Id,
             };
             string? itemId = this.staticItemDataService.GetId(item.Name);
 

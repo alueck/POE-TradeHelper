@@ -18,19 +18,10 @@ namespace POETradeHelper
             this.clipboard = AvaloniaLocator.Current.GetService<IClipboard>()!;
         }
 
-        public Task ClearAsync()
-        {
-            return clipboard.ClearAsync();
-        }
+        public Task ClearAsync() => this.clipboard.ClearAsync();
 
-        public Task<string> GetTextAsync()
-        {
-            return clipboard.GetTextAsync();
-        }
+        public Task<string> GetTextAsync() => this.clipboard.GetTextAsync();
 
-        public Task SetTextAsync(string text)
-        {
-            return clipboard.SetTextAsync(text);
-        }
+        public Task SetTextAsync(string text) => this.clipboard.SetTextAsync(text);
     }
 }

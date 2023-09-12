@@ -16,34 +16,41 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
     public class AdvancedFiltersViewModelTests
     {
         private IStatFilterViewModelFactory statFilterViewModelFactoryMock;
+
         private List<IAdditionalFilterViewModelsFactory> additionalFiltersViewModelFactoryMocks;
+
         private AdvancedFiltersViewModel advancedFiltersViewModel;
+
+        public delegate IList<StatFilterViewModel> GetFilterViewModels(AdvancedFiltersViewModel advancedFiltersViewModel);
 
         [SetUp]
         public void Setup()
         {
             this.statFilterViewModelFactoryMock = Substitute.For<IStatFilterViewModelFactory>();
-            this.additionalFiltersViewModelFactoryMocks = new List<IAdditionalFilterViewModelsFactory> {
+            this.additionalFiltersViewModelFactoryMocks = new List<IAdditionalFilterViewModelsFactory>
+            {
                 Substitute.For<IAdditionalFilterViewModelsFactory>(),
-                Substitute.For<IAdditionalFilterViewModelsFactory>()
+                Substitute.For<IAdditionalFilterViewModelsFactory>(),
             };
-            this.advancedFiltersViewModel = new AdvancedFiltersViewModel(this.statFilterViewModelFactoryMock, this.additionalFiltersViewModelFactoryMocks);
+            this.advancedFiltersViewModel = new AdvancedFiltersViewModel(
+                this.statFilterViewModelFactoryMock,
+                this.additionalFiltersViewModelFactoryMocks);
         }
 
-        [TestCaseSource(nameof(DisabledItems))]
+        [TestCaseSource(nameof(GetDisabledItems))]
         public async Task LoadAsyncShouldSetIsEnabledToFalse(Item item)
         {
-            var searchQueryRequest = new SearchQueryRequest();
+            SearchQueryRequest searchQueryRequest = new();
 
             await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
             Assert.IsFalse(this.advancedFiltersViewModel.IsEnabled);
         }
 
-        [TestCaseSource(nameof(EnabledItems))]
+        [TestCaseSource(nameof(GetEnabledItems))]
         public async Task LoadAsyncShouldSetIsEnabledToTrue(Item item)
         {
-            var searchQueryRequest = new SearchQueryRequest();
+            SearchQueryRequest searchQueryRequest = new();
 
             await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
@@ -64,20 +71,20 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
-            foreach (var itemStat in item.Stats.AllStats)
+            foreach (ItemStat itemStat in item.Stats.AllStats)
             {
                 this.statFilterViewModelFactoryMock
-                .Received()
-                .Create(itemStat, searchQueryRequest);
+                    .Received()
+                    .Create(itemStat, searchQueryRequest);
             }
         }
 
-        [TestCaseSource(nameof(LoadAsyncShouldAssignFilterViewModelsStatsTestCases))]
+        [TestCaseSource(nameof(GetLoadAsyncShouldAssignFilterViewModelsStatsTestCases))]
         public async Task LoadAsyncShouldSetStatFilterViewModels(StatCategory statCategory, GetFilterViewModels getFilterViewModelsDelegate)
         {
             ItemWithStats item = CreateItemWithStats(statCategory);
-            var expected1 = new MinMaxStatFilterViewModel { Id = item.Stats.AllStats[0].Id };
-            var expected2 = new MinMaxStatFilterViewModel { Id = item.Stats.AllStats[1].Id };
+            MinMaxStatFilterViewModel expected1 = new() { Id = item.Stats.AllStats[0].Id };
+            MinMaxStatFilterViewModel expected2 = new() { Id = item.Stats.AllStats[1].Id };
 
             this.statFilterViewModelFactoryMock
                 .Create(Arg.Any<ItemStat>(), Arg.Any<SearchQueryRequest>())
@@ -85,7 +92,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             await this.advancedFiltersViewModel.LoadAsync(item, new SearchQueryRequest(), default);
 
-            var filterViewModels = getFilterViewModelsDelegate(this.advancedFiltersViewModel);
+            IList<StatFilterViewModel> filterViewModels = getFilterViewModelsDelegate(this.advancedFiltersViewModel);
 
             Assert.That(filterViewModels, Has.Count.EqualTo(2));
 
@@ -96,7 +103,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
         [Test]
         public async Task LoadAsyncShouldCallCreateOnAdditionalFiltersViewModelFactories()
         {
-            var item = new EquippableItem(ItemRarity.Magic);
+            EquippableItem item = new(ItemRarity.Magic);
             SearchQueryRequest searchQueryRequest = new() { League = "Heist" };
 
             await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
@@ -112,9 +119,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
         [Test]
         public async Task LoadAsyncShouldAddReturnValuesOfAdditionalFiltersViewModelFactoriesToAdditionalFilters()
         {
-            var item = new EquippableItem(ItemRarity.Magic);
-            var expected1 = new BindableMinMaxFilterViewModel(x => x.Query.Filters.MiscFilters.Quality);
-            var expected2 = new BindableMinMaxFilterViewModel(x => x.Query.Filters.ArmourFilters.Armour);
+            EquippableItem item = new(ItemRarity.Magic);
+            BindableMinMaxFilterViewModel expected1 = new(x => x.Query.Filters.MiscFilters.Quality);
+            BindableMinMaxFilterViewModel expected2 = new(x => x.Query.Filters.ArmourFilters.Armour);
 
             this.additionalFiltersViewModelFactoryMocks[0].Create(Arg.Any<Item>(), Arg.Any<SearchQueryRequest>())
                 .Returns(new[] { expected1 });
@@ -128,57 +135,44 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Contains.Item(expected2));
         }
 
-        private static ItemWithStats CreateItemWithStats(StatCategory statCategory)
-        {
-            return new EquippableItem(ItemRarity.Rare)
+        private static ItemWithStats CreateItemWithStats(StatCategory statCategory) =>
+            new EquippableItem(ItemRarity.Rare)
             {
                 Stats = new ItemStats
                 {
                     AllStats =
                     {
-                        new ItemStat(statCategory){ Id = $"{statCategory}ItemStatId" },
-                        new ItemStat(statCategory){ Id = $"{statCategory}ItemStatId1" },
-                    }
-                }
+                        new ItemStat(statCategory) { Id = $"{statCategory}ItemStatId" },
+                        new ItemStat(statCategory) { Id = $"{statCategory}ItemStatId1" },
+                    },
+                },
             };
+
+        private static IEnumerable GetLoadAsyncShouldAssignFilterViewModelsStatsTestCases()
+        {
+            yield return new TestCaseData(StatCategory.Enchant, (GetFilterViewModels)(x => x.EnchantedItemStatFilters));
+            yield return new TestCaseData(StatCategory.Fractured, (GetFilterViewModels)(x => x.FracturedItemStatFilters));
+            yield return new TestCaseData(StatCategory.Implicit, (GetFilterViewModels)(x => x.ImplicitItemStatFilters));
+            yield return new TestCaseData(StatCategory.Explicit, (GetFilterViewModels)(x => x.ExplicitItemStatFilters));
+            yield return new TestCaseData(StatCategory.Crafted, (GetFilterViewModels)(x => x.CraftedItemStatFilters));
+            yield return new TestCaseData(StatCategory.Monster, (GetFilterViewModels)(x => x.MonsterItemStatFilters));
+            yield return new TestCaseData(StatCategory.Pseudo, (GetFilterViewModels)(x => x.PseudoItemStatFilters));
         }
 
-        public delegate IList<StatFilterViewModel> GetFilterViewModels(AdvancedFiltersViewModel advancedFiltersViewModel);
-
-        private static IEnumerable LoadAsyncShouldAssignFilterViewModelsStatsTestCases
+        private static IEnumerable<Item> GetDisabledItems()
         {
-            get
-            {
-                yield return new TestCaseData(StatCategory.Enchant, (GetFilterViewModels)(x => x.EnchantedItemStatFilters));
-                yield return new TestCaseData(StatCategory.Fractured, (GetFilterViewModels)(x => x.FracturedItemStatFilters));
-                yield return new TestCaseData(StatCategory.Implicit, (GetFilterViewModels)(x => x.ImplicitItemStatFilters));
-                yield return new TestCaseData(StatCategory.Explicit, (GetFilterViewModels)(x => x.ExplicitItemStatFilters));
-                yield return new TestCaseData(StatCategory.Crafted, (GetFilterViewModels)(x => x.CraftedItemStatFilters));
-                yield return new TestCaseData(StatCategory.Monster, (GetFilterViewModels)(x => x.MonsterItemStatFilters));
-                yield return new TestCaseData(StatCategory.Pseudo, (GetFilterViewModels)(x => x.PseudoItemStatFilters));
-            }
+            yield return new ProphecyItem();
+            yield return new DivinationCardItem();
         }
 
-        private static IEnumerable<Item> DisabledItems
+        private static IEnumerable GetEnabledItems()
         {
-            get
-            {
-                yield return new ProphecyItem();
-                yield return new DivinationCardItem();
-            }
-        }
-
-        private static IEnumerable EnabledItems
-        {
-            get
-            {
-                yield return new EquippableItem(ItemRarity.Normal);
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new GemItem();
-                yield return new JewelItem(ItemRarity.Normal);
-                yield return new MapItem(ItemRarity.Normal);
-                yield return new OrganItem();
-            }
+            yield return new EquippableItem(ItemRarity.Normal);
+            yield return new FlaskItem(ItemRarity.Normal);
+            yield return new GemItem();
+            yield return new JewelItem(ItemRarity.Normal);
+            yield return new MapItem(ItemRarity.Normal);
+            yield return new OrganItem();
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System.Diagnostics.CodeAnalysis;
 
 using POETradeHelper.Common.WritableOptions;
 
@@ -19,7 +20,7 @@ namespace POETradeHelper.Common.Extensions
             services.Configure<T>(section);
             services.AddTransient<IWritableOptions<T>>(provider =>
             {
-                var options = provider.GetRequiredService<IOptionsMonitor<T>>();
+                IOptionsMonitor<T> options = provider.GetRequiredService<IOptionsMonitor<T>>();
                 return new WritableOptions<T>(options, section.Key, file);
             });
 

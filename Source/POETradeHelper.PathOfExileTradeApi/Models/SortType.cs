@@ -3,6 +3,6 @@
     public enum SortType
     {
         Asc,
-        Desc
+        Desc,
     }
 }

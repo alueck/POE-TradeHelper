@@ -7,7 +7,7 @@ namespace POETradeHelper.QualityOfLife.UI.Avalonia.Views
     {
         public WikiSettingsView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void InitializeComponent()

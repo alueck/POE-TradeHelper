@@ -22,8 +22,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnTrueIfItemIsNormalRarityAndHasNoItemLevelOrProphecyDescription()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Normal)
-                                            .BuildLines();
+                .WithRarity(ItemRarity.Normal)
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -34,9 +34,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseIfItemIsNormalRarityButHasItemLevel()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Normal)
-                                            .WithItemLevel(10)
-                                            .BuildLines();
+                .WithRarity(ItemRarity.Normal)
+                .WithItemLevel(10)
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -47,9 +47,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseIfItemIsNormalRarityButProphecyDescription()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Normal)
-                                            .WithDescription($"Right-click to add this {Resources.ProphecyKeyword} to your character.")
-                                            .BuildLines();
+                .WithRarity(ItemRarity.Normal)
+                .WithDescription($"Right-click to add this {Resources.ProphecyKeyword} to your character.")
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -79,8 +79,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         protected override string[] GetValidItemStringLines()
         {
             return this.itemStringBuilder
-                        .WithName(Fragment)
-                        .BuildLines();
+                .WithName(Fragment)
+                .BuildLines();
         }
     }
 }

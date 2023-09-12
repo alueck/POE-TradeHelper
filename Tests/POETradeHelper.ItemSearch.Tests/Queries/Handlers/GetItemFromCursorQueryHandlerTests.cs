@@ -30,7 +30,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
         [Test]
         public async Task HandleShouldSendGetItemTextFromCursorQuery()
         {
-            var cancellationToken = new CancellationToken();
+            CancellationToken cancellationToken = CancellationToken.None;
             this.itemParserAggregatorMock
                 .IsParseable(Arg.Any<string>())
                 .Returns(true);
@@ -66,7 +66,10 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
                 .IsParseable(Arg.Any<string>())
                 .Returns(false);
 
-            async Task Action() => await this.handler.Handle(new GetItemFromCursorQuery(), default);
+            async Task Action()
+            {
+                await this.handler.Handle(new GetItemFromCursorQuery(), default);
+            }
 
             Assert.ThrowsAsync<InvalidItemStringException>(Action);
         }
@@ -90,7 +93,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
         [Test]
         public async Task HandleShouldReturnParseResult()
         {
-            var expected = new EquippableItem(ItemRarity.Normal) { Name = "TestItem" };
+            EquippableItem? expected = new(ItemRarity.Normal) { Name = "TestItem" };
             this.itemParserAggregatorMock.IsParseable(Arg.Any<string>())
                 .Returns(true);
             this.itemParserAggregatorMock.Parse(Arg.Any<string>())

@@ -16,15 +16,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
     public class MapItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
         [SetUp]
-        public void Setup()
-        {
-            AdditionalFilterViewModelsFactory = new MapItemAdditionalFilterViewModelsFactory();
-        }
+        public void Setup() => this.AdditionalFilterViewModelsFactory = new MapItemAdditionalFilterViewModelsFactory();
 
-        [TestCaseSource(nameof(NonMapItems))]
+        [TestCaseSource(nameof(GetNonMapItems))]
         public void CreateShouldReturnEmptyEnumerableForNonMapItems(Item item)
         {
-            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             Assert.IsNotNull(result);
             Assert.That(result, Is.Empty);
@@ -34,126 +31,187 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnQualityFilterViewModel()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                Quality = 10
+                Quality = 10,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.Quality, Resources.QualityColumn);
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.Quality, Resources.QualityColumn);
         }
 
         [Test]
         public void CreateShouldReturnQualityFilterViewModelWithValuesFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                Quality = 10
+                Quality = 10,
             };
 
-            var queryRequestFilter = new MinMaxFilter
+            MinMaxFilter queryRequestFilter = new()
             {
                 Min = 8,
-                Max = 15
+                Max = 15,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, mapItem, mapItem.Quality, Resources.QualityColumn, queryRequestFilter);
+            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
+                expectedBindingExpression,
+                mapItem,
+                mapItem.Quality,
+                Resources.QualityColumn,
+                queryRequestFilter);
         }
 
         [Test]
         public void CreateShouldReturnItemQuantityFilterViewModel()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapIncreasedItemQuantity;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                ItemQuantity = 79
+                ItemQuantity = 79,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.ItemQuantity, Resources.MapItemQuantity);
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                mapItem,
+                mapItem.ItemQuantity,
+                Resources.MapItemQuantity);
         }
 
         [Test]
         public void CreateShouldReturnItemQuantityFilterViewModelWithValuesFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapIncreasedItemQuantity;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                ItemQuantity = 79
+                ItemQuantity = 79,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.ItemQuantity, Resources.MapItemQuantity);
+            MinMaxFilter queryRequestFilter = new()
+            {
+                Min = 60,
+                Max = 76,
+            };
+
+            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
+                expectedBindingExpression,
+                mapItem,
+                mapItem.ItemQuantity,
+                Resources.MapItemQuantity,
+                queryRequestFilter);
         }
 
         [Test]
         public void CreateShouldReturnItemRarityFilterViewModel()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapIncreasedItemRarity;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                ItemRarity = 101
+                ItemRarity = 101,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.ItemRarity, Resources.MapItemRarity);
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                mapItem,
+                mapItem.ItemRarity,
+                Resources.MapItemRarity);
         }
 
         [Test]
         public void CreateShouldReturnItemRarityFilterViewModelWithValuesFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapIncreasedItemRarity;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                ItemRarity = 101
+                ItemRarity = 101,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.ItemRarity, Resources.MapItemRarity);
+            MinMaxFilter queryRequestFilter = new()
+            {
+                Min = 80,
+                Max = 95,
+            };
+
+            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
+                expectedBindingExpression,
+                mapItem,
+                mapItem.ItemRarity,
+                Resources.MapItemRarity,
+                queryRequestFilter);
         }
 
         [Test]
         public void CreateShouldReturnMonsterPackSizeFilterViewModel()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapPacksize;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                MonsterPackSize = 35
+                MonsterPackSize = 35,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.MonsterPackSize, Resources.MapMonsterPacksize);
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                mapItem,
+                mapItem.MonsterPackSize,
+                Resources.MapMonsterPacksize);
         }
 
         [Test]
         public void CreateShouldReturnMonsterPackSizeFilterViewModelWithValuesFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapPacksize;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                MonsterPackSize = 35
+                MonsterPackSize = 35,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.MonsterPackSize, Resources.MapMonsterPacksize);
+            MinMaxFilter queryRequestFilter = new()
+            {
+                Min = 25,
+                Max = 30,
+            };
+
+            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
+                expectedBindingExpression,
+                mapItem,
+                mapItem.MonsterPackSize,
+                Resources.MapMonsterPacksize,
+                queryRequestFilter);
         }
 
         [Test]
         public void CreateShouldReturnMapTierFilterViewModel()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapTier;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                Tier = 6
+                Tier = 6,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.Tier, Resources.MapTier);
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.Tier, Resources.MapTier);
         }
 
         [Test]
         public void CreateShouldReturnMapTierFilterViewModelWithValuesFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapTier;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                Tier = 6
+                Tier = 6,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, mapItem, mapItem.Tier, Resources.MapTier);
+            MinMaxFilter queryRequestFilter = new()
+            {
+                Min = 4,
+                Max = 8,
+            };
+
+            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
+                expectedBindingExpression,
+                mapItem,
+                mapItem.Tier,
+                Resources.MapTier,
+                queryRequestFilter);
         }
 
         [TestCase(true)]
@@ -161,29 +219,33 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnIdentifiedFilterViewModel(bool value)
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                IsIdentified = value
+                IsIdentified = value,
             };
 
-            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.Identified);
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.Identified);
         }
 
         [Test]
         public void CreateShouldReturnIdentifiedFilterViewModelWithValueFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                IsIdentified = true
+                IsIdentified = true,
             };
 
-            var queryRequestFilter = new BoolOptionFilter
+            BoolOptionFilter queryRequestFilter = new()
             {
-                Option = false
+                Option = false,
             };
 
-            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, mapItem, Resources.Identified, queryRequestFilter);
+            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+                expectedBindingExpression,
+                mapItem,
+                Resources.Identified,
+                queryRequestFilter);
         }
 
         [TestCase(true)]
@@ -191,29 +253,33 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnCorruptedFilterViewModel(bool value)
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                IsCorrupted = value
+                IsCorrupted = value,
             };
 
-            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.Corrupted);
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.Corrupted);
         }
 
         [Test]
         public void CreateShouldReturnCorruptedFilterViewModelWithValueFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                IsCorrupted = true
+                IsCorrupted = true,
             };
 
-            var queryRequestFilter = new BoolOptionFilter
+            BoolOptionFilter queryRequestFilter = new()
             {
-                Option = false
+                Option = false,
             };
 
-            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, mapItem, Resources.Corrupted, queryRequestFilter);
+            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+                expectedBindingExpression,
+                mapItem,
+                Resources.Corrupted,
+                queryRequestFilter);
         }
 
         [TestCase(true)]
@@ -221,12 +287,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnBlightedFilterViewModel(bool value)
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapBlighted;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                IsBlighted = value
+                IsBlighted = value,
             };
 
-            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.MapBlighted);
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.MapBlighted);
         }
 
         [TestCase(true)]
@@ -234,45 +300,46 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnBlightRavagedFilterViewModel(bool value)
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapBlightRavaged;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                IsBlightRavaged = value
+                IsBlightRavaged = value,
             };
 
-            CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.MapBlightRavaged);
+            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, mapItem, null, Resources.MapBlightRavaged);
         }
 
         [Test]
         public void CreateShouldReturnBlightedFilterViewModelWithValueFromQueryRequest()
         {
             Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapBlighted;
-            var mapItem = new MapItem(ItemRarity.Rare)
+            MapItem mapItem = new(ItemRarity.Rare)
             {
-                IsBlighted = true
+                IsBlighted = true,
             };
 
-            var queryRequestFilter = new BoolOptionFilter
+            BoolOptionFilter queryRequestFilter = new()
             {
-                Option = false
+                Option = false,
             };
 
-            CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(expectedBindingExpression, mapItem, Resources.MapBlighted, queryRequestFilter);
+            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+                expectedBindingExpression,
+                mapItem,
+                Resources.MapBlighted,
+                queryRequestFilter);
         }
 
-        private static IEnumerable<Item> NonMapItems
+        private static IEnumerable<Item> GetNonMapItems()
         {
-            get
-            {
-                yield return new CurrencyItem();
-                yield return new DivinationCardItem();
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new FragmentItem();
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-                yield return new JewelItem(ItemRarity.Magic);
-                yield return new EquippableItem(ItemRarity.Magic);
-                yield return new GemItem();
-            }
+            yield return new CurrencyItem();
+            yield return new DivinationCardItem();
+            yield return new FlaskItem(ItemRarity.Normal);
+            yield return new FragmentItem();
+            yield return new OrganItem();
+            yield return new ProphecyItem();
+            yield return new JewelItem(ItemRarity.Magic);
+            yield return new EquippableItem(ItemRarity.Magic);
+            yield return new GemItem();
         }
     }
 }

@@ -7,6 +7,6 @@ namespace POETradeHelper.ItemSearch.Contract.Models
     {
         public ICollection<SocketGroup> SocketGroups { get; } = new List<SocketGroup>();
 
-        public int Count => SocketGroups.Sum(s => s.Sockets.Count);
+        public int Count => this.SocketGroups.Sum(s => s.Sockets.Count);
     }
 }

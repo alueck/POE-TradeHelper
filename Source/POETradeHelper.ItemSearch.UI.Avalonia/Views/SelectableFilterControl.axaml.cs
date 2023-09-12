@@ -8,14 +8,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
 {
     public class SelectableFilterControl : UserControl
     {
+        public static readonly AvaloniaProperty<FilterViewModelBase> FilterProperty =
+            AvaloniaProperty.Register<SelectableFilterControl, FilterViewModelBase>(nameof(Filter));
+
+        public static readonly AvaloniaProperty<bool> IsThreeStateProperty =
+            AvaloniaProperty.Register<SelectableFilterControl, bool>(nameof(IsThreeState));
+
         public SelectableFilterControl()
         {
             this.InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         public FilterViewModelBase Filter
@@ -24,14 +25,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
             set => this.SetValue(FilterProperty, value);
         }
 
-        public static AvaloniaProperty<FilterViewModelBase> FilterProperty = AvaloniaProperty.Register<SelectableFilterControl, FilterViewModelBase>(nameof(Filter));
-
         public bool IsThreeState
         {
             get => this.GetValue<bool>(IsThreeStateProperty);
             set => this.SetValue(IsThreeStateProperty, value);
         }
 
-        public static AvaloniaProperty<bool> IsThreeStateProperty = AvaloniaProperty.Register<SelectableFilterControl, bool>(nameof(IsThreeState));
+        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }

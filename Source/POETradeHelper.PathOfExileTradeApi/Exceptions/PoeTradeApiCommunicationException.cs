@@ -5,7 +5,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Exceptions
 {
     public class PoeTradeApiCommunicationException : Exception
     {
-        public PoeTradeApiCommunicationException() : base()
+        public PoeTradeApiCommunicationException()
         {
         }
 

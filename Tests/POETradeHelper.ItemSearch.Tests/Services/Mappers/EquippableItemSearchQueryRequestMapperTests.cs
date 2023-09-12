@@ -20,17 +20,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         public EquippableItemSearchQueryRequestMapperTests()
         {
-            this.ItemSearchQueryRequestMapper = this.equippableItemToQueryRequestMapper = new EquippableItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
+            this.ItemSearchQueryRequestMapper = this.equippableItemToQueryRequestMapper =
+                new EquippableItemSearchQueryRequestMapper(this.ItemSearchOptionsMock);
         }
+
+        public delegate BoolOptionFilter? BoolOptionAccessor(SearchQueryRequest searchQueryRequest);
 
         [Test]
         public void MapToQueryItemShouldMapItemNameForIdentfiedUniqueItem()
         {
             const string expected = "Dire Nock";
-            var item = new EquippableItem(ItemRarity.Unique)
+            EquippableItem item = new(ItemRarity.Unique)
             {
                 Name = expected,
-                IsIdentified = true
+                IsIdentified = true,
             };
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
@@ -41,9 +44,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [Test]
         public void MapToQueryItemShouldNotMapItemNameForUnidentifiedUniqueItem()
         {
-            var item = new EquippableItem(ItemRarity.Unique)
+            EquippableItem item = new(ItemRarity.Unique)
             {
-                Type = "Thicket Bow"
+                Type = "Thicket Bow",
             };
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
@@ -51,12 +54,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             Assert.IsNull(result.Query.Name);
         }
 
-        [TestCaseSource(nameof(NonUniqueItemRarities))]
+        [TestCaseSource(nameof(GetNonUniqueItemRarities))]
         public void MapToQueryItemShouldNotMapItemNameForNonUniqueItems(ItemRarity itemRarity)
         {
-            var item = new EquippableItem(itemRarity)
+            EquippableItem item = new(itemRarity)
             {
-                Name = "Dire Nock"
+                Name = "Dire Nock",
             };
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
@@ -68,9 +71,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCase(6)]
         public void MapToQueryItemShouldMapLinksIfLinkCountIsMinimumFive(int linkCount)
         {
-            var item = new EquippableItem(ItemRarity.Normal)
+            EquippableItem item = new(ItemRarity.Normal)
             {
-                Sockets = GetLinkedItemSockets(linkCount)
+                Sockets = GetLinkedItemSockets(linkCount),
             };
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
@@ -91,9 +94,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCase(4)]
         public void MapToQueryItemShoulNotMapLinksIfLinkCountIsLowerThanFive(int linkCount)
         {
-            var item = new EquippableItem(ItemRarity.Normal)
+            EquippableItem item = new(ItemRarity.Normal)
             {
-                Sockets = GetLinkedItemSockets(linkCount)
+                Sockets = GetLinkedItemSockets(linkCount),
             };
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
@@ -104,7 +107,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [Test]
         public void MapToQueryItemShouldMapItemRarityForUniqueItems()
         {
-            var item = new EquippableItem(ItemRarity.Unique);
+            EquippableItem item = new(ItemRarity.Unique);
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
@@ -112,10 +115,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
         }
 
-        [TestCaseSource(nameof(NonUniqueItemRarities))]
+        [TestCaseSource(nameof(GetNonUniqueItemRarities))]
         public void MapToQueryItemShouldMapItemRarityForNonUniqueItems(ItemRarity itemRarity)
         {
-            var item = new EquippableItem(itemRarity);
+            EquippableItem item = new(itemRarity);
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
@@ -123,12 +126,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
         }
 
-        [TestCaseSource(nameof(InfluenceTestCases))]
+        [TestCaseSource(nameof(GetInfluenceTestCases))]
         public void MapQueryItemShouldMapInfluence(InfluenceType influenceType, BoolOptionAccessor filterOptionAccessor)
         {
-            var item = new EquippableItem(ItemRarity.Normal)
+            EquippableItem item = new(ItemRarity.Normal)
             {
-                Influence = influenceType
+                Influence = influenceType,
             };
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
@@ -143,16 +146,16 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         public void MapQueryItemShouldMapItemLevelIfThresholdIsReached()
         {
             const int itemLevel = 86;
-            var item = new EquippableItem(ItemRarity.Normal)
+            EquippableItem item = new(ItemRarity.Normal)
             {
-                ItemLevel = itemLevel
+                ItemLevel = itemLevel,
             };
 
             this.ItemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     ItemLevelThreshold = itemLevel,
-                    League = new League()
+                    League = new League(),
                 });
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
@@ -167,16 +170,16 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         public void MapQueryItemShouldNotMapItemLevelIfThresholdIsNotReached()
         {
             const int itemLevel = 86;
-            var item = new EquippableItem(ItemRarity.Normal)
+            EquippableItem item = new(ItemRarity.Normal)
             {
-                ItemLevel = itemLevel - 1
+                ItemLevel = itemLevel - 1,
             };
 
             this.ItemSearchOptionsMock.CurrentValue
                 .Returns(new ItemSearchOptions
                 {
                     ItemLevelThreshold = itemLevel,
-                    League = new League()
+                    League = new League(),
                 });
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
@@ -184,28 +187,23 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             Assert.IsNull(result.Query.Filters.MiscFilters.ItemLevel);
         }
 
-        public delegate BoolOptionFilter? BoolOptionAccessor(SearchQueryRequest searchQueryRequest);
-
-        private static IEnumerable InfluenceTestCases
+        private static IEnumerable GetInfluenceTestCases()
         {
-            get
-            {
-                yield return new TestCaseData(InfluenceType.Crusader, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.CrusaderItem));
-                yield return new TestCaseData(InfluenceType.Elder, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.ElderItem));
-                yield return new TestCaseData(InfluenceType.Hunter, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.HunterItem));
-                yield return new TestCaseData(InfluenceType.Redeemer, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.RedeemerItem));
-                yield return new TestCaseData(InfluenceType.Shaper, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.ShaperItem));
-                yield return new TestCaseData(InfluenceType.Warlord, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.WarlordItem));
-            }
+            yield return new TestCaseData(InfluenceType.Crusader, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.CrusaderItem));
+            yield return new TestCaseData(InfluenceType.Elder, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.ElderItem));
+            yield return new TestCaseData(InfluenceType.Hunter, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.HunterItem));
+            yield return new TestCaseData(InfluenceType.Redeemer, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.RedeemerItem));
+            yield return new TestCaseData(InfluenceType.Shaper, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.ShaperItem));
+            yield return new TestCaseData(InfluenceType.Warlord, (BoolOptionAccessor)(result => result.Query.Filters.MiscFilters.WarlordItem));
         }
 
         private static ItemSockets GetLinkedItemSockets(int linkCount)
         {
-            var result = new ItemSockets();
+            ItemSockets result = new();
 
             if (linkCount > 0)
             {
-                var socketGroup = new SocketGroup();
+                SocketGroup socketGroup = new();
 
                 for (int i = 0; i < linkCount; i++)
                 {
@@ -230,8 +228,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                     {
                         Sockets =
                         {
-                            new Socket()
-                        }
+                            new Socket(),
+                        },
                     });
                 }
             }

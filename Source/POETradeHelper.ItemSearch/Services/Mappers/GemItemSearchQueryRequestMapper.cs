@@ -9,20 +9,18 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class GemItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
-        public GemItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions) : base(itemSearchOptions)
+        public GemItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions) : base(
+            itemSearchOptions)
         {
         }
 
-        public override bool CanMap(Item item)
-        {
-            return item is GemItem;
-        }
+        public override bool CanMap(Item item) => item is GemItem;
 
         public override SearchQueryRequest MapToQueryRequest(Item item)
         {
             SearchQueryRequest result = base.MapToQueryRequest(item);
 
-            var gemItem = (GemItem)item;
+            GemItem gemItem = (GemItem)item;
 
             MapGemLevel(result, gemItem);
             MapQuality(result, gemItem);
@@ -36,28 +34,22 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             // rarity is always Gem
         }
 
-        private static void MapGemLevel(SearchQueryRequest result, GemItem gemItem)
-        {
+        private static void MapGemLevel(SearchQueryRequest result, GemItem gemItem) =>
             result.Query.Filters.MiscFilters.GemLevel = new MinMaxFilter
             {
-                Min = gemItem.Level
+                Min = gemItem.Level,
             };
-        }
 
-        private static void MapQuality(SearchQueryRequest result, GemItem gemItem)
-        {
+        private static void MapQuality(SearchQueryRequest result, GemItem gemItem) =>
             result.Query.Filters.MiscFilters.Quality = new MinMaxFilter
             {
-                Min = gemItem.Quality
+                Min = gemItem.Quality,
             };
-        }
 
-        private static void MapGemQualityType(SearchQueryRequest result, GemItem gemItem)
-        {
+        private static void MapGemQualityType(SearchQueryRequest result, GemItem gemItem) =>
             result.Query.Filters.MiscFilters.GemAlternateQuality = new OptionFilter
             {
-                Option = ((int)gemItem.QualityType).ToString()
+                Option = ((int)gemItem.QualityType).ToString(),
             };
-        }
     }
 }

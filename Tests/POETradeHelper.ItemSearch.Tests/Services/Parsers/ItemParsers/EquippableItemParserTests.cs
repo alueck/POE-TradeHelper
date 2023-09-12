@@ -58,8 +58,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseForItemWithoutItemLevel()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithItemLevel(0)
-                                            .BuildLines();
+                .WithItemLevel(0)
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -70,9 +70,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseForItemWithMapTier()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                .WithItemLevel(1)
-                                .WithDescription($"{Resources.MapTierDescriptor} 10")
-                                .BuildLines();
+                .WithItemLevel(1)
+                .WithDescription($"{Resources.MapTierDescriptor} 10")
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -83,9 +83,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseForMetamorphOrganItem()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                .WithItemLevel(1)
-                                .WithDescription(Resources.OrganItemDescriptor)
-                                .BuildLines();
+                .WithItemLevel(1)
+                .WithDescription(Resources.OrganItemDescriptor)
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -97,10 +97,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseForFlaskItem(string name)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                .WithItemLevel(1)
-                                .WithName(name)
-                                .WithType(Resources.FlaskKeyword)
-                                .BuildLines();
+                .WithItemLevel(1)
+                .WithName(name)
+                .WithType(Resources.FlaskKeyword)
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -112,10 +112,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void CanParseShouldReturnFalseForJewelItem(string name)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                .WithItemLevel(1)
-                                .WithName(name)
-                                .WithType(Resources.JewelKeyword)
-                                .BuildLines();
+                .WithItemLevel(1)
+                .WithName(name)
+                .WithType(Resources.JewelKeyword)
+                .BuildLines();
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
@@ -129,8 +129,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldParseRarity(ItemRarity expected)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(expected)
-                                            .BuildLines();
+                .WithRarity(expected)
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -141,7 +141,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldParseIdentified()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .BuildLines();
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -152,8 +152,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldParseUnidentified()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithUnidentified()
-                                            .BuildLines();
+                .WithUnidentified()
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -166,9 +166,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             const string expected = "Wrath Salvation";
 
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithName(expected)
-                                            .WithType("Cutthroat's Garb")
-                                            .BuildLines();
+                .WithName(expected)
+                .WithType("Cutthroat's Garb")
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -181,10 +181,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             const string expected = "Cutthroat's Garb";
 
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithRarity(ItemRarity.Magic)
-                                            .WithUnidentified()
-                                            .WithName(expected)
-                                            .BuildLines();
+                .WithRarity(ItemRarity.Magic)
+                .WithUnidentified()
+                .WithName(expected)
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -202,15 +202,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             const string expected = "Result from ItemTypeParser";
             string[] itemStringLines = this.itemStringBuilder
-                                .WithRarity(itemRarity)
-                                .WithIdentified(isIdentified)
-                                .WithName("Cutthroat's Garb")
-                                .BuildLines();
+                .WithRarity(itemRarity)
+                .WithIdentified(isIdentified)
+                .WithName("Cutthroat's Garb")
+                .BuildLines();
 
             this.itemTypeParserMock.ParseType(itemStringLines, itemRarity, isIdentified)
                 .Returns(expected);
 
-            var result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.Type, Is.EqualTo(expected));
         }
@@ -219,8 +219,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldParseCorrupted()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithCorrupted()
-                                            .BuildLines();
+                .WithCorrupted()
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -231,7 +231,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldParseNotCorrupted()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .BuildLines();
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -243,8 +243,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldParseItemLevel(int expected)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithItemLevel(expected)
-                                            .BuildLines();
+                .WithItemLevel(expected)
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -256,8 +256,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldParseQuality(int expected)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithQuality(expected)
-                                            .BuildLines();
+                .WithQuality(expected)
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -270,8 +270,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldParseInfluence(InfluenceType expected)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .WithInflucence(expected)
-                                            .BuildLines();
+                .WithInflucence(expected)
+                .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
@@ -283,8 +283,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             const string socketsString = "B-G-G-G";
             string[] itemStringLines = this.itemStringBuilder
-                                .WithSockets(socketsString)
-                                .BuildLines();
+                .WithSockets(socketsString)
+                .BuildLines();
 
             this.ItemParser.Parse(itemStringLines);
 
@@ -297,18 +297,20 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldSetSocketsOnItem()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                            .BuildLines();
+                .BuildLines();
 
             ItemSockets expected = new()
             {
                 SocketGroups =
                 {
-                    new SocketGroup { Sockets =
+                    new SocketGroup
+                    {
+                        Sockets =
                         {
                             new Socket { SocketType = SocketType.Blue },
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             this.socketsParserMock.Parse(Arg.Any<string>())
@@ -323,8 +325,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldCallParseOnItemStatsParserIfItemIsIdentified()
         {
             string[] itemStringLines = this.itemStringBuilder
-                                           .WithType("Thicket Bow")
-                                           .BuildLines();
+                .WithType("Thicket Bow")
+                .BuildLines();
 
             this.ItemParser.Parse(itemStringLines);
 
@@ -337,11 +339,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         [TestCase(EquippableItemCategory.Accessories, false)]
         [TestCase(EquippableItemCategory.Armour, true)]
         [TestCase(EquippableItemCategory.Weapons, true)]
-        public void ParseShouldCallParseOnItemStatsParserWithPreferLocalStats(EquippableItemCategory itemCategory, bool expectedPreferLocalStats)
+        public void ParseShouldCallParseOnItemStatsParserWithPreferLocalStats(
+            EquippableItemCategory itemCategory,
+            bool expectedPreferLocalStats)
         {
             string[] itemStringLines = this.itemStringBuilder
-                                           .WithType("Thicket Bow")
-                                           .BuildLines();
+                .WithType("Thicket Bow")
+                .BuildLines();
 
             const string itemType = "parsed item type";
             this.itemTypeParserMock.ParseType(Arg.Any<string[]>(), Arg.Any<ItemRarity>(), Arg.Any<bool>())
@@ -360,9 +364,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldNotCallParseOnItemStatsParserIfItemIsUnidentified()
         {
             string[] itemStringLines = this.itemStringBuilder
-                               .WithType("Thicket Bow")
-                               .WithUnidentified()
-                               .BuildLines();
+                .WithType("Thicket Bow")
+                .WithUnidentified()
+                .BuildLines();
 
             this.ItemParser.Parse(itemStringLines);
 
@@ -376,8 +380,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             ItemStats expected = new();
             string[] itemStringLines = this.itemStringBuilder
-                               .WithType("Thicket Bow")
-                               .BuildLines();
+                .WithType("Thicket Bow")
+                .BuildLines();
 
             this.itemStatsParserMock.Parse(Arg.Any<string[]>(), Arg.Any<bool>())
                 .Returns(expected);
@@ -428,15 +432,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             Assert.That(result.Category, Is.EqualTo(expectedItemCategory));
         }
 
-        protected override string[] GetValidItemStringLines()
-        {
-            return this.itemStringBuilder
-                        .WithRarity(ItemRarity.Rare)
-                        .WithType("Thicket Bow")
-                        .WithName("Woe Rain")
-                        .WithItemLevel(85)
-                        .WithSockets("G-G-G")
-                        .BuildLines();
-        }
+        protected override string[] GetValidItemStringLines() =>
+            this.itemStringBuilder
+                .WithRarity(ItemRarity.Rare)
+                .WithType("Thicket Bow")
+                .WithName("Woe Rain")
+                .WithItemLevel(85)
+                .WithSockets("G-G-G")
+                .BuildLines();
     }
 }

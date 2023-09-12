@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper", "Source\POETradeHelper\POETradeHelper.csproj", "{1C4A35D4-F7C9-4A6A-B689-155E3C142F54}"
 EndProject
@@ -39,8 +39,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common.UI", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AE56CA71-3340-4B9C-A8A5-9D6DC241619E}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		CodeCoverage.runsettings = CodeCoverage.runsettings
 		Directory.build.props = Directory.build.props
+		POETradeHelper.ruleset = POETradeHelper.ruleset
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common.UI.Tests", "Tests\POETradeHelper.Common.UI.Tests\POETradeHelper.Common.UI.Tests.csproj", "{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}"
@@ -55,17 +57,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.PricePredict
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.PricePrediction.UI.Avalonia", "Source\POETradeHelper.PricePrediction.UI.Avalonia\POETradeHelper.PricePrediction.UI.Avalonia.csproj", "{4259F770-7FDD-4666-AA10-C295F9BFE921}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.Common.Contract.Tests", "Tests\POETradeHelper.Common.Contract.Tests\POETradeHelper.Common.Contract.Tests.csproj", "{910E5298-B306-4BA2-A732-5BA4E58D3227}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common.Contract.Tests", "Tests\POETradeHelper.Common.Contract.Tests\POETradeHelper.Common.Contract.Tests.csproj", "{910E5298-B306-4BA2-A732-5BA4E58D3227}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.PricePrediction", "Source\POETradeHelper.PricePrediction\POETradeHelper.PricePrediction.csproj", "{67D11B51-3167-454E-927A-9584427871C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.PricePrediction", "Source\POETradeHelper.PricePrediction\POETradeHelper.PricePrediction.csproj", "{67D11B51-3167-454E-927A-9584427871C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.PricePrediction.Tests", "Tests\POETradeHelper.PricePrediction.Tests\POETradeHelper.PricePrediction.Tests.csproj", "{42954B0B-6477-4B0B-B064-60FB67DE667E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.PricePrediction.Tests", "Tests\POETradeHelper.PricePrediction.Tests\POETradeHelper.PricePrediction.Tests.csproj", "{42954B0B-6477-4B0B-B064-60FB67DE667E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.ItemSearch", "Source\POETradeHelper.ItemSearch\POETradeHelper.ItemSearch.csproj", "{2F8EB24C-EDA5-401C-B477-C41EF24BE49B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.ItemSearch", "Source\POETradeHelper.ItemSearch\POETradeHelper.ItemSearch.csproj", "{2F8EB24C-EDA5-401C-B477-C41EF24BE49B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.ItemSearch.Tests", "Tests\POETradeHelper.ItemSearch.Tests\POETradeHelper.ItemSearch.Tests.csproj", "{EE941FA9-D53B-4012-B89F-46E860BA48C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.ItemSearch.Tests", "Tests\POETradeHelper.ItemSearch.Tests\POETradeHelper.ItemSearch.Tests.csproj", "{EE941FA9-D53B-4012-B89F-46E860BA48C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POETradeHelper.QualityOfLife", "Source\POETradeHelper.QualityOfLife\POETradeHelper.QualityOfLife.csproj", "{1FEEEBC0-D669-470B-B4EB-D940E3F7C93F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.QualityOfLife", "Source\POETradeHelper.QualityOfLife\POETradeHelper.QualityOfLife.csproj", "{1FEEEBC0-D669-470B-B4EB-D940E3F7C93F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

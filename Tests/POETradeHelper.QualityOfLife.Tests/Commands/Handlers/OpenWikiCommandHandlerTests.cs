@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using FluentAssertions;
+
 using MediatR;
 
 using Microsoft.Extensions.Logging;
@@ -43,25 +45,6 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
                 this.wikiOptionsMock,
                 this.wikiUrlProviderMocks,
                 Substitute.For<ILogger<OpenWikiCommandHandler>>());
-        }
-
-        private void SetupWikiUrlProviderMocks()
-        {
-            var poeWikiWikiUrlProviderMock = Substitute.For<IWikiUrlProvider>();
-            poeWikiWikiUrlProviderMock
-                .HandledWikiType
-                .Returns(WikiType.PoeWiki);
-
-            var poeDbWikiUrlProviderMock = Substitute.For<IWikiUrlProvider>();
-            poeDbWikiUrlProviderMock
-                .HandledWikiType
-                .Returns(WikiType.PoeDb);
-
-            this.wikiUrlProviderMocks = new[]
-            {
-                poeWikiWikiUrlProviderMock,
-                poeDbWikiUrlProviderMock
-            };
         }
 
         [Test]
@@ -141,7 +124,28 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
                 .Send(Arg.Any<GetItemFromCursorQuery>(), Arg.Any<CancellationToken>())
                 .Throws<Exception>();
 
-            await this.handler.Handle(new OpenWikiCommand(), default);
+            Func<Task> action = () => this.handler.Handle(new OpenWikiCommand(), default);
+
+            await action.Should().NotThrowAsync();
+        }
+
+        private void SetupWikiUrlProviderMocks()
+        {
+            var poeWikiWikiUrlProviderMock = Substitute.For<IWikiUrlProvider>();
+            poeWikiWikiUrlProviderMock
+                .HandledWikiType
+                .Returns(WikiType.PoeWiki);
+
+            var poeDbWikiUrlProviderMock = Substitute.For<IWikiUrlProvider>();
+            poeDbWikiUrlProviderMock
+                .HandledWikiType
+                .Returns(WikiType.PoeDb);
+
+            this.wikiUrlProviderMocks = new[]
+            {
+                poeWikiWikiUrlProviderMock,
+                poeDbWikiUrlProviderMock,
+            };
         }
     }
 }

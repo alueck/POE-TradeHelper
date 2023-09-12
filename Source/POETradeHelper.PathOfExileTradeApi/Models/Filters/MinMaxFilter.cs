@@ -3,11 +3,9 @@
     public class MinMaxFilter : IFilter
     {
         public decimal? Min { get; set; }
+
         public decimal? Max { get; set; }
 
-        public object Clone()
-        {
-            return this.MemberwiseClone();
-        }
+        public object Clone() => this.MemberwiseClone();
     }
 }

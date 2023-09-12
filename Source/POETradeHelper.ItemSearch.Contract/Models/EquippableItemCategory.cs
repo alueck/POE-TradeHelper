@@ -15,6 +15,6 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         Armour,
 
         [Display(Name = nameof(Resources.EquippableItemCategory_Weapons), ResourceType = typeof(Resources))]
-        Weapons
+        Weapons,
     }
 }

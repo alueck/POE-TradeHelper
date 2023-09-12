@@ -9,9 +9,10 @@ using Microsoft.Extensions.Options;
 
 namespace POETradeHelper.Common.WritableOptions
 {
-    public class WritableOptions<TOptions> : IWritableOptions<TOptions> where TOptions : class, new()
+    public class WritableOptions<TOptions> : IWritableOptions<TOptions>
+        where TOptions : class, new()
     {
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() { Converters = { new JsonStringEnumConverter() } };
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new() { Converters = { new JsonStringEnumConverter() } };
         private readonly IOptionsMonitor<TOptions> options;
         private readonly string sectionName;
         private readonly string filePath;
@@ -31,12 +32,12 @@ namespace POETradeHelper.Common.WritableOptions
         {
             var jsonDocument = JsonDocument.Parse(File.ReadAllText(this.filePath));
             var section = jsonDocument.RootElement.TryGetProperty(this.sectionName, out JsonElement sectionElement)
-                ? JsonSerializer.Deserialize<TOptions>(sectionElement.ToString(), jsonSerializerOptions) ?? new TOptions()
+                ? JsonSerializer.Deserialize<TOptions>(sectionElement.ToString(), JsonSerializerOptions) ?? new TOptions()
                 : this.Value;
 
             update(section);
 
-            string json = BuildNewConfigurationJson(jsonDocument, section);
+            string json = this.BuildNewConfigurationJson(jsonDocument, section);
 
             File.WriteAllText(this.filePath, FormatJson(json));
         }
@@ -53,8 +54,8 @@ namespace POETradeHelper.Common.WritableOptions
                 foundSection |= isCurrentSection;
 
                 string elementJson = isCurrentSection
-                   ? GetUpdatedJson(updatedSection)
-                   : GetCurrentJson(element);
+                    ? GetUpdatedJson(updatedSection)
+                    : GetCurrentJson(element);
 
                 sectionsJson.Add(GetSectionJson(element.Name, elementJson));
             }
@@ -73,7 +74,7 @@ namespace POETradeHelper.Common.WritableOptions
 
         private static string GetUpdatedJson(TOptions updatedSection)
         {
-            return JsonSerializer.Serialize(updatedSection, jsonSerializerOptions);
+            return JsonSerializer.Serialize(updatedSection, JsonSerializerOptions);
         }
 
         private static string GetCurrentJson(JsonProperty element)

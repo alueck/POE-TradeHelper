@@ -1,6 +1,6 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using System;
 
-using System;
+using POETradeHelper.Common.Extensions;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {

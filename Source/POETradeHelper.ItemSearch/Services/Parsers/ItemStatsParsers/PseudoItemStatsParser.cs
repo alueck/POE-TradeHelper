@@ -18,7 +18,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
         public IEnumerable<ItemStat> Parse(IEnumerable<ItemStat> itemStats)
         {
             IList<ItemStat> result = new List<ItemStat>();
-            foreach (var entry in this.GetRelevantPseudoStatDataMappings(itemStats))
+            foreach (KeyValuePair<StatData, IList<ItemStat>> entry in this.GetRelevantPseudoStatDataMappings(itemStats))
             {
                 switch (entry.Value[0])
                 {
@@ -47,11 +47,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
         private IDictionary<StatData, IList<ItemStat>> GetPseudoStatDataMappings(IEnumerable<ItemStat> itemStats)
         {
             IDictionary<StatData, IList<ItemStat>> pseudoStatDataMapping = new Dictionary<StatData, IList<ItemStat>>();
-            foreach (var itemStat in itemStats)
+            foreach (ItemStat itemStat in itemStats)
             {
-                var pseudoStatDataList = this.pseudoStatDataMappingService.GetPseudoStatData(itemStat.Id);
+                IEnumerable<StatData> pseudoStatDataList = this.pseudoStatDataMappingService.GetPseudoStatData(itemStat.Id);
 
-                foreach (var pseudoStatData in pseudoStatDataList)
+                foreach (StatData pseudoStatData in pseudoStatDataList)
                 {
                     if (!pseudoStatDataMapping.TryGetValue(pseudoStatData, out IList<ItemStat>? mappedItemStats))
                     {
@@ -65,15 +65,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return pseudoStatDataMapping;
         }
 
-        private static SingleValueItemStat GetSingleValueItemStat(KeyValuePair<StatData, IList<ItemStat>> entry)
-        {
-            return new SingleValueItemStat(StatCategory.Pseudo)
+        private static SingleValueItemStat GetSingleValueItemStat(KeyValuePair<StatData, IList<ItemStat>> entry) =>
+            new(StatCategory.Pseudo)
             {
                 Id = entry.Key.Id,
                 TextWithPlaceholders = entry.Key.Text,
-                Value = GetSingleValueItemStatValue(entry)
+                Value = GetSingleValueItemStatValue(entry),
             };
-        }
 
         private static decimal GetSingleValueItemStatValue(KeyValuePair<StatData, IList<ItemStat>> entry)
         {
@@ -106,15 +104,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return sumFunction;
         }
 
-        private static MinMaxValueItemStat GetMinMaxValueItemStat(KeyValuePair<StatData, IList<ItemStat>> entry)
-        {
-            return new MinMaxValueItemStat(StatCategory.Pseudo)
+        private static MinMaxValueItemStat GetMinMaxValueItemStat(KeyValuePair<StatData, IList<ItemStat>> entry) =>
+            new(StatCategory.Pseudo)
             {
                 Id = entry.Key.Id,
                 TextWithPlaceholders = entry.Key.Text,
                 MinValue = entry.Value.Cast<MinMaxValueItemStat>().Sum(itemStat => itemStat.MinValue),
-                MaxValue = entry.Value.Cast<MinMaxValueItemStat>().Sum(itemStat => itemStat.MaxValue)
+                MaxValue = entry.Value.Cast<MinMaxValueItemStat>().Sum(itemStat => itemStat.MaxValue),
             };
-        }
     }
 }

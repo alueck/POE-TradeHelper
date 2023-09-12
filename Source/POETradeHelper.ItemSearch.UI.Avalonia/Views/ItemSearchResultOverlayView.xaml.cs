@@ -15,15 +15,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
 #endif
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
-
         protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             this.BeginMoveDrag(e);
             base.OnPointerPressed(e);
         }
+
+        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }

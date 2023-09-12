@@ -24,28 +24,32 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             this.staticDataServiceMock = Substitute.For<IStaticDataService>();
             this.itemSearchOptionsMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
             this.itemSearchOptionsMock.CurrentValue
-                .Returns(new ItemSearchOptions
-                {
-                    League = new League()
-                });
+                .Returns(
+                    new ItemSearchOptions
+                    {
+                        League = new League(),
+                    });
 
-            this.itemToExchangeQueryRequestMapper = new ItemToExchangeQueryRequestMapper(this.staticDataServiceMock, this.itemSearchOptionsMock);
+            this.itemToExchangeQueryRequestMapper = new ItemToExchangeQueryRequestMapper(
+                this.staticDataServiceMock,
+                this.itemSearchOptionsMock);
         }
 
         [Test]
         public void MapToQueryRequestShouldMapLeague()
         {
             const string expected = "TestLeague";
-            var item = new CurrencyItem();
+            CurrencyItem item = new();
 
             this.itemSearchOptionsMock.CurrentValue
-                .Returns(new ItemSearchOptions
-                {
-                    League = new League
+                .Returns(
+                    new ItemSearchOptions
                     {
-                        Id = expected
-                    }
-                });
+                        League = new League
+                        {
+                            Id = expected,
+                        },
+                    });
 
             ExchangeQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
@@ -55,9 +59,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [Test]
         public void MapToQueryRequestShouldCallGetIdOnStaticItemDataService()
         {
-            var item = new CurrencyItem
+            CurrencyItem item = new()
             {
-                Name = "Scroll of Wisdom"
+                Name = "Scroll of Wisdom",
             };
 
             this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
@@ -71,12 +75,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         public void MapToQueryRequestShouldReturnExchangeQueryRequestWithIdFromStaticItemDataService()
         {
             const string expected = "item-id";
-            var item = new CurrencyItem();
+            CurrencyItem item = new();
 
             this.staticDataServiceMock.GetId(Arg.Any<string>())
                 .Returns(expected);
 
-            var result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
+            ExchangeQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result);
             Assert.That(result.Query.Have, Has.Count.EqualTo(1));
@@ -86,9 +90,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [Test]
         public void MapToQueryRequestShouldReturnExchangeQueryRequestWithChaosAsWant()
         {
-            var item = new CurrencyItem();
+            CurrencyItem item = new();
 
-            var result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
+            ExchangeQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
             Assert.NotNull(result);
             Assert.That(result.Query.Want, Has.Count.EqualTo(1));

@@ -18,19 +18,22 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controls;
 public partial class SearchResultsDataGrid : UserControl
 {
     public static readonly DirectProperty<SearchResultsDataGrid, IEnumerable> ItemsProperty =
-        AvaloniaProperty.RegisterDirect<SearchResultsDataGrid, IEnumerable>(nameof(Items), o => o.Items, (o, v) => o.Items = v);
+        AvaloniaProperty.RegisterDirect<SearchResultsDataGrid, IEnumerable>(
+            nameof(Items),
+            o => o.Items,
+            (o, v) => o.Items = v);
 
     private IEnumerable items = new AvaloniaList<object>();
+
+    public SearchResultsDataGrid()
+    {
+        this.InitializeComponent();
+    }
 
     public IEnumerable Items
     {
         get => this.items;
         set => this.SetAndRaise(ItemsProperty, ref this.items, value);
-    }
-
-    public SearchResultsDataGrid()
-    {
-        this.InitializeComponent();
     }
 
     public DataGrid ListingsGrid => this.Get<DataGrid>("ListingsGrid");
@@ -45,7 +48,7 @@ public partial class SearchResultsDataGrid : UserControl
     {
         DataGrid dataGrid = (DataGrid)sender!;
 
-        var itemsEnumerator = dataGrid.Items.GetEnumerator();
+        IEnumerator itemsEnumerator = dataGrid.Items.GetEnumerator();
 
         if (itemsEnumerator.MoveNext())
         {
@@ -57,11 +60,12 @@ public partial class SearchResultsDataGrid : UserControl
                 e.Column = new DataGridTemplateColumn
                 {
                     Header = property.GetCustomAttribute<DisplayAttribute>()?.GetShortName() ?? property.Name,
-                    CellTemplate = dataGrid.DataTemplates.OfType<DataTemplate>().Single(d => d.DataType == typeof(PriceViewModel)),
+                    CellTemplate = dataGrid.DataTemplates.OfType<DataTemplate>()
+                        .Single(d => d.DataType == typeof(PriceViewModel)),
                 };
             }
 
-            var styleClassAttribute = property.GetCustomAttribute<StyleClassesAttribute>();
+            StyleClassesAttribute? styleClassAttribute = property.GetCustomAttribute<StyleClassesAttribute>();
             if (styleClassAttribute != null)
             {
                 e.Column.CellStyleClasses.AddRange(styleClassAttribute.StyleClasses);

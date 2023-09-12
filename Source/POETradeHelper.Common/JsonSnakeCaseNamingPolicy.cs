@@ -17,7 +17,9 @@ namespace POETradeHelper.Common
         public override string ConvertName(string name)
         {
             if (string.IsNullOrEmpty(name))
+            {
                 return name;
+            }
 
             // Allocates a string builder with the guessed result length,
             // where 5 is the average word length in English, and
@@ -43,10 +45,10 @@ namespace POETradeHelper.Common
                     case UnicodeCategory.TitlecaseLetter:
                         if (previousCategory == UnicodeCategory.SpaceSeparator ||
                             previousCategory == UnicodeCategory.LowercaseLetter ||
-                            previousCategory != UnicodeCategory.DecimalDigitNumber &&
-                            currentIndex > 0 &&
-                            currentIndex + 1 < name.Length &&
-                            char.IsLower(name[currentIndex + 1]))
+                            (previousCategory != UnicodeCategory.DecimalDigitNumber &&
+                             currentIndex > 0 &&
+                             currentIndex + 1 < name.Length &&
+                             char.IsLower(name[currentIndex + 1])))
                         {
                             builder.Append('_');
                         }
@@ -60,6 +62,7 @@ namespace POETradeHelper.Common
                         {
                             builder.Append('_');
                         }
+
                         break;
 
                     default:
@@ -67,6 +70,7 @@ namespace POETradeHelper.Common
                         {
                             previousCategory = UnicodeCategory.SpaceSeparator;
                         }
+
                         continue;
                 }
 

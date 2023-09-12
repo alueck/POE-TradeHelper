@@ -1,30 +1,28 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
+using NUnit.Framework;
+
+using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations;
 using POETradeHelper.ItemSearch.UI.Avalonia.Properties;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-
-using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class GemItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
         [SetUp]
-        public void Setup()
-        {
-            AdditionalFilterViewModelsFactory = new GemItemAdditionalFilterViewModelsFactory();
-        }
+        public void Setup() => this.AdditionalFilterViewModelsFactory = new GemItemAdditionalFilterViewModelsFactory();
 
-        [TestCaseSource(nameof(NonGemItems))]
+        [TestCaseSource(nameof(GetNonGemItems))]
         public void CreateShouldReturnEmptyEnumerableForNonGemItems(Item item)
         {
-            IEnumerable<FilterViewModelBase> result = AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result =
+                this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             Assert.IsNotNull(result);
             Assert.That(result, Is.Empty);
@@ -34,112 +32,142 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnQualityFilterViewModel()
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
-            var gemItem = new GemItem
+            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.Quality;
+            GemItem gemItem = new()
             {
-                Quality = 11
+                Quality = 11,
             };
 
             // act & assert
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, gemItem, gemItem.Quality, Resources.QualityColumn);
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                gemItem,
+                gemItem.Quality,
+                Resources.QualityColumn);
         }
 
         [Test]
         public void CreateShouldReturnQualityFilterViewModelWithValuesFromSearchQueryRequest()
         {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
-            var gemItem = new GemItem
+            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.Quality;
+            GemItem gemItem = new()
             {
-                Quality = 11
+                Quality = 11,
             };
 
-            var queryRequestFilter = new MinMaxFilter
+            MinMaxFilter queryRequestFilter = new()
             {
                 Min = 10,
-                Max = 17
+                Max = 17,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, gemItem, gemItem.Quality, Resources.QualityColumn, queryRequestFilter);
+            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
+                expectedBindingExpression,
+                gemItem,
+                gemItem.Quality,
+                Resources.QualityColumn,
+                queryRequestFilter);
         }
 
         [Test]
         public void CreateShouldReturnGemLevelFilterViewModel()
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.GemLevel;
-            var gemItem = new GemItem
+            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.GemLevel;
+            GemItem gemItem = new()
             {
-                Level = 10
+                Level = 10,
             };
 
             // act & assert
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, gemItem, gemItem.Level, Resources.GemLevelColumn);
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                gemItem,
+                gemItem.Level,
+                Resources.GemLevelColumn);
         }
 
         [Test]
         public void CreateShouldReturnGemLevelFilterViewModelWithValuesFromSearchQueryRequest()
         {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.GemLevel;
-            var gemItem = new GemItem
+            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.GemLevel;
+            GemItem gemItem = new()
             {
-                Level = 11
+                Level = 11,
             };
 
-            var queryRequestFilter = new MinMaxFilter
+            MinMaxFilter queryRequestFilter = new()
             {
                 Min = 5,
-                Max = 20
+                Max = 20,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, gemItem, gemItem.Level, Resources.GemLevelColumn, queryRequestFilter);
+            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
+                expectedBindingExpression,
+                gemItem,
+                gemItem.Level,
+                Resources.GemLevelColumn,
+                queryRequestFilter);
         }
 
         [Test]
         public void CreateShouldReturnExperiencePercentlFilterViewModel()
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.GemLevelProgress;
-            var gemItem = new GemItem
+            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.GemLevelProgress;
+            GemItem gemItem = new()
             {
-                ExperiencePercent = 27
+                ExperiencePercent = 27,
             };
 
             // act & assert
-            CreateShouldReturnBindableMinMaxFilterViewModel(expectedBindingExpression, gemItem, gemItem.ExperiencePercent, Resources.GemExperiencePercentColumn);
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                gemItem,
+                gemItem.ExperiencePercent,
+                Resources.GemExperiencePercentColumn);
         }
 
         [Test]
         public void CreateShouldReturnGemExperiencePercentFilterViewModelWithValuesFromSearchQueryRequest()
         {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.GemLevelProgress;
-            var gemItem = new GemItem
+            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.GemLevelProgress;
+            GemItem gemItem = new()
             {
-                ExperiencePercent = 52
+                ExperiencePercent = 52,
             };
 
-            var queryRequestFilter = new MinMaxFilter
+            MinMaxFilter queryRequestFilter = new()
             {
                 Min = 47,
-                Max = 90
+                Max = 90,
             };
 
-            CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(expectedBindingExpression, gemItem, gemItem.ExperiencePercent, Resources.GemExperiencePercentColumn, queryRequestFilter);
+            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
+                expectedBindingExpression,
+                gemItem,
+                gemItem.ExperiencePercent,
+                Resources.GemExperiencePercentColumn,
+                queryRequestFilter);
         }
 
-        private static IEnumerable<Item> NonGemItems
+        private static IEnumerable<Item> GetNonGemItems()
         {
-            get
-            {
-                yield return new CurrencyItem();
-                yield return new DivinationCardItem();
-                yield return new FlaskItem(ItemRarity.Normal);
-                yield return new FragmentItem();
-                yield return new MapItem(ItemRarity.Normal);
-                yield return new OrganItem();
-                yield return new ProphecyItem();
-                yield return new JewelItem(ItemRarity.Magic);
-                yield return new EquippableItem(ItemRarity.Magic);
-            }
+            yield return new CurrencyItem();
+            yield return new DivinationCardItem();
+            yield return new FlaskItem(ItemRarity.Normal);
+            yield return new FragmentItem();
+            yield return new MapItem(ItemRarity.Normal);
+            yield return new OrganItem();
+            yield return new ProphecyItem();
+            yield return new JewelItem(ItemRarity.Magic);
+            yield return new EquippableItem(ItemRarity.Magic);
         }
     }
 }

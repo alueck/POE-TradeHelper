@@ -10,9 +10,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
             this.InitializeComponent();
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }

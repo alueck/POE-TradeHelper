@@ -161,7 +161,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             Assert.That(result.ExperiencePercent, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(nameof(GemQualityTypeTestCases))]
+        [TestCaseSource(nameof(GetGemQualityTypeTestCases))]
         public void ParseShouldParseGemQualityType(string qualityTypePrefix, GemQualityType expectedQualityType)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -171,17 +171,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result.QualityType, Is.EqualTo(expectedQualityType));
-        }
-
-        private static IEnumerable GemQualityTypeTestCases
-        {
-            get
-            {
-                yield return new object[] { "", GemQualityType.Default };
-                yield return new object[] { $"{Resources.GemQualityType_Anomalous} ", GemQualityType.Anomalous };
-                yield return new object[] { $"{Resources.GemQualityType_Divergent} ", GemQualityType.Divergent };
-                yield return new object[] { $"{Resources.GemQualityType_Phantasmal} ", GemQualityType.Phantasmal };
-            }
         }
 
         [Test]
@@ -221,13 +210,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             Assert.That(result.IsVaalVersion);
         }
 
-        protected override string[] GetValidItemStringLines()
+        protected override string[] GetValidItemStringLines() =>
+            this.itemStringBuilder
+                .WithName($"{Resources.VaalKeyword} Flameblast")
+                .WithTags($"{Resources.VaalKeyword}, Spell, AoE, Fire, Channelling")
+                .WithCorrupted()
+                .BuildLines();
+
+        private static IEnumerable GetGemQualityTypeTestCases()
         {
-            return this.itemStringBuilder
-                        .WithName($"{Resources.VaalKeyword} Flameblast")
-                        .WithTags($"{Resources.VaalKeyword}, Spell, AoE, Fire, Channelling")
-                        .WithCorrupted()
-                        .BuildLines();
+            yield return new object[] { string.Empty, GemQualityType.Default };
+            yield return new object[] { $"{Resources.GemQualityType_Anomalous} ", GemQualityType.Anomalous };
+            yield return new object[] { $"{Resources.GemQualityType_Divergent} ", GemQualityType.Divergent };
+            yield return new object[] { $"{Resources.GemQualityType_Phantasmal} ", GemQualityType.Phantasmal };
         }
     }
 }

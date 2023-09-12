@@ -42,6 +42,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result;
         }
 
+        public StatData? GetStatDataById(string itemStatId)
+        {
+            return !string.IsNullOrEmpty(itemStatId) && this.statsDataDictionary.TryGetValue(itemStatId, out StatData? statData)
+                ? statData
+                : null;
+        }
+
         private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params string[] statCategoriesToSearch)
         {
             IEnumerable<Data<StatData>>? result = null;
@@ -96,16 +103,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result;
         }
 
-        public StatData? GetStatDataById(string itemStatId)
+        private sealed class StatDataTextMatcher
         {
-            return !string.IsNullOrEmpty(itemStatId) && this.statsDataDictionary.TryGetValue(itemStatId, out StatData? statData)
-                ? statData
-                : null;
-        }
-
-        private class StatDataTextMatcher
-        {
-            private const string localStatMatchGroupName = "localStat";
+            private const string LocalStatMatchGroupName = "localStat";
             private readonly Regex regex;
 
             public StatDataTextMatcher(string statText)
@@ -117,7 +117,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             {
                 var match = this.regex.Match(statData.Text);
 
-                return new StatDataTextMatchResult(statData, match.Success, match.Groups[localStatMatchGroupName].Success);
+                return new StatDataTextMatchResult(statData, match.Success, match.Groups[LocalStatMatchGroupName].Success);
             }
 
             /// <summary>
@@ -128,6 +128,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             /// 60% chance for Poisons inflicted with this Weapon to deal 100% more Damage
             /// becomes
             /// (60|#)% chance for Poisons inflicted with this Weapon to deal (100|#)% more Damage
+            /// .
             /// </example>
             private static Regex GetStatDataTextRegex(string statText)
             {
@@ -135,11 +136,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
                 const string monsterItemStatSuffix = @" \(×#\)";
                 string localSuffix = $@" \({Resources.LocalKeyword}\)";
 
-                return new Regex($@"^([\+\-]?{regexString}({monsterItemStatSuffix}|(?<{localStatMatchGroupName}>{localSuffix}))?)$");
+                return new Regex($@"^([\+\-]?{regexString}({monsterItemStatSuffix}|(?<{LocalStatMatchGroupName}>{localSuffix}))?)$");
             }
         }
 
-        private class StatDataTextMatchResult
+        private sealed class StatDataTextMatchResult
         {
             public StatDataTextMatchResult(StatData statData, bool isMatch, bool isLocalStat)
             {

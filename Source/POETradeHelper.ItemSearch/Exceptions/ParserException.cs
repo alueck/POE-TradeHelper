@@ -2,8 +2,6 @@
 {
     public class ParserException : Exception
     {
-        protected string ItemString { get; }
-
         public ParserException(string itemString) : this(itemString, null, null)
         {
         }
@@ -29,5 +27,7 @@
         {
             this.ItemString = string.Join(Environment.NewLine, itemStringLines);
         }
+
+        protected string ItemString { get; }
     }
 }
