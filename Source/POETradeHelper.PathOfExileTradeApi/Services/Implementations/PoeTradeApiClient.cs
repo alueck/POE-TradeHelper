@@ -53,7 +53,7 @@ public class PoeTradeApiClient : IPoeTradeApiClient
         }
 
         ExchangeQueryResult result = await this.ReadAsJsonAsync<ExchangeQueryResult>(response.Content).ConfigureAwait(false);
-        result.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{endpoint}{result.Id}");
+        result.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{endpoint}/{result.Id}");
 
         return result;
     }
