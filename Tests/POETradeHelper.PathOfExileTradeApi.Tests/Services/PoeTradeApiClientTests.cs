@@ -134,7 +134,7 @@ public class PoeTradeApiClientTests
     public async Task GetListingsAsyncWithSearchQueryRequestShouldFetchItemsWithCorrectUri()
     {
         // arrange
-        SearchQueryResult searchQueryResult = new SearchQueryResult
+        SearchQueryResult searchQueryResult = new()
         {
             Result = Enumerable.Range(0, 20).Select(i => i.ToString()).ToList(),
             Total = 20,
@@ -241,7 +241,7 @@ public class PoeTradeApiClientTests
     public async Task GetListingsAsyncWithSearchQueryRequestShouldReturnResultWithUri()
     {
         // arrange
-        SearchQueryRequest queryRequest = new SearchQueryRequest
+        SearchQueryRequest queryRequest = new()
         {
             League = "TestLeague",
         };
@@ -416,7 +416,10 @@ public class PoeTradeApiClientTests
     public async Task GetListingsAsyncWithExchangeQueryRequestShouldReturnResultWithUri()
     {
         // arrange
-        ExchangeQueryRequest queryRequest = new ExchangeQueryRequest();
+        ExchangeQueryRequest queryRequest = new()
+        {
+            League = "TestLeague",
+        };
         const string expectedId = "abdef";
         this.poeTradeApiJsonSerializerMock
             .Deserialize<ExchangeQueryResult>(Arg.Any<string>())
