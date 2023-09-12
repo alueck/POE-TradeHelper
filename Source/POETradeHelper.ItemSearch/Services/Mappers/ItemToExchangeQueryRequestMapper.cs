@@ -22,12 +22,12 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
         public ExchangeQueryRequest MapToQueryRequest(Item item)
         {
-            if (item is not CurrencyItem or FragmentItem or DivinationCardItem)
+            if (item is not (CurrencyItem or FragmentItem))
             {
-                throw new ArgumentException("Item must be currency, fragment or divination card.", nameof(item));
+                throw new ArgumentException("Item must be currency or fragment.", nameof(item));
             }
 
-            ExchangeQueryRequest result = new ExchangeQueryRequest
+            ExchangeQueryRequest result = new()
             {
                 League = this.itemSearchOptions.CurrentValue.League.Id,
             };

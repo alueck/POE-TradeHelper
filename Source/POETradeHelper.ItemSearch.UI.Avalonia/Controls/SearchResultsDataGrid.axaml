@@ -39,7 +39,7 @@
         ScrollViewer.VerticalScrollBarVisibility="Visible">
         <DataGrid.DataTemplates>
             <DataTemplate DataType="{x:Type localVms:PriceViewModel}">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel DataContext="{Binding Price}" Orientation="Horizontal"> <!-- DataContext binding is required for correct display -->
                     <TextBlock VerticalAlignment="Center" Text="{Binding Amount}" />
                     <TextBlock Text=" " />
                     <Image

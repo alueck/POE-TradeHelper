@@ -402,6 +402,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stack Size.
+        /// </summary>
+        public static string StackSize {
+            get {
+                return ResourceManager.GetString("StackSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W.
         /// </summary>
         public static string White {
