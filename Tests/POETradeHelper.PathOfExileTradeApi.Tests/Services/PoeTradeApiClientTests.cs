@@ -426,7 +426,7 @@ public class PoeTradeApiClientTests
             .Returns(new ExchangeQueryResult(expectedId, 1, new Dictionary<string, ExchangeQueryResultListing>()));
         Uri expectedUri =
             new(
-                $"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiExchangeEndpoint}{queryRequest.League}/{expectedId}");
+                $"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiExchangeEndpoint}/{queryRequest.League}/{expectedId}");
 
         // act
         ExchangeQueryResult result = await this.poeTradeApiClient.GetListingsAsync(queryRequest);
