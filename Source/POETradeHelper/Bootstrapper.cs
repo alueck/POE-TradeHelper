@@ -146,11 +146,6 @@ namespace POETradeHelper
                 .RegisterType<Mediator>()
                 .As<IMediator>()
                 .InstancePerLifetimeScope();
-            builder.Register<ServiceFactory>(context =>
-            {
-                var c = context.Resolve<IComponentContext>();
-                return t => c.Resolve(t);
-            });
         }
 
         private static void ConfigureOptions(ServiceCollection serviceCollection)

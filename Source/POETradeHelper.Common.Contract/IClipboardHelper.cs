@@ -4,9 +4,9 @@ namespace POETradeHelper.Common.Contract
 {
     public interface IClipboardHelper
     {
-        Task<string> GetTextAsync();
+        Task<string?> GetTextAsync();
 
-        Task SetTextAsync(string text);
+        Task SetTextAsync(string? text);
 
         Task ClearAsync();
     }

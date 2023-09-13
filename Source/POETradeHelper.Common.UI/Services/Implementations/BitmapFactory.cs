@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 
 namespace POETradeHelper.Common.UI.Services
@@ -8,6 +9,6 @@ namespace POETradeHelper.Common.UI.Services
     [ExcludeFromCodeCoverage]
     public class BitmapFactory : IBitmapFactory
     {
-        public IBitmap Create(Stream stream) => new Bitmap(stream);
+        public IImage Create(Stream stream) => new Bitmap(stream);
     }
 }

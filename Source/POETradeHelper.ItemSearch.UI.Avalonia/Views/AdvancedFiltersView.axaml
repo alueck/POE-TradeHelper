@@ -2,12 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
-             xmlns:localViews="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Views;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
-             xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Properties;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+             xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.ViewModels"
+             xmlns:localViews="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Views"
+             xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Properties"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             d:DataContext="{d:DesignInstance Type=localVms:AdvancedFiltersViewModel}"
-             x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Views.AdvancedFiltersView">
+             x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Views.AdvancedFiltersView"
+             x:DataType="localVms:AdvancedFiltersViewModel">
 
     <ScrollViewer
         HorizontalScrollBarVisibility="Disabled"

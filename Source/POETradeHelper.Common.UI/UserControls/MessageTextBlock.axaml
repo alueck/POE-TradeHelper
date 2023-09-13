@@ -2,9 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
+             xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters"
              mc:Ignorable="d" d:DesignWidth="100" d:DesignHeight="20"
-             x:Class="POETradeHelper.Common.UI.UserControls.MessageTextBlock">
+             x:Class="POETradeHelper.Common.UI.UserControls.MessageTextBlock"
+             x:CompileBindings="False">
 
   <UserControl.Resources>
     <commonUiConverters:MessageTypeToBrushConverter x:Key="MessageTypeToBrushConverter" />

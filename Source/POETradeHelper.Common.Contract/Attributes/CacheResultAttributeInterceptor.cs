@@ -36,7 +36,7 @@ public class CacheResultAttributeInterceptor : IInterceptor
         }
 
         string cacheKey = GetCacheKey(invocation);
-        if (this.memoryCache.TryGetValue(cacheKey, out object result))
+        if (this.memoryCache.TryGetValue(cacheKey, out object? result))
         {
             invocation.ReturnValue = result;
             return;

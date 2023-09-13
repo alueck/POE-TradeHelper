@@ -1,11 +1,11 @@
 ﻿using System.IO;
 
-using Avalonia.Media.Imaging;
+using Avalonia.Media;
 
 namespace POETradeHelper.Common.UI.Services
 {
     public interface IBitmapFactory
     {
-        IBitmap Create(Stream stream);
+        IImage Create(Stream stream);
     }
 }

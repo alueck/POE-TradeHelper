@@ -7,10 +7,6 @@ using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-using Avalonia.Utilities;
-using Avalonia.Visuals.Media.Imaging;
 
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -85,13 +81,13 @@ namespace POETradeHelper.Common.UI.Tests.Services
         public async Task GetImageAsyncShouldReturnImageIfHttpResponseIndicatesSuccess()
         {
             // arrange
-            IBitmap expected = new TestBitmap();
+            IImage expected = new TestBitmap();
             this.MockHttpClientGetAsyncSuccessResponse();
             this.bitmapFactoryMock.Create(Arg.Any<Stream>())
                 .Returns(expected);
 
             // act
-            IBitmap result = await this.imageService.GetImageAsync(Uri);
+            IImage result = await this.imageService.GetImageAsync(Uri);
 
             // assert
             Assert.That(result, Is.EqualTo(expected));
@@ -108,7 +104,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.httpClientWrapperMock.GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
                 .Returns(httpResponse);
 
-            IBitmap result = await this.imageService.GetImageAsync(Uri);
+            IImage result = await this.imageService.GetImageAsync(Uri);
 
             Assert.IsNull(result);
         }
@@ -148,23 +144,13 @@ namespace POETradeHelper.Common.UI.Tests.Services
             return httpResponse;
         }
 
-        private class TestBitmap : IBitmap
+        private class TestBitmap : IImage
         {
-            public Vector Dpi => throw new NotImplementedException();
+            public Size Size { get; } = new Size(1, 1);
 
-            public PixelSize PixelSize => throw new NotImplementedException();
-
-            public IRef<IBitmapImpl> PlatformImpl => throw new NotImplementedException();
-
-            public Size Size => throw new NotImplementedException();
-
-            public void Dispose() => throw new NotImplementedException();
-
-            public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode) => throw new NotImplementedException();
-
-            public void Save(string fileName) => throw new NotImplementedException();
-
-            public void Save(Stream stream) => throw new NotImplementedException();
+            public void Draw(DrawingContext context, Rect sourceRect, Rect destRect)
+            {
+            }
         }
     }
 }

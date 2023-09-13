@@ -49,12 +49,12 @@ namespace POETradeHelper.Common
         {
             if (eventArgs.Data.KeyCode == KeyCode.VcEscape)
             {
-                void OnHandled() => eventArgs.Reserved = EventReservedValueMask.SuppressEvent;
+                void OnHandled() => eventArgs.SuppressEvent = true;
                 await this.mediator.Send(new HideOverlayCommand(OnHandled)).ConfigureAwait(false);
             }
             else if (this.pathOfExileProcessHelper.IsPathOfExileActiveWindow() && TryGetRequest(eventArgs, out var request))
             {
-                eventArgs.Reserved = EventReservedValueMask.SuppressEvent;
+                eventArgs.SuppressEvent = true;
                 await this.mediator.Send(request).ConfigureAwait(false);
             }
         }

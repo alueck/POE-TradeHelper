@@ -62,7 +62,7 @@ namespace POETradeHelper.Common.Tests
             await this.mediatorMock
                 .Received()
                 .Send(Arg.Any<SearchItemCommand>(), Arg.Any<CancellationToken>());
-            keyEventArgs.Reserved.Should().Be(EventReservedValueMask.SuppressEvent);
+            keyEventArgs.SuppressEvent.Should().BeTrue();
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace POETradeHelper.Common.Tests
             await this.mediatorMock
                 .DidNotReceive()
                 .Send(Arg.Any<SearchItemCommand>(), Arg.Any<CancellationToken>());
-            keyEventArgs.Reserved.Should().BeNull();
+            keyEventArgs.SuppressEvent.Should().BeFalse();
         }
 
         [Test]
@@ -116,9 +116,9 @@ namespace POETradeHelper.Common.Tests
             this.keyPressed.OnNext(keyEventArgs);
 
             onHandledAction.Should().NotBeNull();
-            keyEventArgs.Reserved.Should().BeNull();
+            keyEventArgs.SuppressEvent.Should().BeFalse();
             onHandledAction.Invoke();
-            keyEventArgs.Reserved.Should().Be(EventReservedValueMask.SuppressEvent);
+            keyEventArgs.SuppressEvent.Should().BeTrue();
         }
 
         [Test]
@@ -137,7 +137,7 @@ namespace POETradeHelper.Common.Tests
             await this.mediatorMock
                 .Received()
                 .Send(Arg.Any<GotoHideoutCommand>(), Arg.Any<CancellationToken>());
-            keyEventArgs.Reserved.Should().Be(EventReservedValueMask.SuppressEvent);
+            keyEventArgs.SuppressEvent.Should().BeTrue();
         }
 
         [Test]
@@ -154,7 +154,7 @@ namespace POETradeHelper.Common.Tests
             await this.mediatorMock
                 .DidNotReceive()
                 .Send(Arg.Any<GotoHideoutCommand>(), Arg.Any<CancellationToken>());
-            keyEventArgs.Reserved.Should().BeNull();
+            keyEventArgs.SuppressEvent.Should().BeFalse();
         }
 
         [Test]
@@ -174,7 +174,7 @@ namespace POETradeHelper.Common.Tests
             await this.mediatorMock
                 .Received()
                 .Send(Arg.Any<OpenWikiCommand>(), Arg.Any<CancellationToken>());
-            keyEventArgs.Reserved.Should().Be(EventReservedValueMask.SuppressEvent);
+            keyEventArgs.SuppressEvent.Should().BeTrue();
         }
 
         [Test]
@@ -192,7 +192,7 @@ namespace POETradeHelper.Common.Tests
             await this.mediatorMock
                 .DidNotReceive()
                 .Send(Arg.Any<OpenWikiCommand>(), Arg.Any<CancellationToken>());
-            keyEventArgs.Reserved.Should().BeNull();
+            keyEventArgs.SuppressEvent.Should().BeFalse();
         }
     }
 }

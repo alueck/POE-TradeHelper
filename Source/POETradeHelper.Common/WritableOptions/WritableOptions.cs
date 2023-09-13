@@ -26,7 +26,7 @@ namespace POETradeHelper.Common.WritableOptions
 
         public TOptions Value => this.options.CurrentValue;
 
-        public TOptions Get(string name) => this.options.Get(name);
+        public TOptions Get(string? name) => this.options.Get(name);
 
         public void Update(Action<TOptions> update)
         {

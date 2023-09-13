@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Controls.SearchResultsDataGrid">
+             x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Controls.SearchResultsDataGrid"
+             x:CompileBindings="False">
     <UserControl.Styles>
         <Style Selector="DataGridCell.alignRight">
             <Setter Property="HorizontalContentAlignment" Value="Right" />
@@ -28,14 +29,19 @@
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Padding" Value="8,4" />
         </Style>
+        
+        <Style Selector="DataGridRow:nth-child(odd)">
+            <Setter Property="Background" Value="#243A45"/>
+        </Style>
     </UserControl.Styles>
     
     <DataGrid
         Name="ListingsGrid"
         AutoGenerateColumns="True"
+        RowBackground="Transparent"
         ColumnWidth="Auto"
         IsReadOnly="True"
-        Items="{Binding $parent[UserControl].Items}"
+        ItemsSource="{Binding $parent[UserControl].Items}"
         ScrollViewer.VerticalScrollBarVisibility="Visible">
         <DataGrid.DataTemplates>
             <DataTemplate DataType="{x:Type localVms:PriceViewModel}">

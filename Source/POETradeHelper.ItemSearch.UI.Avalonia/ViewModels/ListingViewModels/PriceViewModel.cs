@@ -1,4 +1,4 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Media;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
@@ -8,6 +8,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 
         public string Currency { get; set; } = string.Empty;
 
-        public IBitmap? Image { get; set; }
+        public IImage? Image { get; set; }
     }
 }

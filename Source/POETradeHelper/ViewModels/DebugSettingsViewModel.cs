@@ -19,7 +19,7 @@ namespace POETradeHelper.ViewModels
             this.SearchItemFromClipboardCommand = ReactiveCommand.CreateFromTask(() => mediator.Send(new SearchItemCommand()));
         }
 
-        public ReactiveCommand<Unit, MediatR.Unit> SearchItemFromClipboardCommand { get; }
+        public ReactiveCommand<Unit, Unit> SearchItemFromClipboardCommand { get; }
 
         public string Title => Resources.DebugSettingsHeader;
 

@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
 namespace POETradeHelper.QualityOfLife.UI.Avalonia.Views
 {
@@ -8,11 +7,6 @@ namespace POETradeHelper.QualityOfLife.UI.Avalonia.Views
         public WikiSettingsView()
         {
             this.InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
     }
 }

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 
+using DynamicData.Kernel;
+
 using FluentAssertions;
 using FluentAssertions.Reactive;
 
@@ -27,8 +29,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
     public class ItemSearchOverlayViewModelTests
     {
         private IMediator mediatorMock;
-        private Func<IScreen, IItemResultsViewModel> itemResultsViewModelFactoryMock;
-        private Func<IScreen, IExchangeResultsViewModel> exchangeResultsViewModelFactoryMock;
+        private Func<IItemSearchResultOverlayViewModel, IItemResultsViewModel> itemResultsViewModelFactoryMock;
+        private Func<IItemSearchResultOverlayViewModel, IExchangeResultsViewModel> exchangeResultsViewModelFactoryMock;
         private ItemSearchResultOverlayViewModel itemSearchOverlayViewModel;
 
         [SetUp]
@@ -37,11 +39,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             this.mediatorMock = Substitute.For<IMediator>();
             this.itemResultsViewModelFactoryMock = Substitute.For<Func<IScreen, IItemResultsViewModel>>();
             this.itemResultsViewModelFactoryMock
-                .Invoke(Arg.Any<IScreen>())
+                .Invoke(Arg.Any<IItemSearchResultOverlayViewModel>())
                 .Returns(Substitute.For<IItemResultsViewModel>());
             this.exchangeResultsViewModelFactoryMock = Substitute.For<Func<IScreen, IExchangeResultsViewModel>>();
             this.exchangeResultsViewModelFactoryMock
-                .Invoke(Arg.Any<IScreen>())
+                .Invoke(Arg.Any<IItemSearchResultOverlayViewModel>())
                 .Returns(Substitute.For<IExchangeResultsViewModel>());
 
             this.itemSearchOverlayViewModel = new ItemSearchResultOverlayViewModel(this.mediatorMock, this.itemResultsViewModelFactoryMock, this.exchangeResultsViewModelFactoryMock);
@@ -126,7 +128,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             observer.Should().NotPush();
             this.exchangeResultsViewModelFactoryMock
                 .DidNotReceive()
-                .Invoke(Arg.Any<IScreen>());
+                .Invoke(Arg.Any<IItemSearchResultOverlayViewModel>());
         }
 
         [TestCaseSource(nameof(GetItemResultsViewModelItems))]
@@ -183,7 +185,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             observer.Should().NotPush();
             this.itemResultsViewModelFactoryMock
                 .DidNotReceive()
-                .Invoke(Arg.Any<IScreen>());
+                .Invoke(Arg.Any<IItemSearchResultOverlayViewModel>());
         }
 
         [Test]
@@ -203,7 +205,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
         }
 
         [Test]
-        public async Task SetListingForItemUnderCursorAsyncShouldNotSetMessageIfInvalidItemStringExceptionOccurs()
+        public async Task SetListingForItemUnderCursorAsyncShouldSetMessageIfInvalidItemStringExceptionOccurs()
         {
             var exception = new InvalidItemStringException("invalid item string");
 
@@ -213,7 +215,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            this.itemSearchOverlayViewModel.Message.Should().BeNull();
+            this.itemSearchOverlayViewModel.Message.Should().BeEquivalentTo(
+                new Message
+                {
+                    Text = "Invalid item string",
+                    Type = MessageType.Error,
+                });
         }
 
         [Test]

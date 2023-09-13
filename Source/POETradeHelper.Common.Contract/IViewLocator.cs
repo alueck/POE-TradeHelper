@@ -2,6 +2,6 @@
 {
     public interface IViewLocator
     {
-        object GetView(object viewModel);
+        object? GetView(object viewModel);
     }
 }

@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
 {
@@ -9,7 +8,5 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
         {
             this.InitializeComponent();
         }
-
-        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }
