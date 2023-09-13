@@ -3,12 +3,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
-        xmlns:resources="clr-namespace:POETradeHelper.Properties;assembly=POETradeHelper"
+        xmlns:resources="clr-namespace:POETradeHelper.Properties"
+        xmlns:viewModels="clr-namespace:POETradeHelper.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="POETradeHelper.Views.MainWindow"
         Title="POE Trade Helper"
         Width="640"
-        Height="480">
+        Height="480"
+        RequestedThemeVariant="Dark"
+        x:CompileBindings="True"
+        x:DataType="viewModels:MainWindowViewModel">
 
   <Window.Styles>
     <Style Selector="HeaderedContentControl">
@@ -17,10 +21,10 @@
           <ControlTemplate>
             <Border>
               <StackPanel Spacing="5">
-                <ContentPresenter TextBlock.FontWeight="Bold" Content="{TemplateBinding Header}" />
+                <ContentPresenter Content="{TemplateBinding Header}" />
                 <Border
                     BorderBrush="Gray"
-                    BorderThickness="0.5"
+                    BorderThickness="1"
                     CornerRadius="5">
                   <ContentPresenter Content="{TemplateBinding Content}" Margin="20" />
                 </Border>
@@ -40,7 +44,7 @@
     <Grid>
 
       <StackPanel ZIndex="999" Margin="20" Spacing="10">
-        <ItemsControl Items="{Binding SettingsViewModels}">
+        <ItemsControl ItemsSource="{Binding SettingsViewModels}">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
               <HeaderedContentControl Content="{Binding .}" Header="{Binding Title}" Margin="0,5" />

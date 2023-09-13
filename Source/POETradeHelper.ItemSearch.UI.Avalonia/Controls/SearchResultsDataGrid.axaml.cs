@@ -7,7 +7,7 @@ using System.Reflection;
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
 
 using POETradeHelper.ItemSearch.UI.Avalonia.Attributes;
@@ -28,6 +28,7 @@ public partial class SearchResultsDataGrid : UserControl
     public SearchResultsDataGrid()
     {
         this.InitializeComponent();
+        this.ListingsGrid.AutoGeneratingColumn += this.OnDataGridAutoGeneratingColumn;
     }
 
     public IEnumerable Items
@@ -36,21 +37,13 @@ public partial class SearchResultsDataGrid : UserControl
         set => this.SetAndRaise(ItemsProperty, ref this.items, value);
     }
 
-    public DataGrid ListingsGrid => this.Get<DataGrid>("ListingsGrid");
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-        this.ListingsGrid.AutoGeneratingColumn += this.OnDataGridAutoGeneratingColumn;
-    }
-
     private void OnDataGridAutoGeneratingColumn(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         DataGrid dataGrid = (DataGrid)sender!;
 
-        IEnumerator itemsEnumerator = dataGrid.Items.GetEnumerator();
+        IEnumerator itemsEnumerator = dataGrid.ItemsSource.GetEnumerator();
 
-        if (itemsEnumerator.MoveNext())
+        if (itemsEnumerator.MoveNext() && itemsEnumerator.Current != null)
         {
             Type itemType = itemsEnumerator.Current.GetType();
             PropertyInfo property = itemType.GetProperty(e.PropertyName)!;

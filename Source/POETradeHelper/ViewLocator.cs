@@ -13,9 +13,9 @@ namespace POETradeHelper
     {
         public bool SupportsRecycling => false;
 
-        public IControl Build(object data)
+        public Control? Build(object? data)
         {
-            string? name = data.GetType().AssemblyQualifiedName?.Replace("ViewModel", "View");
+            string? name = data?.GetType().AssemblyQualifiedName?.Replace("ViewModel", "View");
 
             if (!string.IsNullOrEmpty(name))
             {
@@ -30,7 +30,7 @@ namespace POETradeHelper
             return new TextBlock { Text = "Not Found: " + name };
         }
 
-        public object GetView(object viewModel)
+        public object? GetView(object viewModel)
         {
             if (this.Match(viewModel))
             {
@@ -41,6 +41,6 @@ namespace POETradeHelper
                 $"The type {viewModel.GetType().FullName} of {nameof(viewModel)} does not inherit from {nameof(ReactiveObject)}.");
         }
 
-        public bool Match(object data) => data is ReactiveObject;
+        public bool Match(object? data) => data is ReactiveObject;
     }
 }

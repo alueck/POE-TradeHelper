@@ -33,7 +33,7 @@ namespace POETradeHelper.Common
 
         private async Task SendChatCommand(string chatCommand)
         {
-            string clipBoardText = await this.clipboardHelper.GetTextAsync();
+            string? clipBoardText = await this.clipboardHelper.GetTextAsync();
 
             await this.clipboardHelper.SetTextAsync(chatCommand);
             this.TypeKey(KeyCode.VcEnter);

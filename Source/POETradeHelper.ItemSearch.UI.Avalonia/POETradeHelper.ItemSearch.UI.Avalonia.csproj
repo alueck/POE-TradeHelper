@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,10 +14,10 @@
       <SubType>Designer</SubType>
     </AvaloniaResource>
     <AvaloniaResource Include="Assets\**" />
-    <Compile Update="Views\ExchangeResultsView.xaml.cs">
+    <Compile Update="Views\ExchangeResultsView.axaml.cs">
       <DependentUpon>ExchangeResultsView.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\ItemResultsView.xaml.cs">
+    <Compile Update="Views\ItemResultsView.axaml.cs">
       <DependentUpon>ItemResultsView.xaml</DependentUpon>
     </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
@@ -27,12 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.16" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.16" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.16" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.16" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.16" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Avalonia" Version="11.0.4" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.4" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.4" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="ReactiveUI.Fody" Version="18.3.1" />
   </ItemGroup>
 
@@ -47,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\FiltersControl.xaml.cs">
+    <Compile Update="Views\FiltersControl.axaml.cs">
       <DependentUpon>FiltersControl.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\FilterTextBoxControl.axaml.cs">

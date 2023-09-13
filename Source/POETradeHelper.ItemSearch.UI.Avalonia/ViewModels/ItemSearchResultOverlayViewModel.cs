@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
@@ -22,18 +23,21 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
     public class ItemSearchResultOverlayViewModel : ReactiveObject, IItemSearchResultOverlayViewModel
     {
         private readonly IMediator mediator;
-        private readonly Func<IScreen, IItemResultsViewModel> itemResultsViewModelFactory;
-        private readonly Func<IScreen, IExchangeResultsViewModel> exchangeResultsViewModelFactory;
+        private readonly Func<IItemSearchResultOverlayViewModel, IItemResultsViewModel> itemResultsViewModelFactory;
+        private readonly Func<IItemSearchResultOverlayViewModel, IExchangeResultsViewModel> exchangeResultsViewModelFactory;
 
         public ItemSearchResultOverlayViewModel(
             IMediator mediator,
-            Func<IScreen, IItemResultsViewModel> itemResultsViewModelFactory,
-            Func<IScreen, IExchangeResultsViewModel> exchangeResultsViewModelFactory)
+            Func<IItemSearchResultOverlayViewModel, IItemResultsViewModel> itemResultsViewModelFactory,
+            Func<IItemSearchResultOverlayViewModel, IExchangeResultsViewModel> exchangeResultsViewModelFactory)
         {
             this.mediator = mediator;
             this.itemResultsViewModelFactory = itemResultsViewModelFactory;
             this.exchangeResultsViewModelFactory = exchangeResultsViewModelFactory;
             this.Router = new RoutingState();
+
+            this.WhenAnyValue(x => x.Message)
+                .Subscribe(x => Debug.WriteLine(x));
         }
 
         public RoutingState Router { get; }
@@ -68,10 +72,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
                     await this.GoToView(this.itemResultsViewModelFactory, token);
                 }
             }
-            catch (InvalidItemStringException exception)
-            {
-                this.Log().Error(exception);
-            }
             catch (Exception exception)
             {
                 if (exception is not OperationCanceledException and not TaskCanceledException)
@@ -92,14 +92,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         {
             this.Message = new Message
             {
-                Text = $"An error occurred. Please try again.{Environment.NewLine}If the error persists, check the logs and create an issue on GitHub.",
+                Text = exception is InvalidItemStringException
+                    ? "Invalid item string"
+                    : $"An error occurred. Please try again.{Environment.NewLine}If the error persists, check the logs and create an issue on GitHub.",
                 Type = MessageType.Error,
             };
 
             this.Log().Error(exception);
         }
 
-        private async Task GoToView<T>(Func<IScreen, T> factory, CancellationToken cancellationToken)
+        private async Task GoToView<T>(Func<IItemSearchResultOverlayViewModel, T> factory, CancellationToken cancellationToken)
             where T : IResultsViewModel
         {
             T viewModel;

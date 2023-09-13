@@ -6,12 +6,11 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
 {
-    public class FilterTextBoxControl : UserControl
+    public partial class FilterTextBoxControl : UserControl
     {
         public static readonly AvaloniaProperty<decimal?> ValueProperty =
             AvaloniaProperty.Register<FilterTextBoxControl, decimal?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
@@ -19,13 +18,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
         public static readonly AvaloniaProperty<string?> WatermarkProperty =
             AvaloniaProperty.Register<FilterTextBoxControl, string?>(nameof(Watermark));
 
-        private readonly TextBox textBox;
-
         public FilterTextBoxControl()
         {
             this.InitializeComponent();
-            this.textBox = this.Get<TextBox>("textBox");
-            this.textBox.AddHandler(TextInputEvent, this.TextBox_OnTextInput, RoutingStrategies.Tunnel);
+            this.TextBox.AddHandler(TextInputEvent, this.TextBox_OnTextInput, RoutingStrategies.Tunnel);
         }
 
         public decimal? Value
@@ -42,22 +38,20 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
 
         public void TextBox_GotFocus(object sender, GotFocusEventArgs eventArgs)
         {
-            if (this.textBox.Text != null)
+            if (this.TextBox.Text != null)
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    this.textBox.SelectionStart = 0;
-                    this.textBox.SelectionEnd = this.textBox.Text.Length;
+                    this.TextBox.SelectionStart = 0;
+                    this.TextBox.SelectionEnd = this.TextBox.Text.Length;
                 });
             }
         }
 
-        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
-
         private void TextBox_OnTextInput(object? sender, TextInputEventArgs e)
         {
             string numberRegex = $@"^[\+\-]?\d+[\.{Regex.Escape(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)}]?\d*$";
-            string newText = this.textBox.Text.Insert(this.textBox.SelectionStart, e.Text ?? string.Empty);
+            string newText = (this.TextBox.Text ?? string.Empty).Insert(this.TextBox.SelectionStart, e.Text ?? string.Empty);
             bool isNumericText = Regex.IsMatch(newText, numberRegex);
             e.Handled = !isNumericText;
         }

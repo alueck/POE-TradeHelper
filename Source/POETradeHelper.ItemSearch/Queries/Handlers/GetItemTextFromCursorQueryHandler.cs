@@ -17,14 +17,14 @@ namespace POETradeHelper.ItemSearch.Queries.Handlers
 
         public async Task<string> Handle(GetItemTextFromCursorQuery request, CancellationToken cancellationToken)
         {
-            string clipBoardTemp = await this.clipboardHelper.GetTextAsync();
+            string? clipBoardTemp = await this.clipboardHelper.GetTextAsync();
 
             this.userInputSimulator.SendCopyCommand();
 
             // small delay, because the text is not always directly available after the copy key command
             await Task.Delay(300, cancellationToken);
 
-            string itemString = await this.clipboardHelper.GetTextAsync();
+            string? itemString = await this.clipboardHelper.GetTextAsync();
 
             if (string.IsNullOrEmpty(clipBoardTemp))
             {
@@ -35,7 +35,7 @@ namespace POETradeHelper.ItemSearch.Queries.Handlers
                 await this.clipboardHelper.SetTextAsync(clipBoardTemp);
             }
 
-            return itemString;
+            return itemString ?? string.Empty;
         }
     }
 }

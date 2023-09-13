@@ -2,12 +2,11 @@
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 
 namespace POETradeHelper.Common.UI.UserControls
 {
-    public class BusyIndicator : UserControl
+    public partial class BusyIndicator : UserControl
     {
         public static readonly AvaloniaProperty<TimeSpan> DisplayAfterProperty = AvaloniaProperty.Register<BusyIndicator, TimeSpan>(nameof(DisplayAfter), TimeSpan.FromMilliseconds(100));
         public static readonly AvaloniaProperty<bool> IsBusyProperty = AvaloniaProperty.Register<BusyIndicator, bool>(nameof(IsBusy));
@@ -19,6 +18,7 @@ namespace POETradeHelper.Common.UI.UserControls
         public BusyIndicator()
         {
             this.displayAfterTimer.Tick += this.DisplayAfterTimerEnded;
+            IsBusyProperty.Changed.Subscribe(this.OnIsBusyChanged);
             this.InitializeComponent();
         }
 
@@ -44,13 +44,6 @@ namespace POETradeHelper.Common.UI.UserControls
         {
             get => this.GetValue<bool>(IsBusyIndicatorVisibleProperty);
             set => this.SetValue(IsBusyIndicatorVisibleProperty, value);
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-
-            IsBusyProperty.Changed.Subscribe(this.OnIsBusyChanged);
         }
 
         private void DisplayAfterTimerEnded(object? sender, EventArgs e)

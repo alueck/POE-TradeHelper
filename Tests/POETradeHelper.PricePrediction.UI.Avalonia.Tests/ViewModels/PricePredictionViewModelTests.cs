@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using Avalonia.Media.Imaging;
+using Avalonia.Media;
 
 using MediatR;
 
@@ -106,7 +106,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
             this.viewModel.Currency = "chaos";
             this.viewModel.Prediction = "0.25 - 0.33";
             this.viewModel.ConfidenceScore = "89 %";
-            this.viewModel.CurrencyImage = Substitute.For<IBitmap>();
+            this.viewModel.CurrencyImage = Substitute.For<IImage>();
 
             // act
             listener(

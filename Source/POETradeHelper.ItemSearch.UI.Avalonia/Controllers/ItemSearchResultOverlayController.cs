@@ -2,8 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using Avalonia.Controls;
-
 using MediatR;
 
 using POETradeHelper.Common.Contract;
@@ -37,7 +35,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
 
         private IItemSearchResultOverlayView View => LazyInitializer.EnsureInitialized(ref this.view, this.CreateView);
 
-        public async Task<Unit> Handle(SearchItemCommand request, CancellationToken cancellationToken)
+        public async Task Handle(SearchItemCommand request, CancellationToken cancellationToken)
         {
             await this.uiThreadDispatcher.InvokeAsync(async () =>
             {
@@ -56,11 +54,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
                     // do nothing
                 }
             });
-
-            return Unit.Value;
         }
 
-        public async Task<Unit> Handle(HideOverlayCommand request, CancellationToken cancellationToken)
+        public async Task Handle(HideOverlayCommand request, CancellationToken cancellationToken)
         {
             await this.uiThreadDispatcher.InvokeAsync(() =>
             {
@@ -71,19 +67,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
                     this.View.Hide();
                 }
             });
-
-            return Unit.Value;
         }
 
         private IItemSearchResultOverlayView CreateView()
         {
-            object view = this.viewLocator.GetView(this.itemSearchResultOverlayViewModel);
-            if (view is IItemSearchResultOverlayView itemSearchResultOverlay)
+            if (this.viewLocator.GetView(this.itemSearchResultOverlayViewModel) is IItemSearchResultOverlayView itemSearchResultOverlay)
             {
-                if (view is IControl control)
-                {
-                    control.DataContext = this.itemSearchResultOverlayViewModel;
-                }
+                itemSearchResultOverlay.DataContext = this.itemSearchResultOverlayViewModel;
 
                 return itemSearchResultOverlay;
             }

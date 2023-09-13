@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using Autofac.Extras.DynamicProxy;
 
-using Avalonia.Media.Imaging;
+using Avalonia.Media;
 
 using POETradeHelper.Common.Contract.Attributes;
 using POETradeHelper.Common.Wrappers;
@@ -25,9 +25,9 @@ namespace POETradeHelper.Common.UI.Services
         }
 
         [CacheResult]
-        public async Task<IBitmap?> GetImageAsync(Uri uri, CancellationToken cancellationToken = default)
+        public async Task<IImage?> GetImageAsync(Uri uri, CancellationToken cancellationToken = default)
         {
-            IBitmap? image = null;
+            IImage? image = null;
             HttpResponseMessage response = await this.httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)

@@ -3,27 +3,14 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="UserControls\BusyIndicator.xaml"/>
-        <None Remove="UserControls\MessageTextBlock.xaml"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Include="UserControls\BusyIndicator.xaml">
-            <Generator>MSBuild:Compile</Generator>
-        </EmbeddedResource>
-        <EmbeddedResource Include="UserControls\MessageTextBlock.xaml">
-            <Generator>MSBuild:Compile</Generator>
-        </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Autofac" Version="6.4.0"/>
-        <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.1"/>
-        <PackageReference Include="Avalonia" Version="0.10.16"/>
-        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0"/>
+        <PackageReference Include="Autofac" Version="7.1.0" />
+        <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
+        <PackageReference Include="Avalonia" Version="11.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>

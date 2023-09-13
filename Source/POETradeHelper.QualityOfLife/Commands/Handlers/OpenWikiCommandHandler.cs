@@ -31,7 +31,7 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
             this.logger = logger;
         }
 
-        public async Task<Unit> Handle(OpenWikiCommand request, CancellationToken cancellationToken)
+        public async Task Handle(OpenWikiCommand request, CancellationToken cancellationToken)
         {
             Item? item = null;
             try
@@ -47,8 +47,6 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
             {
                 this.logger.LogError(exception, "Failed to open wiki for {@Item}", item);
             }
-
-            return Unit.Value;
         }
     }
 }

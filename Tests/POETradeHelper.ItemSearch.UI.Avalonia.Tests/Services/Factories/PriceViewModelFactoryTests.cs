@@ -1,14 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-using Avalonia.Utilities;
-using Avalonia.Visuals.Media.Imaging;
 
 using NSubstitute;
 
@@ -128,7 +123,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public async Task CreateAsyncShouldSetImageOnPriceViewModel()
         {
-            IBitmap expected = new TestBitmap();
+            IImage expected = new TestBitmap();
             Price price = new();
 
             this.imageServiceMock.GetImageAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
@@ -139,24 +134,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             Assert.That(result.Image, Is.EqualTo(expected));
         }
 
-        private class TestBitmap : IBitmap
+        private class TestBitmap : IImage
         {
-            public Vector Dpi => throw new NotImplementedException();
+            public Size Size { get; } = new(1, 1);
 
-            public PixelSize PixelSize => throw new NotImplementedException();
-
-            public IRef<IBitmapImpl> PlatformImpl => throw new NotImplementedException();
-
-            public Size Size => throw new NotImplementedException();
-
-            public void Dispose() => throw new NotImplementedException();
-
-            public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode) =>
-                throw new NotImplementedException();
-
-            public void Save(string fileName) => throw new NotImplementedException();
-
-            public void Save(Stream stream) => throw new NotImplementedException();
+            public void Draw(DrawingContext context, Rect sourceRect, Rect destRect)
+            {
+            }
         }
     }
 }

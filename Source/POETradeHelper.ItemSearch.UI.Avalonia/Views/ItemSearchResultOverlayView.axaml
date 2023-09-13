@@ -4,10 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commonUiControls="clr-namespace:POETradeHelper.Common.UI.UserControls;assembly=POETradeHelper.Common.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Converters;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
-    xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+    xmlns:localConverters="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Converters"
+    xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.ViewModels"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Properties;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+    xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Properties"
     xmlns:reactiveUi="http://reactiveui.net"
     Title="Overlay"
     MinWidth="400"
@@ -16,10 +16,11 @@
     MaxHeight="392"
     d:DesignHeight="400"
     d:DesignWidth="800"
-    d:DataContext="{d:DesignInstance Type=localVms:ItemSearchResultOverlayViewModel}"
     SystemDecorations="None"
     Topmost="True"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    x:DataType="localVms:ItemSearchResultOverlayViewModel"
+    x:CompileBindings="True">
 
     <Window.Resources>
         <localConverters:ItemRarityToBrushConverter x:Key="ItemRarityToBrushConverter" />

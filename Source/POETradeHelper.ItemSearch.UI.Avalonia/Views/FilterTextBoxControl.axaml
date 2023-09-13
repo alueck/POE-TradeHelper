@@ -4,15 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:commonUiConverters="clr-namespace:POETradeHelper.Common.UI.Converters;assembly=POETradeHelper.Common.UI"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Views.FilterTextBoxControl">
+             x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Views.FilterTextBoxControl"
+             x:CompileBindings="False">
     
     <UserControl.Resources>
-        <commonUiConverters:NullableDecimalStringConverter x:Key="nullableDecimalStringConverter" />
+        <commonUiConverters:NullableDecimalStringConverter x:Key="NullableDecimalStringConverter" />
     </UserControl.Resources>
     
     <TextBox DataContext="{Binding $parent[UserControl]}"
-             Name="textBox"
-             Text="{Binding Value, Converter={StaticResource nullableDecimalStringConverter}}"
+             Name="TextBox"
+             Text="{Binding Value, Converter={StaticResource NullableDecimalStringConverter}}"
              HorizontalAlignment="Stretch"
              Margin="5"
              TextAlignment="Right"

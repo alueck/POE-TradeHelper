@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using Avalonia.Media.Imaging;
+using Avalonia.Media;
 
 using MediatR;
 
@@ -64,7 +64,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
         public string Currency { get; set; } = string.Empty;
 
         [Reactive]
-        public IBitmap? CurrencyImage { get; set; }
+        public IImage? CurrencyImage { get; set; }
 
         [Reactive]
         public string ConfidenceScore { get; set; } = string.Empty;
@@ -119,7 +119,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
             this.CurrencyImage = await this.GetCurrencyImage(prediction.Currency, cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<IBitmap?> GetCurrencyImage(string currency, CancellationToken cancellationToken)
+        private async Task<IImage?> GetCurrencyImage(string currency, CancellationToken cancellationToken)
         {
             Uri imageUrl = this.staticDataService.GetImageUrl(currency);
 

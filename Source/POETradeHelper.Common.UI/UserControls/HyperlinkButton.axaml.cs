@@ -3,11 +3,10 @@ using System.Diagnostics;
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
 namespace POETradeHelper.Common.UI.UserControls
 {
-    public class HyperlinkButton : UserControl
+    public partial class HyperlinkButton : UserControl
     {
         public static readonly AvaloniaProperty<IHideable?> HideableWindowProperty = AvaloniaProperty.Register<HyperlinkButton, IHideable?>(nameof(HideableWindow));
         public static readonly AvaloniaProperty<Uri> UriProperty = AvaloniaProperty.Register<HyperlinkButton, Uri>(nameof(Uri));
@@ -42,7 +41,5 @@ namespace POETradeHelper.Common.UI.UserControls
 
             this.HideableWindow?.Hide();
         }
-
-        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }

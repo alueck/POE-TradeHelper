@@ -1,12 +1,11 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
 {
-    public class SelectableFilterControl : UserControl
+    public partial class SelectableFilterControl : UserControl
     {
         public static readonly AvaloniaProperty<FilterViewModelBase> FilterProperty =
             AvaloniaProperty.Register<SelectableFilterControl, FilterViewModelBase>(nameof(Filter));
@@ -30,7 +29,5 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
             get => this.GetValue<bool>(IsThreeStateProperty);
             set => this.SetValue(IsThreeStateProperty, value);
         }
-
-        private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }

@@ -5,11 +5,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.ViewModels"
-    xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Properties;assembly=POETradeHelper.ItemSearch.UI.Avalonia"
+    xmlns:resources="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Properties"
     xmlns:controls="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Controls"
     d:DesignHeight="450" d:DesignWidth="800"
-    d:DataContext="{d:DesignInstance Type=localVms:ExchangeResultsViewModel}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    x:DataType="localVms:ExchangeResultsViewModel">
 
     <Grid>
 

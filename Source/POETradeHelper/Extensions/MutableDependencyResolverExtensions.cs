@@ -1,7 +1,6 @@
 using System;
 
 using Avalonia.ReactiveUI;
-using Avalonia.Threading;
 
 using Microsoft.Extensions.Logging;
 

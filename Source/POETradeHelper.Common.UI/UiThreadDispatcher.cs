@@ -19,27 +19,22 @@ public class UiThreadDispatcher : IUiThreadDispatcher
         Dispatcher.UIThread.VerifyAccess();
     }
 
-    public void Post(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+    public void Post(Action action, DispatcherPriority priority = default)
     {
         Dispatcher.UIThread.Post(action, priority);
     }
 
-    public Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+    public async Task InvokeAsync(Action action, DispatcherPriority priority = default)
     {
-        return Dispatcher.UIThread.InvokeAsync(action, priority);
+        await Dispatcher.UIThread.InvokeAsync(action, priority);
     }
 
-    public Task<TResult> InvokeAsync<TResult>(Func<TResult> function, DispatcherPriority priority = DispatcherPriority.Normal)
-    {
-        return Dispatcher.UIThread.InvokeAsync(function, priority);
-    }
-
-    public Task InvokeAsync(Func<Task> function, DispatcherPriority priority = DispatcherPriority.Normal)
+    public Task InvokeAsync(Func<Task> function, DispatcherPriority priority = default)
     {
         return Dispatcher.UIThread.InvokeAsync(function, priority);
     }
 
-    public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = DispatcherPriority.Normal)
+    public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = default)
     {
         return Dispatcher.UIThread.InvokeAsync(function, priority);
     }

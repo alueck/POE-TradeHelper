@@ -8,9 +8,9 @@ using MediatR;
 namespace POETradeHelper.Common.Commands.Handlers
 {
     [ExcludeFromCodeCoverage]
-    public class OpenUrlInBrowserCommandHandler : AsyncRequestHandler<OpenUrlInBrowserCommand>
+    public class OpenUrlInBrowserCommandHandler : IRequestHandler<OpenUrlInBrowserCommand>
     {
-        protected override Task Handle(OpenUrlInBrowserCommand request, CancellationToken cancellationToken)
+        public Task Handle(OpenUrlInBrowserCommand request, CancellationToken cancellationToken)
         {
             Process.Start(new ProcessStartInfo
             {
