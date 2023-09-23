@@ -1,4 +1,11 @@
-﻿namespace POETradeHelper.ItemSearch.Contract.Models
+﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+using POETradeHelper.ItemSearch.Contract.Extensions;
+using POETradeHelper.ItemSearch.Contract.Properties;
+
+namespace POETradeHelper.ItemSearch.Contract.Models
 {
     public abstract class Item
     {
@@ -27,6 +34,19 @@
                 }
 
                 return displayName;
+            }
+        }
+
+        public virtual string NormalizedItemText
+        {
+            get
+            {
+                string text = string.Join(Environment.NewLine, this.ItemText.Split('\r', '\n')
+                    .Where(x => !x.StartsWith('{') && !x.StartsWith('(')))
+                    .RemoveStatRanges()
+                    .Replace(Resources.UnscalableValueSuffix, string.Empty);
+
+                return text;
             }
         }
     }

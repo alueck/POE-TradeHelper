@@ -1,5 +1,6 @@
 ﻿using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
@@ -31,7 +32,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
             var itemStats = groupedItemStatLines.Select(group => new SingleValueItemStat(StatCategory.Monster)
                 {
-                    Text = group.Key,
+                    Text = group.Key.Replace(Resources.UnscalableValueSuffix, string.Empty),
                     Value = group.Count(),
                 })
                 .Select(s => this.GetCompleteItemStat(s, false))

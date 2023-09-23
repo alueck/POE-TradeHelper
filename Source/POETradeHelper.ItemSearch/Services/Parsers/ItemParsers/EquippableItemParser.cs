@@ -81,7 +81,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
         private static InfluenceType GetInfluenceType(string[] itemStringLines)
         {
-            InfluenceType? influenceType = itemStringLines.Last().ParseToEnumByDisplayName<InfluenceType>();
+            InfluenceType? influenceType = itemStringLines
+                .Reverse()
+                .Take(4)
+                .Select(x => x.ParseToEnumByDisplayName<InfluenceType>())
+                .FirstOrDefault(x => x.HasValue);
 
             return influenceType ?? InfluenceType.None;
         }
