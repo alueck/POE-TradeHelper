@@ -72,7 +72,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
 
             SingleValueItemStat stat = (SingleValueItemStat)result.MonsterStats.First();
-            Assert.NotNull(stat);
+            Assert.That(stat, Is.Not.Null);
             Assert.That(stat.Value, Is.EqualTo(3));
         }
 

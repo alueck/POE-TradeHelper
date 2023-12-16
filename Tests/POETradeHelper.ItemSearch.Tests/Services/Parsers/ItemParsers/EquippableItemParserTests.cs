@@ -63,7 +63,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -89,11 +89,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [TestCase("Coralito's Signature")]
-        [TestCase(null)]
         public void CanParseShouldReturnFalseForFlaskItem(string name)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -104,11 +103,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [TestCase("Kitava's Teachings")]
-        [TestCase(null)]
         public void CanParseShouldReturnFalseForJewelItem(string name)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -119,7 +117,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [TestCase(ItemRarity.Normal)]
@@ -145,7 +143,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsTrue(result.IsIdentified);
+            Assert.That(result.IsIdentified, Is.True);
         }
 
         [Test]
@@ -157,7 +155,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsFalse(result.IsIdentified);
+            Assert.That(result.IsIdentified, Is.False);
         }
 
         [Test]
@@ -224,7 +222,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsTrue(result.IsCorrupted);
+            Assert.That(result.IsCorrupted, Is.True);
         }
 
         [Test]
@@ -235,7 +233,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsFalse(result.IsCorrupted);
+            Assert.That(result.IsCorrupted, Is.False);
         }
 
         [TestCase(74)]

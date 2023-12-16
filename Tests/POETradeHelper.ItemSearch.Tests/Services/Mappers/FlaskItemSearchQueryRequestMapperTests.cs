@@ -55,7 +55,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.IsNull(result.Query.Name);
+            Assert.That(result.Query.Name, Is.Null);
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -68,7 +68,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.IsNull(result.Query.Name);
+            Assert.That(result.Query.Name, Is.Null);
         }
     }
 }

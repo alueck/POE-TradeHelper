@@ -34,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [TestCase(ItemRarity.Magic)]
@@ -87,7 +87,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsTrue(result.IsIdentified);
+            Assert.That(result.IsIdentified, Is.True);
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsFalse(result.IsIdentified);
+            Assert.That(result.IsIdentified, Is.False);
         }
 
         [Test]
@@ -167,7 +167,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsTrue(result.IsCorrupted);
+            Assert.That(result.IsCorrupted, Is.True);
         }
 
         [Test]
@@ -178,7 +178,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsFalse(result.IsCorrupted);
+            Assert.That(result.IsCorrupted, Is.False);
         }
 
         [Test]

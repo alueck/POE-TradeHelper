@@ -34,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsTrue(result.IsIdentified);
+            Assert.That(result.IsIdentified, Is.True);
         }
 
         [Test]
@@ -149,7 +149,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             FlaskItem result = (FlaskItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsFalse(result.IsIdentified);
+            Assert.That(result.IsIdentified, Is.False);
         }
 
         [Test]

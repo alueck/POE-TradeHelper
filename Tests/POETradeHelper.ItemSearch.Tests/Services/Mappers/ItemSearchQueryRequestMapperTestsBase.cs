@@ -55,7 +55,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             bool result = this.ItemSearchQueryRequestMapper.CanMap(item);
 
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [TestCaseSource(nameof(GetNonMatchingItems))]
@@ -63,7 +63,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             bool result = this.ItemSearchQueryRequestMapper.CanMap(nonEquippableItem);
 
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         protected static IEnumerable<Item> GetNonMatchingItems() => GetItems().Where(item => item.GetType() != typeof(TItemType));

@@ -45,6 +45,13 @@ namespace POETradeHelper.Common.Tests
             await this.userInputEventProvider.OnInitAsync();
         }
 
+        [TearDown]
+        public void Teardown()
+        {
+            this.keyPressed.Dispose();
+            this.hookMock.Dispose();
+        }
+
         [Test]
         public async Task SearchItemKeyCombinationShouldSendSearchItemCommandIfPathOfExileIsActiveWindow()
         {

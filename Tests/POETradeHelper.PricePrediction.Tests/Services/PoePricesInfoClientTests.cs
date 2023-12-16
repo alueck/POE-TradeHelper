@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.Json;
-
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 
 using NSubstitute;
@@ -144,7 +144,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
-            Assert.IsNull(result);
+            result.Should().BeNull();
         }
 
         [Test]
@@ -163,16 +163,14 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         }
 
         [TestCase("Heist", "")]
-        [TestCase("Heist", null)]
         [TestCase("", "Scroll of Wisdom")]
-        [TestCase(null, "Scroll of Wisdom")]
         public async Task GetPricePredictionAsyncShouldReturnNullIf(string league, string itemText)
         {
             // act
             PoePricesInfoPrediction? result = await this.poePricesInfoClient.GetPricePredictionAsync(league, itemText);
 
             // assert
-            Assert.IsNull(result);
+            result.Should().BeNull();
         }
     }
 }

@@ -94,7 +94,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsTrue(result.IsCorrupted);
+            Assert.That(result.IsCorrupted, Is.True);
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsFalse(result.IsCorrupted);
+            Assert.That(result.IsCorrupted, Is.False);
         }
 
         [Test]
@@ -183,7 +183,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Name, Is.EqualTo("Vaal Flameblast"));
             Assert.That(result.Type, Is.EqualTo("Vaal Flameblast"));
             Assert.That(result.IsCorrupted);
@@ -203,7 +203,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Name, Is.EqualTo("Vaal Impurity of Lightning"));
             Assert.That(result.Type, Is.EqualTo("Vaal Impurity of Lightning"));
             Assert.That(result.IsCorrupted);

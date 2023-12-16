@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 
 using NSubstitute;
@@ -351,7 +351,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             StatData result = this.statsDataService.GetStatDataById(itemStatId);
 
-            Assert.IsNull(result);
+            result.Should().BeNull();
         }
 
         [Test]
@@ -421,7 +421,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             StatData result = this.statsDataService.GetStatData(itemStatText, false);
 
             // assert
-            Assert.IsNull(result);
+            result.Should().BeNull();
         }
 
         [Test]

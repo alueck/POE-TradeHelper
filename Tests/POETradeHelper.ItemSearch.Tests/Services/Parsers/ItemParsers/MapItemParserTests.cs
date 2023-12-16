@@ -34,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -176,7 +176,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.IsTrue(result.IsBlighted);
+            Assert.That(result.IsBlighted, Is.True);
         }
 
         [TestCase("Blight-ravaged Dig Map", true)]

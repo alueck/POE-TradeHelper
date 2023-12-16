@@ -36,7 +36,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             PriceViewModel result = await this.priceViewModelFactory.CreateAsync(null);
 
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [TestCase(1.0)]

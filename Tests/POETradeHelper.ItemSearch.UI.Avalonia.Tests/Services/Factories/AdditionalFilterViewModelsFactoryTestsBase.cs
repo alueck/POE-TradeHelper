@@ -41,9 +41,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(result);
-
+            Assert.That(result, Is.Not.Null.And.Not.Empty);
             Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableMinMaxFilterViewModel(x, expected)));
         }
 
@@ -72,9 +70,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(result);
-
+            Assert.That(result, Is.Not.Null.And.Not.Empty);
             Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableMinMaxFilterViewModel(x, expected)));
         }
 
@@ -99,9 +95,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(result);
-
+            Assert.That(result, Is.Not.Null.And.Not.Empty);
             Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableSocketsFilterViewModel(x, expected)));
         }
 
@@ -134,9 +128,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(result);
-
+            Assert.That(result, Is.Not.Null.And.Not.Empty);
             Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableSocketsFilterViewModel(x, expected)));
         }
 
@@ -158,9 +150,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(result);
-
+            Assert.That(result, Is.Not.Null.And.Not.Empty);
             Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableFilterViewModel(x, expected)));
         }
 
@@ -185,9 +175,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(result);
-
+            Assert.That(result, Is.Not.Null.And.Not.Empty);
             Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableFilterViewModel(x, expected)));
         }
 

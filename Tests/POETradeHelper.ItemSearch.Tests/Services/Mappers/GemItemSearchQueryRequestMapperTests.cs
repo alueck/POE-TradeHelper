@@ -42,7 +42,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.IsNull(result.Query.Name);
+            Assert.That(result.Query.Name, Is.Null);
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.IsNull(result.Query.Filters.TypeFilters.Rarity);
+            Assert.That(result.Query.Filters.TypeFilters.Rarity, Is.Null);
         }
 
         [TestCase(10)]
@@ -67,9 +67,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             MinMaxFilter? gemLevelFilter = result.Query.Filters.MiscFilters.GemLevel;
-            Assert.IsNotNull(gemLevelFilter);
+            Assert.That(gemLevelFilter, Is.Not.Null);
             Assert.That(gemLevelFilter!.Min, Is.EqualTo(expected));
-            Assert.IsNull(gemLevelFilter.Max);
+            Assert.That(gemLevelFilter.Max, Is.Null);
         }
 
         [TestCase(10)]
@@ -84,9 +84,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             MinMaxFilter? qualityFilter = result.Query.Filters.MiscFilters.Quality;
-            Assert.IsNotNull(qualityFilter);
+            Assert.That(qualityFilter, Is.Not.Null);
             Assert.That(qualityFilter!.Min, Is.EqualTo(expected));
-            Assert.IsNull(qualityFilter.Max);
+            Assert.That(qualityFilter.Max, Is.Null);
         }
 
         [TestCase(GemQualityType.Default)]
@@ -104,7 +104,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             OptionFilter? gemQualityTypeFilter = result.Query.Filters.MiscFilters.GemAlternateQuality;
-            Assert.IsNotNull(gemQualityTypeFilter);
+            Assert.That(gemQualityTypeFilter, Is.Not.Null);
             Assert.That(gemQualityTypeFilter!.Option, Is.EqualTo(expected));
         }
     }

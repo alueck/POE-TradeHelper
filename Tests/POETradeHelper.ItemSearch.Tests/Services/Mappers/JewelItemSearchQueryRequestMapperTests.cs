@@ -56,7 +56,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.IsNull(result.Query.Name);
+            Assert.That(result.Query.Name, Is.Null);
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -69,7 +69,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.IsNull(result.Query.Name);
+            Assert.That(result.Query.Name, Is.Null);
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.NotNull(result.Query.Filters.TypeFilters);
+            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
             Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
         }
 
@@ -90,7 +90,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.NotNull(result.Query.Filters.TypeFilters);
+            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
             Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
         }
     }

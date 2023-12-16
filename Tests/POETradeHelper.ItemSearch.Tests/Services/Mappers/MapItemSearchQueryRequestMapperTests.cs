@@ -58,7 +58,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.IsNull(result.Query.Name);
+            Assert.That(result.Query.Name, Is.Null);
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -71,7 +71,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.IsNull(result.Query.Name);
+            Assert.That(result.Query.Name, Is.Null);
         }
 
         [TestCase(true)]
@@ -95,7 +95,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.NotNull(result.Query.Filters.TypeFilters);
+            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
             Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
         }
 
@@ -106,7 +106,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.NotNull(result.Query.Filters.TypeFilters);
+            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
             Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
         }
 
@@ -122,7 +122,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             MinMaxFilter? mapTierFilter = result.Query.Filters.MapFilters.MapTier;
-            Assert.NotNull(mapTierFilter);
+            Assert.That(mapTierFilter, Is.Not.Null);
             Assert.That(mapTierFilter!.Min, Is.EqualTo(mapTier));
             Assert.That(mapTierFilter.Max, Is.EqualTo(mapTier));
         }
@@ -139,7 +139,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             BoolOptionFilter? blightedFilter = result.Query.Filters.MapFilters.MapBlighted;
-            Assert.NotNull(blightedFilter);
+            Assert.That(blightedFilter, Is.Not.Null);
             Assert.That(blightedFilter!.Option, Is.EqualTo(isBlighted));
         }
 
@@ -155,7 +155,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             BoolOptionFilter? blightRavaged = result.Query.Filters.MapFilters.MapBlightRavaged;
-            Assert.NotNull(blightRavaged);
+            Assert.That(blightRavaged, Is.Not.Null);
             Assert.That(blightRavaged!.Option, Is.EqualTo(isBlightRavaged));
         }
     }

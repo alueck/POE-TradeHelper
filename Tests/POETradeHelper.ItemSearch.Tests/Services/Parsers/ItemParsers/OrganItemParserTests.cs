@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using FluentAssertions;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -31,7 +32,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsTrue(result);
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -42,7 +43,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsFalse(result);
+            result.Should().BeFalse();
         }
 
         [Test]
@@ -55,7 +56,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             ItemWithStats result = (ItemWithStats)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Name, Is.EqualTo(expected));
+            result.Name.Should().Be(expected);
         }
 
         [Test]
@@ -68,7 +69,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             ItemWithStats result = (ItemWithStats)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Type, Is.EqualTo(expected));
+            result.Type.Should().Be(expected);
         }
 
         [Test]
@@ -102,7 +103,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             ItemWithStats result = (ItemWithStats)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Stats, Is.SameAs(expectedOrganItemStats));
+            result.Stats.Should().BeSameAs(expectedOrganItemStats);
         }
 
         protected override string[] GetValidItemStringLines()
