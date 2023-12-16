@@ -23,7 +23,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
         {
             SearchQueryRequest result = new()
             {
-                League = this.ItemSearchOptions.CurrentValue.League.Id,
+                League = this.ItemSearchOptions.CurrentValue.League!.Id,
             };
 
             this.MapItemName(result, item);

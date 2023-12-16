@@ -269,7 +269,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-
             result.AllStats.Should().HaveCount(1);
             SingleValueItemStat itemStat = (SingleValueItemStat)result.AllStats.First();
             itemStat.Value.Should().Be(expected);
