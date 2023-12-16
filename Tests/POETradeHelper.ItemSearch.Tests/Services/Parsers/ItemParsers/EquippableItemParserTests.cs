@@ -270,7 +270,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         public void ParseShouldParseInfluence(InfluenceType expected)
         {
             string[] itemStringLines = this.itemStringBuilder
-                .WithInflucence(expected)
+                .WithInfluence(expected)
                 .BuildLines();
 
             EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);

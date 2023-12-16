@@ -40,7 +40,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             string[] itemStringLines = this.itemStringBuilder
                 .WithType("Oriath's Virtue's Eye")
                 .WithItemLevel(73)
-                .WithItemStat(expected, StatCategory.Monster)
+                .WithItemStat($"{expected}{Resources.UnscalableValueSuffix}", StatCategory.Monster)
                 .WithDescription(Resources.OrganItemDescriptor)
                 .BuildLines();
 

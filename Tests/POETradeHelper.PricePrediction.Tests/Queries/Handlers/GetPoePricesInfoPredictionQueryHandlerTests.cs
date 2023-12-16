@@ -28,7 +28,7 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
 
             EquippableItem? validItem = new EquippableItem(ItemRarity.Rare)
             {
-                ItemText = "abc",
+                ExtendedItemText = "abc",
             };
             this.validRequest = new GetPoePricesInfoPredictionQuery(validItem, new League { Id = "Heist" });
         }
@@ -45,7 +45,7 @@ namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
             // assert
             await this.poePricesInfoClientMock
                 .Received()
-                .GetPricePredictionAsync(this.validRequest.League.Id, this.validRequest.Item.ItemText, cancellationToken);
+                .GetPricePredictionAsync(this.validRequest.League.Id, this.validRequest.Item.ExtendedItemText, cancellationToken);
         }
 
         [Test]

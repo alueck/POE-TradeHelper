@@ -45,17 +45,17 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
         }
 
         [Test]
-        public async Task HandleShouldCallGetTextAsyncOnClipboardHelperDelayedUpToFiveTimesIfRetrievedTextFromClipboardDidNotChange()
+        public async Task HandleShouldCallGetTextAsyncOnClipboardHelperDelayedUpToEightTimesIfRetrievedTextFromClipboardDidNotChange()
         {
             this.clipboardHelperMock
                 .GetTextAsync()
-                .Returns(null, null, null, null, null, null, null, "string");
+                .Returns(null, null, null, null, null, null, null, null, null, null, "string");
 
             Func<Task> action = () => this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
-            action.ExecutionTime().Should().BeCloseTo(1000.Milliseconds(), 50.Milliseconds());
+            action.ExecutionTime().Should().BeCloseTo(1600.Milliseconds(), 100.Milliseconds());
             await this.clipboardHelperMock
-                .Received(6) // first call to save previous clipboard content for restore
+                .Received(9) // first call to save previous clipboard content for restore
                 .GetTextAsync();
         }
 

@@ -136,7 +136,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
                 const string monsterItemStatSuffix = @" \(×#\)";
                 string localSuffix = $@" \({Resources.LocalKeyword}\)";
 
-                return new Regex($@"^([\+\-]?{regexString}({monsterItemStatSuffix}|(?<{LocalStatMatchGroupName}>{localSuffix}))?)$");
+                return new Regex($@"^({regexString}({monsterItemStatSuffix}|(?<{LocalStatMatchGroupName}>{localSuffix}))?)$");
             }
         }
 

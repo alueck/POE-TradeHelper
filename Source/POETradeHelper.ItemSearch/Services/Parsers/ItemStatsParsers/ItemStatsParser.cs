@@ -28,22 +28,24 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
             int statsStartIndex = GetStatsStartIndex(itemStringLines);
 
-            IEnumerable<string> statTextLines = itemStringLines.Skip(statsStartIndex);
+            string[] statTextLines = itemStringLines.Skip(statsStartIndex).ToArray();
 
             int? tier = null;
             List<string> statTexts = new();
             List<ItemStat> itemStats = new();
             foreach (string statTextLine in statTextLines)
             {
-                if (statTextLine.StartsWith('{'))
-                {
-                    tier = TryGetTier(statTextLine);
-                }
-
-                if (statTextLine.StartsWith('{') || statTextLine.StartsWith('(') || statTextLine == ParserConstants.PropertyGroupSeparator)
+                if ((statTexts.Count > 0 && statTextLine.StartsWith('{')) || statTextLine.StartsWith('(') || statTextLine == ParserConstants.PropertyGroupSeparator)
                 {
                     itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier));
                     statTexts.Clear();
+                    tier = TryGetTier(statTextLine);
+                    continue;
+                }
+
+                if (statTextLine.StartsWith('{'))
+                {
+                    tier = TryGetTier(statTextLine);
                     continue;
                 }
 
@@ -56,6 +58,23 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
             result.AllStats.AddRange(itemStats);
             result.AllStats.AddRange(pseudoItemStats);
+
+            return result;
+        }
+
+        protected override ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
+        {
+            ItemStat? result = base.GetCompleteItemStat(itemStat, preferLocalStatData);
+
+            int? placeholderCount = result?.TextWithPlaceholders.Count(c => c == Placeholder);
+            if (placeholderCount == 1)
+            {
+                result = GetSingleValueItemStat(itemStat);
+            }
+            else if (placeholderCount == 2)
+            {
+                result = GetMinMaxValueItemStat(itemStat);
+            }
 
             return result;
         }
@@ -83,23 +102,6 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return int.TryParse(match.Groups["tier"].Value, out int tier)
                 ? tier
                 : null;
-        }
-
-        protected override ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
-        {
-            ItemStat? result = base.GetCompleteItemStat(itemStat, preferLocalStatData);
-
-            int? placeholderCount = result?.TextWithPlaceholders.Count(c => c == Placeholder);
-            if (placeholderCount == 1)
-            {
-                result = GetSingleValueItemStat(itemStat);
-            }
-            else if (placeholderCount == 2)
-            {
-                result = GetMinMaxValueItemStat(itemStat);
-            }
-
-            return result;
         }
 
         private ItemStat? ParseStatText(string statText, int? tier, bool preferLocalStats)
