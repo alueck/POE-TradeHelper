@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
@@ -27,7 +28,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsTrue(result);
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -39,7 +40,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.IsFalse(result);
+            result.Should().BeFalse();
         }
 
         [Test]
@@ -49,7 +50,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             ProphecyItem result = (ProphecyItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Name, Is.EqualTo(Prophecy));
+            result.Name.Should().Be(Prophecy);
         }
 
         [Test]
@@ -59,7 +60,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             ProphecyItem result = (ProphecyItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Type, Is.EqualTo(Prophecy));
+            result.Type.Should().Be(Prophecy);
         }
 
         protected override string[] GetValidItemStringLines()

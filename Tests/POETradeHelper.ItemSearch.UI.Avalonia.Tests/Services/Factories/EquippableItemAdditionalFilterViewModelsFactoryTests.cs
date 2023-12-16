@@ -27,7 +27,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             IEnumerable<FilterViewModelBase> result =
                 this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
-            Assert.IsNotNull(result);
             Assert.That(result, Is.Empty);
         }
 

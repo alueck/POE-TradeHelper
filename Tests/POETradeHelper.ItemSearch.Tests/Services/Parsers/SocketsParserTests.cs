@@ -23,7 +23,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             ItemSockets result = this.socketsParser.Parse(socketsString);
 
-            Assert.NotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(1));
             Assert.That(result.SocketGroups.Count, Is.EqualTo(1));
 
@@ -36,7 +36,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             ItemSockets result = this.socketsParser.Parse(socketsString);
 
-            Assert.NotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
             Assert.That(result.SocketGroups.Count, Is.EqualTo(2));
 
@@ -49,7 +49,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             ItemSockets result = this.socketsParser.Parse("R-B");
 
-            Assert.NotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
             Assert.That(result.SocketGroups.Count, Is.EqualTo(1));
 
@@ -61,7 +61,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             ItemSockets result = this.socketsParser.Parse("R-B W-G");
 
-            Assert.NotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(4));
             Assert.That(result.SocketGroups.Count, Is.EqualTo(2));
 
@@ -71,11 +71,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
         [TestCase(null)]
         [TestCase("  ")]
-        public void ParseShouldReturnEmptyItemSocketsIfStringIsNullOrWhitespace(string socketsString)
+        public void ParseShouldReturnEmptyItemSocketsIfStringIsNullOrWhitespace(string? socketsString)
         {
             ItemSockets result = this.socketsParser.Parse(socketsString);
 
-            Assert.NotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(0));
         }
 

@@ -82,7 +82,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             ExchangeQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.NotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Query.Have, Has.Count.EqualTo(1));
             Assert.That(result.Query.Have, Has.One.EqualTo(expected));
         }
@@ -94,7 +94,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             ExchangeQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.NotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Query.Want, Has.Count.EqualTo(1));
             Assert.That(result.Query.Want, Has.One.EqualTo("chaos"));
         }

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 using POETradeHelper.Common.Extensions;
 
@@ -22,7 +23,7 @@ namespace POETradeHelper.Common.Tests.Extensions
 
             TestEnumWrapper.TestEnum? result = invalidDisplayName.ParseToEnumByDisplayName<TestEnumWrapper.TestEnum>();
 
-            Assert.IsNull(result);
+            result.Should().BeNull();
         }
     }
 }

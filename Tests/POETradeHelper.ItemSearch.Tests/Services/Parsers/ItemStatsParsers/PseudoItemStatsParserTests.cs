@@ -92,7 +92,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
             ItemStat itemStat = result.First();
-            Assert.IsInstanceOf<SingleValueItemStat>(itemStat);
+            Assert.That(itemStat, Is.InstanceOf<SingleValueItemStat>());
             Assert.That(itemStat.StatCategory, Is.EqualTo(StatCategory.Pseudo));
         }
 
@@ -176,7 +176,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
             ItemStat itemStat = result.First();
-            Assert.IsInstanceOf<MinMaxValueItemStat>(itemStat);
+            Assert.That(itemStat, Is.InstanceOf<MinMaxValueItemStat>());
             Assert.That(itemStat.StatCategory, Is.EqualTo(StatCategory.Pseudo));
         }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Media;
-
+using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
@@ -106,7 +106,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
 
             IImage result = await this.imageService.GetImageAsync(Uri);
 
-            Assert.IsNull(result);
+            result.Should().BeNull();
         }
 
         [TestCase(typeof(OperationCanceledException))]

@@ -12,13 +12,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
-      - name: Setup .NET 6.0
-        uses: actions/setup-dotnet@v1
+      - name: Setup .NET 8.0
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 6.0.102
+          dotnet-version: 8.x
       - name: Build project
         run: |
-          dotnet publish .\Source\POETradeHelper\POETradeHelper.csproj -c Release -r win10-x64 -o Publish -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
+          dotnet publish .\Source\POETradeHelper\POETradeHelper.csproj -c Release -r win-x64 -o Publish -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest

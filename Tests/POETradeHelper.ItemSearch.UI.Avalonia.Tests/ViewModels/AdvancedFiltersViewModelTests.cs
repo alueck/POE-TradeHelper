@@ -44,7 +44,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
-            Assert.IsFalse(this.advancedFiltersViewModel.IsEnabled);
+            Assert.That(this.advancedFiltersViewModel.IsEnabled, Is.False);
         }
 
         [TestCaseSource(nameof(GetEnabledItems))]
@@ -54,7 +54,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
-            Assert.IsTrue(this.advancedFiltersViewModel.IsEnabled);
+            Assert.That(this.advancedFiltersViewModel.IsEnabled, Is.True);
         }
 
         [TestCase(StatCategory.Enchant)]
