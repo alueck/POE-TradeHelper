@@ -1,4 +1,9 @@
-﻿namespace POETradeHelper.ItemSearch.Contract.Models
+﻿using System;
+using System.Linq;
+using POETradeHelper.ItemSearch.Contract.Extensions;
+using POETradeHelper.ItemSearch.Contract.Properties;
+
+namespace POETradeHelper.ItemSearch.Contract.Models
 {
     public abstract class Item
     {
@@ -7,7 +12,7 @@
             this.Rarity = rarity;
         }
 
-        public string ItemText { get; set; } = string.Empty;
+        public string ExtendedItemText { get; set; } = string.Empty;
 
         public string Name { get; set; } = string.Empty;
 
@@ -27,6 +32,20 @@
                 }
 
                 return displayName;
+            }
+        }
+
+        public string PlainItemText
+        {
+            get
+            {
+                string text = string.Join(Environment.NewLine, this.ExtendedItemText
+                        .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Where(x => !x.StartsWith('{') && !x.StartsWith('(')))
+                    .RemoveStatRanges()
+                    .Replace(Resources.UnscalableValueSuffix, string.Empty);
+
+                return text;
             }
         }
     }

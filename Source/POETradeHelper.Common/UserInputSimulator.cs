@@ -20,10 +20,7 @@ namespace POETradeHelper.Common
             this.eventSimulator = eventSimulator;
         }
 
-        public void SendCopyCommand()
-        {
-            this.SendKeyWithModifier(KeyCode.VcLeftControl, KeyCode.VcC);
-        }
+        public void SendCopyAdvancedItemStringCommand() => this.SendKeyWithModifiers(KeyCode.VcC, KeyCode.VcLeftControl,  KeyCode.VcLeftAlt);
 
         public async Task SendGotoHideoutCommand()
         {
@@ -37,7 +34,7 @@ namespace POETradeHelper.Common
 
             await this.clipboardHelper.SetTextAsync(chatCommand);
             this.TypeKey(KeyCode.VcEnter);
-            this.SendKeyWithModifier(KeyCode.VcLeftControl, KeyCode.VcA);
+            this.SendKeyWithModifiers(KeyCode.VcA, KeyCode.VcLeftControl);
             this.Paste();
             this.TypeKey(KeyCode.VcEnter);
             await Task.Delay(200);
@@ -45,23 +42,36 @@ namespace POETradeHelper.Common
             await this.clipboardHelper.SetTextAsync(clipBoardText);
         }
 
-        private void Paste()
-        {
-            this.SendKeyWithModifier(KeyCode.VcLeftControl, KeyCode.VcV);
-        }
+        private void Paste() => this.SendKeyWithModifiers(KeyCode.VcV, KeyCode.VcLeftControl);
 
-        private void SendKeyWithModifier(KeyCode modifier, KeyCode key)
+        private void SendKeyWithModifiers(KeyCode key, params KeyCode[] modifiers)
         {
-            this.eventSimulator.SimulateKeyPress(modifier);
-            this.eventSimulator.SimulateKeyPress(key);
-            this.eventSimulator.SimulateKeyRelease(modifier);
-            this.eventSimulator.SimulateKeyRelease(key);
+            this.SimulateKeyPress(modifiers);
+            this.SimulateKeyPress(key);
+            this.SimulateKeyRelease(modifiers);
+            this.SimulateKeyRelease(key);
         }
 
         private void TypeKey(KeyCode keyCode)
         {
-            this.eventSimulator.SimulateKeyPress(keyCode);
-            this.eventSimulator.SimulateKeyRelease(keyCode);
+            this.SimulateKeyPress(keyCode);
+            this.SimulateKeyRelease(keyCode);
+        }
+
+        private void SimulateKeyPress(params KeyCode[] keys)
+        {
+            foreach (KeyCode key in keys)
+            {
+                this.eventSimulator.SimulateKeyPress(key);
+            }
+        }
+
+        private void SimulateKeyRelease(params KeyCode[] keys)
+        {
+            foreach (KeyCode key in keys)
+            {
+                this.eventSimulator.SimulateKeyRelease(key);
+            }
         }
     }
 }

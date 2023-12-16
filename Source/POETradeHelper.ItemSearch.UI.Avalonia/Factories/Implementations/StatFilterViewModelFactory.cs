@@ -71,6 +71,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 Max = matchingFilter != null ? matchingFilter.Value.Max : GetValueWithOffset(minMaxTuple.MaxValue, maxValuePercentageOffset),
                 Current = GetCurrent(minMaxTuple.MinValue, minMaxTuple.MaxValue),
                 Text = itemStat.TextWithPlaceholders,
+                Tier = itemStat.Tier,
             };
         }
 

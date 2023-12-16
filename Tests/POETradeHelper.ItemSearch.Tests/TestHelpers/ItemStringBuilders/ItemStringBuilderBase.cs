@@ -55,7 +55,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
             return (T)this;
         }
 
-        public string[] BuildLines() => this.Build().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        public string[] BuildLines() => this.Build().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         public abstract string Build();
     }

@@ -3,7 +3,9 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 
 using POETradeHelper.Common.Extensions;
+using POETradeHelper.ItemSearch.Contract.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
@@ -22,15 +24,36 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
         public ItemStats Parse(string[] itemStringLines, bool preferLocalStats)
         {
-            ItemStats result = new ItemStats();
+            ItemStats result = new();
 
             int statsStartIndex = GetStatsStartIndex(itemStringLines);
 
-            IEnumerable<string> statTexts = itemStringLines.Skip(statsStartIndex)
-                .Where(s => s != ParserConstants.PropertyGroupSeparator);
+            string[] statTextLines = itemStringLines.Skip(statsStartIndex).ToArray();
 
-            List<ItemStat> itemStats =
-                statTexts.Select(s => this.ParseStatText(s, preferLocalStats)).OfType<ItemStat>().ToList();
+            int? tier = null;
+            List<string> statTexts = new();
+            List<ItemStat> itemStats = new();
+            foreach (string statTextLine in statTextLines)
+            {
+                if ((statTexts.Count > 0 && statTextLine.StartsWith('{')) || statTextLine.StartsWith('(') || statTextLine == ParserConstants.PropertyGroupSeparator)
+                {
+                    itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier));
+                    statTexts.Clear();
+                    tier = TryGetTier(statTextLine);
+                    continue;
+                }
+
+                if (statTextLine.StartsWith('{'))
+                {
+                    tier = TryGetTier(statTextLine);
+                    continue;
+                }
+
+                statTexts.Add(statTextLine.Replace(Resources.UnscalableValueSuffix, string.Empty).RemoveStatRanges());
+            }
+
+            itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier));
+
             IEnumerable<ItemStat> pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
             result.AllStats.AddRange(itemStats);
@@ -56,7 +79,32 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return result;
         }
 
-        private ItemStat? ParseStatText(string statText, bool preferLocalStats)
+        private IEnumerable<ItemStat> GetItemStats(bool preferLocalStats, IReadOnlyCollection<string> statTexts, int? tier)
+        {
+            List<ItemStat> result = new();
+            ItemStat? stat = this.ParseStatText(string.Join('\n', statTexts), tier, preferLocalStats);
+            if (stat != null)
+            {
+                result.Add(stat);
+            }
+            else
+            {
+                result.AddRange(statTexts.Select(x => this.ParseStatText(x, tier, preferLocalStats)).OfType<ItemStat>());
+            }
+
+            return result;
+        }
+
+        private static int? TryGetTier(string statDescription)
+        {
+            Match match = Regex.Match(statDescription, @"(Rank|Tier): (?<tier>\d+)");
+
+            return int.TryParse(match.Groups["tier"].Value, out int tier)
+                ? tier
+                : null;
+        }
+
+        private ItemStat? ParseStatText(string statText, int? tier, bool preferLocalStats)
         {
             if (!TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out ItemStat? result)
                 && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
@@ -69,10 +117,15 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
                 };
             }
 
+            result.Tier = tier;
+
             return this.GetCompleteItemStat(result, preferLocalStats);
         }
 
-        private static bool TryGetItemStatForCategoryByMarker(string statText, StatCategory statCategory, [NotNullWhen(true)] out ItemStat? itemStat)
+        private static bool TryGetItemStatForCategoryByMarker(
+            string statText,
+            StatCategory statCategory,
+            [NotNullWhen(true)] out ItemStat? itemStat)
         {
             itemStat = null;
 
@@ -107,7 +160,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
         private static ItemStat GetMinMaxValueItemStat(ItemStat itemStat)
         {
-            MinMaxValueItemStat result = new MinMaxValueItemStat(itemStat);
+            MinMaxValueItemStat result = new(itemStat);
 
             int maxValueIndex = itemStat.TextWithPlaceholders.LastIndexOf(Placeholder);
             if (maxValueIndex >= 0)

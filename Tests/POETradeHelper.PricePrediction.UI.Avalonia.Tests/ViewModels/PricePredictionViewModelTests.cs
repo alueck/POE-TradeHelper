@@ -50,7 +50,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
             // arrange
             EquippableItem item = new EquippableItem(ItemRarity.Rare)
             {
-                ItemText = "abc",
+                ExtendedItemText = "abc",
             };
 
             this.itemSearchOptionsMock.CurrentValue
@@ -74,7 +74,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
             // arrange
             EquippableItem item = new EquippableItem(ItemRarity.Rare)
             {
-                ItemText = "text",
+                ExtendedItemText = "text",
             };
 
             this.itemSearchOptionsMock.CurrentValue
@@ -130,7 +130,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
             // arrange
             EquippableItem item = new EquippableItem(ItemRarity.Rare)
             {
-                ItemText = "text",
+                ExtendedItemText = "text",
             };
 
             this.itemSearchOptionsMock.CurrentValue

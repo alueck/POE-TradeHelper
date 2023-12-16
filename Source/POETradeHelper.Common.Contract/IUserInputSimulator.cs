@@ -4,7 +4,7 @@ namespace POETradeHelper.Common.Contract
 {
     public interface IUserInputSimulator
     {
-        void SendCopyCommand();
+        void SendCopyAdvancedItemStringCommand();
 
         Task SendGotoHideoutCommand();
     }

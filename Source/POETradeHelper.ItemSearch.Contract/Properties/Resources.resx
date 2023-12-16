@@ -273,4 +273,7 @@
   <data name="BlightRavagedPrefix" xml:space="preserve">
     <value>Blight-ravaged</value>
   </data>
+  <data name="UnscalableValueSuffix" xml:space="preserve">
+    <value> — Unscalable Value</value>
+  </data>
 </root>

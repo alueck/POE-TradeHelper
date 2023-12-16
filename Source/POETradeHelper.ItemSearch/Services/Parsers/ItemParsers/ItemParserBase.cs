@@ -12,7 +12,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         public Item Parse(string[] itemStringLines)
         {
             Item item = this.ParseItem(itemStringLines);
-            item.ItemText = string.Join(Environment.NewLine, itemStringLines);
+            item.ExtendedItemText = string.Join(Environment.NewLine, itemStringLines);
 
             return item;
         }

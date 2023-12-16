@@ -77,12 +77,12 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
             try
             {
                 if (this.itemSearchOptions.CurrentValue.PricePredictionEnabled &&
-                    !string.Equals(this.item?.ItemText, item.ItemText))
+                    !string.Equals(this.item?.ExtendedItemText, item.ExtendedItemText))
                 {
                     this.item = item;
                     this.Clear();
 
-                    GetPoePricesInfoPredictionQuery request = new(item, this.itemSearchOptions.CurrentValue.League);
+                    GetPoePricesInfoPredictionQuery request = new(item, this.itemSearchOptions.CurrentValue.League!);
                     PoePricesInfoPrediction poePricesInfoPrediction =
                         await this.mediator.Send(request, cancellationToken).ConfigureAwait(true);
 

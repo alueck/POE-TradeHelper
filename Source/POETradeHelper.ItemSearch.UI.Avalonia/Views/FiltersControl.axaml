@@ -31,7 +31,7 @@
     <DataTemplate DataType="{x:Type localVMs:BindableSocketsFilterViewModel}">
       <Grid>
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="325" MaxWidth="325" />
+          <ColumnDefinition Width="310" MaxWidth="310" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
           <RowDefinition />
@@ -103,21 +103,28 @@
         </Grid>
       </Grid>
     </DataTemplate>
-
+    
     <DataTemplate DataType="{x:Type localVMs:IMinMaxFilterViewModel}">
       <Grid>
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="325" MaxWidth="325" />
+          <ColumnDefinition Width="310" MaxWidth="310" />
+          <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
           <RowDefinition />
           <RowDefinition />
         </Grid.RowDefinitions>
 
-        <localViews:SelectableFilterControl Grid.Column="0" Filter="{Binding .}" />
+        <localViews:SelectableFilterControl Grid.Row="0" Grid.Column="0" Filter="{Binding .}" />
+        <TextBlock Grid.Row="0" Grid.Column="1"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"
+                   Text="{Binding Tier, StringFormat={}T{0}}"
+                   IsVisible="{Binding Tier, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
         <Grid
             Grid.Row="1"
+            Grid.Column="0"
             Margin="25,0,0,0"
             IsVisible="{Binding IsEnabled}">
           <Grid.ColumnDefinitions>
@@ -149,7 +156,7 @@
     <DataTemplate DataType="{x:Type localVMs:FilterViewModelBase}">
       <Grid>
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="325" MaxWidth="325" />
+          <ColumnDefinition Width="310" MaxWidth="310" />
         </Grid.ColumnDefinitions>
 
         <localViews:SelectableFilterControl

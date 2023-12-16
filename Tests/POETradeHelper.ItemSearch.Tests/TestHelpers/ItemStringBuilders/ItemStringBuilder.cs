@@ -44,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
             return this;
         }
 
-        public ItemStringBuilder WithInflucence(InfluenceType influence)
+        public ItemStringBuilder WithInfluence(InfluenceType influence)
         {
             this.InfluenceType = influence;
             return this;

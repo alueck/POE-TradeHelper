@@ -25,10 +25,10 @@ namespace POETradeHelper.PricePrediction.Queries.Handlers
             PoePricesInfoPrediction? prediction = null;
 
             if (request is { League: { }, Item.Rarity: ItemRarity.Rare }
-                && !string.IsNullOrEmpty(request.Item.ItemText))
+                && !string.IsNullOrEmpty(request.Item.PlainItemText))
             {
                 prediction = await this.poePricesInfoClient
-                    .GetPricePredictionAsync(request.League.Id, request.Item.ItemText, cancellationToken)
+                    .GetPricePredictionAsync(request.League.Id, request.Item.PlainItemText, cancellationToken)
                     .ConfigureAwait(false);
             }
 

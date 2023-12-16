@@ -29,7 +29,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
             ExchangeQueryRequest result = new()
             {
-                League = this.itemSearchOptions.CurrentValue.League.Id,
+                League = this.itemSearchOptions.CurrentValue.League!.Id,
             };
             string? itemId = this.staticItemDataService.GetId(item.Name);
 

@@ -1,3 +1,6 @@
+using FluentAssertions;
+using FluentAssertions.Extensions;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -27,18 +30,33 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
             await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
             await this.clipboardHelperMock
-                .Received(2)
+                .Received()
                 .GetTextAsync();
         }
 
         [Test]
-        public async Task HandleShouldCallSendCopyCommandOnUserInputSimulator()
+        public async Task HandleShouldCallSendCopyAdvancedItemStringCommandOnUserInputSimulator()
         {
             await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
             this.userInputSimulatorMock
                 .Received()
-                .SendCopyCommand();
+                .SendCopyAdvancedItemStringCommand();
+        }
+
+        [Test]
+        public async Task HandleShouldCallGetTextAsyncOnClipboardHelperDelayedUpToEightTimesIfRetrievedTextFromClipboardDidNotChange()
+        {
+            this.clipboardHelperMock
+                .GetTextAsync()
+                .Returns(null, null, null, null, null, null, null, null, null, null, "string");
+
+            Func<Task> action = () => this.handler.Handle(new GetItemTextFromCursorQuery(), default);
+
+            action.ExecutionTime().Should().BeCloseTo(1600.Milliseconds(), 100.Milliseconds());
+            await this.clipboardHelperMock
+                .Received(9) // first call to save previous clipboard content for restore
+                .GetTextAsync();
         }
 
         [Test]
@@ -49,7 +67,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
                 .Returns("previously copied text");
 
             this.userInputSimulatorMock
-                .WhenForAnyArgs(m => m.SendCopyCommand())
+                .WhenForAnyArgs(m => m.SendCopyAdvancedItemStringCommand())
                 .Do(_ => this.clipboardHelperMock.GetTextAsync().Returns(expected));
 
             string result = await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
@@ -65,7 +83,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
                 .Returns(expected);
 
             this.userInputSimulatorMock
-                .WhenForAnyArgs(m => m.SendCopyCommand())
+                .WhenForAnyArgs(m => m.SendCopyAdvancedItemStringCommand())
                 .Do(_ => this.clipboardHelperMock.GetTextAsync().Returns(expected));
 
             await this.handler.Handle(new GetItemTextFromCursorQuery(), default);

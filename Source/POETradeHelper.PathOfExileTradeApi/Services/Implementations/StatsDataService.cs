@@ -132,11 +132,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             /// </example>
             private static Regex GetStatDataTextRegex(string statText)
             {
-                string regexString = NumberRegex.Replace(statText, match => $"({Regex.Escape(match.Value)}|{Regex.Escape(Placeholder)})");
+                string regexString = NumberRegex.Replace(statText, match => @$"({Regex.Escape(match.Value)}|[\+\-]?{Regex.Escape(Placeholder)})");
                 const string monsterItemStatSuffix = @" \(×#\)";
                 string localSuffix = $@" \({Resources.LocalKeyword}\)";
 
-                return new Regex($@"^([\+\-]?{regexString}({monsterItemStatSuffix}|(?<{LocalStatMatchGroupName}>{localSuffix}))?)$");
+                return new Regex($@"^({regexString}({monsterItemStatSuffix}|(?<{LocalStatMatchGroupName}>{localSuffix}))?)$");
             }
         }
 

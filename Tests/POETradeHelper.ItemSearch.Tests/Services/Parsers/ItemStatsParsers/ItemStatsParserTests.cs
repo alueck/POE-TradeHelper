@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using FluentAssertions;
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -45,10 +46,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-
-            ItemStat itemStat = result.AllStats.First();
-            Assert.That(itemStat.Text, Is.EqualTo(expected));
+            result.AllStats.Should().HaveCount(1);
+            result.AllStats.First().Text.Should().Be(expected);
         }
 
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage", "Minions deal # to # additional Physical Damage")]
@@ -69,18 +68,16 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-
-            ItemStat itemStat = result.AllStats.First();
-            Assert.That(itemStat.TextWithPlaceholders, Is.EqualTo(expected));
+            result.AllStats.Should().HaveCount(1);
+            result.AllStats.First().TextWithPlaceholders.Should().Be(expected);
         }
 
-        [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage")]
-        [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)")]
-        [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)")]
-        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)")]
-        [TestCase(StatCategory.Fractured, "Adds 11 to 142 Lightning Damage (fractured)")]
-        public void ParseShouldParseStatTextInCorrectCategory(StatCategory expected, string statText)
+        [TestCase("Minions deal 1 to 15 additional Physical Damage", StatCategory.Explicit)]
+        [TestCase("+25% to Cold Resistance (implicit)", StatCategory.Implicit)]
+        [TestCase("+25% to Cold Resistance (crafted)", StatCategory.Crafted)]
+        [TestCase("10% increased Movement Speed if you haven't been Hit Recently (enchant)", StatCategory.Enchant)]
+        [TestCase("Adds 11 to 142 Lightning Damage (fractured)", StatCategory.Fractured)]
+        public void ParseShouldParseStatTextInCorrectCategory(string statText, StatCategory expected)
         {
             string[] itemStringLines = this.itemStringBuilder
                 .WithName("Titan Greaves")
@@ -93,10 +90,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-
-            ItemStat itemStat = result.AllStats.First();
-            Assert.That(itemStat.StatCategory, Is.EqualTo(expected));
+            result.AllStats.Should().HaveCount(1);
+            result.AllStats.First().StatCategory.Should().Be(expected);
         }
 
         [Test]
@@ -111,7 +106,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Is.Empty);
+            result.AllStats.Should().BeEmpty();
         }
 
         [TestCase(StatCategory.Explicit)]
@@ -185,10 +180,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-
-            ItemStat itemStat = result.AllStats.First();
-            Assert.That(itemStat.Id, Is.EqualTo(expected));
+            result.AllStats.Should().HaveCount(1);
+            result.AllStats.First().Id.Should().Be(expected);
         }
 
         [TestCase(StatCategory.Enchant, "Trigger Edict of Frost on Kill", "#% chance to Trigger Edict of Frost on Kill")]
@@ -209,10 +202,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-
-            ItemStat itemStat = result.AllStats.First();
-            Assert.That(itemStat.GetType(), Is.EqualTo(typeof(ItemStat)));
+            result.AllStats.Should().HaveCount(1);
+            result.AllStats.First().Should().BeOfType<ItemStat>();
         }
 
         [Test]
@@ -234,8 +225,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             Assert.That(result.AllStats, Has.Count.EqualTo(1));
 
-            ItemStat itemStat = result.AllStats.First();
-            Assert.IsInstanceOf<SingleValueItemStat>(itemStat);
+            result.AllStats.Should().HaveCount(1);
+            result.AllStats.First().Should().BeOfType<SingleValueItemStat>();
         }
 
         [Test]
@@ -255,10 +246,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-
-            ItemStat itemStat = result.AllStats.First();
-            Assert.IsInstanceOf<MinMaxValueItemStat>(itemStat);
+            result.AllStats.Should().HaveCount(1);
+            result.AllStats.First().Should().BeOfType<MinMaxValueItemStat>();
         }
 
         [TestCase(StatCategory.Explicit, "+25% to Cold Resistance", "#% to Cold Resistance", 25)]
@@ -280,9 +269,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
+            result.AllStats.Should().HaveCount(1);
             SingleValueItemStat itemStat = (SingleValueItemStat)result.AllStats.First();
-            Assert.That(itemStat.Value, Is.EqualTo(expected));
+            itemStat.Value.Should().Be(expected);
         }
 
         [TestCase(StatCategory.Explicit, "Adds 10 to 23 Chaos Damage", "Adds # to # Chaos Damage", 10)]
@@ -303,9 +292,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
+            result.AllStats.Should().HaveCount(1);
             MinMaxValueItemStat itemStat = (MinMaxValueItemStat)result.AllStats.First();
-            Assert.That(itemStat.MinValue, Is.EqualTo(expected));
+            itemStat.MinValue.Should().Be(expected);
         }
 
         [TestCase(StatCategory.Explicit, "Adds 10 to 23 Chaos Damage", "Adds # to # Chaos Damage", 23)]
@@ -326,9 +315,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
+            result.AllStats.Should().HaveCount(1);
             MinMaxValueItemStat itemStat = (MinMaxValueItemStat)result.AllStats.First();
-            Assert.That(itemStat.MaxValue, Is.EqualTo(expected));
+            itemStat.MaxValue.Should().Be(expected);
         }
 
         [Test]
@@ -375,7 +364,30 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Contains.Item(expected));
+            result.AllStats.Should().Contain(expected);
+        }
+
+        [Test]
+        public void ParseShouldParseStatTier()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                .WithName("Titan Greaves")
+                .WithItemLevel(75)
+                .WithItemStat("{ Prefix Modifier \"Hunter's\" (Tier: 2) — Damage, Chaos, Ailment }\n84(80-89)% increased Chaos Damage over Time", StatCategory.Explicit)
+                .BuildLines();
+
+            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new StatData { Type = "Explicit" });
+
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
+
+            result.ExplicitStats.Should()
+                .HaveCount(1)
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Explicit)
+                {
+                    Text = "84% increased Chaos Damage over Time",
+                    Tier = 2,
+                });
         }
 
         [Test]
@@ -447,39 +459,168 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(4));
-
-            Assert.That(result.ExplicitStats, Has.Count.EqualTo(1));
-            AssertEquals(expectedExplicitItemStat, result.ExplicitStats.First());
-
-            Assert.That(result.ImplicitStats, Has.Count.EqualTo(1));
-            AssertEquals(expectedImplicitItemStat, result.ImplicitStats.First());
-
-            Assert.That(result.CraftedStats, Has.Count.EqualTo(1));
-            AssertEquals(expectedCraftedItemStat, result.CraftedStats.First());
-
-            Assert.That(result.EnchantedStats, Has.Count.EqualTo(1));
-            AssertEquals(expectedEnchantedItemStat, result.EnchantedStats.First());
+            result.AllStats.Should().HaveCount(4);
+            result.ExplicitStats.Should().ContainEquivalentOf(expectedExplicitItemStat, opt => opt.RespectingRuntimeTypes());
+            result.ImplicitStats.Should().ContainEquivalentOf(expectedImplicitItemStat, opt => opt.RespectingRuntimeTypes());
+            result.CraftedStats.Should().ContainEquivalentOf(expectedCraftedItemStat, opt => opt.RespectingRuntimeTypes());
+            result.EnchantedStats.Should().ContainEquivalentOf(expectedEnchantedItemStat, opt => opt.RespectingRuntimeTypes());
         }
 
-        private static void AssertEquals(ItemStat expectedItemStat, ItemStat actualItemStat)
+        [Test]
+        public void ParseShouldParseItemWithExtendedItemTextCorrectly()
         {
-            Assert.That(actualItemStat.GetType(), Is.EqualTo(expectedItemStat.GetType()));
-            Assert.That(actualItemStat.Id, Is.EqualTo(expectedItemStat.Id));
-            Assert.That(actualItemStat.StatCategory, Is.EqualTo(expectedItemStat.StatCategory));
-            Assert.That(actualItemStat.Text, Is.EqualTo(expectedItemStat.Text));
-            Assert.That(actualItemStat.TextWithPlaceholders, Is.EqualTo(expectedItemStat.TextWithPlaceholders));
+            // arrange
+            string itemText = @"
+Item Class: Boots
+Rarity: Rare
+Honour Stride
+Dragonscale Boots
+--------
+Quality: +20% (augmented)
+Armour: 145 (augmented)
+Evasion Rating: 145 (augmented)
+--------
+Requirements:
+Level: 70
+Str: 130
+Dex: 67
+Int: 35
+--------
+Sockets: R-R-R-R 
+--------
+Item Level: 72
+--------
+6% increased Movement Speed if you haven't been Hit Recently (enchant)
+(Recently refers to the past 4 seconds) (enchant)
+--------
+{ Prefix Modifier ""Athlete's"" (Tier: 1) — Life }
++87(80-89) to maximum Life
+{ Master Crafted Prefix Modifier ""Upgraded"" (Rank: 3) — Speed }
+23(20-24)% increased Movement Speed (crafted)
+{ Suffix Modifier ""of the Polar Bear"" (Tier: 3) — Elemental, Cold, Resistance }
++40(36-41)% to Cold Resistance
+{ Suffix Modifier ""of the Apt"" (Tier: 1) }
+32% reduced Attribute Requirements
+(Attributes are Strength, Dexterity, and Intelligence)
+";
+            this.statsDataServiceMock
+                .GetStatData(Arg.Is<string>(s => !s.Contains("Movement") && !string.IsNullOrWhiteSpace(s)), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new StatData { Type = StatCategory.Explicit.GetDisplayName() });
+            this.statsDataServiceMock
+                .GetStatData(Arg.Is<string>(s => s.Contains("6%")), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new StatData { Type = StatCategory.Enchant.GetDisplayName() });
+            this.statsDataServiceMock
+                .GetStatData(Arg.Is<string>(s => s.Contains("23")), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new StatData { Type = StatCategory.Crafted.GetDisplayName() });
 
-            if (expectedItemStat is SingleValueItemStat expectedSingleValueItemStat)
-            {
-                Assert.That(((SingleValueItemStat)actualItemStat).Value, Is.EqualTo(expectedSingleValueItemStat.Value));
-            }
-            else if (expectedItemStat is MinMaxValueItemStat expectedMinMaxValueItemStat)
-            {
-                MinMaxValueItemStat actualMinMaxValueItemStat = (MinMaxValueItemStat)actualItemStat;
-                Assert.That(actualMinMaxValueItemStat.MinValue, Is.EqualTo(expectedMinMaxValueItemStat.MinValue));
-                Assert.That(actualMinMaxValueItemStat.MaxValue, Is.EqualTo(expectedMinMaxValueItemStat.MaxValue));
-            }
+            // act
+            ItemStats result = this.itemStatsParser.Parse(itemText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries), false);
+
+            // assert
+            result.EnchantedStats.Should()
+                .HaveCount(1)
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Enchant)
+                {
+                    Text = "6% increased Movement Speed if you haven't been Hit Recently",
+                });
+
+            result.ExplicitStats.Should()
+                .HaveCount(3)
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Explicit)
+                {
+                    Text = "+87 to maximum Life",
+                    Tier = 1,
+                })
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Explicit)
+                {
+                    Text = "+40% to Cold Resistance",
+                    Tier = 3,
+                })
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Explicit)
+                {
+                    Text = "32% reduced Attribute Requirements",
+                    Tier = 1,
+                });
+
+            result.CraftedStats.Should()
+                .HaveCount(1)
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Crafted)
+                {
+                    Text = "23% increased Movement Speed",
+                    Tier = 3,
+                });
+        }
+
+        [Test]
+        public void ParseShouldParseUniqueItemWithExtendedItemTextCorrectly()
+        {
+            // arrange
+            string itemText = @"
+Item Class: Gloves
+Rarity: Unique
+The Embalmer
+Carnal Mitts
+--------
+Quality: +20% (augmented)
+Evasion Rating: 108 (augmented)
+Energy Shield: 23 (augmented)
+--------
+Requirements:
+Level: 69
+Dex: 151
+Int: 108
+--------
+Sockets: B-G-G-G 
+--------
+Item Level: 51
+--------
+Trigger Edict of Frost on Kill (enchant)
+--------
+{ Unique Modifier — Gem }
+Socketed Gems are Supported by Level 20 Vile Toxins — Unscalable Value
+{ Unique Modifier — Chaos, Ailment }
+22(20-25)% increased Poison Duration
+{ Unique Modifier — Life }
++59(50-70) to maximum Life
+{ Unique Modifier — Chaos, Resistance }
++19(17-29)% to Chaos Resistance
+{ Unique Modifier — Damage, Chaos }
+Adds 13(13-17) to 28(23-29) Chaos Damage
+--------";
+            this.statsDataServiceMock
+                .GetStatData(Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new StatData());
+
+            // act
+            ItemStats result = this.itemStatsParser.Parse(itemText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries), false);
+
+            // assert
+            result.AllStats.Should()
+                .HaveCount(6)
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Unknown)
+                {
+                    Text = "Trigger Edict of Frost on Kill",
+                })
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Unknown)
+                {
+                    Text = "Socketed Gems are Supported by Level 20 Vile Toxins",
+                })
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Unknown)
+                {
+                    Text = "22% increased Poison Duration",
+                })
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Unknown)
+                {
+                    Text = "+59 to maximum Life",
+                })
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Unknown)
+                {
+                    Text = "+19% to Chaos Resistance",
+                })
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Unknown)
+                {
+                    Text = "Adds 13 to 28 Chaos Damage",
+                });
         }
     }
 }

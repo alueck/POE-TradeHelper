@@ -20,7 +20,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             Item result = this.ItemParser.Parse(itemStringLines);
 
             // assert
-            Assert.That(result.ItemText, Is.EqualTo(expected));
+            Assert.That(result.ExtendedItemText, Is.EqualTo(expected));
         }
 
         protected abstract string[] GetValidItemStringLines();
