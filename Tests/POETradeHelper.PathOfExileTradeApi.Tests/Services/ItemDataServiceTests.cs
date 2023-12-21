@@ -167,8 +167,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Entries = new List<ItemData>
                             {
                                 new() { Name = "Wurm's Molt", Type = "Leather Belt" },
-                                new() { Name = "Test", Text = "Belt" },
-                                new() { Name = "Leather Belt", Text = "Leather Belt" },
+                                new() { Name = "Test", Type = "Belt" },
+                                new() { Name = "Leather Belt", Type = "Leather Belt" },
                             },
                         },
                     },
