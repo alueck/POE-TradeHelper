@@ -15,7 +15,7 @@ using SharpHook.Reactive;
 
 namespace POETradeHelper.Common
 {
-    public class UserInputEventProvider : IUserInputEventProvider
+    public sealed class UserInputEventProvider : IUserInputEventProvider
     {
         private readonly IReactiveGlobalHook hook;
         private readonly IPathOfExileProcessHelper pathOfExileProcessHelper;

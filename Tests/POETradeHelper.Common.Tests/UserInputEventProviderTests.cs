@@ -50,6 +50,7 @@ namespace POETradeHelper.Common.Tests
         {
             this.keyPressed.Dispose();
             this.hookMock.Dispose();
+            this.userInputEventProvider.Dispose();
         }
 
         [Test]
