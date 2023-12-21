@@ -13,8 +13,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
 
         private static readonly JsonSerializerOptions SnakeCaseJsonSerializerOptions = new()
         {
-            PropertyNamingPolicy = new JsonSnakeCaseNamingPolicy(),
-            Converters = { new JsonStringEnumConverter(new JsonSnakeCaseNamingPolicy()) },
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) },
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
 
