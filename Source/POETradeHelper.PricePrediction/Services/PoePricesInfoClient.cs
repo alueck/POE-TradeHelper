@@ -3,7 +3,6 @@ using System.Text.Json;
 
 using Microsoft.Extensions.Logging;
 
-using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PricePrediction.Models;
 
@@ -11,6 +10,8 @@ namespace POETradeHelper.PricePrediction.Services
 {
     public class PoePricesInfoClient : IPoePricesInfoClient
     {
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+
         private readonly IHttpClientWrapper httpClient;
         private readonly IJsonSerializerWrapper jsonSerializer;
         private readonly ILogger<PoePricesInfoClient> logger;
@@ -39,7 +40,7 @@ namespace POETradeHelper.PricePrediction.Services
                 if (httpResponse.IsSuccessStatusCode)
                 {
                     string jsonResult = await httpResponse.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                    result = this.jsonSerializer.Deserialize<PoePricesInfoPrediction>(jsonResult, new JsonSerializerOptions { PropertyNamingPolicy = new JsonSnakeCaseNamingPolicy() });
+                    result = this.jsonSerializer.Deserialize<PoePricesInfoPrediction>(jsonResult, JsonSerializerOptions);
                 }
                 else
                 {

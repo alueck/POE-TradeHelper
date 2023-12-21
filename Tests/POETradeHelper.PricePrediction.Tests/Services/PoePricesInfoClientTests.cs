@@ -84,8 +84,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 .Received()
                 .Deserialize<PoePricesInfoPrediction>(
                     json,
-                    Arg.Is<JsonSerializerOptions>(x =>
-                        x.PropertyNamingPolicy!.GetType() == typeof(JsonSnakeCaseNamingPolicy)));
+                    Arg.Is<JsonSerializerOptions>(x => x.PropertyNamingPolicy == JsonNamingPolicy.SnakeCaseLower));
         }
 
         [Test]

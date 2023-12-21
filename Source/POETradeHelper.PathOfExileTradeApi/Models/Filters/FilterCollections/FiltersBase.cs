@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using POETradeHelper.Common;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
@@ -9,7 +10,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
     public abstract class FiltersBase<TType> : ICloneable
         where TType : FiltersBase<TType>, new()
     {
-        private static readonly JsonSnakeCaseNamingPolicy SnakeCaseNamingPolicy = new();
         private readonly Dictionary<string, object> filters = new();
 
         /// <summary>
@@ -41,11 +41,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 
             if (filter == null)
             {
-                this.filters.Remove(SnakeCaseNamingPolicy.ConvertName(filterName));
+                this.filters.Remove(JsonNamingPolicy.SnakeCaseLower.ConvertName(filterName));
             }
             else
             {
-                this.filters[SnakeCaseNamingPolicy.ConvertName(filterName)] = filter;
+                this.filters[JsonNamingPolicy.SnakeCaseLower.ConvertName(filterName)] = filter;
             }
         }
 
@@ -57,7 +57,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
                 throw new ArgumentNullException(nameof(filterName));
             }
 
-            return this.filters.TryGetValue(SnakeCaseNamingPolicy.ConvertName(filterName), out object? filter)
+            return this.filters.TryGetValue(JsonNamingPolicy.SnakeCaseLower.ConvertName(filterName), out object? filter)
                 ? (TFilter)filter
                 : default;
         }

@@ -48,7 +48,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.jsonSerializerWrapperMock
                 .Received()
-                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy is JsonSnakeCaseNamingPolicy));
+                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy == JsonNamingPolicy.SnakeCaseLower));
         }
 
         [Test]

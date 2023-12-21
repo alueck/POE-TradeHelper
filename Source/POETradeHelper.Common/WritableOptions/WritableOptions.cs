@@ -12,7 +12,9 @@ namespace POETradeHelper.Common.WritableOptions
     public class WritableOptions<TOptions> : IWritableOptions<TOptions>
         where TOptions : class, new()
     {
-        private static readonly JsonSerializerOptions JsonSerializerOptions = new() { Converters = { new JsonStringEnumConverter() } };
+        private static readonly JsonSerializerOptions ReadJsonSerializerOptions = new() { Converters = { new JsonStringEnumConverter() } };
+        private static readonly JsonSerializerOptions FormatJsonSerializerOptions = new() { WriteIndented = true };
+
         private readonly IOptionsMonitor<TOptions> options;
         private readonly string sectionName;
         private readonly string filePath;
@@ -32,7 +34,7 @@ namespace POETradeHelper.Common.WritableOptions
         {
             var jsonDocument = JsonDocument.Parse(File.ReadAllText(this.filePath));
             var section = jsonDocument.RootElement.TryGetProperty(this.sectionName, out JsonElement sectionElement)
-                ? JsonSerializer.Deserialize<TOptions>(sectionElement.ToString(), JsonSerializerOptions) ?? new TOptions()
+                ? JsonSerializer.Deserialize<TOptions>(sectionElement.ToString(), ReadJsonSerializerOptions) ?? new TOptions()
                 : this.Value;
 
             update(section);
@@ -74,7 +76,7 @@ namespace POETradeHelper.Common.WritableOptions
 
         private static string GetUpdatedJson(TOptions updatedSection)
         {
-            return JsonSerializer.Serialize(updatedSection, JsonSerializerOptions);
+            return JsonSerializer.Serialize(updatedSection, ReadJsonSerializerOptions);
         }
 
         private static string GetCurrentJson(JsonProperty element)
@@ -89,7 +91,7 @@ namespace POETradeHelper.Common.WritableOptions
 
         private static string FormatJson(string json)
         {
-            return JsonSerializer.Serialize(JsonDocument.Parse(json).RootElement, new JsonSerializerOptions { WriteIndented = true });
+            return JsonSerializer.Serialize(JsonDocument.Parse(json).RootElement, FormatJsonSerializerOptions);
         }
     }
 }
