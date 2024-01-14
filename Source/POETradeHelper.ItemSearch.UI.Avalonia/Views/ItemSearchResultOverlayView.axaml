@@ -74,7 +74,7 @@
                     HorizontalAlignment="Right"
                     Content="{x:Static resources:Resources.OpenInBrowser}"
                     HideableWindow="{Binding $parent[Window]}"
-                    Uri="{Binding Url}" />
+                    Uri="{Binding ResultsViewModel.ItemListings.ListingsUri}" />
 
                 <reactiveUi:RoutedViewHost Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Router="{Binding Router}" />
             </Grid>

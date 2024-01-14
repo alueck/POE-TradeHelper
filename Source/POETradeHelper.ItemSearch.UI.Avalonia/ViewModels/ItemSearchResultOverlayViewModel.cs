@@ -54,6 +54,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         [Reactive]
         public Uri? Url { get; private set; }
 
+        [Reactive]
+        public IResultsViewModel? ResultsViewModel { get; private set; }
+
         public async Task SetListingForItemUnderCursorAsync(CancellationToken token = default)
         {
             try
@@ -116,7 +119,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             }
 
             await viewModel.InitializeAsync(this.Item, cancellationToken);
-            this.Url = viewModel.ItemListings?.ListingsUri;
+            this.ResultsViewModel = viewModel;
         }
     }
 }

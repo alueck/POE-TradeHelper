@@ -90,6 +90,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             await observer.Should().PushMatchAsync(x => x == expectedViewModel);
+            this.itemSearchOverlayViewModel.ResultsViewModel.Should().Be(expectedViewModel);
         }
 
         [TestCaseSource(nameof(GetExchangeResultsViewModelItems))]
@@ -147,6 +148,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             await observer.Should().PushMatchAsync(x => x == expectedViewModel);
+            this.itemSearchOverlayViewModel.ResultsViewModel.Should().Be(expectedViewModel);
         }
 
         [TestCaseSource(nameof(GetItemResultsViewModelItems))]
