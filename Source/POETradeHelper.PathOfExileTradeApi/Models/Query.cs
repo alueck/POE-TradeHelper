@@ -10,7 +10,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
     {
         public string? Name { get; set; }
 
-        public string? Type { get; set; }
+        public TypeFilter? Type { get; set; }
 
         public string? Term { get; set; }
 

@@ -25,7 +25,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
             return itemHasName
                 ? itemStringLines[NamedItemTypeIndex]
-                : this.itemDataService.GetType(itemStringLines[NamedItemTypeIndex - 1]);
+                : this.itemDataService.GetType(itemStringLines[NamedItemTypeIndex - 1])?.Type ?? string.Empty;
         }
     }
 }

@@ -5,6 +5,7 @@ using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
+using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
@@ -96,7 +97,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
                 .BuildLines();
 
             this.itemDataServiceMock.GetType(Arg.Any<string>())
-                .Returns(expected);
+                .Returns(new ItemType(expected));
 
             string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, false);
 

@@ -4,6 +4,7 @@ using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
 namespace POETradeHelper.ItemSearch.Services.Mappers
 {
@@ -25,7 +26,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
         protected override void MapItemType(SearchQueryRequest result, Item item)
         {
-            result.Query.Type = ItemTypeFilterOptions.Prophecy;
+            result.Query.Type = new TypeFilter { Option = ItemTypeFilterOptions.Prophecy };
         }
 
         protected override void MapItemRarity(SearchQueryRequest result, Item item)

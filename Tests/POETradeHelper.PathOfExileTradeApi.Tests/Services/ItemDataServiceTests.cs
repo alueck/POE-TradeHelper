@@ -11,6 +11,7 @@ using NSubstitute;
 using NUnit.Framework;
 
 using POETradeHelper.Common.Wrappers;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -104,8 +105,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Id = "Accessories",
                             Entries = new List<ItemData>
                             {
-                                new() { Name = "Belt", Type = "Belt" },
-                                new() { Name = expectedType, Type = expectedType },
+                                new() { Text = "Belt", Type = "Belt" },
+                                new() { Text = expectedType, Type = expectedType },
                             },
                         },
                     },
@@ -113,9 +114,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.itemDataService.OnInitAsync();
 
-            string result = this.itemDataService.GetType(name);
+            ItemType result = this.itemDataService.GetType(name);
 
-            result.Should().Be(expectedType);
+            result!.Type.Should().Be(expectedType);
         }
 
         [Test]
@@ -132,7 +133,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Id = "Gems",
                             Entries = new List<ItemData>
                             {
-                                new() { Name = "Blight", Type = "Blight" },
+                                new() { Text = "Blight", Type = "Blight" },
                             },
                         },
                         new()
@@ -140,7 +141,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Id = "Maps",
                             Entries = new List<ItemData>
                             {
-                                new() { Name = expectedType, Type = expectedType },
+                                new() { Text = expectedType, Type = expectedType },
                             },
                         },
                     },
@@ -148,9 +149,39 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.itemDataService.OnInitAsync();
 
-            string result = this.itemDataService.GetType("Blight-ravaged Primordial Pool Map");
+            ItemType result = this.itemDataService.GetType("Blight-ravaged Primordial Pool Map");
 
-            result.Should().Be(expectedType);
+            result!.Type.Should().Be(expectedType);
+        }
+
+        [Test]
+        public async Task GetTypeShouldReturnCorrectTypeForGem()
+        {
+            ItemType expectedType = new("Eye of Winter", "alt_y");
+            const string gemName = "Eye of Winter of Transience";
+
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
+                .Returns(new QueryResult<Data<ItemData>>
+                {
+                    Result = new List<Data<ItemData>>
+                    {
+                        new()
+                        {
+                            Id = "Gems",
+                            Entries = new List<ItemData>
+                            {
+                                new() { Text = expectedType.Type, Type = expectedType.Type },
+                                new() { Text = gemName, Type = expectedType.Type, Disc = expectedType.Discriminator },
+                            },
+                        },
+                    },
+                });
+
+            await this.itemDataService.OnInitAsync();
+
+            ItemType result = this.itemDataService.GetType(gemName);
+
+            result.Should().BeEquivalentTo(expectedType);
         }
 
         [Test]
@@ -166,9 +197,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Id = "Accessories",
                             Entries = new List<ItemData>
                             {
-                                new() { Name = "Wurm's Molt", Type = "Leather Belt" },
-                                new() { Name = "Test", Type = "Belt" },
-                                new() { Name = "Leather Belt", Type = "Leather Belt" },
+                                new() { Text = "Wurm's Molt Leather Belt", Type = "Leather Belt" },
+                                new() { Text = "Test", Type = "Belt" },
+                                new() { Text = "Leather Belt", Type = "Leather Belt" },
                             },
                         },
                     },
@@ -176,9 +207,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.itemDataService.OnInitAsync();
 
-            string result = this.itemDataService.GetType("No Match");
+            ItemType result = this.itemDataService.GetType("No Match");
 
-            result.Should().BeEmpty();
+            result.Should().BeNull();
         }
 
         [Test]
@@ -196,7 +227,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Id = "Accessories",
                             Entries = new List<ItemData>
                             {
-                                new() { Name = "Wurm's Molt", Type = "Leather Belt" },
+                                new() { Text = "Wurm's Molt Leather Bealt", Type = "Leather Belt" },
                             },
                         },
                         new()
@@ -204,8 +235,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Id = expectedCategory,
                             Entries = new List<ItemData>
                             {
-                                new() { Name = "Broken Sword", Type = "Broken Sword" },
-                                new() { Name = "Sword", Type = itemType },
+                                new() { Text = "Broken Sword", Type = "Broken Sword" },
+                                new() { Text = "Sword", Type = itemType },
                             },
                         },
                     },
@@ -231,7 +262,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                             Id = "Accessories",
                             Entries = new List<ItemData>
                             {
-                                new() { Name = "Wurm's Molt", Type = "Leather Belt" },
+                                new() { Text = "Wurm's Molt Leather Belt", Type = "Leather Belt" },
                             },
                         },
                     },

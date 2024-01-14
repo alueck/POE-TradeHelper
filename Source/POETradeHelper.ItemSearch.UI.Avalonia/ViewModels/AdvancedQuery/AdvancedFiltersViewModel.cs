@@ -81,6 +81,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
                 this.MonsterItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.MonsterStats, searchQueryRequest);
                 this.PseudoItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.PseudoStats, searchQueryRequest);
             }
+            else
+            {
+                this.Reset();
+            }
 
             this.AdditionalFilters = this.additionalFilterViewModelsFactories.SelectMany(x => x.Create(item, searchQueryRequest)).ToList();
 

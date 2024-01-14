@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
@@ -27,7 +28,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Type, Is.EqualTo(expectedType));
+            result.Query.Type.Should().NotBeNull();
+            result.Query.Type!.Option.Should().Be(item.Type);
         }
 
         [Test]

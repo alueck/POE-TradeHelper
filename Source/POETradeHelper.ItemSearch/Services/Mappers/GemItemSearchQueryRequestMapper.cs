@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -24,9 +23,14 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
             MapGemLevel(result, gemItem);
             MapQuality(result, gemItem);
-            MapGemQualityType(result, gemItem);
 
             return result;
+        }
+
+        protected override void MapItemType(SearchQueryRequest result, Item item)
+        {
+            base.MapItemType(result, item);
+            result.Query.Type!.Discriminator = ((GemItem)item).TypeDiscriminator;
         }
 
         protected override void MapItemRarity(SearchQueryRequest result, Item item)
@@ -44,12 +48,6 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             result.Query.Filters.MiscFilters.Quality = new MinMaxFilter
             {
                 Min = gemItem.Quality,
-            };
-
-        private static void MapGemQualityType(SearchQueryRequest result, GemItem gemItem) =>
-            result.Query.Filters.MiscFilters.GemAlternateQuality = new OptionFilter
-            {
-                Option = ((int)gemItem.QualityType).ToString(),
             };
     }
 }

@@ -31,7 +31,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             result.Query.Term.Should().Be(name);
             result.Query.Name.Should().BeNullOrEmpty();
-            result.Query.Type.Should().BeNullOrEmpty();
+            result.Query.Type.Should().BeNull();
 
             Assert.That(result.Query.Term, Is.EqualTo(name));
         }

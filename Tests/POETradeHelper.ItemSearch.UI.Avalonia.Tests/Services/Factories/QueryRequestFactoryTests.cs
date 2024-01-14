@@ -421,14 +421,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             {
                 Query =
                 {
-                    Type = expected,
+                    Type = new TypeFilter { Option = expected },
                 },
             };
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Type, Is.EqualTo(expected));
+            Assert.That(result.Query.Type, Is.EqualTo(searchQueryRequest.Query.Type));
         }
 
         [Test]

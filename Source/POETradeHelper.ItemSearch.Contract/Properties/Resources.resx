@@ -249,15 +249,6 @@
   <data name="StatCategoryFractured" xml:space="preserve">
     <value>Fractured</value>
   </data>
-  <data name="GemQualityType_Anomalous" xml:space="preserve">
-    <value>Anomalous</value>
-  </data>
-  <data name="GemQualityType_Divergent" xml:space="preserve">
-    <value>Divergent</value>
-  </data>
-  <data name="GemQualityType_Phantasmal" xml:space="preserve">
-    <value>Phantasmal</value>
-  </data>
   <data name="EquippableItemCategory_Accessories" xml:space="preserve">
     <value>Accessories</value>
   </data>

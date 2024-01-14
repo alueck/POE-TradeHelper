@@ -7,15 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.CodeDom.Compiler;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Resources;
-using System.Runtime.CompilerServices;
-
 namespace POETradeHelper.ItemSearch.Tests.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,27 +18,27 @@ namespace POETradeHelper.ItemSearch.Tests.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [GeneratedCode("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
-    [DebuggerNonUserCode()]
-    [CompilerGenerated()]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
         
-        private static ResourceManager resourceMan;
+        private static global::System.Resources.ResourceManager resourceMan;
         
-        private static CultureInfo resourceCulture;
+        private static global::System.Globalization.CultureInfo resourceCulture;
         
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
-        internal static ResourceManager ResourceManager {
+        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
-                if (ReferenceEquals(resourceMan, null)) {
-                    ResourceManager temp = new ResourceManager("POETradeHelper.ItemSearch.Tests.Properties.Resources", typeof(Resources).Assembly);
+                if (object.ReferenceEquals(resourceMan, null)) {
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("POETradeHelper.ItemSearch.Tests.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -54,8 +49,8 @@ namespace POETradeHelper.ItemSearch.Tests.Properties {
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
-        internal static CultureInfo Culture {
+        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -65,28 +60,29 @@ namespace POETradeHelper.ItemSearch.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Item Class: Active Skill Gems
+        ///   Looks up a localized string similar to Item Class: Skill Gems
         ///Rarity: Gem
-        ///Flameblast
+        ///Animate Weapon of Ranged Arms
         ///--------
-        ///Vaal, Spell, AoE, Fire, Channelling
+        ///Duration, Minion, Spell, Vaal, Physical
         ///Level: 20 (Max)
-        ///Mana Cost: 7
-        ///Cast Time: 0.20 sec
-        ///Critical Strike Chance: 5.00%
-        ///Effectiveness of Added Damage: 60%
+        ///Cost: 20 Mana
+        ///Cast Time: 0.75 sec
         ///Quality: +20% (augmented)
-        ///Alternate Quality
         ///--------
         ///Requirements:
         ///Level: 70
-        ///Int: 155
+        ///Dex: 98
+        ///Int: 68
         ///--------
-        ///Channels to build up a large explosion, which is released when you stop using the skill. The longer you channel, the larger the area of effect and damage of the explosion, up to 10 stages. [rest of string was truncated]&quot;;.
+        ///Animates a Ranged Weapon Item or Lingering Blade to fight by your side. You cannot animate unidentified Weapons. Will not animate weapons with 6 sockets. Cannot be used by Traps or Mines.
+        ///--------
+        ///Base duration is 40.00 seconds
+        ///Can use Items requ [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string AnomalousVaalFlameblast {
+        internal static string VaalAnimateWeaponOfRangedArms {
             get {
-                return ResourceManager.GetString("AnomalousVaalFlameblast", resourceCulture);
+                return ResourceManager.GetString("VaalAnimateWeaponOfRangedArms", resourceCulture);
             }
         }
         
