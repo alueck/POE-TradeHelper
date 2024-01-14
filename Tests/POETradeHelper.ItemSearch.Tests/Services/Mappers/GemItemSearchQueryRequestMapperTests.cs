@@ -24,12 +24,16 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             GemItem item = new()
             {
                 Type = expected,
+                TypeDiscriminator = "alt_x",
             };
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            result.Query.Type.Should().NotBeNull();
-            result.Query.Type!.Option.Should().Be(item.Type);
+            result.Query.Type.Should().BeEquivalentTo(new TypeFilter
+            {
+                Option = expected,
+                Discriminator = item.TypeDiscriminator,
+            });
         }
 
         [Test]
