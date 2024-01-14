@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using FluentAssertions;
 using NSubstitute;
 
 using NUnit.Framework;
@@ -133,6 +133,24 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Has.Count.EqualTo(2));
             Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Contains.Item(expected1));
             Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Contains.Item(expected2));
+        }
+
+        [Test]
+        public async Task LoadAsyncShouldClearStatFiltersIfItemIsNotItemWithStats()
+        {
+            GemItem item = new();
+            this.advancedFiltersViewModel.ExplicitItemStatFilters.Add(new StatFilterViewModel());
+            this.advancedFiltersViewModel.ImplicitItemStatFilters.Add(new StatFilterViewModel());
+            this.advancedFiltersViewModel.CraftedItemStatFilters.Add(new StatFilterViewModel());
+            this.advancedFiltersViewModel.EnchantedItemStatFilters.Add(new StatFilterViewModel());
+            this.advancedFiltersViewModel.FracturedItemStatFilters.Add(new StatFilterViewModel());
+            this.advancedFiltersViewModel.MonsterItemStatFilters.Add(new StatFilterViewModel());
+            this.advancedFiltersViewModel.PseudoItemStatFilters.Add(new StatFilterViewModel());
+            this.advancedFiltersViewModel.AdditionalFilters.Add(new StatFilterViewModel());
+
+            await this.advancedFiltersViewModel.LoadAsync(item, new SearchQueryRequest(), default);
+
+            this.advancedFiltersViewModel.AllStatFilters.Should().BeEmpty();
         }
 
         private static ItemWithStats CreateItemWithStats(StatCategory statCategory) =>
