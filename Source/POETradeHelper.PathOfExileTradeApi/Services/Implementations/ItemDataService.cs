@@ -17,15 +17,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         {
         }
 
-        public string GetType(string name)
+        public ItemType? GetType(string name)
         {
             List<ItemData> matches = new();
 
-            foreach (ItemData? entry in this.Data.SelectMany(x => x.Entries).Where(x => x.Type != null))
+            foreach (ItemData? entry in this.Data.SelectMany(x => x.Entries))
             {
-                if (entry.Type == name)
+                if (entry.Type == name || entry.Text == name)
                 {
-                    return entry.Type;
+                    return new ItemType(entry.Type, entry.Disc);
                 }
 
                 if (name.Contains(entry.Type!))
@@ -34,10 +34,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
                 }
             }
 
-            return matches
-                       .Select(x => x.Type!)
-                       .MaxBy(x => x.Length)
-                   ?? string.Empty;
+            ItemData? itemData = matches.MaxBy(x => x.Type.Length);
+
+            return itemData != null
+                ? new ItemType(itemData.Type, itemData.Disc)
+                : null;
         }
 
         public string? GetCategory(string type) =>

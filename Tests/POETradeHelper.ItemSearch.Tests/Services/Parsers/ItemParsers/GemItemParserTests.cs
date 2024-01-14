@@ -1,13 +1,10 @@
-﻿using System.Collections;
-
-using NSubstitute;
-
+﻿using NSubstitute;
 using NUnit.Framework;
-
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
+using POETradeHelper.ItemSearch.Tests.Properties;
 using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
+using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
@@ -68,7 +65,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldSetNameAndTypeFromItemDataService()
+        public void ParseShouldSetTypeFromItemDataService()
         {
             const string expected = "Result from ItemDataService";
 
@@ -77,11 +74,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
                 .BuildLines();
 
             this.itemDataServiceMock.GetType(Arg.Any<string>())
-                .Returns(expected);
+                .Returns(new ItemType(expected));
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Name, Is.EqualTo(expected));
             Assert.That(result.Type, Is.EqualTo(expected));
         }
 
@@ -161,68 +157,52 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             Assert.That(result.ExperiencePercent, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(nameof(GetGemQualityTypeTestCases))]
-        public void ParseShouldParseGemQualityType(string qualityTypePrefix, GemQualityType expectedQualityType)
-        {
-            string[] itemStringLines = this.itemStringBuilder
-                .WithName($"{qualityTypePrefix}Flameblast")
-                .BuildLines();
-
-            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
-
-            Assert.That(result.QualityType, Is.EqualTo(expectedQualityType));
-        }
-
         [Test]
         public void ParseShouldParseVaalGem()
         {
-            string[] itemStringLines = Properties.Resources.AnomalousVaalFlameblast.Split(Environment.NewLine);
+            const string name = "Vaal Animate Weapon (Animate Weapon of Ranged Arms)";
+            string[] itemStringLines = Resources.VaalAnimateWeaponOfRangedArms.Split(Environment.NewLine);
+            ItemType itemType = new("Vaal Animate Weapon", "alt_y");
+
             this.itemDataServiceMock
-                .GetType("Anomalous Vaal Flameblast")
-                .Returns("Vaal Flameblast");
+                .GetType(name)
+                .Returns(itemType);
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Name, Is.EqualTo("Vaal Flameblast"));
-            Assert.That(result.Type, Is.EqualTo("Vaal Flameblast"));
+            Assert.That(result.Name, Is.EqualTo(name));
+            Assert.That(result.Type, Is.EqualTo(itemType.Type));
+            Assert.That(result.TypeDiscriminator, Is.EqualTo(itemType.Discriminator));
             Assert.That(result.IsCorrupted);
             Assert.That(result.IsVaalVersion);
             Assert.That(result.Level, Is.EqualTo(20));
             Assert.That(result.Quality, Is.EqualTo(20));
-            Assert.That(result.QualityType, Is.EqualTo(GemQualityType.Anomalous));
         }
 
         [Test]
         public void ParseShouldParseVaalGemWithDifferentNameCorrectly()
         {
-            string[] itemStringLines = Properties.Resources.VaalImpurityOfLightning.Split(Environment.NewLine);
+            string[] itemStringLines = Resources.VaalImpurityOfLightning.Split(Environment.NewLine);
+            const string type = "Vaal Impurity of Lightning";
             this.itemDataServiceMock
-                .GetType("Vaal Impurity of Lightning")
-                .Returns("Vaal Impurity of Lightning");
+                .GetType(type)
+                .Returns(new ItemType(type));
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Name, Is.EqualTo("Vaal Impurity of Lightning"));
-            Assert.That(result.Type, Is.EqualTo("Vaal Impurity of Lightning"));
+            Assert.That(result.Name, Is.EqualTo(type));
+            Assert.That(result.Type, Is.EqualTo(type));
             Assert.That(result.IsCorrupted);
             Assert.That(result.IsVaalVersion);
         }
 
         protected override string[] GetValidItemStringLines() =>
             this.itemStringBuilder
-                .WithName($"{Resources.VaalKeyword} Flameblast")
-                .WithTags($"{Resources.VaalKeyword}, Spell, AoE, Fire, Channelling")
+                .WithName($"{Contract.Properties.Resources.VaalKeyword} Flameblast")
+                .WithTags($"{Contract.Properties.Resources.VaalKeyword}, Spell, AoE, Fire, Channelling")
                 .WithCorrupted()
                 .BuildLines();
-
-        private static IEnumerable GetGemQualityTypeTestCases()
-        {
-            yield return new object[] { string.Empty, GemQualityType.Default };
-            yield return new object[] { $"{Resources.GemQualityType_Anomalous} ", GemQualityType.Anomalous };
-            yield return new object[] { $"{Resources.GemQualityType_Divergent} ", GemQualityType.Divergent };
-            yield return new object[] { $"{Resources.GemQualityType_Phantasmal} ", GemQualityType.Phantasmal };
-        }
     }
 }

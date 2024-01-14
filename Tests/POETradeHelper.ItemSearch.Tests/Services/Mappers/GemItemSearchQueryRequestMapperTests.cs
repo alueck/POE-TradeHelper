@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-
+﻿using FluentAssertions;
+using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -28,7 +28,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Type, Is.EqualTo(expected));
+            result.Query.Type.Should().NotBeNull();
+            result.Query.Type!.Option.Should().Be(item.Type);
         }
 
         [Test]
@@ -87,25 +88,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             Assert.That(qualityFilter, Is.Not.Null);
             Assert.That(qualityFilter!.Min, Is.EqualTo(expected));
             Assert.That(qualityFilter.Max, Is.Null);
-        }
-
-        [TestCase(GemQualityType.Default)]
-        [TestCase(GemQualityType.Anomalous)]
-        [TestCase(GemQualityType.Divergent)]
-        [TestCase(GemQualityType.Phantasmal)]
-        public void MapToQueryRequestShouldMapGemQualityType(GemQualityType gemQualityType)
-        {
-            string expected = ((int)gemQualityType).ToString();
-            GemItem item = new()
-            {
-                QualityType = gemQualityType,
-            };
-
-            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
-
-            OptionFilter? gemQualityTypeFilter = result.Query.Filters.MiscFilters.GemAlternateQuality;
-            Assert.That(gemQualityTypeFilter, Is.Not.Null);
-            Assert.That(gemQualityTypeFilter!.Option, Is.EqualTo(expected));
         }
     }
 }

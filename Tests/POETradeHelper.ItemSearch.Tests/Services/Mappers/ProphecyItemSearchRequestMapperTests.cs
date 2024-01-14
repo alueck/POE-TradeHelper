@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
@@ -28,7 +29,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.prophecyItemSearchRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.EqualTo(expected));
+            result.Query.Name.Should().Be(expected);
         }
 
         [Test]
@@ -38,7 +39,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.prophecyItemSearchRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Type, Is.EqualTo(ItemTypeFilterOptions.Prophecy));
+            result.Query.Type.Should().NotBeNull();
+            result.Query.Type!.Option.Should().Be(ItemTypeFilterOptions.Prophecy);
         }
     }
 }

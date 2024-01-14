@@ -1,6 +1,6 @@
-﻿using POETradeHelper.Common.Extensions;
-using POETradeHelper.ItemSearch.Contract.Models;
+﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
+using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
@@ -19,22 +19,41 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
         protected override Item ParseItem(string[] itemStringLines)
         {
-            string? vaalName = Array.FindLast(itemStringLines, l => l.Contains(Resources.VaalKeyword));
-            string name = this.itemDataService.GetType(vaalName ?? itemStringLines[NameLineIndex]);
+            string? vaalName = Array.Find(itemStringLines, l => l.StartsWith(Resources.VaalKeyword));
+            string name = GetName(itemStringLines[NameLineIndex], vaalName);
 
-            GemItem gemItem = new GemItem
+            ItemType? itemType = this.itemDataService.GetType(name);
+
+            GemItem gemItem = new()
             {
                 Name = name,
-                Type = name,
+                Type = itemType?.Type ?? string.Empty,
+                TypeDiscriminator = itemType?.Discriminator,
                 IsCorrupted = this.IsCorrupted(itemStringLines),
                 Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 Level = GetIntegerFromFirstStringContaining(itemStringLines, Resources.LevelDescriptor),
                 ExperiencePercent = GetExperiencePercent(itemStringLines),
                 IsVaalVersion = !string.IsNullOrEmpty(vaalName),
-                QualityType = GetQualityType(itemStringLines),
             };
 
             return gemItem;
+        }
+
+        private static string GetName(string nameLine, string? vaalName)
+        {
+            string name;
+
+            if (!string.IsNullOrEmpty(vaalName))
+            {
+                bool isTransfiguredVaalGem = nameLine.Length > vaalName!.Length;
+                name = isTransfiguredVaalGem ? $"{vaalName} ({nameLine})" : vaalName;
+            }
+            else
+            {
+                name = nameLine;
+            }
+
+            return name;
         }
 
         private static int GetExperiencePercent(string[] itemStringLines)
@@ -64,9 +83,5 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
             return (int)percent;
         }
-
-        private static GemQualityType GetQualityType(string[] itemStringLines) =>
-            Enum.GetValues<GemQualityType>()
-                .FirstOrDefault(gemQualityType => itemStringLines.Any(l => l.StartsWith(gemQualityType.GetDisplayName())));
     }
 }

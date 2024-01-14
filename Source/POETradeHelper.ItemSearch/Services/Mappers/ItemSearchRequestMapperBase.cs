@@ -44,7 +44,8 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             }
         }
 
-        protected virtual void MapItemType(SearchQueryRequest result, Item item) => result.Query.Type = item.Type;
+        protected virtual void MapItemType(SearchQueryRequest result, Item item) =>
+            result.Query.Type = new TypeFilter { Option = item.Type };
 
         protected virtual void MapItemRarity(SearchQueryRequest result, Item item) =>
             result.Query.Filters.TypeFilters.Rarity = new OptionFilter
