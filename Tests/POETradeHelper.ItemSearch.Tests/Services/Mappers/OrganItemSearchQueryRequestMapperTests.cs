@@ -35,5 +35,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             Assert.That(result.Query.Term, Is.EqualTo(name));
         }
+
+        protected override bool MapsTier1ItemStats() => false;
     }
 }
