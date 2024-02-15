@@ -1,14 +1,13 @@
-﻿using Microsoft.Extensions.Options;
-
+﻿using FluentAssertions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
-
 using NUnit.Framework;
-
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
@@ -43,9 +42,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                     },
                 });
 
-            SearchQueryRequest queryRequest = this.ItemSearchQueryRequestMapper.MapToQueryRequest(item);
+            SearchQueryRequest result = this.ItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(queryRequest.League, Is.EqualTo(expectedLeague));
+            result.League.Should().BeEquivalentTo(expectedLeague);
         }
 
         [Test]
@@ -55,7 +54,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             bool result = this.ItemSearchQueryRequestMapper.CanMap(item);
 
-            Assert.That(result, Is.True);
+            result.Should().BeTrue();
         }
 
         [TestCaseSource(nameof(GetNonMatchingItems))]
@@ -63,8 +62,49 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             bool result = this.ItemSearchQueryRequestMapper.CanMap(nonEquippableItem);
 
-            Assert.That(result, Is.False);
+            result.Should().BeFalse();
         }
+
+        [Test]
+        public void MapShouldMapTier1Stats()
+        {
+            if (!this.MapsTier1ItemStats())
+            {
+                Assert.Ignore();
+            }
+
+            ItemWithStats item = (ItemWithStats)GetItems().First(item => item.GetType() == typeof(TItemType));
+            MinMaxValueItemStat minMaxValueItemStat = new(StatCategory.Explicit) { Id = "MinMaxValueStat", Tier = 1, MinValue = 2, MaxValue = 5 };
+            SingleValueItemStat singleValueItemStat = new(StatCategory.Explicit) { Id = "SingleValueStat", Tier = 1, Value = 4 };
+
+            item.Stats = new ItemStats
+            {
+                AllStats =
+                {
+                    minMaxValueItemStat,
+                    singleValueItemStat,
+                    new MinMaxValueItemStat(StatCategory.Explicit) { Id = "Tier2MinMaxValueStat", Tier = 2 },
+                    new SingleValueItemStat(StatCategory.Explicit) { Id = "Tier2SingleValueStat", Tier = 2 },
+                },
+            };
+
+            SearchQueryRequest result = this.ItemSearchQueryRequestMapper.MapToQueryRequest(item);
+
+            result.Query.Stats.Should().HaveCount(1);
+            result.Query.Stats[0].Filters.Should().SatisfyRespectively(
+                x => x.Should().BeEquivalentTo(new StatFilter
+                {
+                    Id = minMaxValueItemStat.Id,
+                    Value = new MinMaxFilter { Min = minMaxValueItemStat.MinValue, Max = minMaxValueItemStat.MaxValue },
+                }),
+                x => x.Should().BeEquivalentTo(new StatFilter
+                {
+                    Id = singleValueItemStat.Id,
+                    Value = new MinMaxFilter { Min = singleValueItemStat.Value },
+                }));
+        }
+
+        protected virtual bool MapsTier1ItemStats() => typeof(TItemType).IsAssignableTo(typeof(ItemWithStats));
 
         protected static IEnumerable<Item> GetNonMatchingItems() => GetItems().Where(item => item.GetType() != typeof(TItemType));
 
