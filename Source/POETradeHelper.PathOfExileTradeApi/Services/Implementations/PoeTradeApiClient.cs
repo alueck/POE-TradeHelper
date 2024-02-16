@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using DotNext;
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
@@ -32,7 +34,40 @@ public class PoeTradeApiClient : IPoeTradeApiClient
         {
             SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(request, cancellationToken).ConfigureAwait(false);
 
-            return await this.GetListingsQueryResult(searchQueryResult, cancellationToken).ConfigureAwait(false);
+            ItemListingsQueryResult result = await this.GetListingsQueryResult(searchQueryResult, 0, cancellationToken).ConfigureAwait(false);
+            if (result.HasMorePages)
+            {
+                ItemListingsQueryResult result2 = await this.GetListingsQueryResult(searchQueryResult, 1, cancellationToken).ConfigureAwait(false);
+
+                result = result with
+                {
+                    CurrentPage = 2,
+                    Result = new List<ListingResult>
+                    {
+                        result.Result,
+                        result2.Result,
+                    },
+                };
+            }
+
+            return result;
+        }
+        catch (Exception exception) when (exception is not PoeTradeApiCommunicationException and not OperationCanceledException)
+        {
+            throw new PoeTradeApiCommunicationException("Retrieving listings for item led to an exception.", exception);
+        }
+    }
+
+    public async Task<Optional<ItemListingsQueryResult>> LoadNextPage(ItemListingsQueryResult lastResult, CancellationToken cancellationToken = default)
+    {
+        if (!lastResult.HasMorePages)
+        {
+            return Optional<ItemListingsQueryResult>.None;
+        }
+
+        try
+        {
+            return await this.GetListingsQueryResult(lastResult.SearchQueryResult, lastResult.CurrentPage + 1, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is not PoeTradeApiCommunicationException and not OperationCanceledException)
         {
@@ -67,10 +102,11 @@ public class PoeTradeApiClient : IPoeTradeApiClient
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new PoeTradeApiCommunicationException(endpoint, await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false), response.StatusCode);
+            string stringContent = await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            throw new PoeTradeApiCommunicationException(endpoint, stringContent, response.StatusCode);
         }
 
-        var searchQueryResult = await this.ReadAsJsonAsync<SearchQueryResult>(response.Content).ConfigureAwait(false);
+        SearchQueryResult searchQueryResult = await this.ReadAsJsonAsync<SearchQueryResult>(response.Content).ConfigureAwait(false);
         searchQueryResult.Request = queryRequest;
 
         return searchQueryResult;
@@ -83,20 +119,29 @@ public class PoeTradeApiClient : IPoeTradeApiClient
         return new StringContent(serializedQueryRequest, Encoding.UTF8, "application/json");
     }
 
-    private async Task<ItemListingsQueryResult> GetListingsQueryResult(SearchQueryResult searchQueryResult, CancellationToken cancellationToken)
+    private async Task<ItemListingsQueryResult> GetListingsQueryResult(
+        SearchQueryResult searchQueryResult,
+        int page,
+        CancellationToken cancellationToken)
     {
-        ItemListingsQueryResult? itemListingsQueryResult = null;
+        const int pageSize = ItemListingsQueryResult.PageSize;
 
-        if (searchQueryResult.Total > 0)
+        ItemListingsQueryResult? itemListingsQueryResult = null;
+        List<string> ids = searchQueryResult.Result.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+        if (ids.Any())
         {
-            string url = $"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(",", searchQueryResult.Result.Take(10))}";
+            string url = $"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(",", ids)}";
             itemListingsQueryResult = await this.GetAsync<ItemListingsQueryResult>(url, cancellationToken).ConfigureAwait(false);
         }
 
-        itemListingsQueryResult ??= new ItemListingsQueryResult();
-        itemListingsQueryResult.Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{searchQueryResult.Request.League}/{searchQueryResult.Id}");
-        itemListingsQueryResult.TotalCount = searchQueryResult.Total;
-        itemListingsQueryResult.SearchQueryRequest = searchQueryResult.Request;
+        itemListingsQueryResult = (itemListingsQueryResult ?? new ItemListingsQueryResult()) with
+        {
+            Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{searchQueryResult.Request.League}/{searchQueryResult.Id}"),
+            TotalCount = searchQueryResult.Total,
+            SearchQueryResult = searchQueryResult,
+            CurrentPage = ids.Any() ? page : (int)Math.Ceiling(searchQueryResult.Total / (double)pageSize),
+        };
 
         return itemListingsQueryResult;
     }
@@ -105,7 +150,7 @@ public class PoeTradeApiClient : IPoeTradeApiClient
     {
         try
         {
-            var response = await this.httpClient.GetAsync(endpoint, cancellationToken).ConfigureAwait(false);
+            HttpResponseMessage response = await this.httpClient.GetAsync(endpoint, cancellationToken).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -123,7 +168,7 @@ public class PoeTradeApiClient : IPoeTradeApiClient
     private async Task<TResult> ReadAsJsonAsync<TResult>(HttpContent httpContent)
     {
         string json = await httpContent.ReadAsStringAsync().ConfigureAwait(false);
-        var result = this.jsonSerializer.Deserialize<TResult>(json);
+        TResult? result = this.jsonSerializer.Deserialize<TResult>(json);
 
         if (result == null)
         {

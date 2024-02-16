@@ -35,7 +35,7 @@
 
         <Grid Grid.Column="2" RowDefinitions="*,25">
 
-            <controls:SearchResultsDataGrid Items="{Binding ItemListings.Listings}" />
+            <controls:SearchResultsDataGrid Items="{Binding ItemListings.Listings}" LoadNextPageCommand="{Binding LoadNextPageCommand}" />
         
             <TextBlock
                 HorizontalAlignment="Center"

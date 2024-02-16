@@ -2,12 +2,18 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public class ItemListingsQueryResult : QueryResult<ListingResult>
+    public record ItemListingsQueryResult : QueryResult<ListingResult>
     {
-        public Uri? Uri { get; set; }
+        public const int PageSize = 10;
 
-        public int TotalCount { get; set; }
+        public Uri? Uri { get; init; }
 
-        public SearchQueryRequest SearchQueryRequest { get; set; } = new();
+        public int TotalCount { get; init; }
+
+        public SearchQueryResult SearchQueryResult { get; init; } = new();
+
+        public int CurrentPage { get; init; }
+
+        public bool HasMorePages => this.CurrentPage < Math.Ceiling(this.TotalCount / (double)PageSize);
     }
 }

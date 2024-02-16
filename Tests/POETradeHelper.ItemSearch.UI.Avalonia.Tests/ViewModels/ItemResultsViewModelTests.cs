@@ -252,4 +252,36 @@ public class ItemResultsViewModelTests
             .Received()
             .HandleException(exception);
     }
+
+    [Test]
+    public async Task LoadNextPageCommandAddsNewPageItemsToListings()
+    {
+        // arrange
+        EquippableItem item = new(ItemRarity.Rare);
+        ItemListingsQueryResult previousListingResult = new() { TotalCount = 100, CurrentPage = 2 };
+        this.poeTradeApiClientMock
+            .GetListingsAsync(Arg.Any<SearchQueryRequest>(), Arg.Any<CancellationToken>())
+            .Returns(previousListingResult);
+        this.itemListingsViewModelFactoryMock
+            .CreateAsync(Arg.Any<Item>(), previousListingResult, Arg.Any<CancellationToken>())
+            .Returns(new ItemListingsViewModel());
+
+        ItemListingsQueryResult nextPageResult = new() { Uri = new Uri("http://test.com") };
+        this.poeTradeApiClientMock
+            .LoadNextPage(previousListingResult, Arg.Any<CancellationToken>())
+            .Returns(nextPageResult);
+
+        SimpleListingViewModel[] nextPageListings = [new() { AccountName = "Test" }, new() { AccountName = "Test2" }];
+        this.itemListingsViewModelFactoryMock
+            .CreateAsync(Arg.Any<Item>(), nextPageResult, Arg.Any<CancellationToken>())
+            .Returns(new ItemListingsViewModel { Listings = { nextPageListings } });
+
+        await this.viewModel.InitializeAsync(item, default);
+
+        // act
+        await this.viewModel.LoadNextPageCommand.Execute();
+
+        // assert
+        this.viewModel.ItemListings!.Listings.Should().ContainEquivalentOf(nextPageListings);
+    }
 }

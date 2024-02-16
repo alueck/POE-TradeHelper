@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:localVms="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.ViewModels"
+             xmlns:behaviors="clr-namespace:POETradeHelper.ItemSearch.UI.Avalonia.Behaviors"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Controls.SearchResultsDataGrid"
              x:CompileBindings="False">
@@ -43,6 +44,10 @@
         IsReadOnly="True"
         ItemsSource="{Binding $parent[UserControl].Items}"
         ScrollViewer.VerticalScrollBarVisibility="Visible">
+        <Interaction.Behaviors>
+            <behaviors:DataGridInfiniteScrollBehavior LoadNextPageCommand="{Binding $parent[UserControl].LoadNextPageCommand}" />
+        </Interaction.Behaviors>
+        
         <DataGrid.DataTemplates>
             <DataTemplate DataType="{x:Type localVms:PriceViewModel}">
                 <StackPanel DataContext="{Binding Price}" Orientation="Horizontal"> <!-- DataContext binding is required for correct display -->
