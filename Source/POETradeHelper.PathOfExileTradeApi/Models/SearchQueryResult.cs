@@ -1,6 +1,6 @@
 ﻿namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public class SearchQueryResult : QueryResult<string>
+    public record SearchQueryResult : QueryResult<string>
     {
         public string Id { get; set; } = string.Empty;
 

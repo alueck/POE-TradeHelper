@@ -2,8 +2,8 @@
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public class QueryResult<TResult>
+    public record QueryResult<TResult>
     {
-        public List<TResult> Result { get; set; } = new List<TResult>();
+        public List<TResult> Result { get; set; } = new();
     }
 }

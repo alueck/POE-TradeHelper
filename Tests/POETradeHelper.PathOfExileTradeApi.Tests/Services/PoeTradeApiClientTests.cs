@@ -5,16 +5,15 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-
+using DotNext;
 using FluentAssertions;
 using FluentAssertions.Specialized;
-
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-
 using NUnit.Framework;
-
 using POETradeHelper.Common.Wrappers;
+using POETradeHelper.ItemSearch.Contract;
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -53,8 +52,7 @@ public class PoeTradeApiClientTests
         this.poeTradeApiJsonSerializerMock.Serialize(Arg.Any<object>())
             .Returns(string.Empty);
 
-        this.poeTradeApiClient =
-            new PoeTradeApiClient(this.httpClientFactoryWrapperMock, this.poeTradeApiJsonSerializerMock);
+        this.poeTradeApiClient = new PoeTradeApiClient(this.httpClientFactoryWrapperMock, this.poeTradeApiJsonSerializerMock);
     }
 
     [Test]
@@ -117,17 +115,18 @@ public class PoeTradeApiClientTests
     }
 
     [Test]
-    public async Task GetListingsAsyncWithSearchQueryRequestShouldSetRequestOnResult()
+    public async Task GetListingsAsyncWithSearchQueryRequestShouldSetSearchQueryResultOnResult()
     {
         SearchQueryRequest searchQueryRequest = new() { League = "Heist" };
+        SearchQueryResult expected = new() { Id = "Test" };
         this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
-            .Returns(new SearchQueryResult());
+            .Returns(expected);
         this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(new ItemListingsQueryResult());
 
         ItemListingsQueryResult result = await this.poeTradeApiClient.GetListingsAsync(searchQueryRequest);
 
-        result.SearchQueryRequest.Should().Be(searchQueryRequest);
+        result.SearchQueryResult.Should().Be(expected);
     }
 
     [Test]
@@ -209,32 +208,88 @@ public class PoeTradeApiClientTests
     }
 
     [Test]
-    public async Task GetListingsAsyncWithSearchQueryRequestShouldReturnFetchResult()
+    public async Task GetListingsAsyncWithSearchQueryRequestShouldReturnFetchResultForFirstPage()
     {
         // arrange
+        const string id = "aef21";
+        const string league = "League";
+
+        SearchQueryResult searchQueryResult = new()
+        {
+            Id = id,
+            Result = new List<string> { "123" },
+            Total = 1,
+        };
+
         ItemListingsQueryResult expected = new()
         {
             Result = new List<ListingResult>
             {
                 new() { Id = "Test" },
             },
+            CurrentPage = 1,
+            TotalCount = 1,
+            Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{league}/{id}"),
+            SearchQueryResult = searchQueryResult,
         };
 
         this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
-            .Returns(new SearchQueryResult
-            {
-                Result = new List<string> { "123" },
-                Total = 1,
-            });
+            .Returns(searchQueryResult);
 
         this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
             .Returns(expected);
 
         // act
-        ItemListingsQueryResult result = await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest());
+        ItemListingsQueryResult result = await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest { League = league });
 
         // assert
-        result.Should().Be(expected);
+        result.Should().BeEquivalentTo(expected);
+    }
+
+    [Test]
+    public async Task GetListingsAsyncWithSearchQueryRequestShouldReturnFetchResultForFirstTwoPagesIfEnoughDataFound()
+    {
+        // arrange
+        const string id = "aef21";
+        const string league = "League";
+
+        SearchQueryResult searchQueryResult = new()
+        {
+            Id = id,
+            Result = Enumerable.Range(0, 100).Select(x => x.ToString()).ToList(),
+            Total = 100,
+        };
+
+        ItemListingsQueryResult firstListingsResult = new()
+        {
+            Result = [new ListingResult { Id = "Test" }],
+            CurrentPage = 1,
+            TotalCount = 100,
+            Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{league}/{id}"),
+            SearchQueryResult = searchQueryResult,
+        };
+
+        ItemListingsQueryResult secondListingsResult = firstListingsResult with
+        {
+            Result = [new ListingResult { Id = "Test2" }],
+            CurrentPage = 2,
+        };
+
+        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
+            .Returns(searchQueryResult);
+
+        this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
+            .Returns(firstListingsResult, secondListingsResult);
+
+        // act
+        ItemListingsQueryResult result = await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest { League = league });
+
+        // assert
+        result.Should().BeEquivalentTo(firstListingsResult with
+        {
+            CurrentPage = 2,
+            Result = [firstListingsResult.Result[0], secondListingsResult.Result[0]],
+        });
     }
 
     [Test]
@@ -433,6 +488,72 @@ public class PoeTradeApiClientTests
 
         // assert
         result.Uri.Should().Be(expectedUri);
+    }
+
+    [Test]
+    public async Task LoadNextPageReturnsNoneIfLastResultHasNoMorePages()
+    {
+        // arrange
+        ItemListingsQueryResult lastResult = new()
+        {
+            SearchQueryResult = new SearchQueryResult
+            {
+                Total = 100,
+            },
+            TotalCount = 100,
+            CurrentPage = 10,
+        };
+
+        // act
+        Optional<ItemListingsQueryResult> result = await this.poeTradeApiClient.LoadNextPage(lastResult);
+
+        // assert
+        result.Should().Be(Optional<ItemListingsQueryResult>.None);
+    }
+
+    [Test]
+    public async Task LoadNextPageReturnsResultIfLastResultHasMorePages()
+    {
+        // arrange
+        const string id = "afe2";
+        const string league = "League";
+        ItemListingsQueryResult lastResult = new()
+        {
+            SearchQueryResult = new SearchQueryResult
+            {
+                Result = Enumerable.Range(0, 100).Select(x => x.ToString()).ToList(),
+                Total = 100,
+                Id = id,
+                Request = new SearchQueryRequest { League = league },
+            },
+            TotalCount = 100,
+            CurrentPage = 9,
+        };
+
+        string url = $"{Resources.PoeTradeApiFetchEndpoint}/{string.Join(',', lastResult.SearchQueryResult.Result.Skip(90).Take(10))}";
+        const string json = "{ json }";
+        this.httpClientWrapperMock.GetAsync(url, Arg.Any<CancellationToken>())
+            .Returns(new HttpResponseMessage
+            {
+                Content = new StringContent(json),
+            });
+
+        ItemListingsQueryResult expected = new()
+        {
+            Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{league}/{id}"),
+            SearchQueryResult = lastResult.SearchQueryResult,
+            TotalCount = 100,
+            CurrentPage = 10,
+        };
+        this.poeTradeApiJsonSerializerMock
+            .Deserialize<ItemListingsQueryResult>(json)
+            .Returns(expected);
+
+        // act
+        Optional<ItemListingsQueryResult> result = await this.poeTradeApiClient.LoadNextPage(lastResult);
+
+        // assert
+        result.Value.Should().BeEquivalentTo(expected);
     }
 
     private async Task AssertThrowsPoeTradeApiCommunicationExceptionIfHttpResponseDoesNotReturnSuccessStatusCode(

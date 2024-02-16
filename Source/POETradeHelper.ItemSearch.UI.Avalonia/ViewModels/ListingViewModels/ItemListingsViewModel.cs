@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
@@ -9,6 +8,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         public Uri? ListingsUri { get; set; }
 
         // object type is required for auto-generating columns
-        public ICollection<object> Listings { get; } = new ObservableCollection<object>();
+        public ObservableCollection<object> Listings { get; } = new();
     }
 }
