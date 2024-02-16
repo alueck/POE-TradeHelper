@@ -34,10 +34,10 @@ public class PoeTradeApiClient : IPoeTradeApiClient
         {
             SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(request, cancellationToken).ConfigureAwait(false);
 
-            ItemListingsQueryResult result = await this.GetListingsQueryResult(searchQueryResult, 0, cancellationToken).ConfigureAwait(false);
+            ItemListingsQueryResult result = await this.GetListingsQueryResult(searchQueryResult, 1, cancellationToken).ConfigureAwait(false);
             if (result.HasMorePages)
             {
-                ItemListingsQueryResult result2 = await this.GetListingsQueryResult(searchQueryResult, 1, cancellationToken).ConfigureAwait(false);
+                ItemListingsQueryResult result2 = await this.GetListingsQueryResult(searchQueryResult, 2, cancellationToken).ConfigureAwait(false);
 
                 result = result with
                 {
