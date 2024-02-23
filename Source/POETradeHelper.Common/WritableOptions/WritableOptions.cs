@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 using Microsoft.Extensions.Options;
 
@@ -12,8 +13,17 @@ namespace POETradeHelper.Common.WritableOptions
     public class WritableOptions<TOptions> : IWritableOptions<TOptions>
         where TOptions : class, new()
     {
-        private static readonly JsonSerializerOptions ReadJsonSerializerOptions = new() { Converters = { new JsonStringEnumConverter() } };
-        private static readonly JsonSerializerOptions FormatJsonSerializerOptions = new() { WriteIndented = true };
+        private static readonly JsonSerializerOptions ReadJsonSerializerOptions = new()
+        {
+            Converters = { new JsonStringEnumConverter() },
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
+        };
+
+        private static readonly JsonSerializerOptions FormatJsonSerializerOptions = new()
+        {
+            WriteIndented = true,
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
+        };
 
         private readonly IOptionsMonitor<TOptions> options;
         private readonly string sectionName;

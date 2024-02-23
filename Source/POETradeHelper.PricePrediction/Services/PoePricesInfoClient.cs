@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
-
+using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.Logging;
 
 using POETradeHelper.Common.Wrappers;
@@ -10,7 +10,11 @@ namespace POETradeHelper.PricePrediction.Services
 {
     public class PoePricesInfoClient : IPoePricesInfoClient
     {
-        private static readonly JsonSerializerOptions JsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
+        };
 
         private readonly IHttpClientWrapper httpClient;
         private readonly IJsonSerializerWrapper jsonSerializer;
