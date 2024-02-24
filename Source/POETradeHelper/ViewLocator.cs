@@ -11,8 +11,6 @@ namespace POETradeHelper
 {
     public class ViewLocator : IDataTemplate, IViewLocator
     {
-        public bool SupportsRecycling => false;
-
         public Control? Build(object? data)
         {
             string? name = data?.GetType().AssemblyQualifiedName?.Replace("ViewModel", "View");

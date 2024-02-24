@@ -59,8 +59,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         private static void SetStatFilters(IAdvancedFiltersViewModel advancedFiltersViewModel, SearchQueryRequest searchQueryRequest)
         {
-            IEnumerable<StatFilterViewModel> enabledStatFilterViewModels =
-                advancedFiltersViewModel.AllStatFilters.Where(f => f.IsEnabled == true);
+            IEnumerable<StatFilterViewModel> enabledStatFilterViewModels = advancedFiltersViewModel.AllStatFilters.Where(f => f.IsEnabled == true);
 
             StatFilters statFilters = new();
 
@@ -115,7 +114,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             foreach (MemberExpression expression in expressions.OfType<MemberExpression>())
             {
                 PropertyInfo property = (PropertyInfo)expression.Member;
-                if (expression == expressions.Last())
+                if (expression == expressions[^1])
                 {
                     IFilter? filter = GetFilter(bindableFilterViewModel);
                     property.SetValue(parent, filter);

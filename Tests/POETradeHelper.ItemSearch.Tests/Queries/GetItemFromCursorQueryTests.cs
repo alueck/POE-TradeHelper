@@ -1,26 +1,21 @@
 ﻿using FluentAssertions;
-
 using MediatR;
-
 using NSubstitute;
-
 using NUnit.Framework;
-
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Exceptions;
 using POETradeHelper.ItemSearch.Queries;
-using POETradeHelper.ItemSearch.Queries.Handlers;
 
-namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
+namespace POETradeHelper.ItemSearch.Tests.Queries
 {
-    public class GetItemFromCursorQueryHandlerTests
+    public class GetItemFromCursorQueryTests
     {
         private readonly IMediator mediatorMock;
         private readonly IItemParserAggregator itemParserAggregatorMock;
         private readonly GetItemFromCursorQueryHandler handler;
 
-        public GetItemFromCursorQueryHandlerTests()
+        public GetItemFromCursorQueryTests()
         {
             this.mediatorMock = Substitute.For<IMediator>();
             this.itemParserAggregatorMock = Substitute.For<IItemParserAggregator>();

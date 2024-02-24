@@ -46,8 +46,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         private static FilterViewModelBase? GetInfluenceFilterViewModel(EquippableItem equippableItem, SearchQueryRequest searchQueryRequest)
         {
-            Expression<Func<SearchQueryRequest, IFilter?>>? bindingExpression =
-                GetInfluenceBindingExpression(equippableItem.Influence);
+            Expression<Func<SearchQueryRequest, IFilter?>>? bindingExpression = GetInfluenceBindingExpression(equippableItem.Influence);
 
             return bindingExpression != null
                 ? new BindableFilterViewModel(bindingExpression)

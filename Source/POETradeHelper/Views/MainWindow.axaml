@@ -35,6 +35,14 @@
       </Setter>
     </Style>
   </Window.Styles>
+  
+  <Interaction.Behaviors>
+    <EventTriggerBehavior EventName="Opened">
+      <EventTriggerBehavior.Actions>
+        <InvokeCommandAction Command="{Binding InitializeCommand}" />
+      </EventTriggerBehavior.Actions>
+    </EventTriggerBehavior>
+  </Interaction.Behaviors>
 
   <commonUiControls:BusyIndicator
     IsBusy="{Binding IsBusy}"

@@ -1,23 +1,19 @@
 using FluentAssertions;
 using FluentAssertions.Extensions;
-
 using NSubstitute;
-
 using NUnit.Framework;
-
 using POETradeHelper.Common.Contract;
 using POETradeHelper.ItemSearch.Queries;
-using POETradeHelper.ItemSearch.Queries.Handlers;
 
-namespace POETradeHelper.ItemSearch.Tests.Queries.Handlers
+namespace POETradeHelper.ItemSearch.Tests.Queries
 {
-    public class GetItemTextFromCursorQueryHandlerTests
+    public class GetItemTextFromCursorQueryTests
     {
         private readonly IClipboardHelper clipboardHelperMock;
         private readonly IUserInputSimulator userInputSimulatorMock;
         private readonly GetItemTextFromCursorQueryHandler handler;
 
-        public GetItemTextFromCursorQueryHandlerTests()
+        public GetItemTextFromCursorQueryTests()
         {
             this.clipboardHelperMock = Substitute.For<IClipboardHelper>();
             this.userInputSimulatorMock = Substitute.For<IUserInputSimulator>();

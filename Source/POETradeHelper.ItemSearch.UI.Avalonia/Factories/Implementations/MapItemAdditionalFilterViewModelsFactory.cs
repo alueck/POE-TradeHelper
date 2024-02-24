@@ -29,8 +29,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             return result;
         }
 
-        private FilterViewModelBase
-            GetItemQuantityFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest) =>
+        private FilterViewModelBase GetItemQuantityFilterViewModel(MapItem mapItem, SearchQueryRequest searchQueryRequest) =>
             this.CreateBindableMinMaxFilterViewModel(
                 x => x.Query.Filters.MapFilters.MapIncreasedItemQuantity,
                 Resources.MapItemQuantity,

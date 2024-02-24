@@ -1,27 +1,23 @@
 ﻿using FluentAssertions;
-
 using NSubstitute;
-
 using NUnit.Framework;
-
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PricePrediction.Models;
 using POETradeHelper.PricePrediction.Queries;
-using POETradeHelper.PricePrediction.Queries.Handlers;
 using POETradeHelper.PricePrediction.Services;
 
-namespace POETradeHelper.PricePrediction.Tests.Queries.Handlers
+namespace POETradeHelper.PricePrediction.Tests.Queries
 {
     [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
-    public class GetPoePricesInfoPredictionQueryHandlerTests
+    public class GetPoePricesInfoPredictionQueryTests
     {
         private readonly IPoePricesInfoClient poePricesInfoClientMock;
         private readonly GetPoePricesInfoPredictionQueryHandler handler;
 
         private readonly GetPoePricesInfoPredictionQuery validRequest;
 
-        public GetPoePricesInfoPredictionQueryHandlerTests()
+        public GetPoePricesInfoPredictionQueryTests()
         {
             this.poePricesInfoClientMock = Substitute.For<IPoePricesInfoClient>();
             this.handler = new GetPoePricesInfoPredictionQueryHandler(this.poePricesInfoClientMock);
