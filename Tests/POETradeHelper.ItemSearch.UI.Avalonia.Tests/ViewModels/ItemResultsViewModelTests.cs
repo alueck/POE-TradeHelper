@@ -22,16 +22,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels;
 
 public class ItemResultsViewModelTests
 {
-    private IItemSearchResultOverlayViewModel itemSearchResultsOverlayViewModelMock;
-    private ISearchQueryRequestFactory searchQueryRequestFactoryMock;
-    private IItemListingsViewModelFactory itemListingsViewModelFactoryMock;
-    private IPoeTradeApiClient poeTradeApiClientMock;
-    private IPricePredictionViewModel pricePredictionViewModelMock;
-    private IAdvancedFiltersViewModel advancedFiltersViewModelMock;
-    private ItemResultsViewModel viewModel;
+    private readonly IItemSearchResultOverlayViewModel itemSearchResultsOverlayViewModelMock;
+    private readonly ISearchQueryRequestFactory searchQueryRequestFactoryMock;
+    private readonly IItemListingsViewModelFactory itemListingsViewModelFactoryMock;
+    private readonly IPoeTradeApiClient poeTradeApiClientMock;
+    private readonly IPricePredictionViewModel pricePredictionViewModelMock;
+    private readonly IAdvancedFiltersViewModel advancedFiltersViewModelMock;
+    private readonly ItemResultsViewModel viewModel;
 
-    [SetUp]
-    public void Setup()
+    public ItemResultsViewModelTests()
     {
         this.itemSearchResultsOverlayViewModelMock = Substitute.For<IItemSearchResultOverlayViewModel>();
         this.searchQueryRequestFactoryMock = Substitute.For<ISearchQueryRequestFactory>();
@@ -213,7 +212,7 @@ public class ItemResultsViewModelTests
         ItemListingsQueryResult result = new() { TotalCount = 1 };
         this.poeTradeApiClientMock
             .GetListingsAsync(Arg.Any<SearchQueryRequest>(), Arg.Any<CancellationToken>())
-            .Returns(null, result);
+            .Returns(new ItemListingsQueryResult(), result);
         await this.viewModel.InitializeAsync(item, default);
 
         await this.viewModel.ExecuteAdvancedQueryCommand.Execute();
@@ -230,7 +229,7 @@ public class ItemResultsViewModelTests
         ItemListingsViewModel expected = new() { ListingsUri = new Uri("https://test.test") };
         this.itemListingsViewModelFactoryMock
             .CreateAsync(Arg.Any<Item>(), Arg.Any<ItemListingsQueryResult>(), Arg.Any<CancellationToken>())
-            .Returns(null, expected);
+            .Returns(new ItemListingsViewModel(), expected);
         await this.viewModel.InitializeAsync(item, default);
 
         await this.viewModel.ExecuteAdvancedQueryCommand.Execute();

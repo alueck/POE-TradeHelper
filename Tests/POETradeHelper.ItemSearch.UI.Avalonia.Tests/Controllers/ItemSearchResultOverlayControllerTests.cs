@@ -22,14 +22,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
 {
     public class ItemSearchResultOverlayControllerTests
     {
-        private IItemSearchResultOverlayView viewMock;
-        private IItemSearchResultOverlayViewModel viewModelMock;
-        private IViewLocator viewLocatorMock;
-        private IUiThreadDispatcher uiThreadDispatcherMock;
-        private ItemSearchResultOverlayController overlayController;
+        private readonly IItemSearchResultOverlayView viewMock;
+        private readonly IItemSearchResultOverlayViewModel viewModelMock;
+        private readonly IViewLocator viewLocatorMock;
+        private readonly IUiThreadDispatcher uiThreadDispatcherMock;
+        private readonly ItemSearchResultOverlayController overlayController;
 
-        [SetUp]
-        public void Setup()
+        public ItemSearchResultOverlayControllerTests()
         {
             this.viewMock = Substitute.For<IItemSearchResultOverlayView>();
             this.viewModelMock = Substitute.For<IItemSearchResultOverlayViewModel>();
@@ -100,29 +99,31 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
                 .SetListingForItemUnderCursorAsync(Arg.Any<CancellationToken>())
                 .Throws<OperationCanceledException>();
 
-            await this.ExecuteSearchItemCommand(new SearchItemCommand());
+            Func<Task> action = () => this.ExecuteSearchItemCommand(new SearchItemCommand());
+
+            await action.Should().NotThrowAsync();
         }
 
         private async Task ExecuteHideOverlayCommand(HideOverlayCommand command)
         {
-            Action action = null;
+            Action? action = null;
             this.uiThreadDispatcherMock
                 .When(x => x.InvokeAsync(Arg.Any<Action>(), Arg.Any<DispatcherPriority>()))
                 .Do(ctx => action = ctx.Arg<Action>());
 
             await this.overlayController.Handle(command, default);
-            action();
+            action!();
         }
 
         private async Task ExecuteSearchItemCommand(SearchItemCommand command)
         {
-            Func<Task> action = null;
+            Func<Task>? action = null;
             this.uiThreadDispatcherMock
                 .When(x => x.InvokeAsync(Arg.Any<Func<Task>>(), Arg.Any<DispatcherPriority>()))
                 .Do(ctx => action = ctx.Arg<Func<Task>>());
 
             await this.overlayController.Handle(command, default);
-            await action();
+            await action!();
         }
     }
 }

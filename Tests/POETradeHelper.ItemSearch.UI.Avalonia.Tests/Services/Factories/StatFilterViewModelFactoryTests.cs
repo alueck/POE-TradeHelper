@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using FluentAssertions;
+
 using Microsoft.Extensions.Options;
 
 using NSubstitute;
@@ -12,16 +14,16 @@ using POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
+using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class StatFilterViewModelFactoryTests
     {
-        private IOptionsMonitor<ItemSearchOptions> itemSearchOptionsMock;
-        private StatFilterViewModelFactory statFilterViewModelFactory;
+        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptionsMock;
+        private readonly StatFilterViewModelFactory statFilterViewModelFactory;
 
-        [SetUp]
-        public void Setup()
+        public StatFilterViewModelFactoryTests()
         {
             this.itemSearchOptionsMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
             this.itemSearchOptionsMock.CurrentValue
@@ -46,8 +48,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Id, Is.EqualTo(expected));
+            result.Id.Should().Be(expected);
         }
 
         [Test]
@@ -57,7 +58,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.InstanceOf<MinMaxStatFilterViewModel>());
+            result.Should().BeOfType<MinMaxStatFilterViewModel>();
         }
 
         [Test]
@@ -67,7 +68,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.InstanceOf<MinMaxStatFilterViewModel>());
+            result.Should().BeOfType<MinMaxStatFilterViewModel>();
         }
 
         [Test]
@@ -77,8 +78,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result, Is.Not.InstanceOf<MinMaxValueItemStat>());
+            result.Should()
+                .NotBeNull()
+                .And.NotBeOfType<MinMaxStatFilterViewModel>();
         }
 
         [Test]
@@ -89,8 +91,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Text, Is.EqualTo(expected));
+            result.Text.Should().Be(expected);
         }
 
         [SetCulture("")]
@@ -104,11 +105,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 Value = value,
             };
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Current, Is.EqualTo(expected));
+            result.Current.Should().Be(expected);
         }
 
         [SetCulture("")]
@@ -127,11 +126,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             };
             string expected = $"{expectedMinValue} - {expectedMaxValue}";
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Current, Is.EqualTo(expected));
+            result.Current.Should().Be(expected);
         }
 
         [TestCaseSource(nameof(GetDecimalValueRoundingTestCases))]
@@ -142,11 +139,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 Value = value,
             };
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Min, Is.EqualTo(expected));
+            result.Min.Should().Be(expected);
         }
 
         [TestCaseSource(nameof(GetDecimalValueRoundingTestCases))]
@@ -157,11 +152,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 Value = value,
             };
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Max, Is.EqualTo(expected));
+            result.Max.Should().Be(expected);
         }
 
         [TestCaseSource(nameof(GetDecimalValueRoundingTestCases))]
@@ -172,11 +165,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 MinValue = value,
             };
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Min, Is.EqualTo(expected));
+            result.Min.Should().Be(expected);
         }
 
         [TestCaseSource(nameof(GetDecimalValueRoundingTestCases))]
@@ -187,11 +178,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 MaxValue = value,
             };
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Max, Is.EqualTo(expected));
+            result.Max.Should().Be(expected);
         }
 
         [TestCaseSource(nameof(GetDecimalValueOffsetTestCases))]
@@ -252,8 +241,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Text, Is.EqualTo(statText));
+            result.Text.Should().Be(statText);
         }
 
         [TestCase(null)]
@@ -319,7 +307,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest);
 
-            Assert.That(result.IsEnabled, Is.True);
+            result.IsEnabled.Should().BeTrue();
         }
 
         [TestCaseSource(nameof(GetItemStatsWithIds))]
@@ -329,7 +317,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             StatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest);
 
-            Assert.That(result.IsEnabled, Is.False);
+            result.IsEnabled.Should().BeFalse();
         }
 
         [Test]
@@ -338,17 +326,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             const int expected = 2;
             SingleValueItemStat itemStat = new(StatCategory.Monster) { Value = expected };
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result.Min, Is.EqualTo(expected));
+            result.Min.Should().Be(expected);
         }
 
         [Test]
         public void CreateShouldIgnoreConfigurationForMonsterItemStat()
         {
             const int expected = 3;
-            SingleValueItemStat itemStat = new(StatCategory.Monster) { Id = "monsterItemStat", Value = expected };
+            SingleValueItemStat itemStat = new(StatCategory.Monster) { Value = expected };
 
             this.itemSearchOptionsMock.CurrentValue
                 .Returns(
@@ -361,11 +348,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                         },
                     });
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result.Min, Is.EqualTo(expected));
-            Assert.That(result.Max, Is.EqualTo(expected));
+            result.Min.Should().Be(expected);
+            result.Max.Should().Be(expected);
         }
 
         private void CreateShouldConsiderMinValuePercentageOffsetForItemStat(ItemStat itemStat, decimal percentageOffset, decimal expected)
@@ -381,11 +367,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                         },
                     });
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Min, Is.EqualTo(expected));
+            result.Min.Should().Be(expected);
         }
 
         private void CreateShouldTakeMinValueFromQueryRequest(ItemStat itemStat, decimal? expected)
@@ -402,9 +386,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             itemStat.Id = "item stat id";
             SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Min = expected });
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest) as MinMaxStatFilterViewModel;
 
-            Assert.That(result.Min, Is.EqualTo(expected));
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, queryRequest);
+
+            result.Min.Should().Be(expected);
         }
 
         private void CreateShouldConsiderMaxValuePercentageOffsetForItemStat(ItemStat itemStat, decimal percentageOffset, decimal expected)
@@ -420,11 +405,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                         },
                     });
 
-            MinMaxStatFilterViewModel result =
-                this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest()) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, new SearchQueryRequest());
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Max, Is.EqualTo(expected));
+            result.Max.Should().Be(expected);
         }
 
         private void CreateShouldTakeMaxValueFromQueryRequest(ItemStat itemStat, decimal? expected)
@@ -442,9 +425,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             itemStat.Id = "item stat id";
             SearchQueryRequest queryRequest = GetQueryRequestWithStatFilter(itemStat.Id, new MinMaxFilter { Max = expected });
 
-            MinMaxStatFilterViewModel result = this.statFilterViewModelFactory.Create(itemStat, queryRequest) as MinMaxStatFilterViewModel;
+            MinMaxStatFilterViewModel result = (MinMaxStatFilterViewModel)this.statFilterViewModelFactory.Create(itemStat, queryRequest);
 
-            Assert.That(result.Max, Is.EqualTo(expected));
+            result.Max.Should().Be(expected);
         }
 
         private static IEnumerable<object> GetDecimalValueRoundingTestCases()

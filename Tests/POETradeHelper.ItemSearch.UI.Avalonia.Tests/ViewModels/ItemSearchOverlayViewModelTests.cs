@@ -3,8 +3,6 @@ using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 
-using DynamicData.Kernel;
-
 using FluentAssertions;
 using FluentAssertions.Reactive;
 
@@ -28,13 +26,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 {
     public class ItemSearchOverlayViewModelTests
     {
-        private IMediator mediatorMock;
-        private Func<IItemSearchResultOverlayViewModel, IItemResultsViewModel> itemResultsViewModelFactoryMock;
-        private Func<IItemSearchResultOverlayViewModel, IExchangeResultsViewModel> exchangeResultsViewModelFactoryMock;
-        private ItemSearchResultOverlayViewModel itemSearchOverlayViewModel;
+        private readonly IMediator mediatorMock;
+        private readonly Func<IItemSearchResultOverlayViewModel, IItemResultsViewModel> itemResultsViewModelFactoryMock;
+        private readonly Func<IItemSearchResultOverlayViewModel, IExchangeResultsViewModel> exchangeResultsViewModelFactoryMock;
+        private readonly ItemSearchResultOverlayViewModel itemSearchOverlayViewModel;
 
-        [SetUp]
-        public void Setup()
+        public ItemSearchOverlayViewModelTests()
         {
             this.mediatorMock = Substitute.For<IMediator>();
             this.itemResultsViewModelFactoryMock = Substitute.For<Func<IScreen, IItemResultsViewModel>>();
@@ -202,7 +199,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
             this.itemSearchOverlayViewModel.Message.Should().NotBeNull();
-            this.itemSearchOverlayViewModel.Message.Type.Should().Be(MessageType.Error);
+            this.itemSearchOverlayViewModel.Message!.Type.Should().Be(MessageType.Error);
             this.itemSearchOverlayViewModel.Message.Text.Should().NotBeNullOrEmpty();
         }
 

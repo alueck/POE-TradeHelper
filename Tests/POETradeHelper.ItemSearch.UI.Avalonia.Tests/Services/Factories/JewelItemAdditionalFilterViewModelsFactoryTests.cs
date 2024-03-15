@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
+using FluentAssertions;
+
 using Microsoft.Extensions.Options;
 
 using NSubstitute;
@@ -20,8 +22,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class JewelItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
-        [SetUp]
-        public void Setup() => this.AdditionalFilterViewModelsFactory = new JewelItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
+        public JewelItemAdditionalFilterViewModelsFactoryTests()
+        {
+            this.AdditionalFilterViewModelsFactory = new JewelItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
+        }
 
         [TestCaseSource(nameof(GetNonJewelItems))]
         public void CreateShouldReturnEmptyEnumerableForNonJewelItems(Item item)
@@ -29,13 +33,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             IEnumerable<FilterViewModelBase> result =
                 this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
-            Assert.That(result, Is.Empty);
+            result.Should().BeEmpty();
         }
 
         [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
         public void CreateShouldReturnIdentifiedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
             JewelItem jewelItem = new(ItemRarity.Rare)
             {
                 IsIdentified = !queryRequestFilter.Option,
@@ -51,7 +55,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
         public void CreateShouldReturnCorruptedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
             JewelItem jewelItem = new(ItemRarity.Rare)
             {
                 IsCorrupted = !queryRequestFilter.Option,

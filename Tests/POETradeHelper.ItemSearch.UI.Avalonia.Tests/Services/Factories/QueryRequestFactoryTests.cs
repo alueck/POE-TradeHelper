@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using FluentAssertions;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -12,15 +14,16 @@ using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
+using ReactiveUI;
+
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class QueryRequestFactoryTests
     {
-        private List<IItemSearchQueryRequestMapper> itemSearchQueryRequestMapperMocks;
-        private SearchQueryRequestFactory searchQueryRequestFactory;
+        private readonly List<IItemSearchQueryRequestMapper> itemSearchQueryRequestMapperMocks;
+        private readonly SearchQueryRequestFactory searchQueryRequestFactory;
 
-        [SetUp]
-        public void Setup()
+        public QueryRequestFactoryTests()
         {
             this.itemSearchQueryRequestMapperMocks = new List<IItemSearchQueryRequestMapper>
             {
@@ -84,7 +87,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(item);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -99,21 +102,30 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 IsEnabled = true,
             };
             IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
+
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
-
-            Assert.That(result.Query.Stats, Has.Count.EqualTo(1));
-            StatFilters statFilters = result.Query.Stats.First();
-
-            Assert.That(statFilters.Filters, Has.Count.EqualTo(1));
-            StatFilter statFilter = statFilters.Filters.First();
-
-            Assert.That(statFilter.Id, Is.EqualTo(statFilterViewModel.Id));
-            Assert.That(statFilter.Text, Is.EqualTo(statFilterViewModel.Text));
-            Assert.That(statFilter.Value, Is.Not.Null);
-            Assert.That(statFilter.Value.Min, Is.EqualTo(statFilterViewModel.Min));
-            Assert.That(statFilter.Value.Max, Is.EqualTo(statFilterViewModel.Max));
+            result.Should().BeEquivalentTo(new SearchQueryRequest
+            {
+                Query =
+                {
+                    Stats =
+                    {
+                        new StatFilters
+                        {
+                            Filters =
+                            {
+                                new StatFilter
+                                {
+                                    Id = statFilterViewModel.Id,
+                                    Text = statFilterViewModel.Text,
+                                    Value = new MinMaxFilter { Min = statFilterViewModel.Min, Max = statFilterViewModel.Max },
+                                },
+                            },
+                        },
+                    },
+                },
+            });
         }
 
         [Test]
@@ -130,16 +142,27 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
-
-            Assert.That(result.Query.Stats, Has.Count.EqualTo(1));
-            StatFilters statFilters = result.Query.Stats.First();
-
-            Assert.That(statFilters.Filters, Has.Count.EqualTo(1));
-            StatFilter statFilter = statFilters.Filters.First();
-
-            Assert.That(statFilter.Value.Min, Is.EqualTo(expectedValue));
-            Assert.That(statFilter.Value.Max, Is.EqualTo(expectedValue));
+            result.Should().BeEquivalentTo(new SearchQueryRequest
+            {
+                Query =
+                {
+                    Stats =
+                    {
+                        new StatFilters
+                        {
+                            Filters =
+                            {
+                                new StatFilter
+                                {
+                                    Id = statFilterViewModel.Id,
+                                    Text = statFilterViewModel.Text,
+                                    Value = new MinMaxFilter { Min = expectedValue, Max = expectedValue },
+                                },
+                            },
+                        },
+                    },
+                },
+            });
         }
 
         [Test]
@@ -167,14 +190,23 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
-
-            Assert.That(result.Query.Stats, Has.Count.EqualTo(1));
-            StatFilters statFilters = result.Query.Stats.First();
-
-            Assert.That(statFilters.Filters, Has.Count.EqualTo(2));
-            Assert.That(statFilters.Filters, Has.One.Matches<StatFilter>(f => f.Id == filters[0].Id));
-            Assert.That(statFilters.Filters, Has.One.Matches<StatFilter>(f => f.Id == filters[2].Id));
+            result.Should().BeEquivalentTo(new SearchQueryRequest
+            {
+                Query =
+                {
+                    Stats =
+                    {
+                        new StatFilters
+                        {
+                            Filters =
+                            {
+                                new StatFilter { Id = filters[0].Id },
+                                new StatFilter { Id = filters[2].Id },
+                            },
+                        },
+                    },
+                },
+            });
         }
 
         [Test]
@@ -209,9 +241,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Stats, Has.Count.EqualTo(1));
-            Assert.That(result.Query.Stats.First().Filters, Has.Count.EqualTo(1));
+            result.Query.Should().NotBeNull();
+            result.Query.Stats.Should().SatisfyRespectively(x => x.Filters.Should().ContainSingle());
         }
 
         [Test]
@@ -227,16 +258,26 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
-
-            Assert.That(result.Query.Stats, Has.Count.EqualTo(1));
-            StatFilters statFilters = result.Query.Stats.First();
-
-            Assert.That(statFilters.Filters, Has.Count.EqualTo(1));
-            StatFilter statFilter = statFilters.Filters.First();
-
-            Assert.That(statFilter.Id, Is.EqualTo(statFilterViewModel.Id));
-            Assert.That(statFilter.Text, Is.EqualTo(statFilterViewModel.Text));
+            result.Should().BeEquivalentTo(new SearchQueryRequest
+            {
+                Query =
+                {
+                    Stats =
+                    {
+                        new StatFilters
+                        {
+                            Filters =
+                            {
+                                new StatFilter
+                                {
+                                    Id = statFilterViewModel.Id,
+                                    Text = statFilterViewModel.Text,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
         }
 
         [TestCase(10, 20, 10, 20)]
@@ -256,12 +297,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
+            result.Should().NotBeNull();
 
-            MinMaxFilter qualityFilter = result.Query.Filters.MiscFilters.Quality;
-            Assert.That(qualityFilter, Is.Not.Null);
-            Assert.That(qualityFilter.Min, Is.EqualTo(expectedMinValue));
-            Assert.That(qualityFilter.Max, Is.EqualTo(expectedMaxValue));
+            MinMaxFilter? qualityFilter = result.Query.Filters.MiscFilters.Quality;
+            qualityFilter.Should()
+                .BeEquivalentTo(new MinMaxFilter
+                {
+                    Min = expectedMinValue,
+                    Max = expectedMaxValue,
+                });
         }
 
         [Test]
@@ -275,8 +319,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Filters.MiscFilters.Quality, Is.Null);
+            result.Should().BeEquivalentTo(new SearchQueryRequest());
         }
 
         [TestCase(true)]
@@ -291,11 +334,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
+            result.Should().NotBeNull();
 
-            BoolOptionFilter crusaderItemFilter = result.Query.Filters.MiscFilters.CrusaderItem;
-            Assert.That(crusaderItemFilter, Is.Not.Null);
-            Assert.That(crusaderItemFilter.Option, Is.EqualTo(value));
+            BoolOptionFilter? crusaderItemFilter = result.Query.Filters.MiscFilters.CrusaderItem;
+            crusaderItemFilter.Should().BeEquivalentTo(new BoolOptionFilter { Option = value });
         }
 
         [Test]
@@ -306,8 +348,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Filters.MiscFilters.CrusaderItem, Is.Null);
+            result.Should().BeEquivalentTo(new SearchQueryRequest());
         }
 
         [Test]
@@ -362,19 +403,24 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Filters.ArmourFilters.Filters, Is.Null);
-            Assert.That(result.Query.Filters.MapFilters.Filters, Is.Null);
-            Assert.That(result.Query.Filters.RequirementsFilters.Filters, Is.Null);
-            Assert.That(result.Query.Filters.SocketFilters.Filters, Is.Null);
-            Assert.That(result.Query.Filters.WeaponFilters.Filters, Is.Null);
-
-            Assert.That(result.Query.Filters.MiscFilters.Filters, Has.Count.EqualTo(1));
-            Assert.That(result.Query.Filters.MiscFilters.CrusaderItem, Is.Not.Null);
-
-            Assert.That(result.Query.Filters.TypeFilters.Filters, Has.Count.EqualTo(2));
-            Assert.That(result.Query.Filters.TypeFilters.Category.Option, Is.EqualTo(categoryOptionValue));
-            Assert.That(result.Query.Filters.TypeFilters.Rarity.Option, Is.EqualTo(rarityOptionValue));
+            result.Should().BeEquivalentTo(new SearchQueryRequest
+            {
+                Query =
+                {
+                    Filters =
+                    {
+                        TypeFilters =
+                        {
+                            Category = searchQueryRequest.Query.Filters.TypeFilters.Category,
+                            Rarity = searchQueryRequest.Query.Filters.TypeFilters.Rarity,
+                        },
+                        MiscFilters =
+                        {
+                            CrusaderItem = new BoolOptionFilter { Option = true },
+                        },
+                    },
+                },
+            });
         }
 
         [Test]
@@ -391,8 +437,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Name, Is.EqualTo(expected));
+            result.Should().BeEquivalentTo(searchQueryRequest);
         }
 
         [Test]
@@ -409,8 +454,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Term, Is.EqualTo(expected));
+            result.Should().BeEquivalentTo(searchQueryRequest);
         }
 
         [Test]
@@ -427,8 +471,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Type, Is.EqualTo(searchQueryRequest.Query.Type));
+            result.Should().BeEquivalentTo(searchQueryRequest);
         }
 
         [Test]
@@ -442,8 +485,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(searchQueryRequest, GetAdvancedFiltersViewModel(null, null));
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.League, Is.EqualTo(expected));
+            result.Should().BeEquivalentTo(searchQueryRequest);
         }
 
         [Test]
@@ -463,22 +505,32 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Filters.SocketFilters, Is.Not.Null);
-
-            SocketsFilter socketsFilter = result.Query.Filters.SocketFilters.Sockets;
-            Assert.That(socketsFilter, Is.Not.Null);
-            Assert.That(socketsFilter.Min, Is.EqualTo(bindableSocketsFilterViewModel.Min));
-            Assert.That(socketsFilter.Max, Is.EqualTo(bindableSocketsFilterViewModel.Max));
-            Assert.That(socketsFilter.Red, Is.EqualTo(bindableSocketsFilterViewModel.Red));
-            Assert.That(socketsFilter.Green, Is.EqualTo(bindableSocketsFilterViewModel.Green));
-            Assert.That(socketsFilter.Blue, Is.EqualTo(bindableSocketsFilterViewModel.Blue));
-            Assert.That(socketsFilter.White, Is.EqualTo(bindableSocketsFilterViewModel.White));
+            result.Should().BeEquivalentTo(new SearchQueryRequest
+            {
+                Query =
+                {
+                    Filters =
+                    {
+                        SocketFilters =
+                        {
+                            Sockets = new SocketsFilter
+                            {
+                                Min = bindableSocketsFilterViewModel.Min,
+                                Max = bindableSocketsFilterViewModel.Max,
+                                Red = bindableSocketsFilterViewModel.Red,
+                                Green = bindableSocketsFilterViewModel.Green,
+                                Blue = bindableSocketsFilterViewModel.Blue,
+                                White = bindableSocketsFilterViewModel.White,
+                            },
+                        },
+                    },
+                },
+            });
         }
 
         private static IAdvancedFiltersViewModel GetAdvancedFiltersViewModel(
-            IEnumerable<StatFilterViewModel> statFilters,
-            IEnumerable<FilterViewModelBase> additionalFilters)
+            IEnumerable<StatFilterViewModel>? statFilters,
+            IEnumerable<FilterViewModelBase>? additionalFilters)
         {
             IAdvancedFiltersViewModel mock = Substitute.For<IAdvancedFiltersViewModel>();
             mock.AllStatFilters

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
+using FluentAssertions;
+
 using Microsoft.Extensions.Options;
 
 using NSubstitute;
@@ -20,22 +22,23 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class MapItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
-        [SetUp]
-        public void Setup() => this.AdditionalFilterViewModelsFactory =
-            new MapItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
+        public MapItemAdditionalFilterViewModelsFactoryTests()
+        {
+            this.AdditionalFilterViewModelsFactory = new MapItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
+        }
 
         [TestCaseSource(nameof(GetNonMapItems))]
         public void CreateShouldReturnEmptyEnumerableForNonMapItems(Item item)
         {
             IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
-            Assert.That(result, Is.Empty);
+            result.Should().BeEmpty();
         }
 
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
         public void CreateShouldReturnQualityFilterViewModel(MinMaxFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
             MapItem mapItem = new(ItemRarity.Rare)
             {
                 Quality = 10,
@@ -52,7 +55,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
         public void CreateShouldReturnItemQuantityFilterViewModel(MinMaxFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapIncreasedItemQuantity;
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapIncreasedItemQuantity;
             MapItem mapItem = new(ItemRarity.Rare)
             {
                 ItemQuantity = 79,
@@ -69,7 +72,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
         public void CreateShouldReturnItemRarityFilterViewModel(MinMaxFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapIncreasedItemRarity;
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapIncreasedItemRarity;
             MapItem mapItem = new(ItemRarity.Rare)
             {
                 ItemRarity = 101,
@@ -86,7 +89,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
         public void CreateShouldReturnMonsterPackSizeFilterViewModel(MinMaxFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapPacksize;
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapPacksize;
             MapItem mapItem = new(ItemRarity.Rare)
             {
                 MonsterPackSize = 35,
@@ -103,7 +106,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
         public void CreateShouldReturnMapTierFilterViewModel(MinMaxFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapTier;
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapTier;
             MapItem mapItem = new(ItemRarity.Rare)
             {
                 Tier = 6,
@@ -120,7 +123,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
         public void CreateShouldReturnIdentifiedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
             MapItem mapItem = new(ItemRarity.Rare)
             {
                 IsIdentified = !queryRequestFilter.Option,
@@ -136,7 +139,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
         public void CreateShouldReturnCorruptedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
             MapItem mapItem = new(ItemRarity.Rare)
             {
                 IsCorrupted = !queryRequestFilter.Option,
@@ -152,7 +155,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
         public void CreateShouldReturnBlightedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapBlighted;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapBlighted;
             MapItem mapItem = new(ItemRarity.Rare)
             {
                 IsBlighted = !queryRequestFilter.Option,
@@ -168,7 +171,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
         public void CreateShouldReturnBlightRavagedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapBlightRavaged;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression = x => x.Query.Filters.MapFilters.MapBlightRavaged;
             MapItem mapItem = new(ItemRarity.Rare)
             {
                 IsBlightRavaged = !queryRequestFilter.Option,

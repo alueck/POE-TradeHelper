@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
+using FluentAssertions;
+
 using Microsoft.Extensions.Options;
 
 using NSubstitute;
@@ -20,9 +22,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class GemItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
-        [SetUp]
-        public void Setup() => this.AdditionalFilterViewModelsFactory =
-            new GemItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
+        public GemItemAdditionalFilterViewModelsFactoryTests()
+        {
+            this.AdditionalFilterViewModelsFactory = new GemItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
+        }
 
         [TestCaseSource(nameof(GetNonGemItems))]
         public void CreateShouldReturnEmptyEnumerableForNonGemItems(Item item)
@@ -30,14 +33,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             IEnumerable<FilterViewModelBase> result =
                 this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
-            Assert.That(result, Is.Empty);
+            result.Should().BeEmpty();
         }
 
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
         public void CreateShouldReturnQualityFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression =
                 x => x.Query.Filters.MiscFilters.Quality;
             GemItem gemItem = new()
             {
@@ -57,7 +60,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnGemLevelFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression =
                 x => x.Query.Filters.MiscFilters.GemLevel;
             GemItem gemItem = new()
             {
@@ -77,7 +80,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnExperiencePercentFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression =
                 x => x.Query.Filters.MiscFilters.GemLevelProgress;
             GemItem gemItem = new()
             {

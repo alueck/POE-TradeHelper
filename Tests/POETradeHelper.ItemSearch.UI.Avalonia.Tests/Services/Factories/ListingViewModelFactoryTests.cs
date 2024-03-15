@@ -20,11 +20,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class ListingViewModelFactoryTests
     {
-        private IPriceViewModelFactory priceViewModelFactoryMock;
-        private ListingViewModelFactory listingViewModelFactory;
+        private readonly IPriceViewModelFactory priceViewModelFactoryMock;
+        private readonly ListingViewModelFactory listingViewModelFactory;
 
-        [SetUp]
-        public void Setup()
+        public ListingViewModelFactoryTests()
         {
             this.priceViewModelFactoryMock = Substitute.For<IPriceViewModelFactory>();
             this.listingViewModelFactory = new ListingViewModelFactory(this.priceViewModelFactoryMock);
@@ -80,9 +79,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             Item item = new GemItem();
 
-            GemItemListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item) as GemItemListingViewModel;
+            GemItemListingViewModel result = (GemItemListingViewModel)await this.listingViewModelFactory.CreateAsync(listingResult, item);
 
-            result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
             result.GemExperiencePercent.Should().Be(experience * 100);
             result.Level.Should().Be(gemLevel);
@@ -94,10 +92,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             ListingResult listingResult = GetListingResult();
 
-            ItemListingViewModelWithItemLevel result =
-                await this.listingViewModelFactory.CreateAsync(listingResult, item) as ItemListingViewModelWithItemLevel;
+            ItemListingViewModelWithItemLevel result = (ItemListingViewModelWithItemLevel)await this.listingViewModelFactory.CreateAsync(listingResult, item);
 
-            result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
             result.ItemLevel.Should().Be(listingResult.Item.ItemLevel);
         }
@@ -113,9 +109,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             listingResult.Item.Properties = GetPropertiesList(propertiesJson);
             Item item = new FlaskItem(ItemRarity.Normal);
 
-            FlaskItemListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item) as FlaskItemListingViewModel;
+            FlaskItemListingViewModel result = (FlaskItemListingViewModel)await this.listingViewModelFactory.CreateAsync(listingResult, item);
 
-            result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
             result.Quality.Should().Be(quality);
         }
@@ -128,9 +123,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             listingResult.Item.StackSize = stackSize;
             Item item = new DivinationCardItem();
 
-            DivinationCardListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item) as DivinationCardListingViewModel;
+            DivinationCardListingViewModel result = (DivinationCardListingViewModel)await this.listingViewModelFactory.CreateAsync(listingResult, item);
 
-            result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
             result.StackSize.Should().Be(stackSize);
         }
@@ -246,7 +240,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
         private static List<Property> GetPropertiesList(string propertiesJson) => JsonSerializer.Deserialize<List<Property>>(
             propertiesJson,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
 
         private static void AssertSimpleListingViewModelProperties(SimpleListingViewModel result, ListingResult listingResult)
         {

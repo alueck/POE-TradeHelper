@@ -22,13 +22,12 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels;
 
 public class ExchangeResultsViewModelTests
 {
-    private IPoeTradeApiClient poeTradeApiClientMock;
-    private IItemToExchangeQueryRequestMapper itemToExchangeQueryRequestMapperMock;
-    private IItemListingsViewModelFactory itemListingsViewModelFactoryMock;
-    private ExchangeResultsViewModel viewModel;
+    private readonly IPoeTradeApiClient poeTradeApiClientMock;
+    private readonly IItemToExchangeQueryRequestMapper itemToExchangeQueryRequestMapperMock;
+    private readonly IItemListingsViewModelFactory itemListingsViewModelFactoryMock;
+    private readonly ExchangeResultsViewModel viewModel;
 
-    [SetUp]
-    public void Setup()
+    public ExchangeResultsViewModelTests()
     {
         this.poeTradeApiClientMock = Substitute.For<IPoeTradeApiClient>();
         this.itemToExchangeQueryRequestMapperMock = Substitute.For<IItemToExchangeQueryRequestMapper>();
