@@ -157,7 +157,7 @@
     <value>Pseudo</value>
   </data>
   <data name="GemExperiencePercentColumn" xml:space="preserve">
-    <value>Experience %</value>
+    <value>Exp. %</value>
   </data>
   <data name="GemLevelColumn" xml:space="preserve">
     <value>Level</value>

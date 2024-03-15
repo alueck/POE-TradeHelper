@@ -276,7 +276,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Experience %.
+        ///   Looks up a localized string similar to Exp. %.
         /// </summary>
         public static string GemExperiencePercentColumn {
             get {
