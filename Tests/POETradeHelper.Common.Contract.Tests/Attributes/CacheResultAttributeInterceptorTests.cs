@@ -12,11 +12,10 @@ namespace POETradeHelper.Common.Contract.Tests.Attributes;
 
 public class CacheResultAttributeInterceptorTests
 {
-    private ITestValueProvider valueProviderMock;
-    private ITestInterface testInstance;
+    private readonly ITestValueProvider valueProviderMock;
+    private readonly ITestInterface testInstance;
 
-    [SetUp]
-    public void Setup()
+    public CacheResultAttributeInterceptorTests()
     {
         this.valueProviderMock = Substitute.For<ITestValueProvider>();
         ContainerBuilder builder = new();
@@ -155,7 +154,7 @@ public class CacheResultAttributeInterceptorTests
 
         void MethodWithoutReturnValue(Request request);
 
-        Task<string> MethodWithReturnValueAsync(Request request, CancellationToken cancellationToken = default);
+        Task<string?> MethodWithReturnValueAsync(Request request, CancellationToken cancellationToken = default);
 
         Task MethodWithoutReturnValueAsync(Request request, CancellationToken cancellationToken = default);
     }
@@ -164,7 +163,7 @@ public class CacheResultAttributeInterceptorTests
     {
         string GetValue();
 
-        Task<string> GetValueAsync();
+        Task<string?> GetValueAsync();
     }
 
     [Intercept(typeof(CacheResultAttributeInterceptor))]
@@ -196,7 +195,7 @@ public class CacheResultAttributeInterceptorTests
         }
 
         [CacheResult]
-        public Task<string> MethodWithReturnValueAsync(Request request, CancellationToken cancellationToken = default)
+        public Task<string?> MethodWithReturnValueAsync(Request request, CancellationToken cancellationToken = default)
         {
             return this.valueProvider.GetValueAsync();
         }

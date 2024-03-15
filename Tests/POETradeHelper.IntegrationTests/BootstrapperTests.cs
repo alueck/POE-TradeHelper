@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Linq;
+
+using FluentAssertions;
+using FluentAssertions.Execution;
 
 using NUnit.Framework;
 
@@ -9,35 +13,29 @@ using Splat;
 
 namespace POETradeHelper.IntegrationTests
 {
-    public class BootstrapperTests
+    public class BootstrapperTests : IDisposable
     {
-        [SetUp]
-        public void Setup()
+        public BootstrapperTests()
         {
             Bootstrapper.Configure();
+        }
+
+        public void Dispose()
+        {
+            Bootstrapper.Shutdown();
         }
 
         [Test]
         public void AllPoeWikiUrlProvidersRegistered()
         {
-            var wikiUrlProviders = Locator.Current.GetServices<IWikiUrlProvider>();
+            var wikiUrlProviders = Locator.Current.GetServices<IWikiUrlProvider>().ToArray();
 
-            Assert.Multiple(() =>
+            using AssertionScope scope = new();
+
+            foreach (var wikiType in Enum.GetValues<WikiType>())
             {
-                foreach (var wikiType in Enum.GetValues<WikiType>())
-                {
-                    Assert.That(
-                        wikiUrlProviders,
-                        Has.One.Matches<IWikiUrlProvider>(x => x.HandledWikiType == wikiType),
-                        () => $"No {nameof(IWikiUrlProvider)} registered/implemented for wiki type '{wikiType}'");
-                }
-            });
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            Bootstrapper.Shutdown();
+                wikiUrlProviders.Should().Contain(x => x.HandledWikiType == wikiType);
+            }
         }
     }
 }

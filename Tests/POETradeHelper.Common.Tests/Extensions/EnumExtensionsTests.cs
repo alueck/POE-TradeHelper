@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
 
 using static POETradeHelper.Common.Extensions.EnumExtensions;
 using static POETradeHelper.Common.Tests.Extensions.TestEnumWrapper;
@@ -12,7 +14,7 @@ namespace POETradeHelper.Common.Tests.Extensions
         {
             string result = TestEnum.TestValue.GetDisplayName();
 
-            Assert.That(result, Is.EqualTo(DisplayName));
+            result.Should().Be(DisplayName);
         }
 
         [Test]
@@ -20,7 +22,7 @@ namespace POETradeHelper.Common.Tests.Extensions
         {
             string result = TestEnum.TestValue1.GetDisplayName();
 
-            Assert.That(result, Is.EqualTo(TestEnum.TestValue1.ToString()));
+            result.Should().Be(TestEnum.TestValue1.ToString());
         }
     }
 }
