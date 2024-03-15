@@ -28,7 +28,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
                     return new ItemType(entry.Type, entry.Disc);
                 }
 
-                if (name.Contains(entry.Type!))
+                if (name.Contains(entry.Type))
                 {
                     matches.Add(entry);
                 }

@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
 
-using NSubstitute.ReturnsExtensions;
-
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;

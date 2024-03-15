@@ -2,7 +2,5 @@
 
 namespace POETradeHelper.Common.Contract.Commands
 {
-    public class SearchItemCommand : IRequest
-    {
-    }
+    public class SearchItemCommand : IRequest;
 }

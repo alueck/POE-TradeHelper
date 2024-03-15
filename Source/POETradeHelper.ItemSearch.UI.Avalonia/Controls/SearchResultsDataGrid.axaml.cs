@@ -4,12 +4,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
+
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.Templates;
+
 using POETradeHelper.ItemSearch.UI.Avalonia.Attributes;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
+
 using ReactiveUI;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Controls;
@@ -49,11 +52,9 @@ public partial class SearchResultsDataGrid : UserControl
     {
         DataGrid dataGrid = (DataGrid)sender!;
 
-        IEnumerator itemsEnumerator = dataGrid.ItemsSource.GetEnumerator();
-
-        if (itemsEnumerator.MoveNext() && itemsEnumerator.Current != null)
+        foreach (object item in dataGrid.ItemsSource)
         {
-            Type itemType = itemsEnumerator.Current.GetType();
+            Type itemType = item.GetType();
             PropertyInfo property = itemType.GetProperty(e.PropertyName)!;
 
             if (property.PropertyType == typeof(PriceViewModel))

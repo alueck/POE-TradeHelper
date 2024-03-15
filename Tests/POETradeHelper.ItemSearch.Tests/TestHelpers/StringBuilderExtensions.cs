@@ -16,12 +16,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers
 
         public static StringBuilder AppendLine(this StringBuilder stringBuilder, string text, Func<bool> condition)
         {
-            if (condition?.Invoke() == true)
-            {
-                stringBuilder.AppendLine(text);
-            }
-
-            return stringBuilder;
+            return condition() ? stringBuilder.AppendLine(text) : stringBuilder;
         }
     }
 }

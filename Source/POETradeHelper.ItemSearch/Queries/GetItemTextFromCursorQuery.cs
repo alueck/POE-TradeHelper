@@ -3,9 +3,7 @@ using POETradeHelper.Common.Contract;
 
 namespace POETradeHelper.ItemSearch.Queries;
 
-public class GetItemTextFromCursorQuery : IRequest<string>
-{
-}
+public class GetItemTextFromCursorQuery : IRequest<string>;
 
 public class GetItemTextFromCursorQueryHandler : IRequestHandler<GetItemTextFromCursorQuery, string>
 {

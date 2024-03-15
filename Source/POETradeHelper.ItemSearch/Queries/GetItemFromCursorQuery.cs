@@ -6,9 +6,7 @@ using POETradeHelper.ItemSearch.Exceptions;
 
 namespace POETradeHelper.ItemSearch.Queries;
 
-public class GetItemFromCursorQuery : IRequest<Item>
-{
-}
+public class GetItemFromCursorQuery : IRequest<Item>;
 
 public class GetItemFromCursorQueryHandler : IRequestHandler<GetItemFromCursorQuery, Item>
 {

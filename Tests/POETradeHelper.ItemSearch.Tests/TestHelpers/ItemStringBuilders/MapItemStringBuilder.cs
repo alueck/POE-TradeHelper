@@ -10,8 +10,6 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
     {
         public MapItemStatsGroup ItemStatsGroup { get; } = new MapItemStatsGroup();
 
-        public bool IsBlighted { get; private set; }
-
         public MapItemStringBuilder WithMapTier(int mapTier)
         {
             this.ItemStatsGroup.MapTier = mapTier;

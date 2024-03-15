@@ -45,7 +45,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
             if (!string.IsNullOrEmpty(vaalName))
             {
-                bool isTransfiguredVaalGem = nameLine.Length > vaalName!.Length;
+                bool isTransfiguredVaalGem = nameLine.Length > vaalName.Length;
                 name = isTransfiguredVaalGem ? $"{vaalName} ({nameLine})" : vaalName;
             }
             else

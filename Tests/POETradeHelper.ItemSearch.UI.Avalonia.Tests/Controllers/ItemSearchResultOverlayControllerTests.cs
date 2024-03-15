@@ -24,7 +24,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
     {
         private readonly IItemSearchResultOverlayView viewMock;
         private readonly IItemSearchResultOverlayViewModel viewModelMock;
-        private readonly IViewLocator viewLocatorMock;
         private readonly IUiThreadDispatcher uiThreadDispatcherMock;
         private readonly ItemSearchResultOverlayController overlayController;
 
@@ -32,11 +31,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
         {
             this.viewMock = Substitute.For<IItemSearchResultOverlayView>();
             this.viewModelMock = Substitute.For<IItemSearchResultOverlayViewModel>();
-            this.viewLocatorMock = Substitute.For<IViewLocator>();
-            this.viewLocatorMock.GetView(Arg.Any<IItemSearchResultOverlayViewModel>())
+            var viewLocatorMock = Substitute.For<IViewLocator>();
+            viewLocatorMock.GetView(Arg.Any<IItemSearchResultOverlayViewModel>())
                 .Returns(this.viewMock);
             this.uiThreadDispatcherMock = Substitute.For<IUiThreadDispatcher>();
-            this.overlayController = new ItemSearchResultOverlayController(this.viewModelMock, this.viewLocatorMock, this.uiThreadDispatcherMock);
+            this.overlayController = new ItemSearchResultOverlayController(this.viewModelMock, viewLocatorMock, this.uiThreadDispatcherMock);
         }
 
         [Test]

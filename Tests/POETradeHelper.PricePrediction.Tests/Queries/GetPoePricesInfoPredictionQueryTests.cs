@@ -22,7 +22,7 @@ namespace POETradeHelper.PricePrediction.Tests.Queries
             this.poePricesInfoClientMock = Substitute.For<IPoePricesInfoClient>();
             this.handler = new GetPoePricesInfoPredictionQueryHandler(this.poePricesInfoClientMock);
 
-            EquippableItem? validItem = new EquippableItem(ItemRarity.Rare)
+            EquippableItem validItem = new EquippableItem(ItemRarity.Rare)
             {
                 ExtendedItemText = """
                                    { Extended stat info }

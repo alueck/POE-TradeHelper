@@ -11,8 +11,7 @@ namespace POETradeHelper.Common.Extensions
         {
             var displayAttribute = enumType
                 .GetType()
-                .GetMember(enumType.ToString())
-                .First()
+                .GetMember(enumType.ToString())[0]
                 .GetCustomAttribute<DisplayAttribute>();
 
             return displayAttribute != null

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq.Expressions;
 
 using Microsoft.Extensions.Options;
@@ -70,8 +69,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             }
             else
             {
-                result.Min = Math.Floor(currentValue * (offsetCurrentValue ? (1 + this.ItemSearchOptions.CurrentValue.AdvancedQueryOptions.MinValuePercentageOffset) : 1));
-                result.Max = Math.Ceiling(currentValue * (offsetCurrentValue ? (1 + this.ItemSearchOptions.CurrentValue.AdvancedQueryOptions.MaxValuePercentageOffset) : 1));
+                result.Min = Math.Floor(currentValue * (offsetCurrentValue ? 1 + this.ItemSearchOptions.CurrentValue.AdvancedQueryOptions.MinValuePercentageOffset : 1));
+                result.Max = Math.Ceiling(currentValue * (offsetCurrentValue ? 1 + this.ItemSearchOptions.CurrentValue.AdvancedQueryOptions.MaxValuePercentageOffset : 1));
             }
 
             return result;

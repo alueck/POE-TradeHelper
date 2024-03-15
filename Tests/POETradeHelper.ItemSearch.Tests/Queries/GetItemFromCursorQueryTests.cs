@@ -85,7 +85,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
         [Test]
         public async Task HandleShouldReturnParseResult()
         {
-            EquippableItem? expected = new(ItemRarity.Normal) { Name = "TestItem" };
+            EquippableItem expected = new(ItemRarity.Normal) { Name = "TestItem" };
             this.itemParserAggregatorMock.IsParseable(Arg.Any<string>())
                 .Returns(true);
             this.itemParserAggregatorMock.Parse(Arg.Any<string>())

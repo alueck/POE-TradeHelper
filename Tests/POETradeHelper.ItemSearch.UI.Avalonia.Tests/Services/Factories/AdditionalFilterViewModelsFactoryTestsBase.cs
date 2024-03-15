@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
 using FluentAssertions;
-using FluentAssertions.Equivalency;
 
 using Microsoft.Extensions.Options;
 
 using NSubstitute;
-
-using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -166,14 +162,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             BindableFilterViewModel<BoolOptionFilter> expected = new(expectedBindingExpression)
             {
                 Text = text,
-                IsEnabled = queryRequestFilter?.Option,
+                IsEnabled = queryRequestFilter.Option,
             };
 
-            SearchQueryRequest searchQueryRequest = new SearchQueryRequest();
-            if (queryRequestFilter != null)
-            {
-                SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
-            }
+            SearchQueryRequest searchQueryRequest = new();
+            SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
 
             // act
             IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
@@ -210,7 +203,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
             foreach (MemberExpression expression in expressions)
             {
-                if (expression == expressions.Last())
+                if (expression == expressions[^1])
                 {
                     ((PropertyInfo)expression.Member).SetValue(parent, value);
                     break;
