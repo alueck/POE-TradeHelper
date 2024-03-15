@@ -22,8 +22,7 @@ namespace POETradeHelper.ViewModels
         {
             this.SettingsViewModels = settingsViewModels;
 
-            this.InitializeAsync(initializables);
-
+            this.InitializeCommand = ReactiveCommand.CreateFromTask(() => this.InitializeAsync(initializables));
             this.SaveSettingsCommand = ReactiveCommand.Create(this.SaveSettings);
             this.SaveSettingsCommand
                 .Select(
@@ -45,6 +44,8 @@ namespace POETradeHelper.ViewModels
 
         public IEnumerable<ISettingsViewModel> SettingsViewModels { get; }
 
+        public ReactiveCommand<Unit, Unit> InitializeCommand { get; }
+
         [Reactive]
         public bool IsBusy { get; private set; }
 
@@ -59,7 +60,7 @@ namespace POETradeHelper.ViewModels
         [Reactive]
         public Message? ErrorMessage { get; private set; }
 
-        private async void InitializeAsync(IEnumerable<IInitializable> initializables)
+        private async Task InitializeAsync(IEnumerable<IInitializable> initializables)
         {
             bool success = await this.InitializeAsync(
                 async () => await InitializeInitializablesAsync(initializables).ConfigureAwait(true),

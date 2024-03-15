@@ -83,8 +83,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
                     this.Clear();
 
                     GetPoePricesInfoPredictionQuery request = new(item, this.itemSearchOptions.CurrentValue.League!);
-                    PoePricesInfoPrediction poePricesInfoPrediction =
-                        await this.mediator.Send(request, cancellationToken).ConfigureAwait(true);
+                    PoePricesInfoPrediction poePricesInfoPrediction = await this.mediator.Send(request, cancellationToken).ConfigureAwait(true);
 
                     await this.MapPrediction(poePricesInfoPrediction, cancellationToken);
                 }

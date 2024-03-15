@@ -8,7 +8,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
     public class BindableSocketsFilterViewModel : BindableMinMaxFilterViewModel
     {
-        public BindableSocketsFilterViewModel(Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression)
+        public BindableSocketsFilterViewModel(Expression<Func<SearchQueryRequest, MinMaxFilter?>> bindingExpression)
             : base(bindingExpression)
         {
         }

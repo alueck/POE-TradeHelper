@@ -267,4 +267,31 @@
   <data name="UnscalableValueSuffix" xml:space="preserve">
     <value> — Unscalable Value</value>
   </data>
+  <data name="ArmourDescriptor" xml:space="preserve">
+    <value>Armour:</value>
+  </data>
+  <data name="EvasionRatingDescriptor" xml:space="preserve">
+    <value>Evasion Rating:</value>
+  </data>
+  <data name="EnergyShieldDescriptor" xml:space="preserve">
+    <value>Energy Shield:</value>
+  </data>
+  <data name="WardDescriptor" xml:space="preserve">
+    <value>Ward:</value>
+  </data>
+  <data name="BlockChanceDescriptor" xml:space="preserve">
+    <value>Chance to Block:</value>
+  </data>
+  <data name="CriticalStrikeChanceDescriptor" xml:space="preserve">
+    <value>Critical Strike Chance:</value>
+  </data>
+  <data name="PhysicalDamageDescriptor" xml:space="preserve">
+    <value>Physical Damage:</value>
+  </data>
+  <data name="ElementalDamageDescriptor" xml:space="preserve">
+    <value>Elemental Damage:</value>
+  </data>
+  <data name="AttacksPerSecondDescriptor" xml:space="preserve">
+    <value>Attacks per Second:</value>
+  </data>
 </root>

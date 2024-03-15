@@ -70,7 +70,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         {
             if (!this.MapsTier1ItemStats())
             {
-                Assert.Ignore();
+                Assert.Ignore("Item has no Tier 1 stats.");
             }
 
             ItemWithStats item = (ItemWithStats)GetItems().First(item => item.GetType() == typeof(TItemType));

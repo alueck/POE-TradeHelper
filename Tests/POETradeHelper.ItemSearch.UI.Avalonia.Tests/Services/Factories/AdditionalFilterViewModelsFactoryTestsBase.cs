@@ -1,11 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
+using FluentAssertions;
+using FluentAssertions.Equivalency;
+
+using Microsoft.Extensions.Options;
+
+using NSubstitute;
+
 using NUnit.Framework;
 
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.UI.Avalonia.Factories;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
@@ -20,169 +29,182 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
     {
         protected IAdditionalFilterViewModelsFactory AdditionalFilterViewModelsFactory { get; set; }
 
+        protected ItemSearchOptions ItemSearchOptions { get; } = new();
+
+        protected IOptionsMonitor<ItemSearchOptions> ItemSearchOptionsMonitorMock { get; private set; }
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.ItemSearchOptionsMonitorMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
+            this.ItemSearchOptionsMonitorMock.CurrentValue.Returns(this.ItemSearchOptions);
+        }
+
         protected void CreateShouldReturnBindableMinMaxFilterViewModel(
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression,
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression,
             Item item,
-            int? currentValue,
-            string text)
+            string text,
+            int currentValue,
+            MinMaxFilter queryRequestFilter,
+            bool offsetCurrentValue = false)
         {
             // arrange
-            BindableMinMaxFilterViewModel expected = new BindableMinMaxFilterViewModel(expectedBindingExpression)
+            BindableMinMaxFilterViewModel expected = new(expectedBindingExpression)
             {
-                Min = currentValue,
-                Max = currentValue,
+                Min = queryRequestFilter?.Min ??
+                      Math.Floor(currentValue * (offsetCurrentValue ? 1 + this.ItemSearchOptions.AdvancedQueryOptions.MinValuePercentageOffset : 1)),
+                Max = queryRequestFilter?.Max ??
+                      Math.Ceiling(currentValue * (offsetCurrentValue ? 1 + this.ItemSearchOptions.AdvancedQueryOptions.MaxValuePercentageOffset : 1)),
                 Current = currentValue.ToString(),
                 Text = text,
-                IsEnabled = false,
+                IsEnabled = queryRequestFilter != null,
             };
+
+            SearchQueryRequest searchQueryRequest = new();
+            if (queryRequestFilter != null)
+            {
+                SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
+            }
 
             // act
             IEnumerable<FilterViewModelBase> result =
-                this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
+                this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             // assert
-            Assert.That(result, Is.Not.Null.And.Not.Empty);
-            Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableMinMaxFilterViewModel(x, expected)));
+            result.Should().ContainEquivalentOf(
+                expected,
+                config => config
+                    .Excluding(x => x.Changed)
+                    .Excluding(x => x.Changed)
+                    .Excluding(x => x.ThrownExceptions));
         }
 
-        protected void CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression,
+        protected void CreateShouldReturnBindableMinMaxFilterViewModel(
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression,
             Item item,
-            int? currentValue,
             string text,
+            decimal currentValue,
             MinMaxFilter queryRequestFilter)
         {
             // arrange
-            BindableMinMaxFilterViewModel expected = new BindableMinMaxFilterViewModel(expectedBindingExpression)
+            BindableMinMaxFilterViewModel expected = new(expectedBindingExpression)
             {
-                Min = queryRequestFilter.Min,
-                Max = queryRequestFilter.Max,
-                Current = currentValue.ToString(),
+                Min = queryRequestFilter?.Min ??
+                      Math.Round(currentValue * (1 + this.ItemSearchOptions.AdvancedQueryOptions.MinValuePercentageOffset), 2),
+                Max = queryRequestFilter?.Max ??
+                      Math.Round(currentValue * (1 + this.ItemSearchOptions.AdvancedQueryOptions.MaxValuePercentageOffset), 2),
+                Current = currentValue.ToString("N2"),
                 Text = text,
-                IsEnabled = true,
+                IsEnabled = queryRequestFilter != null,
             };
 
-            SearchQueryRequest searchQueryRequest = new SearchQueryRequest();
-            SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
+            SearchQueryRequest searchQueryRequest = new();
+            if (queryRequestFilter != null)
+            {
+                SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
+            }
 
             // act
             IEnumerable<FilterViewModelBase> result =
                 this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             // assert
-            Assert.That(result, Is.Not.Null.And.Not.Empty);
-            Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableMinMaxFilterViewModel(x, expected)));
+            result.Should().ContainEquivalentOf(
+                expected,
+                config => config
+                    .Excluding(x => x.Changed)
+                    .Excluding(x => x.Changed)
+                    .Excluding(x => x.ThrownExceptions));
         }
 
         protected void CreateShouldReturnBindableSocketsFilterViewModel(
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression,
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression,
             Item item,
-            int? currentValue,
-            string text)
-        {
-            // arrange
-            BindableSocketsFilterViewModel expected = new BindableSocketsFilterViewModel(expectedBindingExpression)
-            {
-                Min = currentValue,
-                Max = currentValue,
-                Current = currentValue.ToString(),
-                Text = text,
-                IsEnabled = false,
-            };
-
-            // act
-            IEnumerable<FilterViewModelBase> result =
-                this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
-
-            // assert
-            Assert.That(result, Is.Not.Null.And.Not.Empty);
-            Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableSocketsFilterViewModel(x, expected)));
-        }
-
-        protected void CreateShouldReturnBindableSocketsFilterViewModelWithValuesFromQueryRequest(
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression,
-            Item item,
-            int? currentValue,
             string text,
+            int? currentValue,
             SocketsFilter queryRequestFilter)
         {
             // arrange
-            BindableSocketsFilterViewModel expected = new BindableSocketsFilterViewModel(expectedBindingExpression)
+            BindableSocketsFilterViewModel expected = new(expectedBindingExpression)
             {
-                Min = queryRequestFilter.Min,
-                Max = queryRequestFilter.Max,
-                Red = queryRequestFilter.Red,
-                Green = queryRequestFilter.Green,
-                Blue = queryRequestFilter.Blue,
-                White = queryRequestFilter.White,
+                Min = queryRequestFilter?.Min ?? currentValue,
+                Max = queryRequestFilter?.Max ?? currentValue,
+                Red = queryRequestFilter?.Red,
+                Green = queryRequestFilter?.Green,
+                Blue = queryRequestFilter?.Blue,
+                White = queryRequestFilter?.White,
                 Current = currentValue.ToString(),
                 Text = text,
-                IsEnabled = true,
+                IsEnabled = queryRequestFilter != null,
             };
 
             SearchQueryRequest searchQueryRequest = new SearchQueryRequest();
-            SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
+            if (queryRequestFilter != null)
+            {
+                SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
+            }
 
             // act
             IEnumerable<FilterViewModelBase> result =
                 this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             // assert
-            Assert.That(result, Is.Not.Null.And.Not.Empty);
-            Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableSocketsFilterViewModel(x, expected)));
+            result.Should().ContainEquivalentOf(
+                expected,
+                config => config
+                    .Excluding(x => x.Changed)
+                    .Excluding(x => x.Changed)
+                    .Excluding(x => x.ThrownExceptions));
         }
 
-        protected void CreateShouldReturnBindableFilterViewModel(
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression,
-            Item item,
-            bool? isEnabled,
-            string text)
-        {
-            // arrange
-            BindableFilterViewModel expected = new BindableFilterViewModel(expectedBindingExpression)
-            {
-                Text = text,
-                IsEnabled = isEnabled,
-            };
-
-            // act
-            IEnumerable<FilterViewModelBase> result =
-                this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
-
-            // assert
-            Assert.That(result, Is.Not.Null.And.Not.Empty);
-            Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableFilterViewModel(x, expected)));
-        }
-
-        protected void CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression,
+        protected void CreateShouldReturnBindableBoolOptionFilterViewModel(
+            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression,
             Item item,
             string text,
             BoolOptionFilter queryRequestFilter)
         {
             // arrange
-            BindableFilterViewModel expected = new BindableFilterViewModel(expectedBindingExpression)
+            BindableFilterViewModel<BoolOptionFilter> expected = new(expectedBindingExpression)
             {
                 Text = text,
-                IsEnabled = queryRequestFilter.Option,
+                IsEnabled = queryRequestFilter?.Option,
             };
 
             SearchQueryRequest searchQueryRequest = new SearchQueryRequest();
-            SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
+            if (queryRequestFilter != null)
+            {
+                SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
+            }
 
             // act
-            IEnumerable<FilterViewModelBase> result =
-                this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
+            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, searchQueryRequest);
 
             // assert
-            Assert.That(result, Is.Not.Null.And.Not.Empty);
-            Assert.That(result, Has.One.Matches<FilterViewModelBase>(x => MatchBindableFilterViewModel(x, expected)));
+            result.Should().ContainEquivalentOf(
+                expected,
+                config => config
+                    .Excluding(x => x.Changed)
+                    .Excluding(x => x.Changed)
+                    .Excluding(x => x.ThrownExceptions));
         }
 
-        private static void SetValueByExpression(
-            Expression<Func<SearchQueryRequest, IFilter>> bindingExpression,
+        protected static IEnumerable<BoolOptionFilter> GetBoolOptionFilterTestCases()
+        {
+            yield return new BoolOptionFilter { Option = false };
+            yield return new BoolOptionFilter { Option = true };
+        }
+
+        protected static IEnumerable<MinMaxFilter> GetMinMaxFilterTestCases()
+        {
+            yield return null;
+            yield return new MinMaxFilter { Min = 45, Max = 97 };
+        }
+
+        private static void SetValueByExpression<TFilter>(
+            Expression<Func<SearchQueryRequest, TFilter>> bindingExpression,
             SearchQueryRequest searchQueryRequest,
-            IFilter value)
+            TFilter value)
+            where TFilter : IFilter
         {
             List<Expression> expressions = bindingExpression.Body.GetExpressionChain().ToList();
             object parent = searchQueryRequest;
@@ -197,39 +219,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
                 parent = ((PropertyInfo)expression.Member).GetValue(parent);
             }
-        }
-
-        private static bool MatchBindableMinMaxFilterViewModel(
-            FilterViewModelBase actual,
-            BindableMinMaxFilterViewModel expected)
-        {
-            return actual is BindableMinMaxFilterViewModel bindableMinMaxFilterViewModel
-                   && bindableMinMaxFilterViewModel.BindingExpression.ToString() == expected.BindingExpression.ToString()
-                   && bindableMinMaxFilterViewModel.Min == expected.Min
-                   && bindableMinMaxFilterViewModel.Max == expected.Max
-                   && bindableMinMaxFilterViewModel.Current == expected.Current
-                   && bindableMinMaxFilterViewModel.Text == expected.Text
-                   && bindableMinMaxFilterViewModel.IsEnabled == expected.IsEnabled;
-        }
-
-        private static bool MatchBindableSocketsFilterViewModel(
-            FilterViewModelBase actual,
-            BindableSocketsFilterViewModel expected)
-        {
-            return MatchBindableMinMaxFilterViewModel(actual, expected)
-                   && actual is BindableSocketsFilterViewModel bindableSocketsFilterViewModel
-                   && bindableSocketsFilterViewModel.Red == expected.Red
-                   && bindableSocketsFilterViewModel.Green == expected.Green
-                   && bindableSocketsFilterViewModel.Blue == expected.Blue
-                   && bindableSocketsFilterViewModel.White == expected.White;
-        }
-
-        private static bool MatchBindableFilterViewModel(FilterViewModelBase actual, BindableFilterViewModel expected)
-        {
-            return actual is BindableFilterViewModel bindableFilterViewModel
-                   && bindableFilterViewModel.BindingExpression.ToString() == expected.BindingExpression.ToString()
-                   && bindableFilterViewModel.Text == expected.Text
-                   && bindableFilterViewModel.IsEnabled == expected.IsEnabled;
         }
     }
 }

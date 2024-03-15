@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
+using Microsoft.Extensions.Options;
+
+using NSubstitute;
+
 using NUnit.Framework;
 
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations;
 using POETradeHelper.ItemSearch.UI.Avalonia.Properties;
@@ -16,7 +21,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
     public class FlaskItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
         [SetUp]
-        public void Setup() => this.AdditionalFilterViewModelsFactory = new FlaskItemAdditionalFilterViewModelsFactory();
+        public void Setup() => this.AdditionalFilterViewModelsFactory = new FlaskItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
 
         [TestCaseSource(nameof(GetNonFlaskItems))]
         public void CreateShouldReturnEmptyEnumerableForNonFlaskItems(Item item)
@@ -26,11 +31,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             Assert.That(result, Is.Empty);
         }
 
-        [Test]
-        public void CreateShouldReturnQualityFilterViewModel()
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnQualityFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
             FlaskItem flaskItem = new(ItemRarity.Unique)
             {
                 Quality = 20,
@@ -40,61 +45,21 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.CreateShouldReturnBindableMinMaxFilterViewModel(
                 expectedBindingExpression,
                 flaskItem,
-                flaskItem.Quality,
-                Resources.QualityColumn);
-        }
-
-        [Test]
-        public void CreateShouldReturnQualityFilterViewModelWithValuesFromSearchQueryRequest()
-        {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
-            FlaskItem flaskItem = new(ItemRarity.Unique)
-            {
-                Quality = 19,
-            };
-
-            MinMaxFilter queryRequestFilter = new()
-            {
-                Min = 15,
-                Max = 20,
-            };
-
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
-                expectedBindingExpression,
-                flaskItem,
-                flaskItem.Quality,
                 Resources.QualityColumn,
+                flaskItem.Quality,
                 queryRequestFilter);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void CreateShouldReturnIdentifiedFilterViewModel(bool value)
+        [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
+        public void CreateShouldReturnIdentifiedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
             FlaskItem flaskItem = new(ItemRarity.Rare)
             {
-                IsIdentified = value,
+                IsIdentified = !queryRequestFilter.Option,
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, flaskItem, null, Resources.Identified);
-        }
-
-        [Test]
-        public void CreateShouldReturnIdentifiedFilterViewModelWithValueFromQueryRequest()
-        {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
-            FlaskItem flaskItem = new(ItemRarity.Rare)
-            {
-                IsIdentified = true,
-            };
-
-            BoolOptionFilter queryRequestFilter = new()
-            {
-                Option = false,
-            };
-
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
                 expectedBindingExpression,
                 flaskItem,
                 Resources.Identified,

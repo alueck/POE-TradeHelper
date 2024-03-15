@@ -237,4 +237,43 @@
   <data name="StackSize" xml:space="preserve">
     <value>Stack Size</value>
   </data>
+  <data name="FilterCategory_Armour" xml:space="preserve">
+    <value>Armour</value>
+  </data>
+  <data name="FilterCategory_Weapon" xml:space="preserve">
+    <value>Weapon</value>
+  </data>
+  <data name="Armour" xml:space="preserve">
+    <value>Armour</value>
+  </data>
+  <data name="Ward" xml:space="preserve">
+    <value>Ward</value>
+  </data>
+  <data name="EnergyShield" xml:space="preserve">
+    <value>Energy Shield</value>
+  </data>
+  <data name="Evasion" xml:space="preserve">
+    <value>Evasion</value>
+  </data>
+  <data name="ChanceToBlock" xml:space="preserve">
+    <value>Chance to Block</value>
+  </data>
+  <data name="PhysicalDps" xml:space="preserve">
+    <value>Physical DPS</value> 
+  </data>
+  <data name="ElementalDps" xml:space="preserve">
+    <value>Elemental DPS</value>
+  </data>
+  <data name="Dps" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="Damage" xml:space="preserve">
+    <value>Damage</value>
+  </data>
+  <data name="AttacksPerSecond" xml:space="preserve">
+    <value>Attacks per Second</value>
+  </data>
+  <data name="CriticalStrikeChance" xml:space="preserve">
+    <value>Critical Strike Chance</value>
+  </data>
 </root>

@@ -59,8 +59,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         private static void SetStatFilters(IAdvancedFiltersViewModel advancedFiltersViewModel, SearchQueryRequest searchQueryRequest)
         {
-            IEnumerable<StatFilterViewModel> enabledStatFilterViewModels =
-                advancedFiltersViewModel.AllStatFilters.Where(f => f.IsEnabled == true);
+            IEnumerable<StatFilterViewModel> enabledStatFilterViewModels = advancedFiltersViewModel.AllStatFilters.Where(f => f.IsEnabled == true);
 
             StatFilters statFilters = new();
 
@@ -97,8 +96,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         private static void SetAdditionalFilters(IAdvancedFiltersViewModel advancedFiltersViewModel, SearchQueryRequest searchQueryRequest)
         {
-            foreach (BindableFilterViewModel filterViewModel in advancedFiltersViewModel.AdditionalFilters
-                         .OfType<BindableFilterViewModel>())
+            foreach (IBindableFilterViewModel filterViewModel in advancedFiltersViewModel.AdditionalFilters.OfType<IBindableFilterViewModel>())
             {
                 SetValueByExpression(filterViewModel.BindingExpression, searchQueryRequest, filterViewModel);
             }
@@ -107,7 +105,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
         private static void SetValueByExpression(
             Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression,
             SearchQueryRequest searchQueryRequest,
-            BindableFilterViewModel bindableFilterViewModel)
+            IBindableFilterViewModel bindableFilterViewModel)
         {
             List<Expression> expressions = bindingExpression.Body.GetExpressionChain().ToList();
             object? parent = searchQueryRequest;
@@ -115,7 +113,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             foreach (MemberExpression expression in expressions.OfType<MemberExpression>())
             {
                 PropertyInfo property = (PropertyInfo)expression.Member;
-                if (expression == expressions.Last())
+                if (expression == expressions[^1])
                 {
                     IFilter? filter = GetFilter(bindableFilterViewModel);
                     property.SetValue(parent, filter);
@@ -126,7 +124,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             }
         }
 
-        private static IFilter? GetFilter(FilterViewModelBase filterViewModel)
+        private static IFilter? GetFilter(IFilterViewModel filterViewModel)
         {
             IFilter? filter = null;
 

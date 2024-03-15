@@ -1,4 +1,7 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
@@ -6,9 +9,19 @@ using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
-    public class EquippableItemParser : ItemWithStatsParserBase
+    public partial class EquippableItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 2;
+
+        private static readonly IReadOnlyDictionary<string, Action<ArmourValues, int>> ArmourMappings = new Dictionary<string, Action<ArmourValues, int>>
+        {
+            [Resources.ArmourDescriptor] = (armourValues, value) => armourValues.Armour = value,
+            [Resources.BlockChanceDescriptor] = (armourValues, value) => armourValues.BlockChance = value,
+            [Resources.EnergyShieldDescriptor] = (armourValues, value) => armourValues.EnergyShield = value,
+            [Resources.EvasionRatingDescriptor] = (armourValues, value) => armourValues.EvasionRating = value,
+            [Resources.WardDescriptor] = (armourValues, value) => armourValues.Ward = value,
+        };
+
         private readonly ISocketsParser socketsParser;
         private readonly IItemTypeParser itemTypeParser;
         private readonly IItemDataService itemDataService;
@@ -58,6 +71,16 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                     EquippableItemCategory.Unknown;
             }
 
+            if (equippableItem.Category is EquippableItemCategory.Armour or EquippableItemCategory.Unknown)
+            {
+                equippableItem.ArmourValues = ParseArmourValues(itemStringLines);
+            }
+
+            if (equippableItem.Category is EquippableItemCategory.Weapons or EquippableItemCategory.Unknown)
+            {
+                equippableItem.WeaponValues = ParseWeaponValues(itemStringLines);
+            }
+
             return equippableItem;
         }
 
@@ -89,5 +112,81 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
             return influenceType ?? InfluenceType.None;
         }
+
+        private static ArmourValues ParseArmourValues(string[] itemStringLines)
+        {
+            ArmourValues result = new();
+
+            foreach (string line in GetArmourOrWeaponValuesLines(itemStringLines))
+            {
+                Match match = ArmourValuesRegex().Match(line);
+
+                if (match.Success && ArmourMappings.TryGetValue(match.Groups["Descriptor"].Value, out Action<ArmourValues, int>? setter))
+                {
+                    setter(result, int.Parse(match.Groups["Value"].Value));
+                }
+            }
+
+            return result;
+        }
+
+        private static WeaponValues ParseWeaponValues(string[] itemStringLines)
+        {
+            WeaponValues result = new();
+
+            foreach (string line in GetArmourOrWeaponValuesLines(itemStringLines))
+            {
+                Match match = WeaponValuesRegex().Match(line);
+
+                if (!match.Success)
+                {
+                    continue;
+                }
+
+                string descriptor = match.Groups["Descriptor"].Value;
+
+                if (descriptor == Resources.PhysicalDamageDescriptor)
+                {
+                    result.PhysicalDamage = GetMinMaxValue(match.Groups["Min"].Value, match.Groups["Max"].Value);
+                }
+                else if (descriptor == Resources.ElementalDamageDescriptor)
+                {
+                    result.ElementalDamage = match.Groups["Min"].Captures.Select(x => x.Value)
+                        .Zip(match.Groups["Max"].Captures.Select(x => x.Value))
+                        .Select(x => GetMinMaxValue(x.First, x.Second))
+                        .ToArray();
+                }
+                else if (descriptor == Resources.AttacksPerSecondDescriptor)
+                {
+                    result.AttacksPerSecond = decimal.Parse(match.Groups["Values"].Value, CultureInfo.InvariantCulture);
+                }
+                else if (descriptor == Resources.CriticalStrikeChanceDescriptor)
+                {
+                    result.CriticalStrikeChance = decimal.Parse(match.Groups["Values"].Value, CultureInfo.InvariantCulture);
+                }
+            }
+
+            return result;
+        }
+
+        private static MinMaxValue GetMinMaxValue(string min, string max) =>
+            new()
+            {
+                Min = int.Parse(min),
+                Max = int.Parse(max),
+            };
+
+        private static IEnumerable<string> GetArmourOrWeaponValuesLines(string[] itemStringLines)
+        {
+            int index = Array.IndexOf(itemStringLines, ParserConstants.PropertyGroupSeparator);
+
+            return itemStringLines[(index + 1)..].TakeWhile(x => x != ParserConstants.PropertyGroupSeparator);
+        }
+
+        [GeneratedRegex(@"(?<Descriptor>[^:]*:)[\D]*(?<Value>\d+)")]
+        private static partial Regex ArmourValuesRegex();
+
+        [GeneratedRegex(@"^(?<Descriptor>[^:\r\n]*:) (?:(?<Values>(?:(?<Min>\d+)-(?<Max>\d+))|(?:\d+(?:\.\d+)?))[^,\r\n]*(?:, )?)+$")]
+        private static partial Regex WeaponValuesRegex();
     }
 }

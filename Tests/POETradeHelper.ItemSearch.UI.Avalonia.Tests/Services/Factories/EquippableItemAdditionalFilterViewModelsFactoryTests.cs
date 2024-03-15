@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
     {
         [SetUp]
         public void Setup() =>
-            this.AdditionalFilterViewModelsFactory = new EquippableItemAdditionalFilterViewModelsFactory();
+            this.AdditionalFilterViewModelsFactory = new EquippableItemAdditionalFilterViewModelsFactory(this.ItemSearchOptionsMonitorMock);
 
         [TestCaseSource(nameof(GetNonEquippableItems))]
         public void CreateShouldReturnEmptyEnumerableForNonEquippableItems(Item item)
@@ -30,11 +30,184 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             Assert.That(result, Is.Empty);
         }
 
-        [Test]
-        public void CreateShouldReturnQualityFilterViewModel()
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnArmourFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+                x => x.Query.Filters.ArmourFilters.Armour;
+            EquippableItem equippableItem = new(ItemRarity.Unique)
+            {
+                ArmourValues = new() { Armour = 100 },
+            };
+
+            // act & assert
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                equippableItem,
+                Resources.Armour,
+                equippableItem.ArmourValues.Armour.Value,
+                queryRequestFilter,
+                offsetCurrentValue: true);
+        }
+
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnBlockChanceFilterViewModel(MinMaxFilter queryRequestFilter)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+                x => x.Query.Filters.ArmourFilters.Block;
+            EquippableItem equippableItem = new(ItemRarity.Unique)
+            {
+                ArmourValues = new() { BlockChance = 30 },
+            };
+
+            // act & assert
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                equippableItem,
+                Resources.ChanceToBlock,
+                equippableItem.ArmourValues.BlockChance.Value,
+                queryRequestFilter,
+                offsetCurrentValue: true);
+        }
+
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnEnergyShieldFilterViewModel(MinMaxFilter queryRequestFilter)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+                x => x.Query.Filters.ArmourFilters.EnergyShield;
+            EquippableItem equippableItem = new(ItemRarity.Unique)
+            {
+                ArmourValues = new() { EnergyShield = 80 },
+            };
+
+            // act & assert
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                equippableItem,
+                Resources.EnergyShield,
+                equippableItem.ArmourValues.EnergyShield.Value,
+                queryRequestFilter,
+                offsetCurrentValue: true);
+        }
+
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnEvasionRatingFilterViewModel(MinMaxFilter queryRequestFilter)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+                x => x.Query.Filters.ArmourFilters.Evasion;
+            EquippableItem equippableItem = new(ItemRarity.Unique)
+            {
+                ArmourValues = new() { EvasionRating = 97 },
+            };
+
+            // act & assert
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                equippableItem,
+                Resources.Evasion,
+                equippableItem.ArmourValues.EvasionRating.Value,
+                queryRequestFilter,
+                offsetCurrentValue: true);
+        }
+
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnWardFilterViewModel(MinMaxFilter queryRequestFilter)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+                x => x.Query.Filters.ArmourFilters.Ward;
+            EquippableItem equippableItem = new(ItemRarity.Unique)
+            {
+                ArmourValues = new() { Ward = 30 },
+            };
+
+            // act & assert
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                equippableItem,
+                Resources.Ward,
+                equippableItem.ArmourValues.Ward.Value,
+                queryRequestFilter,
+                offsetCurrentValue: true);
+        }
+
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnDamageFilterViewModel(MinMaxFilter queryRequestFilter)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+                x => x.Query.Filters.WeaponFilters.Damage;
+            EquippableItem equippableItem = new(ItemRarity.Unique)
+            {
+                WeaponValues = new()
+                {
+                    PhysicalDamage = new MinMaxValue { Min = 29, Max = 45 },
+                    ElementalDamage =
+                    [
+                        new MinMaxValue { Min = 15, Max = 29 },
+                        new MinMaxValue { Min = 7, Max = 13 },
+                    ],
+                },
+            };
+
+            // act & assert
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                equippableItem,
+                Resources.Damage,
+                equippableItem.WeaponValues.AverageDamage!.Value,
+                queryRequestFilter);
+        }
+
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnAttacksPerSecondFilterViewModel(MinMaxFilter queryRequestFilter)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+                x => x.Query.Filters.WeaponFilters.AttacksPerSecond;
+            EquippableItem equippableItem = new(ItemRarity.Unique)
+            {
+                WeaponValues = new() { AttacksPerSecond = 1.05m },
+            };
+
+            // act & assert
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                equippableItem,
+                Resources.AttacksPerSecond,
+                equippableItem.WeaponValues.AttacksPerSecond.Value,
+                queryRequestFilter);
+        }
+
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnCriticalStrikeChanceFilterViewModel(MinMaxFilter queryRequestFilter)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
+                x => x.Query.Filters.WeaponFilters.CriticalChance;
+            EquippableItem equippableItem = new(ItemRarity.Unique)
+            {
+                WeaponValues = new() { CriticalStrikeChance = 6.5m },
+            };
+
+            // act & assert
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
+                expectedBindingExpression,
+                equippableItem,
+                Resources.CriticalStrikeChance,
+                equippableItem.WeaponValues.CriticalStrikeChance.Value,
+                queryRequestFilter);
+        }
+
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnQualityFilterViewModel(MinMaxFilter queryRequestFilter)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
                 x => x.Query.Filters.MiscFilters.Quality;
             EquippableItem equippableItem = new(ItemRarity.Unique)
             {
@@ -45,40 +218,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.CreateShouldReturnBindableMinMaxFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
-                equippableItem.Quality,
-                Resources.QualityColumn);
-        }
-
-        [Test]
-        public void CreateShouldReturnQualityFilterViewModelWithValuesFromSearchQueryRequest()
-        {
-            // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
-            EquippableItem equippableItem = new(ItemRarity.Unique)
-            {
-                Quality = 7,
-            };
-
-            MinMaxFilter queryRequestFilter = new()
-            {
-                Min = 4,
-                Max = 10,
-            };
-
-            // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
-                expectedBindingExpression,
-                equippableItem,
-                equippableItem.Quality,
                 Resources.QualityColumn,
+                equippableItem.Quality,
                 queryRequestFilter);
         }
 
-        [Test]
-        public void CreateShouldReturnItemLevelFilterViewModel()
+        [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
+        public void CreateShouldReturnItemLevelFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
                 x => x.Query.Filters.MiscFilters.ItemLevel;
             EquippableItem equippableItem = new(ItemRarity.Unique)
             {
@@ -89,57 +238,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.CreateShouldReturnBindableMinMaxFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
-                equippableItem.ItemLevel,
-                Resources.ItemLevelColumn);
-        }
-
-        [Test]
-        public void CreateShouldReturnItemLevelFilterViewModelWithValuesFromSearchQueryRequest()
-        {
-            // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.ItemLevel;
-            EquippableItem equippableItem = new(ItemRarity.Unique)
-            {
-                ItemLevel = 84,
-            };
-
-            MinMaxFilter queryRequestFilter = new()
-            {
-                Min = 75,
-                Max = 90,
-            };
-
-            // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
-                expectedBindingExpression,
-                equippableItem,
-                equippableItem.ItemLevel,
                 Resources.ItemLevelColumn,
+                equippableItem.ItemLevel,
                 queryRequestFilter);
         }
 
         [TestCaseSource(nameof(GetInfluenceFilterViewModelTestData))]
-        public void CreateShouldReturnInfluenceFilterViewModel(
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression,
-            InfluenceType influenceType)
-        {
-            // arrange
-            EquippableItem equippableItem = new(ItemRarity.Unique)
-            {
-                Influence = influenceType,
-            };
-
-            // act & assert
-            this.CreateShouldReturnBindableFilterViewModel(
-                expectedBindingExpression,
-                equippableItem,
-                null,
-                equippableItem.Influence.GetDisplayName());
-        }
-
-        [TestCaseSource(nameof(GetInfluenceFilterViewModelTestData))]
         public void CreateShouldReturnInfluenceFilterViewModelWithValueFromSearchQueryRequest(
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression,
+            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression,
             InfluenceType influenceType)
         {
             // arrange
@@ -154,7 +260,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
                 equippableItem.Influence.GetDisplayName(),
@@ -165,7 +271,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnSocketFilterViewModelIfItemHasAtLeastOneSocket()
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
                 x => x.Query.Filters.SocketFilters.Sockets;
             EquippableItem equippableItem = new(ItemRarity.Rare)
             {
@@ -188,15 +294,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.CreateShouldReturnBindableSocketsFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
+                Resources.Sockets,
                 equippableItem.Sockets.Count,
-                Resources.Sockets);
+                null);
         }
 
         [Test]
         public void CreateShouldReturnSocketFilterViewModelWithValuesFromSearchQueryRequest()
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
                 x => x.Query.Filters.SocketFilters.Sockets;
             EquippableItem equippableItem = new(ItemRarity.Rare)
             {
@@ -226,11 +333,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableSocketsFilterViewModelWithValuesFromQueryRequest(
+            this.CreateShouldReturnBindableSocketsFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
-                equippableItem.Sockets.Count,
                 Resources.Sockets,
+                equippableItem.Sockets.Count,
                 queryRequestFilter);
         }
 
@@ -249,7 +356,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldReturnLinksFilterViewModelIfItemHasAtLeastOneSocket()
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
                 x => x.Query.Filters.SocketFilters.Links;
             EquippableItem equippableItem = new(ItemRarity.Rare)
             {
@@ -272,15 +379,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.CreateShouldReturnBindableMinMaxFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
+                Resources.Links,
                 0,
-                Resources.Links);
+                null);
         }
 
         [Test]
         public void CreateShouldReturnLinksFilterViewModelWithMaxLinkCount()
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
                 x => x.Query.Filters.SocketFilters.Links;
             EquippableItem equippableItem = new(ItemRarity.Rare)
             {
@@ -320,15 +428,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.CreateShouldReturnBindableMinMaxFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
+                Resources.Links,
                 3,
-                Resources.Links);
+                null);
         }
 
         [Test]
         public void CreateShouldReturnLinkFilterViewModelWithValuesFromSearchQueryRequest()
         {
             // arrange
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression =
                 x => x.Query.Filters.SocketFilters.Links;
             EquippableItem equippableItem = new(ItemRarity.Rare)
             {
@@ -354,11 +463,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             };
 
             // act & assert
-            this.CreateShouldReturnBindableMinMaxFilterViewModelWithValuesFromQueryRequest(
+            this.CreateShouldReturnBindableMinMaxFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
-                0,
                 Resources.Links,
+                0,
                 queryRequestFilter);
         }
 
@@ -373,80 +482,34 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             Assert.That(result, Has.None.Matches<FilterViewModelBase>(x => x.Text == Resources.Links));
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void CreateShouldReturnIdentifiedFilterViewModel(bool value)
+        [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
+        public void CreateShouldReturnIdentifiedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression =
                 x => x.Query.Filters.MiscFilters.Identified;
             EquippableItem equippableItem = new(ItemRarity.Rare)
             {
-                IsIdentified = value,
+                IsIdentified = !queryRequestFilter.Option,
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(
-                expectedBindingExpression,
-                equippableItem,
-                null,
-                Resources.Identified);
-        }
-
-        [Test]
-        public void CreateShouldReturnIdentifiedFilterViewModelWithValueFromQueryRequest()
-        {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
-                x => x.Query.Filters.MiscFilters.Identified;
-            EquippableItem equippableItem = new(ItemRarity.Rare)
-            {
-                IsIdentified = true,
-            };
-
-            BoolOptionFilter queryRequestFilter = new()
-            {
-                Option = false,
-            };
-
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
                 Resources.Identified,
                 queryRequestFilter);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void CreateShouldReturnCorruptedFilterViewModel(bool value)
+        [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
+        public void CreateShouldReturnCorruptedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
+            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression =
                 x => x.Query.Filters.MiscFilters.Corrupted;
             EquippableItem equippableItem = new(ItemRarity.Rare)
             {
-                IsCorrupted = value,
+                IsCorrupted = !queryRequestFilter.Option,
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(
-                expectedBindingExpression,
-                equippableItem,
-                null,
-                Resources.Corrupted);
-        }
-
-        [Test]
-        public void CreateShouldReturnCorruptedFilterViewModelWithValueFromQueryRequest()
-        {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression =
-                x => x.Query.Filters.MiscFilters.Corrupted;
-            EquippableItem equippableItem = new(ItemRarity.Rare)
-            {
-                IsCorrupted = true,
-            };
-
-            BoolOptionFilter queryRequestFilter = new()
-            {
-                Option = false,
-            };
-
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
                 expectedBindingExpression,
                 equippableItem,
                 Resources.Corrupted,
@@ -469,22 +532,22 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         private static IEnumerable GetInfluenceFilterViewModelTestData()
         {
             yield return new TestCaseData(
-                (Expression<Func<SearchQueryRequest, IFilter>>)(x => x.Query.Filters.MiscFilters.CrusaderItem),
+                (Expression<Func<SearchQueryRequest, BoolOptionFilter>>)(x => x.Query.Filters.MiscFilters.CrusaderItem),
                 InfluenceType.Crusader);
             yield return new TestCaseData(
-                (Expression<Func<SearchQueryRequest, IFilter>>)(x => x.Query.Filters.MiscFilters.ElderItem),
+                (Expression<Func<SearchQueryRequest, BoolOptionFilter>>)(x => x.Query.Filters.MiscFilters.ElderItem),
                 InfluenceType.Elder);
             yield return new TestCaseData(
-                (Expression<Func<SearchQueryRequest, IFilter>>)(x => x.Query.Filters.MiscFilters.HunterItem),
+                (Expression<Func<SearchQueryRequest, BoolOptionFilter>>)(x => x.Query.Filters.MiscFilters.HunterItem),
                 InfluenceType.Hunter);
             yield return new TestCaseData(
-                (Expression<Func<SearchQueryRequest, IFilter>>)(x => x.Query.Filters.MiscFilters.RedeemerItem),
+                (Expression<Func<SearchQueryRequest, BoolOptionFilter>>)(x => x.Query.Filters.MiscFilters.RedeemerItem),
                 InfluenceType.Redeemer);
             yield return new TestCaseData(
-                (Expression<Func<SearchQueryRequest, IFilter>>)(x => x.Query.Filters.MiscFilters.ShaperItem),
+                (Expression<Func<SearchQueryRequest, BoolOptionFilter>>)(x => x.Query.Filters.MiscFilters.ShaperItem),
                 InfluenceType.Shaper);
             yield return new TestCaseData(
-                (Expression<Func<SearchQueryRequest, IFilter>>)(x => x.Query.Filters.MiscFilters.WarlordItem),
+                (Expression<Func<SearchQueryRequest, BoolOptionFilter>>)(x => x.Query.Filters.MiscFilters.WarlordItem),
                 InfluenceType.Warlord);
         }
     }

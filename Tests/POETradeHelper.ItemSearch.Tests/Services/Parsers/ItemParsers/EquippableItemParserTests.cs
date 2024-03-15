@@ -1,4 +1,6 @@
-﻿using NSubstitute;
+﻿using FluentAssertions;
+
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -428,6 +430,110 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             // assert
             Assert.That(result.Category, Is.EqualTo(expectedItemCategory));
+        }
+
+        [TestCase(EquippableItemCategory.Unknown, true)]
+        [TestCase(EquippableItemCategory.Accessories, false)]
+        [TestCase(EquippableItemCategory.Armour, true)]
+        [TestCase(EquippableItemCategory.Weapons, false)]
+        public void ParseSetsArmourValues(EquippableItemCategory itemCategory, bool valuesSet)
+        {
+            // arrange
+            const int armour = 150;
+            const int energyShield = 89;
+            const int evasionRating = 98;
+            const int blockChance = 10;
+            const int ward = 99;
+
+            this.itemStringBuilder
+                .ItemStatsGroup
+                .WithArmour(armour)
+                .WithEnergyShield(energyShield)
+                .WithEvasionRating(evasionRating)
+                .WithBlockChance(blockChance)
+                .WithWard(ward);
+
+            string[] itemStringLines = this.itemStringBuilder.BuildLines();
+
+            this.itemTypeParserMock
+                .ParseType(Arg.Any<string[]>(), Arg.Any<ItemRarity>(), Arg.Any<bool>())
+                .Returns("Coronal Leather");
+
+            this.itemDataServiceMock
+                .GetCategory(Arg.Any<string>())
+                .Returns(itemCategory.GetDisplayName().ToLower());
+
+            // act
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
+
+            // assert
+            if (valuesSet)
+            {
+                result.ArmourValues.Should()
+                    .BeEquivalentTo(new ArmourValues
+                    {
+                        Armour = armour,
+                        EnergyShield = energyShield,
+                        EvasionRating = evasionRating,
+                        BlockChance = blockChance,
+                        Ward = ward,
+                    });
+            }
+            else
+            {
+                result.ArmourValues.Should().BeNull();
+            }
+        }
+
+        [TestCase(EquippableItemCategory.Unknown, true)]
+        [TestCase(EquippableItemCategory.Accessories, false)]
+        [TestCase(EquippableItemCategory.Armour, false)]
+        [TestCase(EquippableItemCategory.Weapons, true)]
+        public void ParseSetsWeaponValues(EquippableItemCategory itemCategory, bool valuesSet)
+        {
+            // arrange
+            MinMaxValue physicalDamage = new() { Min = 10, Max = 30 };
+            MinMaxValue elementalDamage1 = new() { Min = 10, Max = 19 };
+            MinMaxValue elementalDamage2 = new() { Min = 15, Max = 21 };
+            const decimal attacksPerSecond = 1.35m;
+            const decimal criticalStrikeChance = 6.5m;
+
+            this.itemStringBuilder
+                .ItemStatsGroup
+                .WithPhysicalDamage(physicalDamage)
+                .WithElementalDamage([elementalDamage1, elementalDamage2])
+                .WithAttacksPerSecond(attacksPerSecond)
+                .WithCriticalStrikeChance(criticalStrikeChance);
+
+            string[] itemStringLines = this.itemStringBuilder.BuildLines();
+
+            this.itemTypeParserMock
+                .ParseType(Arg.Any<string[]>(), Arg.Any<ItemRarity>(), Arg.Any<bool>())
+                .Returns("Iron Staff");
+
+            this.itemDataServiceMock
+                .GetCategory(Arg.Any<string>())
+                .Returns(itemCategory.GetDisplayName().ToLower());
+
+            // act
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
+
+            // assert
+            if (valuesSet)
+            {
+                result.WeaponValues.Should()
+                    .BeEquivalentTo(new WeaponValues
+                    {
+                        PhysicalDamage = physicalDamage,
+                        ElementalDamage = [elementalDamage1, elementalDamage2],
+                        AttacksPerSecond = attacksPerSecond,
+                        CriticalStrikeChance = criticalStrikeChance,
+                    });
+            }
+            else
+            {
+                result.WeaponValues.Should().BeNull();
+            }
         }
 
         protected override string[] GetValidItemStringLines() =>

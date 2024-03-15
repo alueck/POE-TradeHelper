@@ -60,6 +60,24 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Armour:.
+        /// </summary>
+        public static string ArmourDescriptor {
+            get {
+                return ResourceManager.GetString("ArmourDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attacks per Second:.
+        /// </summary>
+        public static string AttacksPerSecondDescriptor {
+            get {
+                return ResourceManager.GetString("AttacksPerSecondDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (augmented).
         /// </summary>
         public static string AugmentedDescriptor {
@@ -87,11 +105,29 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Chance to Block:.
+        /// </summary>
+        public static string BlockChanceDescriptor {
+            get {
+                return ResourceManager.GetString("BlockChanceDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Corrupted.
         /// </summary>
         public static string CorruptedKeyword {
             get {
                 return ResourceManager.GetString("CorruptedKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Critical Strike Chance:.
+        /// </summary>
+        public static string CriticalStrikeChanceDescriptor {
+            get {
+                return ResourceManager.GetString("CriticalStrikeChanceDescriptor", resourceCulture);
             }
         }
         
@@ -110,6 +146,24 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string ElderItem {
             get {
                 return ResourceManager.GetString("ElderItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elemental Damage:.
+        /// </summary>
+        public static string ElementalDamageDescriptor {
+            get {
+                return ResourceManager.GetString("ElementalDamageDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Energy Shield:.
+        /// </summary>
+        public static string EnergyShieldDescriptor {
+            get {
+                return ResourceManager.GetString("EnergyShieldDescriptor", resourceCulture);
             }
         }
         
@@ -137,6 +191,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string EquippableItemCategory_Weapons {
             get {
                 return ResourceManager.GetString("EquippableItemCategory_Weapons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Evasion Rating:.
+        /// </summary>
+        public static string EvasionRatingDescriptor {
+            get {
+                return ResourceManager.GetString("EvasionRatingDescriptor", resourceCulture);
             }
         }
         
@@ -330,6 +393,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Physical Damage:.
+        /// </summary>
+        public static string PhysicalDamageDescriptor {
+            get {
+                return ResourceManager.GetString("PhysicalDamageDescriptor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to prophecy.
         /// </summary>
         public static string ProphecyKeyword {
@@ -497,6 +569,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string VaalKeyword {
             get {
                 return ResourceManager.GetString("VaalKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ward:.
+        /// </summary>
+        public static string WardDescriptor {
+            get {
+                return ResourceManager.GetString("WardDescriptor", resourceCulture);
             }
         }
         
