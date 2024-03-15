@@ -349,10 +349,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             EquippableItem equippableItem = new(ItemRarity.Rare);
 
-            IEnumerable<FilterViewModelBase> result =
-                this.AdditionalFilterViewModelsFactory.Create(equippableItem, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(equippableItem, new SearchQueryRequest());
 
-            Assert.That(result, Has.None.Matches<FilterViewModelBase>(x => x.Text == Resources.Sockets));
+            result.Should().NotContain(x => x.Text == Resources.Sockets);
         }
 
         [Test]
@@ -479,10 +478,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             EquippableItem equippableItem = new(ItemRarity.Rare);
 
-            IEnumerable<FilterViewModelBase> result =
-                this.AdditionalFilterViewModelsFactory.Create(equippableItem, new SearchQueryRequest());
+            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(equippableItem, new SearchQueryRequest());
 
-            Assert.That(result, Has.None.Matches<FilterViewModelBase>(x => x.Text == Resources.Links));
+            result.Should().NotContain(x => x.Text == Resources.Links);
         }
 
         [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]

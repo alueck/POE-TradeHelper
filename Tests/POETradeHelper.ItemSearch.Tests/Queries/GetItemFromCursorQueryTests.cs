@@ -55,18 +55,15 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
         }
 
         [Test]
-        public void HandleShouldThrowInvalidItemStringExceptionIfIsParseableFromItemParserReturnsFalse()
+        public async Task HandleShouldThrowInvalidItemStringExceptionIfIsParseableFromItemParserReturnsFalse()
         {
             this.itemParserAggregatorMock
                 .IsParseable(Arg.Any<string>())
                 .Returns(false);
 
-            async Task Action()
-            {
-                await this.handler.Handle(new GetItemFromCursorQuery(), default);
-            }
+            Func<Task> action = () => this.handler.Handle(new GetItemFromCursorQuery(), default);
 
-            Assert.ThrowsAsync<InvalidItemStringException>(Action);
+            await action.Should().ThrowAsync<InvalidItemStringException>();
         }
 
         [Test]
