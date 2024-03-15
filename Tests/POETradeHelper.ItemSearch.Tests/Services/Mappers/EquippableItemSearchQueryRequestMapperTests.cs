@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 
+using FluentAssertions;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -38,7 +40,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.EqualTo(expected));
+            result.Query.Name.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -51,7 +53,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.Null);
+            result.Query.Name.Should().BeNull();
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -64,7 +66,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.Null);
+            result.Query.Name.Should().BeNull();
         }
 
         [TestCase(5)]
@@ -78,13 +80,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.SocketFilters, Is.Not.Null);
-            Assert.That(result.Query.Filters.SocketFilters.Links, Is.Not.Null);
-
-            SocketsFilter? socketsFilter = result.Query.Filters.SocketFilters.Links;
-            Assert.That(socketsFilter, Is.Not.Null);
-            Assert.That(socketsFilter!.Min, Is.EqualTo(linkCount));
-            Assert.That(socketsFilter.Max, Is.EqualTo(linkCount));
+            result.Query.Filters.SocketFilters.Should()
+                .BeEquivalentTo(new SocketFilters
+                {
+                    Links = new SocketsFilter
+                    {
+                        Min = linkCount,
+                        Max = linkCount,
+                    },
+                });
         }
 
         [TestCase(0)]
@@ -92,7 +96,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCase(2)]
         [TestCase(3)]
         [TestCase(4)]
-        public void MapToQueryItemShoulNotMapLinksIfLinkCountIsLowerThanFive(int linkCount)
+        public void MapToQueryItemShouldNotMapLinksIfLinkCountIsLowerThanFive(int linkCount)
         {
             EquippableItem item = new(ItemRarity.Normal)
             {
@@ -101,7 +105,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.SocketFilters.Links, Is.Null);
+            result.Query.Filters.SocketFilters.Links.Should().BeNull();
         }
 
         [Test]
@@ -111,8 +115,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
+            result.Query.Filters.TypeFilters.Rarity.Should().BeEquivalentTo(new OptionFilter { Option = ItemRarityFilterOptions.Unique });
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -122,8 +125,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
+            result.Query.Filters.TypeFilters.Rarity.Should().BeEquivalentTo(new OptionFilter { Option = ItemRarityFilterOptions.NonUnique });
         }
 
         [TestCaseSource(nameof(GetInfluenceTestCases))]
@@ -138,8 +140,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             BoolOptionFilter? filter = filterOptionAccessor(result);
 
-            Assert.That(filter, Is.Not.Null);
-            Assert.That(filter!.Option, Is.True);
+            filter.Should().BeEquivalentTo(new BoolOptionFilter { Option = true });
         }
 
         [Test]
@@ -161,9 +162,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             MinMaxFilter? itemLevelFilter = result.Query.Filters.MiscFilters.ItemLevel;
-            Assert.That(itemLevelFilter, Is.Not.Null);
-            Assert.That(itemLevelFilter!.Min, Is.EqualTo(itemLevel));
-            Assert.That(itemLevelFilter.Max, Is.Null);
+            itemLevelFilter.Should().BeEquivalentTo(new MinMaxFilter { Min = itemLevel });
         }
 
         [Test]
@@ -184,7 +183,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.MiscFilters.ItemLevel, Is.Null);
+            result.Query.Filters.MiscFilters.ItemLevel.Should().BeNull();
         }
 
         private static IEnumerable GetInfluenceTestCases()

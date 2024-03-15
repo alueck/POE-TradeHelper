@@ -223,8 +223,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-
             result.AllStats.Should().HaveCount(1);
             result.AllStats.First().Should().BeOfType<SingleValueItemStat>();
         }
@@ -470,39 +468,39 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         public void ParseShouldParseItemWithExtendedItemTextCorrectly()
         {
             // arrange
-            string itemText = @"
-Item Class: Boots
-Rarity: Rare
-Honour Stride
-Dragonscale Boots
---------
-Quality: +20% (augmented)
-Armour: 145 (augmented)
-Evasion Rating: 145 (augmented)
---------
-Requirements:
-Level: 70
-Str: 130
-Dex: 67
-Int: 35
---------
-Sockets: R-R-R-R 
---------
-Item Level: 72
---------
-6% increased Movement Speed if you haven't been Hit Recently (enchant)
-(Recently refers to the past 4 seconds) (enchant)
---------
-{ Prefix Modifier ""Athlete's"" (Tier: 1) — Life }
-+87(80-89) to maximum Life
-{ Master Crafted Prefix Modifier ""Upgraded"" (Rank: 3) — Speed }
-23(20-24)% increased Movement Speed (crafted)
-{ Suffix Modifier ""of the Polar Bear"" (Tier: 3) — Elemental, Cold, Resistance }
-+40(36-41)% to Cold Resistance
-{ Suffix Modifier ""of the Apt"" (Tier: 1) }
-32% reduced Attribute Requirements
-(Attributes are Strength, Dexterity, and Intelligence)
-";
+            string itemText = """
+                              Item Class: Boots
+                              Rarity: Rare
+                              Honour Stride
+                              Dragonscale Boots
+                              --------
+                              Quality: +20% (augmented)
+                              Armour: 145 (augmented)
+                              Evasion Rating: 145 (augmented)
+                              --------
+                              Requirements:
+                              Level: 70
+                              Str: 130
+                              Dex: 67
+                              Int: 35
+                              --------
+                              Sockets: R-R-R-R
+                              --------
+                              Item Level: 72
+                              --------
+                              6% increased Movement Speed if you haven't been Hit Recently (enchant)
+                              (Recently refers to the past 4 seconds) (enchant)
+                              --------
+                              { Prefix Modifier "Athlete's" (Tier: 1) — Life }
+                              +87(80-89) to maximum Life
+                              { Master Crafted Prefix Modifier "Upgraded" (Rank: 3) — Speed }
+                              23(20-24)% increased Movement Speed (crafted)
+                              { Suffix Modifier "of the Polar Bear" (Tier: 3) — Elemental, Cold, Resistance }
+                              +40(36-41)% to Cold Resistance
+                              { Suffix Modifier "of the Apt" (Tier: 1) }
+                              32% reduced Attribute Requirements
+                              (Attributes are Strength, Dexterity, and Intelligence)
+                              """;
             this.statsDataServiceMock
                 .GetStatData(Arg.Is<string>(s => !s.Contains("Movement") && !string.IsNullOrWhiteSpace(s)), Arg.Any<bool>(), Arg.Any<string[]>())
                 .Returns(new StatData { Type = StatCategory.Explicit.GetDisplayName() });
@@ -555,38 +553,39 @@ Item Level: 72
         public void ParseShouldParseUniqueItemWithExtendedItemTextCorrectly()
         {
             // arrange
-            string itemText = @"
-Item Class: Gloves
-Rarity: Unique
-The Embalmer
-Carnal Mitts
---------
-Quality: +20% (augmented)
-Evasion Rating: 108 (augmented)
-Energy Shield: 23 (augmented)
---------
-Requirements:
-Level: 69
-Dex: 151
-Int: 108
---------
-Sockets: B-G-G-G 
---------
-Item Level: 51
---------
-Trigger Edict of Frost on Kill (enchant)
---------
-{ Unique Modifier — Gem }
-Socketed Gems are Supported by Level 20 Vile Toxins — Unscalable Value
-{ Unique Modifier — Chaos, Ailment }
-22(20-25)% increased Poison Duration
-{ Unique Modifier — Life }
-+59(50-70) to maximum Life
-{ Unique Modifier — Chaos, Resistance }
-+19(17-29)% to Chaos Resistance
-{ Unique Modifier — Damage, Chaos }
-Adds 13(13-17) to 28(23-29) Chaos Damage
---------";
+            string itemText = """
+                              Item Class: Gloves
+                              Rarity: Unique
+                              The Embalmer
+                              Carnal Mitts
+                              --------
+                              Quality: +20% (augmented)
+                              Evasion Rating: 108 (augmented)
+                              Energy Shield: 23 (augmented)
+                              --------
+                              Requirements:
+                              Level: 69
+                              Dex: 151
+                              Int: 108
+                              --------
+                              Sockets: B-G-G-G
+                              --------
+                              Item Level: 51
+                              --------
+                              Trigger Edict of Frost on Kill (enchant)
+                              --------
+                              { Unique Modifier — Gem }
+                              Socketed Gems are Supported by Level 20 Vile Toxins — Unscalable Value
+                              { Unique Modifier — Chaos, Ailment }
+                              22(20-25)% increased Poison Duration
+                              { Unique Modifier — Life }
+                              +59(50-70) to maximum Life
+                              { Unique Modifier — Chaos, Resistance }
+                              +19(17-29)% to Chaos Resistance
+                              { Unique Modifier — Damage, Chaos }
+                              Adds 13(13-17) to 28(23-29) Chaos Damage
+                              --------
+                              """;
             this.statsDataServiceMock
                 .GetStatData(Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)), Arg.Any<bool>(), Arg.Any<string[]>())
                 .Returns(new StatData());

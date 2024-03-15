@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
@@ -20,7 +22,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             Item result = this.ItemParser.Parse(itemStringLines);
 
             // assert
-            Assert.That(result.ExtendedItemText, Is.EqualTo(expected));
+            result.ExtendedItemText.Should().Be(expected);
         }
 
         protected abstract string[] GetValidItemStringLines();

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using FluentAssertions;
+
+using Microsoft.Extensions.Options;
 
 using NSubstitute;
 
@@ -53,7 +55,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             ExchangeQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.League, Is.EqualTo(expected));
+            result.League.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -82,9 +84,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             ExchangeQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Have, Has.Count.EqualTo(1));
-            Assert.That(result.Query.Have, Has.One.EqualTo(expected));
+            result.Query.Have.Should().ContainSingle(expected);
         }
 
         [Test]
@@ -94,9 +94,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             ExchangeQueryRequest result = this.itemToExchangeQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Query.Want, Has.Count.EqualTo(1));
-            Assert.That(result.Query.Want, Has.One.EqualTo("chaos"));
+            result.Query.Want.Should().ContainSingle("chaos");
         }
     }
 }

@@ -68,7 +68,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
 
             string result = await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]

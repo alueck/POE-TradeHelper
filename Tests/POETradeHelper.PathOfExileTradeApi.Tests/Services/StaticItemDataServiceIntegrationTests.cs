@@ -17,7 +17,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
     /// <summary>
     /// Tests without actual HTTP request but with original data.
     /// </summary>
-    [Category("Integration")]
     public class StaticItemDataServiceIntegrationTests
     {
         private StaticDataService staticDataService;

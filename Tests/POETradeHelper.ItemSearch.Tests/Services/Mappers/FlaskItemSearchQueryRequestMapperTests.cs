@@ -1,4 +1,7 @@
 ﻿using FluentAssertions;
+
+using NSubstitute.ReturnsExtensions;
+
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -44,7 +47,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.EqualTo(expected));
+            result.Query.Name.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -57,7 +60,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.Null);
+            result.Query.Name.Should().BeNull();
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -70,7 +73,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.flaskItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.Null);
+            result.Query.Name.Should().BeNull();
         }
     }
 }

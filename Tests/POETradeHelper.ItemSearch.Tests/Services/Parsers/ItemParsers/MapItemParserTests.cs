@@ -1,4 +1,6 @@
-﻿using NSubstitute;
+﻿using FluentAssertions;
+
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -34,7 +36,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.True);
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -48,7 +50,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Rarity, Is.EqualTo(expected));
+            result.Rarity.Should().Be(expected);
         }
 
         [Test]
@@ -61,7 +63,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Tier, Is.EqualTo(expected));
+            result.Tier.Should().Be(expected);
         }
 
         [Test]
@@ -74,7 +76,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.ItemQuantity, Is.EqualTo(expected));
+            result.ItemQuantity.Should().Be(expected);
         }
 
         [Test]
@@ -87,7 +89,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.ItemRarity, Is.EqualTo(expected));
+            result.ItemRarity.Should().Be(expected);
         }
 
         [Test]
@@ -100,7 +102,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.MonsterPackSize, Is.EqualTo(expected));
+            result.MonsterPackSize.Should().Be(expected);
         }
 
         [Test]
@@ -113,7 +115,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Quality, Is.EqualTo(expected));
+            result.Quality.Should().Be(expected);
         }
 
         [TestCase(true)]
@@ -126,7 +128,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsIdentified, Is.EqualTo(identified));
+            result.IsIdentified.Should().Be(identified);
         }
 
         [TestCase(ItemRarity.Magic, true)]
@@ -150,7 +152,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Type, Is.EqualTo(expected));
+            result.Type.Should().Be(expected);
         }
 
         [TestCase("Blighted Dig Map", true)]
@@ -164,7 +166,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsBlighted, Is.EqualTo(expected));
+            result.IsBlighted.Should().Be(expected);
         }
 
         [Test]
@@ -176,7 +178,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsBlighted, Is.True);
+            result.IsBlighted.Should().BeTrue();
         }
 
         [TestCase("Blight-ravaged Dig Map", true)]
@@ -190,7 +192,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsBlightRavaged, Is.EqualTo(expected));
+            result.IsBlightRavaged.Should().Be(expected);
         }
 
         [TestCase(true)]
@@ -203,7 +205,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsCorrupted, Is.EqualTo(isCorrupted));
+            result.IsCorrupted.Should().Be(isCorrupted);
         }
 
         [Test]
@@ -218,7 +220,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Name, Is.EqualTo(expectedName));
+            result.Name.Should().Be(expectedName);
         }
 
         [Test]
@@ -266,7 +268,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Stats, Is.SameAs(expected));
+            result.Stats.Should().BeSameAs(expected);
         }
 
         protected override string[] GetValidItemStringLines()

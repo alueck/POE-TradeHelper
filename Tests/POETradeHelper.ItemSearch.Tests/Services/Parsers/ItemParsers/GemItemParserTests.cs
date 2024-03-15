@@ -1,5 +1,9 @@
-﻿using NSubstitute;
+﻿using FluentAssertions;
+
+using NSubstitute;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
 using POETradeHelper.ItemSearch.Tests.Properties;
@@ -36,7 +40,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -46,7 +50,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             Item item = this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(item, Is.InstanceOf<GemItem>());
+            item.Should().BeOfType<GemItem>();
         }
 
         [Test]
@@ -78,7 +82,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Type, Is.EqualTo(expected));
+            result.Type.Should().Be(expected);
         }
 
         [Test]
@@ -90,7 +94,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsCorrupted, Is.True);
+            result.IsCorrupted.Should().BeTrue();
         }
 
         [Test]
@@ -101,7 +105,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsCorrupted, Is.False);
+            result.IsCorrupted.Should().BeFalse();
         }
 
         [Test]
@@ -114,7 +118,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Quality, Is.EqualTo(expected));
+            result.Quality.Should().Be(expected);
         }
 
         [Test]
@@ -126,7 +130,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Quality, Is.EqualTo(expected));
+            result.Quality.Should().Be(expected);
         }
 
         [Test]
@@ -139,7 +143,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Level, Is.EqualTo(expected));
+            result.Level.Should().Be(expected);
         }
 
         [TestCase("150/1.000", 15)]
@@ -154,7 +158,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.ExperiencePercent, Is.EqualTo(expected));
+            result.ExperiencePercent.Should().Be(expected);
         }
 
         [Test]
@@ -170,14 +174,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Name, Is.EqualTo(name));
-            Assert.That(result.Type, Is.EqualTo(itemType.Type));
-            Assert.That(result.TypeDiscriminator, Is.EqualTo(itemType.Discriminator));
-            Assert.That(result.IsCorrupted);
-            Assert.That(result.IsVaalVersion);
-            Assert.That(result.Level, Is.EqualTo(20));
-            Assert.That(result.Quality, Is.EqualTo(20));
+            result.Should()
+                .BeEquivalentTo(
+                    new GemItem
+                    {
+                        Name = name,
+                        Type = itemType.Type,
+                        TypeDiscriminator = itemType.Discriminator,
+                        IsCorrupted = true,
+                        IsVaalVersion = true,
+                        Level = 20,
+                        Quality = 20,
+                    },
+                    config => config.Excluding(x => x.PlainItemText).Excluding(x => x.ExtendedItemText));
         }
 
         [Test]
@@ -191,11 +200,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Name, Is.EqualTo(type));
-            Assert.That(result.Type, Is.EqualTo(type));
-            Assert.That(result.IsCorrupted);
-            Assert.That(result.IsVaalVersion);
+            result.Should()
+                .BeEquivalentTo(
+                    new GemItem
+                    {
+                        Name = type,
+                        Type = type,
+                        IsCorrupted = true,
+                        IsVaalVersion = true,
+                        Level = 1,
+                    },
+                    config => config.Excluding(x => x.PlainItemText).Excluding(x => x.ExtendedItemText));
         }
 
         protected override string[] GetValidItemStringLines() =>

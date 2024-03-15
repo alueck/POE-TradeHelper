@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
@@ -32,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -42,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             DivinationCardItem result = (DivinationCardItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Name, Is.EqualTo(DivinationCard));
+            result.Name.Should().Be(DivinationCard);
         }
 
         [Test]
@@ -52,7 +54,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             DivinationCardItem result = (DivinationCardItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Type, Is.EqualTo(DivinationCard));
+            result.Type.Should().Be(DivinationCard);
         }
 
         protected override string[] GetValidItemStringLines()
