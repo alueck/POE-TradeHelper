@@ -24,13 +24,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services;
 
 public class PoeTradeApiClientTests
 {
-    private IHttpClientWrapper httpClientWrapperMock;
-    private IHttpClientFactoryWrapper httpClientFactoryWrapperMock;
-    private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
-    private PoeTradeApiClient poeTradeApiClient;
+    private readonly IHttpClientWrapper httpClientWrapperMock;
+    private readonly IHttpClientFactoryWrapper httpClientFactoryWrapperMock;
+    private readonly IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
+    private readonly PoeTradeApiClient poeTradeApiClient;
 
-    [SetUp]
-    public void Setup()
+    public PoeTradeApiClientTests()
     {
         this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
         this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())

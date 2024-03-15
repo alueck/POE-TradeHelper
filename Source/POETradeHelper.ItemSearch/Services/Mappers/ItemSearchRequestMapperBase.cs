@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -37,16 +38,16 @@ public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMappe
 
     protected virtual void MapItemName(SearchQueryRequest result, Item item)
     {
-        if (item.Rarity == ItemRarity.Unique
-            && item is IIdentifiableItem identifiableItem
-            && identifiableItem.IsIdentified)
+        if (item.Rarity == ItemRarity.Unique && item is IIdentifiableItem { IsIdentified: true })
         {
             result.Query.Name = item.Name;
         }
     }
 
-    protected virtual void MapItemType(SearchQueryRequest result, Item item) =>
+    protected virtual void MapItemType(SearchQueryRequest result, Item item)
+    {
         result.Query.Type = new TypeFilter { Option = item.Type };
+    }
 
     protected virtual void MapItemRarity(SearchQueryRequest result, Item item) =>
         result.Query.Filters.TypeFilters.Rarity = new OptionFilter

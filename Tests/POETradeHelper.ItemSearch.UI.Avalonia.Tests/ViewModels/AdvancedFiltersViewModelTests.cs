@@ -15,16 +15,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 {
     public class AdvancedFiltersViewModelTests
     {
-        private IStatFilterViewModelFactory statFilterViewModelFactoryMock;
+        private readonly IStatFilterViewModelFactory statFilterViewModelFactoryMock;
+        private readonly List<IAdditionalFilterViewModelsFactory> additionalFiltersViewModelFactoryMocks;
+        private readonly AdvancedFiltersViewModel advancedFiltersViewModel;
 
-        private List<IAdditionalFilterViewModelsFactory> additionalFiltersViewModelFactoryMocks;
-
-        private AdvancedFiltersViewModel advancedFiltersViewModel;
-
-        public delegate IList<StatFilterViewModel> GetFilterViewModels(AdvancedFiltersViewModel advancedFiltersViewModel);
-
-        [SetUp]
-        public void Setup()
+        public AdvancedFiltersViewModelTests()
         {
             this.statFilterViewModelFactoryMock = Substitute.For<IStatFilterViewModelFactory>();
             this.additionalFiltersViewModelFactoryMocks = new List<IAdditionalFilterViewModelsFactory>
@@ -37,6 +32,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
                 this.additionalFiltersViewModelFactoryMocks);
         }
 
+        public delegate IList<StatFilterViewModel> GetFilterViewModels(AdvancedFiltersViewModel advancedFiltersViewModel);
+
         [TestCaseSource(nameof(GetDisabledItems))]
         public async Task LoadAsyncShouldSetIsEnabledToFalse(Item item)
         {
@@ -44,7 +41,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
-            Assert.That(this.advancedFiltersViewModel.IsEnabled, Is.False);
+            this.advancedFiltersViewModel.IsEnabled.Should().BeFalse();
         }
 
         [TestCaseSource(nameof(GetEnabledItems))]
@@ -54,7 +51,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
-            Assert.That(this.advancedFiltersViewModel.IsEnabled, Is.True);
+            this.advancedFiltersViewModel.IsEnabled.Should().BeTrue();
         }
 
         [TestCase(StatCategory.Enchant)]
@@ -71,7 +68,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             await this.advancedFiltersViewModel.LoadAsync(item, searchQueryRequest, default);
 
-            foreach (ItemStat itemStat in item.Stats.AllStats)
+            foreach (ItemStat itemStat in item.Stats!.AllStats)
             {
                 this.statFilterViewModelFactoryMock
                     .Received()
@@ -83,7 +80,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
         public async Task LoadAsyncShouldSetStatFilterViewModels(StatCategory statCategory, GetFilterViewModels getFilterViewModelsDelegate)
         {
             ItemWithStats item = CreateItemWithStats(statCategory);
-            MinMaxStatFilterViewModel expected1 = new() { Id = item.Stats.AllStats[0].Id };
+            MinMaxStatFilterViewModel expected1 = new() { Id = item.Stats!.AllStats[0].Id };
             MinMaxStatFilterViewModel expected2 = new() { Id = item.Stats.AllStats[1].Id };
 
             this.statFilterViewModelFactoryMock
@@ -94,10 +91,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             IList<StatFilterViewModel> filterViewModels = getFilterViewModelsDelegate(this.advancedFiltersViewModel);
 
-            Assert.That(filterViewModels, Has.Count.EqualTo(2));
-
-            Assert.That(filterViewModels[0], Is.EqualTo(expected1));
-            Assert.That(filterViewModels[1], Is.EqualTo(expected2));
+            filterViewModels.Should()
+                .HaveCount(2)
+                .And.Contain(expected1)
+                .And.Contain(expected2);
         }
 
         [Test]
@@ -130,9 +127,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
             await this.advancedFiltersViewModel.LoadAsync(item, new SearchQueryRequest(), default);
 
-            Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Has.Count.EqualTo(2));
-            Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Contains.Item(expected1));
-            Assert.That(this.advancedFiltersViewModel.AdditionalFilters, Contains.Item(expected2));
+            this.advancedFiltersViewModel.AdditionalFilters.Should()
+                .HaveCount(2)
+                .And.Contain(expected1)
+                .And.Contain(expected2);
         }
 
         [Test]

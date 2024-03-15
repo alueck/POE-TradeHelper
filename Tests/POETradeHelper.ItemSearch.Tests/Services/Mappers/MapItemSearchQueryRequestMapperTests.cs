@@ -46,7 +46,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.EqualTo(expected));
+            result.Query.Name.Should().Be(expected);
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.Null);
+            result.Query.Name.Should().BeNull();
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -73,7 +73,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.Null);
+            result.Query.Name.Should().BeNull();
         }
 
         [TestCase(true)]
@@ -87,7 +87,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.MiscFilters.Identified!.Option, Is.EqualTo(identified));
+            result.Query.Filters.MiscFilters.Identified.Should().BeEquivalentTo(new BoolOptionFilter { Option = identified });
         }
 
         [Test]
@@ -97,8 +97,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
+            result.Query.Filters.TypeFilters.Rarity.Should().BeEquivalentTo(new OptionFilter { Option = ItemRarityFilterOptions.Unique });
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -108,8 +107,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
+            result.Query.Filters.TypeFilters.Rarity.Should().BeEquivalentTo(new OptionFilter { Option = ItemRarityFilterOptions.NonUnique });
         }
 
         [TestCase(10)]
@@ -124,9 +122,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             MinMaxFilter? mapTierFilter = result.Query.Filters.MapFilters.MapTier;
-            Assert.That(mapTierFilter, Is.Not.Null);
-            Assert.That(mapTierFilter!.Min, Is.EqualTo(mapTier));
-            Assert.That(mapTierFilter.Max, Is.EqualTo(mapTier));
+            mapTierFilter.Should().BeEquivalentTo(new MinMaxFilter { Min = mapTier, Max = mapTier });
         }
 
         [TestCase(true)]
@@ -141,8 +137,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             BoolOptionFilter? blightedFilter = result.Query.Filters.MapFilters.MapBlighted;
-            Assert.That(blightedFilter, Is.Not.Null);
-            Assert.That(blightedFilter!.Option, Is.EqualTo(isBlighted));
+            blightedFilter.Should().BeEquivalentTo(new BoolOptionFilter { Option = isBlighted });
         }
 
         [TestCase(true)]
@@ -157,8 +152,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.mapItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             BoolOptionFilter? blightRavaged = result.Query.Filters.MapFilters.MapBlightRavaged;
-            Assert.That(blightRavaged, Is.Not.Null);
-            Assert.That(blightRavaged!.Option, Is.EqualTo(isBlightRavaged));
+            blightRavaged.Should().BeEquivalentTo(new BoolOptionFilter { Option = isBlightRavaged });
         }
     }
 }

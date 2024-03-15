@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
@@ -32,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -42,7 +44,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             Item item = this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(item, Is.InstanceOf<CurrencyItem>());
+            item.Should().BeOfType<CurrencyItem>();
         }
 
         [Test]
@@ -52,7 +54,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             Item item = this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(item.Name, Is.EqualTo(Currency));
+            item.Name.Should().Be(Currency);
         }
 
         [Test]
@@ -62,7 +64,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             Item item = this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(item.Type, Is.EqualTo(Currency));
+            item.Type.Should().Be(Currency);
         }
 
         protected override string[] GetValidItemStringLines()

@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,9 +20,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Source\POETradeHelper.Common\POETradeHelper.Common.csproj" />
     <ProjectReference Include="..\..\Source\POETradeHelper.ItemSearch.UI.Avalonia\POETradeHelper.ItemSearch.UI.Avalonia.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Queries\Handlers" />
   </ItemGroup>
 </Project>

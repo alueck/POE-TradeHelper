@@ -12,11 +12,10 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
 {
     public class GotoHideoutCommandHandlerTests
     {
-        private IUserInputSimulator userInputSimulatorMock;
-        private GotoHideoutCommandHandler goToHideoutCommandHandler;
+        private readonly IUserInputSimulator userInputSimulatorMock;
+        private readonly GotoHideoutCommandHandler goToHideoutCommandHandler;
 
-        [SetUp]
-        public void Setup()
+        public GotoHideoutCommandHandlerTests()
         {
             this.userInputSimulatorMock = Substitute.For<IUserInputSimulator>();
             this.goToHideoutCommandHandler = new GotoHideoutCommandHandler(this.userInputSimulatorMock);

@@ -71,7 +71,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             }
 
             searchQueryRequest.Query.Stats.Clear();
-            searchQueryRequest.Query.Stats.Add(statFilters);
+
+            if (statFilters.Filters.Count > 0)
+            {
+                searchQueryRequest.Query.Stats.Add(statFilters);
+            }
         }
 
         private static StatFilter CreateStatFilter(StatFilterViewModel statFilterViewModel)

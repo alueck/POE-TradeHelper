@@ -127,7 +127,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
                 await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
             // assert
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -147,18 +147,15 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         }
 
         [Test]
-        public void GetPricePredictionAsyncShouldNotCatchOperationCanceledException()
+        public async Task GetPricePredictionAsyncShouldNotCatchOperationCanceledException()
         {
             this.httpClientMock
                 .GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Throws<OperationCanceledException>();
 
-            async Task Action()
-            {
-                await this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
-            }
+            Func<Task> action = () => this.poePricesInfoClient.GetPricePredictionAsync("Heist", "Scroll of Wisdom");
 
-            Assert.ThrowsAsync<OperationCanceledException>(Action);
+            await action.Should().ThrowAsync<OperationCanceledException>();
         }
 
         [TestCase("Heist", "")]

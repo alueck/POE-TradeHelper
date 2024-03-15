@@ -1,4 +1,6 @@
-﻿using NSubstitute;
+﻿using FluentAssertions;
+
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -46,11 +48,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
-
-            ItemStat stat = result.MonsterStats.First();
-            Assert.That(stat.Text, Is.EqualTo(expected));
+            result.AllStats.Should().ContainSingle();
+            result.MonsterStats.Should().ContainSingle(x => x.Text == expected);
         }
 
         [Test]
@@ -68,12 +67,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
-
-            SingleValueItemStat stat = (SingleValueItemStat)result.MonsterStats.First();
-            Assert.That(stat, Is.Not.Null);
-            Assert.That(stat.Value, Is.EqualTo(3));
+            result.AllStats.Should().ContainSingle();
+            result.MonsterStats.Should().SatisfyRespectively(x =>
+            {
+                x.Should().BeOfType<SingleValueItemStat>();
+                ((SingleValueItemStat)x).Value.Should().Be(3);
+            });
         }
 
         [Test]
@@ -88,8 +87,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
+            result.MonsterStats.Should().HaveCount(1);
 
             foreach (ItemStat stat in result.MonsterStats)
             {
@@ -120,11 +118,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
-
-            ItemStat stat = result.MonsterStats.First();
-            Assert.That(stat.Id, Is.EqualTo(expected));
+            result.AllStats.Should().ContainSingle();
+            result.MonsterStats.Should().ContainSingle(x => x.Id == expected);
         }
 
         [Test]
@@ -148,11 +143,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.organItemStatsParser.Parse(itemStringLines, false);
 
-            Assert.That(result.AllStats, Has.Count.EqualTo(1));
-            Assert.That(result.MonsterStats, Has.Count.EqualTo(1));
-
-            ItemStat stat = result.MonsterStats.First();
-            Assert.That(stat.TextWithPlaceholders, Is.EqualTo(expected));
+            result.AllStats.Should().ContainSingle();
+            result.MonsterStats.Should().ContainSingle(x => x.TextWithPlaceholders == expected);
         }
     }
 }

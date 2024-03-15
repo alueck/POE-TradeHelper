@@ -27,25 +27,24 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public abstract class AdditionalFilterViewModelsFactoryTestsBase
     {
-        protected IAdditionalFilterViewModelsFactory AdditionalFilterViewModelsFactory { get; set; }
-
-        protected ItemSearchOptions ItemSearchOptions { get; } = new();
-
-        protected IOptionsMonitor<ItemSearchOptions> ItemSearchOptionsMonitorMock { get; private set; }
-
-        [SetUp]
-        public void SetUp()
+        protected AdditionalFilterViewModelsFactoryTestsBase()
         {
             this.ItemSearchOptionsMonitorMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
             this.ItemSearchOptionsMonitorMock.CurrentValue.Returns(this.ItemSearchOptions);
         }
 
+        protected IAdditionalFilterViewModelsFactory AdditionalFilterViewModelsFactory { get; set; } = null!;
+
+        protected ItemSearchOptions ItemSearchOptions { get; } = new();
+
+        protected IOptionsMonitor<ItemSearchOptions> ItemSearchOptionsMonitorMock { get; }
+
         protected void CreateShouldReturnBindableMinMaxFilterViewModel(
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression,
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression,
             Item item,
             string text,
             int currentValue,
-            MinMaxFilter queryRequestFilter,
+            MinMaxFilter? queryRequestFilter,
             bool offsetCurrentValue = false)
         {
             // arrange
@@ -80,11 +79,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         protected void CreateShouldReturnBindableMinMaxFilterViewModel(
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression,
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression,
             Item item,
             string text,
             decimal currentValue,
-            MinMaxFilter queryRequestFilter)
+            MinMaxFilter? queryRequestFilter)
         {
             // arrange
             BindableMinMaxFilterViewModel expected = new(expectedBindingExpression)
@@ -118,11 +117,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         protected void CreateShouldReturnBindableSocketsFilterViewModel(
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression,
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression,
             Item item,
             string text,
             int? currentValue,
-            SocketsFilter queryRequestFilter)
+            SocketsFilter? queryRequestFilter)
         {
             // arrange
             BindableSocketsFilterViewModel expected = new(expectedBindingExpression)
@@ -133,7 +132,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 Green = queryRequestFilter?.Green,
                 Blue = queryRequestFilter?.Blue,
                 White = queryRequestFilter?.White,
-                Current = currentValue.ToString(),
+                Current = currentValue?.ToString() ?? string.Empty,
                 Text = text,
                 IsEnabled = queryRequestFilter != null,
             };
@@ -158,7 +157,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         protected void CreateShouldReturnBindableBoolOptionFilterViewModel(
-            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression,
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression,
             Item item,
             string text,
             BoolOptionFilter queryRequestFilter)
@@ -194,20 +193,20 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             yield return new BoolOptionFilter { Option = true };
         }
 
-        protected static IEnumerable<MinMaxFilter> GetMinMaxFilterTestCases()
+        protected static IEnumerable<MinMaxFilter?> GetMinMaxFilterTestCases()
         {
             yield return null;
             yield return new MinMaxFilter { Min = 45, Max = 97 };
         }
 
         private static void SetValueByExpression<TFilter>(
-            Expression<Func<SearchQueryRequest, TFilter>> bindingExpression,
+            Expression<Func<SearchQueryRequest, TFilter?>> bindingExpression,
             SearchQueryRequest searchQueryRequest,
             TFilter value)
             where TFilter : IFilter
         {
             List<Expression> expressions = bindingExpression.Body.GetExpressionChain().ToList();
-            object parent = searchQueryRequest;
+            object? parent = searchQueryRequest;
 
             foreach (MemberExpression expression in expressions)
             {

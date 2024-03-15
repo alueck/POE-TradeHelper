@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media;
 
+using FluentAssertions;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -19,12 +21,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class PriceViewModelFactoryTests
     {
-        private IStaticDataService staticDataServiceMock;
-        private IImageService imageServiceMock;
-        private PriceViewModelFactory priceViewModelFactory;
+        private readonly IStaticDataService staticDataServiceMock;
+        private readonly IImageService imageServiceMock;
+        private readonly PriceViewModelFactory priceViewModelFactory;
 
-        [SetUp]
-        public void Setup()
+        public PriceViewModelFactoryTests()
         {
             this.staticDataServiceMock = Substitute.For<IStaticDataService>();
             this.imageServiceMock = Substitute.For<IImageService>();
@@ -34,9 +35,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public async Task CreateAsyncShouldReturnNullIfPriceIsNull()
         {
-            PriceViewModel result = await this.priceViewModelFactory.CreateAsync(null);
+            PriceViewModel? result = await this.priceViewModelFactory.CreateAsync(null);
 
-            Assert.That(result, Is.Null);
+            result.Should().BeNull();
         }
 
         [TestCase(1.0)]
@@ -50,9 +51,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 Amount = amount,
             };
 
-            PriceViewModel result = await this.priceViewModelFactory.CreateAsync(price);
+            PriceViewModel? result = await this.priceViewModelFactory.CreateAsync(price);
 
-            Assert.That(result.Amount, Is.EqualTo(amount.ToString("0.##").PadLeft(6)));
+            result!.Amount.Should().BeEquivalentTo(amount.ToString("0.##").PadLeft(6));
         }
 
         [Test]
@@ -79,9 +80,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.staticDataServiceMock.GetText(Arg.Any<string>())
                 .Returns(expected);
 
-            PriceViewModel result = await this.priceViewModelFactory.CreateAsync(price);
+            PriceViewModel? result = await this.priceViewModelFactory.CreateAsync(price);
 
-            Assert.That(result.Currency, Is.EqualTo(expected));
+            result!.Currency.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -115,6 +116,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             // act
             await this.priceViewModelFactory.CreateAsync(price, cancellationToken);
 
+            // assert
             await this.imageServiceMock
                 .Received()
                 .GetImageAsync(expected, cancellationToken);
@@ -129,9 +131,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             this.imageServiceMock.GetImageAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
                 .Returns(expected);
 
-            PriceViewModel result = await this.priceViewModelFactory.CreateAsync(price);
+            PriceViewModel? result = await this.priceViewModelFactory.CreateAsync(price);
 
-            Assert.That(result.Image, Is.EqualTo(expected));
+            result!.Image.Should().BeEquivalentTo(expected);
         }
 
         private class TestBitmap : IImage

@@ -5,6 +5,7 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
@@ -45,7 +46,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.EqualTo(expected));
+            result.Query.Name.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -58,7 +59,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.Null);
+            result.Query.Name.Should().BeNull();
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -71,7 +72,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.Null);
+            result.Query.Name.Should().BeNull();
         }
 
         [Test]
@@ -81,8 +82,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.Unique));
+            result.Query.Filters.TypeFilters.Rarity.Should().BeEquivalentTo(new OptionFilter { Option = ItemRarityFilterOptions.Unique });
         }
 
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
@@ -92,8 +92,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.TypeFilters, Is.Not.Null);
-            Assert.That(result.Query.Filters.TypeFilters.Rarity!.Option, Is.EqualTo(ItemRarityFilterOptions.NonUnique));
+            result.Query.Filters.TypeFilters.Rarity.Should().BeEquivalentTo(new OptionFilter { Option = ItemRarityFilterOptions.NonUnique });
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
+using FluentAssertions;
+
 using Microsoft.Extensions.Options;
 
 using NSubstitute;
@@ -20,22 +22,24 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class FlaskItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
-        [SetUp]
-        public void Setup() => this.AdditionalFilterViewModelsFactory = new FlaskItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
+        public FlaskItemAdditionalFilterViewModelsFactoryTests()
+        {
+            this.AdditionalFilterViewModelsFactory = new FlaskItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
+        }
 
         [TestCaseSource(nameof(GetNonFlaskItems))]
         public void CreateShouldReturnEmptyEnumerableForNonFlaskItems(Item item)
         {
             IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
 
-            Assert.That(result, Is.Empty);
+            result.Should().BeEmpty();
         }
 
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
         public void CreateShouldReturnQualityFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
-            Expression<Func<SearchQueryRequest, MinMaxFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
+            Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Quality;
             FlaskItem flaskItem = new(ItemRarity.Unique)
             {
                 Quality = 20,
@@ -53,7 +57,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
         public void CreateShouldReturnIdentifiedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
             FlaskItem flaskItem = new(ItemRarity.Rare)
             {
                 IsIdentified = !queryRequestFilter.Option,

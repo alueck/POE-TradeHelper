@@ -1,5 +1,7 @@
 ﻿using System;
 
+using FluentAssertions;
+
 using NUnit.Framework;
 
 using POETradeHelper.Common.Extensions;
@@ -44,7 +46,7 @@ namespace POETradeHelper.Common.Tests.Extensions
 
             string result = timeSpan.ToHumanReadableString();
 
-            Assert.That(result, Is.EqualTo($" 1{Resources.Days}"));
+            result.Should().Be($" 1{Resources.Days}");
         }
 
         [Test]
@@ -54,7 +56,7 @@ namespace POETradeHelper.Common.Tests.Extensions
 
             string result = timeSpan.ToHumanReadableString();
 
-            Assert.That(result, Is.EqualTo($" 1{Resources.Hours}"));
+            result.Should().Be($" 1{Resources.Hours}");
         }
 
         [Test]
@@ -64,7 +66,7 @@ namespace POETradeHelper.Common.Tests.Extensions
 
             string result = timeSpan.ToHumanReadableString();
 
-            Assert.That(result, Is.EqualTo($" 1{Resources.Minutes}"));
+            result.Should().Be($" 1{Resources.Minutes}");
         }
 
         private static void ToHumanReadableStringShouldReturnResult(
@@ -76,7 +78,7 @@ namespace POETradeHelper.Common.Tests.Extensions
 
             string result = timeSpan.ToHumanReadableString();
 
-            Assert.That(result, Is.EqualTo($"{time,2:N0}{unit}"));
+            result.Should().Be($"{time,2:N0}{unit}");
         }
     }
 }

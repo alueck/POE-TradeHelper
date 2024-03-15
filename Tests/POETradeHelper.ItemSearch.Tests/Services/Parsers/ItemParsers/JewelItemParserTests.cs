@@ -1,4 +1,6 @@
-﻿using NSubstitute;
+﻿using FluentAssertions;
+
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -34,7 +36,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.True);
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -48,7 +50,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.True);
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -62,7 +64,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.True);
+            result.Should().BeTrue();
         }
 
         [TestCase(ItemRarity.Magic)]
@@ -76,7 +78,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Rarity, Is.EqualTo(expected));
+            result.Rarity.Should().Be(expected);
         }
 
         [Test]
@@ -87,7 +89,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsIdentified, Is.True);
+            result.IsIdentified.Should().BeTrue();
         }
 
         [Test]
@@ -99,7 +101,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsIdentified, Is.False);
+            result.IsIdentified.Should().BeFalse();
         }
 
         [Test]
@@ -114,7 +116,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Name, Is.EqualTo(expected));
+            result.Name.Should().Be(expected);
         }
 
         [TestCase(ItemRarity.Magic, true)]
@@ -138,7 +140,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Type, Is.EqualTo(expected));
+            result.Type.Should().Be(expected);
         }
 
         [TestCase(ItemRarity.Rare)]
@@ -155,7 +157,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Name, Is.EqualTo(expected));
+            result.Name.Should().Be(expected);
         }
 
         [Test]
@@ -167,7 +169,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsCorrupted, Is.True);
+            result.IsCorrupted.Should().BeTrue();
         }
 
         [Test]
@@ -178,7 +180,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.IsCorrupted, Is.False);
+            result.IsCorrupted.Should().BeFalse();
         }
 
         [Test]

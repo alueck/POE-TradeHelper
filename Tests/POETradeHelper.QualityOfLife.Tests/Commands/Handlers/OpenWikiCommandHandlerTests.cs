@@ -26,19 +26,18 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
 {
     public class OpenWikiCommandHandlerTests
     {
-        private IMediator mediatorMock;
-        private IWikiUrlProvider[] wikiUrlProviderMocks;
-        private IOptionsMonitor<WikiOptions> wikiOptionsMock;
-        private OpenWikiCommandHandler handler;
+        private readonly IMediator mediatorMock;
+        private readonly IWikiUrlProvider[] wikiUrlProviderMocks;
+        private readonly IOptionsMonitor<WikiOptions> wikiOptionsMock;
+        private readonly OpenWikiCommandHandler handler;
 
-        [SetUp]
-        public void Setup()
+        public OpenWikiCommandHandlerTests()
         {
             this.mediatorMock = Substitute.For<IMediator>();
             this.wikiOptionsMock = Substitute.For<IOptionsMonitor<WikiOptions>>();
             this.wikiOptionsMock.CurrentValue
                 .Returns(new WikiOptions());
-            this.SetupWikiUrlProviderMocks();
+            this.wikiUrlProviderMocks = this.SetupWikiUrlProviderMocks();
 
             this.handler = new OpenWikiCommandHandler(
                 this.mediatorMock,
@@ -129,7 +128,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             await action.Should().NotThrowAsync();
         }
 
-        private void SetupWikiUrlProviderMocks()
+        private IWikiUrlProvider[] SetupWikiUrlProviderMocks()
         {
             var poeWikiWikiUrlProviderMock = Substitute.For<IWikiUrlProvider>();
             poeWikiWikiUrlProviderMock
@@ -141,11 +140,11 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
                 .HandledWikiType
                 .Returns(WikiType.PoeDb);
 
-            this.wikiUrlProviderMocks = new[]
-            {
+            return
+            [
                 poeWikiWikiUrlProviderMock,
                 poeDbWikiUrlProviderMock,
-            };
+            ];
         }
     }
 }

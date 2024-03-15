@@ -1,10 +1,12 @@
 ﻿using FluentAssertions;
+
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Mappers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 {
@@ -39,8 +41,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.prophecyItemSearchRequestMapper.MapToQueryRequest(item);
 
-            result.Query.Type.Should().NotBeNull();
-            result.Query.Type!.Option.Should().Be(ItemTypeFilterOptions.Prophecy);
+            result.Query.Type.Should().BeEquivalentTo(new OptionFilter { Option = ItemTypeFilterOptions.Prophecy });
         }
     }
 }

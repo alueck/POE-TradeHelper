@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Services.Parsers;
@@ -23,9 +25,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             ItemSockets result = this.socketsParser.Parse(socketsString);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(1));
-            Assert.That(result.SocketGroups.Count, Is.EqualTo(1));
+            result.Count.Should().Be(1);
+            result.SocketGroups.Count.Should().Be(1);
 
             CheckSocketGroup(result.SocketGroups, 0, expected);
         }
@@ -36,9 +37,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             ItemSockets result = this.socketsParser.Parse(socketsString);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(2));
-            Assert.That(result.SocketGroups.Count, Is.EqualTo(2));
+            result.Count.Should().Be(2);
+            result.SocketGroups.Count.Should().Be(2);
 
             CheckSocketGroup(result.SocketGroups, 0, expected[0]);
             CheckSocketGroup(result.SocketGroups, 1, expected[1]);
@@ -49,9 +49,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             ItemSockets result = this.socketsParser.Parse("R-B");
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(2));
-            Assert.That(result.SocketGroups.Count, Is.EqualTo(1));
+            result.Count.Should().Be(2);
+            result.SocketGroups.Count.Should().Be(1);
 
             CheckSocketGroup(result.SocketGroups, 0, SocketType.Red, SocketType.Blue);
         }
@@ -61,9 +60,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             ItemSockets result = this.socketsParser.Parse("R-B W-G");
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(4));
-            Assert.That(result.SocketGroups.Count, Is.EqualTo(2));
+            result.Count.Should().Be(4);
+            result.SocketGroups.Count.Should().Be(2);
 
             CheckSocketGroup(result.SocketGroups, 0, SocketType.Red, SocketType.Blue);
             CheckSocketGroup(result.SocketGroups, 1, SocketType.White, SocketType.Green);
@@ -75,14 +73,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             ItemSockets result = this.socketsParser.Parse(socketsString);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(0));
+            result.Count.Should().Be(0);
         }
 
         private static void CheckSocketGroup(ICollection<SocketGroup> socketGroups, int socketGroupIndex, params SocketType[] expectedSocketTypes)
         {
             ICollection<Socket> socketGroupSockets = socketGroups.Skip(socketGroupIndex).First().Sockets;
-            Assert.That(socketGroupSockets, Has.Count.EqualTo(expectedSocketTypes.Length));
+            socketGroupSockets.Count.Should().Be(expectedSocketTypes.Length);
 
             CheckSocketColorCount(SocketType.Red, socketGroupSockets, expectedSocketTypes);
             CheckSocketColorCount(SocketType.Blue, socketGroupSockets, expectedSocketTypes);
@@ -92,7 +89,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
         private static void CheckSocketColorCount(SocketType socketTypeToCheck, ICollection<Socket> socketGroupSockets, SocketType[] expectedSocketTypes)
         {
-            Assert.That(socketGroupSockets.Count(s => s.SocketType == socketTypeToCheck), Is.EqualTo(expectedSocketTypes.Count(s => s == socketTypeToCheck)));
+            socketGroupSockets.Count(s => s.SocketType == socketTypeToCheck).Should()
+                .Be(expectedSocketTypes.Count(s => s == socketTypeToCheck));
         }
     }
 }

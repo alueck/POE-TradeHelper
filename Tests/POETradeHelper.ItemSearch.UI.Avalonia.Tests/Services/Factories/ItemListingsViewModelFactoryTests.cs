@@ -20,11 +20,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {
     public class ItemListingsViewModelFactoryTests
     {
-        private IListingViewModelFactory listingViewModelFactoryMock;
-        private ItemListingsViewModelFactory itemListingsViewModelFactory;
+        private readonly IListingViewModelFactory listingViewModelFactoryMock;
+        private readonly ItemListingsViewModelFactory itemListingsViewModelFactory;
 
-        [SetUp]
-        public void Setup()
+        public ItemListingsViewModelFactoryTests()
         {
             this.listingViewModelFactoryMock = Substitute.For<IListingViewModelFactory>();
             this.itemListingsViewModelFactory = new ItemListingsViewModelFactory(this.listingViewModelFactoryMock);

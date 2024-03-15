@@ -1,4 +1,6 @@
-﻿using NSubstitute;
+﻿using FluentAssertions;
+
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -29,10 +31,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         public void ParseTypeShouldThrowArgumentExceptionForUnsupportedItemRarity(ItemRarity itemRarity)
         {
             // act
-            TestDelegate action = () => this.itemTypeParser.ParseType(Array.Empty<string>(), itemRarity, false);
+            Action action = () => this.itemTypeParser.ParseType(Array.Empty<string>(), itemRarity, false);
 
             // assert
-            Assert.Throws<ArgumentException>(action);
+            action.Should().Throw<ArgumentException>();
         }
 
         [Test]
@@ -79,7 +81,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, true);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
             this.itemDataServiceMock
                 .DidNotReceive()
                 .GetType(Arg.Any<string>());
@@ -101,7 +103,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, false);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
     }
 }

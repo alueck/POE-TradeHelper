@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using FluentAssertions;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -20,12 +22,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class StaticDataServiceTests
     {
-        private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
-        private StaticDataService staticDataService;
-        private IHttpClientWrapper httpClientWrapperMock;
+        private readonly IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
+        private readonly StaticDataService staticDataService;
+        private readonly IHttpClientWrapper httpClientWrapperMock;
 
-        [SetUp]
-        public void Setup()
+        public StaticDataServiceTests()
         {
             this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
             this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
@@ -73,7 +74,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
-        public void OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
+        public async Task OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
         {
             this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(new HttpResponseMessage
@@ -81,10 +82,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     StatusCode = HttpStatusCode.BadRequest,
                 });
 
-            AsyncTestDelegate testDelegate = async () => await this.staticDataService.OnInitAsync();
+            Func<Task> action = () => this.staticDataService.OnInitAsync();
 
-            PoeTradeApiCommunicationException exception = Assert.CatchAsync<PoeTradeApiCommunicationException>(testDelegate);
-            Assert.That(exception.Message, Contains.Substring(Resources.PoeTradeApiStaticDataEndpoint));
+            await action.Should()
+                .ThrowAsync<PoeTradeApiCommunicationException>()
+                .Where(x => x.Message.Contains(Resources.PoeTradeApiStaticDataEndpoint));
         }
 
         [Test]
@@ -96,8 +98,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
-                    Result = new List<Data<StaticData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = "Currency",
@@ -107,22 +109,22 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 new() { Id = expected, Text = itemName },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.staticDataService.OnInitAsync();
 
-            string result = this.staticDataService.GetId(itemName);
+            string? result = this.staticDataService.GetId(itemName);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
         public void GetIdShouldReturnNullIfItemIdIsNotFound()
         {
-            string result = this.staticDataService.GetId("random name");
+            string? result = this.staticDataService.GetId("random name");
 
-            Assert.That(result, Is.Null);
+            result.Should().BeNull();
         }
 
         [Test]
@@ -134,8 +136,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
-                    Result = new List<Data<StaticData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = "Currency",
@@ -145,14 +147,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 new() { Id = id, Text = expected },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.staticDataService.OnInitAsync();
 
             string result = this.staticDataService.GetText(id);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -161,18 +163,18 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
-                    Result = new List<Data<StaticData>>(),
+                    Result = [],
                 });
 
             await this.staticDataService.OnInitAsync();
 
-            TestDelegate testDelegate = () => this.staticDataService.GetText("abc");
+            Action action = () => this.staticDataService.GetText("abc");
 
-            Assert.Throws<KeyNotFoundException>(testDelegate);
+            action.Should().Throw<KeyNotFoundException>();
         }
 
         [Test]
-        public async Task GetImageurlShouldReturnCorrectUrlForId()
+        public async Task GetImageUrlShouldReturnCorrectUrlForId()
         {
             const string entryUrl = "image/Art/2DItems/Currency/CurrencyRerollRare.png";
             string expected = Resources.PoeCdnUrl + entryUrl;
@@ -181,8 +183,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
-                    Result = new List<Data<StaticData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = "Currency",
@@ -192,14 +194,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 new() { Id = id, Image = entryUrl },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.staticDataService.OnInitAsync();
 
             Uri result = this.staticDataService.GetImageUrl(id);
 
-            Assert.That(result.ToString(), Is.EqualTo(expected));
+            result.ToString().Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -208,14 +210,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StaticData>>
                 {
-                    Result = new List<Data<StaticData>>(),
+                    Result = [],
                 });
 
             await this.staticDataService.OnInitAsync();
 
-            TestDelegate testDelegate = () => this.staticDataService.GetImageUrl("abc");
+            Action action = () => this.staticDataService.GetImageUrl("abc");
 
-            Assert.Throws<KeyNotFoundException>(testDelegate);
+            action.Should().Throw<KeyNotFoundException>();
         }
     }
 }

@@ -59,7 +59,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats).ToList();
 
-            result.Should().HaveCount(1);
+            result.Should().ContainSingle();
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
-            Assert.That(result, Is.Empty);
+            result.Should().BeEmpty();
         }
 
         [Test]
@@ -92,8 +92,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
             ItemStat itemStat = result.First();
-            Assert.That(itemStat, Is.InstanceOf<SingleValueItemStat>());
-            Assert.That(itemStat.StatCategory, Is.EqualTo(StatCategory.Pseudo));
+            itemStat.Should().BeOfType<SingleValueItemStat>();
+            itemStat.StatCategory.Should().Be(StatCategory.Pseudo);
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
-            Assert.That(result.First().Id, Is.EqualTo(expected));
+            result.First().Id.Should().Be(expected);
         }
 
         [Test]
@@ -133,7 +133,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
-            Assert.That(result.First().TextWithPlaceholders, Is.EqualTo(expected));
+            result.First().TextWithPlaceholders.Should().Be(expected);
         }
 
         [TestCase(10, 12, 22)]
@@ -157,7 +157,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
             SingleValueItemStat itemStat = (SingleValueItemStat)result.First();
-            Assert.That(itemStat.Value, Is.EqualTo(expected));
+            itemStat.Value.Should().Be(expected);
         }
 
         [Test]
@@ -176,8 +176,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
             ItemStat itemStat = result.First();
-            Assert.That(itemStat, Is.InstanceOf<MinMaxValueItemStat>());
-            Assert.That(itemStat.StatCategory, Is.EqualTo(StatCategory.Pseudo));
+            itemStat.Should().BeOfType<MinMaxValueItemStat>();
+            itemStat.StatCategory.Should().Be(StatCategory.Pseudo);
         }
 
         [Test]
@@ -197,7 +197,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
-            Assert.That(result.First().Id, Is.EqualTo(expected));
+            result.First().Id.Should().Be(expected);
         }
 
         [Test]
@@ -217,7 +217,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
-            Assert.That(result.First().TextWithPlaceholders, Is.EqualTo(expected));
+            result.First().TextWithPlaceholders.Should().Be(expected);
         }
 
         [TestCase(7, 14, 21)]
@@ -241,7 +241,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
             MinMaxValueItemStat itemStat = (MinMaxValueItemStat)result.First();
-            Assert.That(itemStat.MinValue, Is.EqualTo(expected));
+            itemStat.MinValue.Should().Be(expected);
         }
 
         [TestCase(45, 64, 109)]
@@ -265,7 +265,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
             MinMaxValueItemStat itemStat = (MinMaxValueItemStat)result.First();
-            Assert.That(itemStat.MaxValue, Is.EqualTo(expected));
+            itemStat.MaxValue.Should().Be(expected);
         }
 
         [TestCase(StatId.FireAndColdResistance, StatId.FireResistance, PseudoStatId.TotalFireResistance)]
@@ -293,15 +293,23 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             IEnumerable<ItemStat> result = this.pseudoItemStatsParser.Parse(itemStats);
 
             // assert
-            SingleValueItemStat itemStat =
-                (SingleValueItemStat)result.First(i => i.Id == PseudoStatId.TotalElementalResistance);
-            Assert.That(itemStat.Value, Is.EqualTo(expectedTotalElementalResistance));
-
-            itemStat = (SingleValueItemStat)result.First(i => i.Id == PseudoStatId.TotalResistance);
-            Assert.That(itemStat.Value, Is.EqualTo(expectedTotalElementalResistance));
-
-            itemStat = (SingleValueItemStat)result.First(i => i.Id == expectedPseudoTotalResistanceStatId);
-            Assert.That(itemStat.Value, Is.EqualTo(expectedTotalSingleResistanceValue));
+            result.OfType<SingleValueItemStat>().Should()
+                .HaveCount(3)
+                .And.ContainEquivalentOf(new SingleValueItemStat(StatCategory.Pseudo)
+                {
+                    Id = PseudoStatId.TotalElementalResistance,
+                    Value = expectedTotalElementalResistance,
+                })
+                .And.ContainEquivalentOf(new SingleValueItemStat(StatCategory.Pseudo)
+                {
+                    Id = PseudoStatId.TotalResistance,
+                    Value = expectedTotalElementalResistance,
+                })
+                .And.ContainEquivalentOf(new SingleValueItemStat(StatCategory.Pseudo)
+                {
+                    Id = expectedPseudoTotalResistanceStatId,
+                    Value = expectedTotalSingleResistanceValue,
+                });
         }
 
         private void SetupPseudoStatsDataMappingServiceMockForDoubleResistanceStats()

@@ -1,4 +1,6 @@
-﻿using NSubstitute;
+﻿using FluentAssertions;
+
+using NSubstitute;
 
 using NUnit.Framework;
 
@@ -32,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             bool result = this.itemParserAggregator.IsParseable(itemString);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -62,17 +64,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
             this.currencyItemParserMock.CanParse(Arg.Any<string[]>())
                 .Returns(true);
 
-            TestDelegate testDelegate = () => this.itemParserAggregator.Parse(string.Empty);
+            Action action = () => this.itemParserAggregator.Parse(string.Empty);
 
-            Assert.Throws<MultipleMatchingParsersFoundException>(testDelegate);
+            action.Should().Throw<MultipleMatchingParsersFoundException>();
         }
 
         [Test]
         public void ParseShouldThrowExceptionIfNoMatchingParserIsFound()
         {
-            TestDelegate testDelegate = () => this.itemParserAggregator.Parse(string.Empty);
+            Action action = () => this.itemParserAggregator.Parse(string.Empty);
 
-            Assert.Throws<NoMatchingParserFoundException>(testDelegate);
+            action.Should().Throw<NoMatchingParserFoundException>();
         }
 
         [Test]
@@ -103,7 +105,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
 
             Item result = this.itemParserAggregator.Parse(string.Empty);
 
-            Assert.That(result, Is.EqualTo(item));
+            result.Should().Be(item);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -11,7 +12,6 @@ using NSubstitute;
 using NUnit.Framework;
 
 using POETradeHelper.Common.Wrappers;
-using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -23,12 +23,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class ItemDataServiceTests
     {
-        private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
-        private ItemDataService itemDataService;
-        private IHttpClientWrapper httpClientWrapperMock;
+        private readonly IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
+        private readonly ItemDataService itemDataService;
+        private readonly IHttpClientWrapper httpClientWrapperMock;
 
-        [SetUp]
-        public void Setup()
+        public ItemDataServiceTests()
         {
             this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
             this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
@@ -75,7 +74,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
-        public void OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
+        public async Task OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
         {
             this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(new HttpResponseMessage
@@ -83,11 +82,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     StatusCode = HttpStatusCode.BadRequest,
                 });
 
-            AsyncTestDelegate testDelegate = async () => await this.itemDataService.OnInitAsync();
+            Func<Task> action = () => this.itemDataService.OnInitAsync();
 
-            PoeTradeApiCommunicationException
-                exception = Assert.CatchAsync<PoeTradeApiCommunicationException>(testDelegate);
-            exception.Message.Should().Contain(Resources.PoeTradeApiItemDataEndpoint);
+            await action.Should()
+                .ThrowAsync<PoeTradeApiCommunicationException>()
+                .Where(x => x.Message.Contains(Resources.PoeTradeApiItemDataEndpoint));
         }
 
         [TestCase("Sanguine Leather Belt of the Whelpling")]
@@ -98,8 +97,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<ItemData>>
                 {
-                    Result = new List<Data<ItemData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = "Accessories",
@@ -109,14 +108,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 new() { Text = expectedType, Type = expectedType },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.itemDataService.OnInitAsync();
 
-            ItemType result = this.itemDataService.GetType(name);
+            ItemType? result = this.itemDataService.GetType(name);
 
-            result!.Type.Should().Be(expectedType);
+            result.Should().BeEquivalentTo(new ItemType(expectedType));
         }
 
         [Test]
@@ -126,8 +125,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<ItemData>>
                 {
-                    Result = new List<Data<ItemData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = "Gems",
@@ -144,14 +143,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 new() { Text = expectedType, Type = expectedType },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.itemDataService.OnInitAsync();
 
-            ItemType result = this.itemDataService.GetType("Blight-ravaged Primordial Pool Map");
+            ItemType? result = this.itemDataService.GetType("Blight-ravaged Primordial Pool Map");
 
-            result!.Type.Should().Be(expectedType);
+            result.Should().BeEquivalentTo(new ItemType(expectedType));
         }
 
         [Test]
@@ -163,8 +162,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<ItemData>>
                 {
-                    Result = new List<Data<ItemData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = "Gems",
@@ -174,12 +173,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 new() { Text = gemName, Type = expectedType.Type, Disc = expectedType.Discriminator },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.itemDataService.OnInitAsync();
 
-            ItemType result = this.itemDataService.GetType(gemName);
+            ItemType? result = this.itemDataService.GetType(gemName);
 
             result.Should().BeEquivalentTo(expectedType);
         }
@@ -190,8 +189,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<ItemData>>
                 {
-                    Result = new List<Data<ItemData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = "Accessories",
@@ -202,12 +201,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 new() { Text = "Leather Belt", Type = "Leather Belt" },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.itemDataService.OnInitAsync();
 
-            ItemType result = this.itemDataService.GetType("No Match");
+            ItemType? result = this.itemDataService.GetType("No Match");
 
             result.Should().BeNull();
         }
@@ -220,8 +219,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<ItemData>>
                 {
-                    Result = new List<Data<ItemData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = "Accessories",
@@ -239,12 +238,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 new() { Text = "Sword", Type = itemType },
                             },
                         },
-                    },
+
+                    ],
                 });
 
             await this.itemDataService.OnInitAsync();
 
-            string result = this.itemDataService.GetCategory(itemType);
+            string? result = this.itemDataService.GetCategory(itemType);
 
             result.Should().Be(expectedCategory);
         }
@@ -255,8 +255,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<ItemData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<ItemData>>
                 {
-                    Result = new List<Data<ItemData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = "Accessories",
@@ -265,12 +265,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 new() { Text = "Wurm's Molt Leather Belt", Type = "Leather Belt" },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.itemDataService.OnInitAsync();
 
-            string result = this.itemDataService.GetCategory("abc");
+            string? result = this.itemDataService.GetCategory("abc");
 
             result.Should().BeNull();
         }

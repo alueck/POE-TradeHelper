@@ -47,7 +47,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Name, Is.Null);
+            result.Query.Name.Should().BeNull();
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            Assert.That(result.Query.Filters.TypeFilters.Rarity, Is.Null);
+            result.Query.Filters.TypeFilters.Rarity.Should().BeNull();
         }
 
         [TestCase(10)]
@@ -72,9 +72,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             MinMaxFilter? gemLevelFilter = result.Query.Filters.MiscFilters.GemLevel;
-            Assert.That(gemLevelFilter, Is.Not.Null);
-            Assert.That(gemLevelFilter!.Min, Is.EqualTo(expected));
-            Assert.That(gemLevelFilter.Max, Is.Null);
+            gemLevelFilter.Should().BeEquivalentTo(new MinMaxFilter { Min = expected });
         }
 
         [TestCase(10)]
@@ -89,9 +87,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             MinMaxFilter? qualityFilter = result.Query.Filters.MiscFilters.Quality;
-            Assert.That(qualityFilter, Is.Not.Null);
-            Assert.That(qualityFilter!.Min, Is.EqualTo(expected));
-            Assert.That(qualityFilter.Max, Is.Null);
+            qualityFilter.Should().BeEquivalentTo(new MinMaxFilter { Min = expected });
         }
     }
 }

@@ -13,7 +13,7 @@ namespace POETradeHelper.Common.Tests.Extensions
             TestEnumWrapper.TestEnum? result =
                 TestEnumWrapper.DisplayName.ParseToEnumByDisplayName<TestEnumWrapper.TestEnum>();
 
-            Assert.That(result, Is.EqualTo(TestEnumWrapper.TestEnum.TestValue));
+            result.Should().Be(TestEnumWrapper.TestEnum.TestValue);
         }
 
         [Test]

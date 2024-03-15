@@ -3,6 +3,8 @@ using System.Globalization;
 
 using Avalonia.Data;
 
+using FluentAssertions;
+
 using NUnit.Framework;
 
 using POETradeHelper.Common.UI.Converters;
@@ -27,7 +29,7 @@ namespace POETradeHelper.Common.UI.Tests.Converters
         {
             var result = this.converter.Convert(value, typeof(string), null, CultureInfo.CurrentCulture);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [SetCulture("de-DE")]
@@ -36,11 +38,11 @@ namespace POETradeHelper.Common.UI.Tests.Converters
         [TestCase("1,23", 1.23)]
         [TestCase("-1,23", -1.23)]
         [TestCase("2.34", 2.34)]
-        public void ConvertBackShouldReturnCorrectDecimal(string value, decimal? expected)
+        public void ConvertBackShouldReturnCorrectDecimal(string? value, decimal? expected)
         {
             var result = this.converter.ConvertBack(value, typeof(decimal?), null, CultureInfo.CurrentCulture);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -48,10 +50,11 @@ namespace POETradeHelper.Common.UI.Tests.Converters
         {
             var result = this.converter.ConvertBack("abc", typeof(decimal?), null, CultureInfo.CurrentCulture);
 
-            Assert.That(result, Is.InstanceOf<BindingNotification>());
-            var bindingNotification = (BindingNotification)result;
-            Assert.That(bindingNotification.Error, Is.InstanceOf<InvalidCastException>().And.Message.EqualTo("'abc' is not a valid number."));
-            Assert.That(bindingNotification.ErrorType, Is.EqualTo(BindingErrorType.Error));
+            BindingNotification bindingNotification = result.Should().BeOfType<BindingNotification>().Which;
+            bindingNotification.Error.Should()
+                .BeOfType<InvalidCastException>()
+                .Which.Message.Should().Be("'abc' is not a valid number.");
+            bindingNotification.ErrorType.Should().Be(BindingErrorType.Error);
         }
     }
 }

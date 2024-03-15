@@ -24,10 +24,11 @@ namespace POETradeHelper.PricePrediction.Tests.Queries
 
             EquippableItem? validItem = new EquippableItem(ItemRarity.Rare)
             {
-                ExtendedItemText = @"
-{ Extended stat info }
-Stat text
-(stat description)",
+                ExtendedItemText = """
+                                   { Extended stat info }
+                                   Stat text
+                                   (stat description)
+                                   """,
             };
             this.validRequest = new GetPoePricesInfoPredictionQuery(validItem, new League { Id = "Heist" });
         }

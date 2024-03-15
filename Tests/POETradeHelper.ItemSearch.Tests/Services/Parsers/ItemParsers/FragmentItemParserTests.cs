@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+
+using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
@@ -27,7 +29,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.True);
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -40,7 +42,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.False);
+            result.Should().BeFalse();
         }
 
         [Test]
@@ -53,7 +55,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             bool result = this.ItemParser.CanParse(itemStringLines);
 
-            Assert.That(result, Is.False);
+            result.Should().BeFalse();
         }
 
         [Test]
@@ -63,7 +65,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             FragmentItem result = (FragmentItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Name, Is.EqualTo(Fragment));
+            result.Name.Should().Be(Fragment);
         }
 
         [Test]
@@ -73,7 +75,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 
             FragmentItem result = (FragmentItem)this.ItemParser.Parse(itemStringLines);
 
-            Assert.That(result.Type, Is.EqualTo(Fragment));
+            result.Type.Should().Be(Fragment);
         }
 
         protected override string[] GetValidItemStringLines()

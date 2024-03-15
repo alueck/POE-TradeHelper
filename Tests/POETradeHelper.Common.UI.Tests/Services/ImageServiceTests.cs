@@ -20,14 +20,13 @@ namespace POETradeHelper.Common.UI.Tests.Services
 {
     public class ImageServiceTests
     {
-        private IHttpClientWrapper httpClientWrapperMock;
-        private IBitmapFactory bitmapFactoryMock;
-        private ImageService imageService;
-
         private static readonly Uri Uri = new("http://www.google.de");
 
-        [SetUp]
-        public void Setup()
+        private readonly IHttpClientWrapper httpClientWrapperMock;
+        private readonly IBitmapFactory bitmapFactoryMock;
+        private readonly ImageService imageService;
+
+        public ImageServiceTests()
         {
             this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
             this.bitmapFactoryMock = Substitute.For<IBitmapFactory>();
@@ -49,7 +48,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
                     StatusCode = HttpStatusCode.BadRequest,
                 });
 
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationTokenSource cancellationTokenSource = new();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             // act
@@ -87,10 +86,10 @@ namespace POETradeHelper.Common.UI.Tests.Services
                 .Returns(expected);
 
             // act
-            IImage result = await this.imageService.GetImageAsync(Uri);
+            IImage? result = await this.imageService.GetImageAsync(Uri);
 
             // assert
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -104,34 +103,31 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.httpClientWrapperMock.GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
                 .Returns(httpResponse);
 
-            IImage result = await this.imageService.GetImageAsync(Uri);
+            IImage? result = await this.imageService.GetImageAsync(Uri);
 
             result.Should().BeNull();
         }
 
         [TestCase(typeof(OperationCanceledException))]
         [TestCase(typeof(TaskCanceledException))]
-        public void GetImageAsyncShouldNotCatchException(Type exceptionType)
+        public async Task GetImageAsyncShouldNotCatchException(Type exceptionType)
         {
             // arrange
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationTokenSource cancellationTokenSource = new();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
             this.httpClientWrapperMock
                 .GetAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
-                .ThrowsAsync((Exception)Activator.CreateInstance(exceptionType));
+                .ThrowsAsync((Exception)Activator.CreateInstance(exceptionType)!);
 
             // act
-            async Task Action()
-            {
-                await this.imageService.GetImageAsync(Uri, cancellationToken);
-            }
+            Task Action() => this.imageService.GetImageAsync(Uri, cancellationToken);
 
             // assert
-            Assert.ThrowsAsync(exceptionType, Action);
+            await Assert.ThatAsync(Action, Throws.TypeOf(exceptionType));
         }
 
-        private HttpResponseMessage MockHttpClientGetAsyncSuccessResponse(Stream stream = null)
+        private HttpResponseMessage MockHttpClientGetAsyncSuccessResponse(Stream? stream = null)
         {
             HttpResponseMessage httpResponse = new()
             {

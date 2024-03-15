@@ -20,16 +20,15 @@ using SharpHook.Reactive;
 
 namespace POETradeHelper.Common.Tests
 {
-    public class UserInputEventProviderTests
+    public class UserInputEventProviderTests : IDisposable
     {
-        private Subject<KeyboardHookEventArgs> keyPressed;
-        private IReactiveGlobalHook hookMock;
-        private IPathOfExileProcessHelper pathOfExileProcessHelperMock;
-        private IMediator mediatorMock;
-        private IUserInputEventProvider userInputEventProvider;
+        private readonly Subject<KeyboardHookEventArgs> keyPressed;
+        private readonly IReactiveGlobalHook hookMock;
+        private readonly IPathOfExileProcessHelper pathOfExileProcessHelperMock;
+        private readonly IMediator mediatorMock;
+        private readonly IUserInputEventProvider userInputEventProvider;
 
-        [SetUp]
-        public async Task Setup()
+        public UserInputEventProviderTests()
         {
             this.keyPressed = new Subject<KeyboardHookEventArgs>();
             this.hookMock = Substitute.For<IReactiveGlobalHook>();
@@ -42,11 +41,15 @@ namespace POETradeHelper.Common.Tests
                 this.hookMock,
                 this.pathOfExileProcessHelperMock,
                 this.mediatorMock);
+        }
+
+        [SetUp]
+        public async Task SetUp()
+        {
             await this.userInputEventProvider.OnInitAsync();
         }
 
-        [TearDown]
-        public void Teardown()
+        public void Dispose()
         {
             this.keyPressed.Dispose();
             this.hookMock.Dispose();
@@ -116,7 +119,7 @@ namespace POETradeHelper.Common.Tests
                 Type = EventType.KeyPressed,
             });
 
-            Action onHandledAction = null;
+            Action? onHandledAction = null;
             this.mediatorMock
                 .When(x => x.Send(Arg.Any<HideOverlayCommand>(), Arg.Any<CancellationToken>()))
                 .Do(ctx => onHandledAction = ctx.Arg<HideOverlayCommand>().OnHandled);
@@ -125,7 +128,7 @@ namespace POETradeHelper.Common.Tests
 
             onHandledAction.Should().NotBeNull();
             keyEventArgs.SuppressEvent.Should().BeFalse();
-            onHandledAction.Invoke();
+            onHandledAction!.Invoke();
             keyEventArgs.SuppressEvent.Should().BeTrue();
         }
 
