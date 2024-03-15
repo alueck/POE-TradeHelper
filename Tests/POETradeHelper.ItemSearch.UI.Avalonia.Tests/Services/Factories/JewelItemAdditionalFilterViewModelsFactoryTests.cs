@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
+using Microsoft.Extensions.Options;
+
+using NSubstitute;
+
 using NUnit.Framework;
 
+using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations;
 using POETradeHelper.ItemSearch.UI.Avalonia.Properties;
@@ -16,7 +21,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
     public class JewelItemAdditionalFilterViewModelsFactoryTests : AdditionalFilterViewModelsFactoryTestsBase
     {
         [SetUp]
-        public void Setup() => this.AdditionalFilterViewModelsFactory = new JewelItemAdditionalFilterViewModelsFactory();
+        public void Setup() => this.AdditionalFilterViewModelsFactory = new JewelItemAdditionalFilterViewModelsFactory(Substitute.For<IOptionsMonitor<ItemSearchOptions>>());
 
         [TestCaseSource(nameof(GetNonJewelItems))]
         public void CreateShouldReturnEmptyEnumerableForNonJewelItems(Item item)
@@ -27,72 +32,32 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             Assert.That(result, Is.Empty);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void CreateShouldReturnIdentifiedFilterViewModel(bool value)
+        [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
+        public void CreateShouldReturnIdentifiedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
             JewelItem jewelItem = new(ItemRarity.Rare)
             {
-                IsIdentified = value,
+                IsIdentified = !queryRequestFilter.Option,
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(
-                expectedBindingExpression,
-                jewelItem,
-                null,
-                Resources.Identified);
-        }
-
-        [Test]
-        public void CreateShouldReturnIdentifiedFilterViewModelWithValueFromQueryRequest()
-        {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Identified;
-            JewelItem jewelItem = new(ItemRarity.Rare)
-            {
-                IsIdentified = true,
-            };
-
-            BoolOptionFilter queryRequestFilter = new()
-            {
-                Option = false,
-            };
-
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
                 expectedBindingExpression,
                 jewelItem,
                 Resources.Identified,
                 queryRequestFilter);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void CreateShouldReturnCorruptedFilterViewModel(bool value)
+        [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
+        public void CreateShouldReturnCorruptedFilterViewModel(BoolOptionFilter queryRequestFilter)
         {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
+            Expression<Func<SearchQueryRequest, BoolOptionFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
             JewelItem jewelItem = new(ItemRarity.Rare)
             {
-                IsCorrupted = value,
+                IsCorrupted = !queryRequestFilter.Option,
             };
 
-            this.CreateShouldReturnBindableFilterViewModel(expectedBindingExpression, jewelItem, null, Resources.Corrupted);
-        }
-
-        [Test]
-        public void CreateShouldReturnCorruptedFilterViewModelWithValueFromQueryRequest()
-        {
-            Expression<Func<SearchQueryRequest, IFilter>> expectedBindingExpression = x => x.Query.Filters.MiscFilters.Corrupted;
-            JewelItem jewelItem = new(ItemRarity.Rare)
-            {
-                IsCorrupted = true,
-            };
-
-            BoolOptionFilter queryRequestFilter = new()
-            {
-                Option = false,
-            };
-
-            this.CreateShouldReturnBindableFilterViewModelWithValueFromQueryRequest(
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
                 expectedBindingExpression,
                 jewelItem,
                 Resources.Corrupted,

@@ -87,11 +87,38 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Armour.
+        /// </summary>
+        public static string Armour {
+            get {
+                return ResourceManager.GetString("Armour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attacks per Second.
+        /// </summary>
+        public static string AttacksPerSecond {
+            get {
+                return ResourceManager.GetString("AttacksPerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to B.
         /// </summary>
         public static string Blue {
             get {
                 return ResourceManager.GetString("Blue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chance to Block.
+        /// </summary>
+        public static string ChanceToBlock {
+            get {
+                return ResourceManager.GetString("ChanceToBlock", resourceCulture);
             }
         }
         
@@ -114,11 +141,74 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Critical Strike Chance.
+        /// </summary>
+        public static string CriticalStrikeChance {
+            get {
+                return ResourceManager.GetString("CriticalStrikeChance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current.
         /// </summary>
         public static string Current {
             get {
                 return ResourceManager.GetString("Current", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Damage.
+        /// </summary>
+        public static string Damage {
+            get {
+                return ResourceManager.GetString("Damage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPS.
+        /// </summary>
+        public static string Dps {
+            get {
+                return ResourceManager.GetString("Dps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elemental DPS.
+        /// </summary>
+        public static string ElementalDps {
+            get {
+                return ResourceManager.GetString("ElementalDps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Energy Shield.
+        /// </summary>
+        public static string EnergyShield {
+            get {
+                return ResourceManager.GetString("EnergyShield", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Evasion.
+        /// </summary>
+        public static string Evasion {
+            get {
+                return ResourceManager.GetString("Evasion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Armour.
+        /// </summary>
+        public static string FilterCategory_Armour {
+            get {
+                return ResourceManager.GetString("FilterCategory_Armour", resourceCulture);
             }
         }
         
@@ -173,6 +263,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         public static string FilterCategory_Pseudo {
             get {
                 return ResourceManager.GetString("FilterCategory_Pseudo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weapon.
+        /// </summary>
+        public static string FilterCategory_Weapon {
+            get {
+                return ResourceManager.GetString("FilterCategory_Weapon", resourceCulture);
             }
         }
         
@@ -339,6 +438,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Physical DPS.
+        /// </summary>
+        public static string PhysicalDps {
+            get {
+                return ResourceManager.GetString("PhysicalDps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Price.
         /// </summary>
         public static string PriceColumn {
@@ -407,6 +515,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         public static string StackSize {
             get {
                 return ResourceManager.GetString("StackSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ward.
+        /// </summary>
+        public static string Ward {
+            get {
+                return ResourceManager.GetString("Ward", resourceCulture);
             }
         }
         

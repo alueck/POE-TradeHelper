@@ -6,9 +6,9 @@ using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
-    public class BindableMinMaxFilterViewModel : BindableFilterViewModel, IMinMaxFilterViewModel
+    public class BindableMinMaxFilterViewModel : BindableFilterViewModel<MinMaxFilter>, IMinMaxFilterViewModel
     {
-        public BindableMinMaxFilterViewModel(Expression<Func<SearchQueryRequest, IFilter?>> bindingExpression) : base(bindingExpression)
+        public BindableMinMaxFilterViewModel(Expression<Func<SearchQueryRequest, MinMaxFilter?>> bindingExpression) : base(bindingExpression)
         {
             this.IsEnabled = false;
         }

@@ -35,5 +35,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
             get => this.GetFilter<MinMaxFilter>();
             set => this.SetFilter(value);
         }
+
+        [JsonIgnore]
+        public MinMaxFilter? Ward
+        {
+            get => this.GetFilter<MinMaxFilter>();
+            set => this.SetFilter(value);
+        }
     }
 }

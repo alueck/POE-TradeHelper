@@ -27,5 +27,9 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         public bool IsIdentified { get; set; }
 
         public EquippableItemCategory Category { get; set; }
+
+        public ArmourValues? ArmourValues { get; set; }
+
+        public WeaponValues? WeaponValues { get; set; }
     }
 }

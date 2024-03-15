@@ -283,7 +283,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [TestCase(false)]
         public void CreateShouldMapAdditionalBoolFilterToQuery(bool value)
         {
-            BindableFilterViewModel additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem)
+            BindableFilterViewModel<BoolOptionFilter> additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem)
             {
                 IsEnabled = value,
             };
@@ -301,7 +301,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldNotMapAdditionalBoolFilterWithoutEnabledValueToQuery()
         {
-            BindableFilterViewModel additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem);
+            BindableFilterViewModel<BoolOptionFilter> additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem);
             IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(null, new[] { additionalFilter });
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
@@ -313,7 +313,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public void CreateShouldClearFiltersBeforeAddingNewOnes()
         {
-            BindableFilterViewModel additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem)
+            BindableFilterViewModel<BoolOptionFilter> additionalFilter = new(x => x.Query.Filters.MiscFilters.CrusaderItem)
             {
                 IsEnabled = true,
             };

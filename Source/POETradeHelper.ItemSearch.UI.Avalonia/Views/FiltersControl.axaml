@@ -45,10 +45,10 @@
             Margin="25,0,0,0"
             IsVisible="{Binding IsEnabled}">
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="55" />
+            <ColumnDefinition Width="55" />
+            <ColumnDefinition Width="55" />
+            <ColumnDefinition Width="55" />
           </Grid.ColumnDefinitions>
 
           <Grid.RowDefinitions>
@@ -128,9 +128,9 @@
             Margin="25,0,0,0"
             IsVisible="{Binding IsEnabled}">
           <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="55" />
             <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="55" />
           </Grid.ColumnDefinitions>
 
           <localViews:FilterTextBoxControl
