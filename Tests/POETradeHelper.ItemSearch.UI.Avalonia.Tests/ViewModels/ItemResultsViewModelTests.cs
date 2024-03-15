@@ -202,7 +202,7 @@ public class ItemResultsViewModelTests
 
         await this.poeTradeApiClientMock
             .Received()
-            .GetListingsAsync(queryRequest, default);
+            .GetListingsAsync(queryRequest);
     }
 
     [Test]
@@ -219,7 +219,7 @@ public class ItemResultsViewModelTests
 
         await this.itemListingsViewModelFactoryMock
             .Received()
-            .CreateAsync(item, result, default);
+            .CreateAsync(item, result);
     }
 
     [Test]

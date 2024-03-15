@@ -11,7 +11,7 @@ namespace POETradeHelper
 {
     public class ViewLocator : IDataTemplate, IViewLocator
     {
-        public Control? Build(object? data)
+        public Control Build(object? data)
         {
             string? name = data?.GetType().AssemblyQualifiedName?.Replace("ViewModel", "View");
 
@@ -28,7 +28,7 @@ namespace POETradeHelper
             return new TextBlock { Text = "Not Found: " + name };
         }
 
-        public object? GetView(object viewModel)
+        public object GetView(object viewModel)
         {
             if (this.Match(viewModel))
             {

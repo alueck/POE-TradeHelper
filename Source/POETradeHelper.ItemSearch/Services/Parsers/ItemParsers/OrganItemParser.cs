@@ -14,7 +14,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
         public override bool CanParse(string[] itemStringLines)
         {
-            return itemStringLines.Last().Contains(Contract.Properties.Resources.OrganItemDescriptor);
+            return itemStringLines[^1].Contains(Contract.Properties.Resources.OrganItemDescriptor);
         }
 
         protected override Item ParseItem(string[] itemStringLines)

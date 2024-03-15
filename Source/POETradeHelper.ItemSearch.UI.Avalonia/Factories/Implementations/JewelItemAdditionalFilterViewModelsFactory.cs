@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
         {
             var result = new List<FilterViewModelBase>();
 
-            if (item is JewelItem jewelItem)
+            if (item is JewelItem)
             {
                 result.Add(this.GetIdentifiedFilterViewModel(searchQueryRequest));
                 result.Add(this.GetCorruptedFilterViewModel(searchQueryRequest));

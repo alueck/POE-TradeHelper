@@ -38,6 +38,7 @@
             <controls:SearchResultsDataGrid Items="{Binding ItemListings.Listings}" LoadNextPageCommand="{Binding LoadNextPageCommand}" />
         
             <TextBlock
+                Grid.Row="0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 IsVisible="{Binding !ItemListings.Listings.Count}"

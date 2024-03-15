@@ -100,7 +100,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 
         private void PrintItemStats(StringBuilder stringBuilder, params StatCategory[] statCategories)
         {
-            var groupedItemStats = this.ItemStats.GroupBy(x => x.StatCategory);
+            var groupedItemStats = this.ItemStats.GroupBy(x => x.StatCategory).ToArray();
 
             var sb = new StringBuilder();
 

@@ -27,6 +27,7 @@
       Target="LeaguesDropDown" />
     <ComboBox
         Name="LeaguesDropDown"
+        Grid.Row="0"
         Grid.Column="1"
         ItemsSource="{Binding Leagues}"
         SelectedItem="{Binding SelectedLeague}">
@@ -39,6 +40,7 @@
 
     <Label
         Grid.Row="2"
+        Grid.Column="0"
         Content="{x:Static resources:Resources.PricePredictionSettingLabel}"
         Target="PricePredictionCheckbox"/>
     <CheckBox

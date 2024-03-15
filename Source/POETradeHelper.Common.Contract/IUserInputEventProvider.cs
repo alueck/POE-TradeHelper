@@ -4,7 +4,5 @@ using POETradeHelper.Common.Contract.Attributes;
 namespace POETradeHelper.Common.Contract
 {
     [Singleton]
-    public interface IUserInputEventProvider : IInitializable, IDisposable
-    {
-    }
+    public interface IUserInputEventProvider : IInitializable, IDisposable;
 }

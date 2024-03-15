@@ -77,7 +77,7 @@ public class CacheResultAttributeInterceptor : IInterceptor
                 var taskType = t.GetType();
                 if (!taskType.IsGenericType || ((dynamic)t).Result != null)
                 {
-                    this.CreateCacheEntry(cacheKey, t!, cacheDurationSeconds);
+                    this.CreateCacheEntry(cacheKey, t, cacheDurationSeconds);
                 }
             },
             TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);

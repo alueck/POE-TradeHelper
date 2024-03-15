@@ -1,6 +1,4 @@
-﻿using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels

@@ -10,7 +10,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         /// </summary>
         /// <param name="itemStatText">the stat text for which to retrieve stat data</param>
         /// <param name="preferLocalStat">defines if a local stat should be preferred if there is one with the same <paramref name="itemStatText"/></param>
-        /// <param name="statCategoriesToSearch">a list of <see cref="StatCategory"/> to search, if it is empty all stat categories are searched</param>
+        /// <param name="statCategoriesToSearch">a list of stat categories to search, if it is empty all stat categories are searched</param>
         /// <returns>the stat data if found; otherwise null</returns>
         StatData? GetStatData(string itemStatText, bool preferLocalStat, params string[] statCategoriesToSearch);
 

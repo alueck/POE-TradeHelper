@@ -1,5 +1,3 @@
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 
-public interface IItemResultsViewModel : IResultsViewModel
-{
-}
+public interface IItemResultsViewModel : IResultsViewModel;

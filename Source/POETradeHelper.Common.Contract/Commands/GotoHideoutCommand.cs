@@ -2,7 +2,5 @@
 
 namespace POETradeHelper.Common.Contract.Commands
 {
-    public class GotoHideoutCommand : IRequest
-    {
-    }
+    public class GotoHideoutCommand : IRequest;
 }

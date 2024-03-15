@@ -5,15 +5,18 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
 using DotNext;
+
 using FluentAssertions;
 using FluentAssertions.Specialized;
+
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Wrappers;
-using POETradeHelper.ItemSearch.Contract;
-using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -25,7 +28,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services;
 public class PoeTradeApiClientTests
 {
     private readonly IHttpClientWrapper httpClientWrapperMock;
-    private readonly IHttpClientFactoryWrapper httpClientFactoryWrapperMock;
     private readonly IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
     private readonly PoeTradeApiClient poeTradeApiClient;
 
@@ -43,15 +45,15 @@ public class PoeTradeApiClientTests
                 Content = new StringContent(string.Empty),
             });
 
-        this.httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
-        this.httpClientFactoryWrapperMock.CreateClient(HttpClientNames.PoeTradeApiItemSearchClient)
+        var httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
+        httpClientFactoryWrapperMock.CreateClient(HttpClientNames.PoeTradeApiItemSearchClient)
             .Returns(this.httpClientWrapperMock);
 
         this.poeTradeApiJsonSerializerMock = Substitute.For<IPoeTradeApiJsonSerializer>();
         this.poeTradeApiJsonSerializerMock.Serialize(Arg.Any<object>())
             .Returns(string.Empty);
 
-        this.poeTradeApiClient = new PoeTradeApiClient(this.httpClientFactoryWrapperMock, this.poeTradeApiJsonSerializerMock);
+        this.poeTradeApiClient = new PoeTradeApiClient(httpClientFactoryWrapperMock, this.poeTradeApiJsonSerializerMock);
     }
 
     [Test]

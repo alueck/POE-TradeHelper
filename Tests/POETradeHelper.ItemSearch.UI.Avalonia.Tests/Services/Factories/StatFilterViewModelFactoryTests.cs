@@ -14,7 +14,6 @@ using POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Models.Filters;
-using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 {

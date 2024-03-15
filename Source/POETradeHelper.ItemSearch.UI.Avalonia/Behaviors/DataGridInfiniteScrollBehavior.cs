@@ -1,10 +1,9 @@
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -12,6 +11,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
+
 using ReactiveUI;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Behaviors;

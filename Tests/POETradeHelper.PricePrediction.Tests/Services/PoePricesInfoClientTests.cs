@@ -1,7 +1,9 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.Json;
+
 using FluentAssertions;
+
 using Microsoft.Extensions.Logging;
 
 using NSubstitute;
@@ -9,7 +11,6 @@ using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
-using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PricePrediction.Models;
 using POETradeHelper.PricePrediction.Services;
@@ -51,7 +52,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
             const string league = "Heist";
             const string itemText = "Scroll of Wisdom\r\nRarity: Currency";
 
-            string? expectedUrl =
+            string expectedUrl =
                 $"https://www.poeprices.info/api?i={Convert.ToBase64String(Encoding.UTF8.GetBytes(itemText))}&l={league}";
             CancellationToken cancellationToken = new CancellationTokenSource().Token;
 
@@ -110,7 +111,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         public async Task GetPricePredictionAsyncShouldReturnResultFromJsonSerializer()
         {
             // arrange
-            PoePricesInfoPrediction? expected = new PoePricesInfoPrediction
+            PoePricesInfoPrediction expected = new PoePricesInfoPrediction
             {
                 Min = 0.15m,
                 Max = 0.25m,

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -24,7 +23,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         public override IEnumerable<FilterViewModelBase> Create(Item item, SearchQueryRequest searchQueryRequest)
         {
-            List<FilterViewModelBase>? result = new();
+            List<FilterViewModelBase> result = [];
 
             if (item is not EquippableItem equippableItem)
             {
@@ -201,7 +200,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             int currentValue,
             SocketsFilter? queryRequestFilter)
         {
-            BindableSocketsFilterViewModel? result = new(bindingExpression)
+            BindableSocketsFilterViewModel result = new(bindingExpression)
             {
                 Current = currentValue.ToString(),
                 Text = text,
