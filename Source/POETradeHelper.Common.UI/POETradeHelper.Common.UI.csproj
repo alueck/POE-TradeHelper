@@ -9,7 +9,7 @@
     <ItemGroup>
         <PackageReference Include="Autofac" Version="8.0.0" />
         <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
-        <PackageReference Include="Avalonia" Version="11.0.9" />
+        <PackageReference Include="Avalonia" Version="11.0.10" />
         <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
     </ItemGroup>
 
