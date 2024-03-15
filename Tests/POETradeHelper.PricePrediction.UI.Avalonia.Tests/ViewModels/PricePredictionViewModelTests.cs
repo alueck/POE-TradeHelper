@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 using Avalonia.Media;
 
+using FluentAssertions;
+
 using MediatR;
 
 using Microsoft.Extensions.Options;
@@ -24,14 +26,13 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
 {
     public class PricePredictionViewModelTests
     {
-        private IOptionsMonitor<ItemSearchOptions> itemSearchOptionsMock;
-        private IMediator mediatorMock;
-        private IStaticDataService staticDataServiceMock;
-        private IImageService imageServiceMock;
+        private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptionsMock;
+        private readonly IMediator mediatorMock;
+        private readonly IStaticDataService staticDataServiceMock;
+        private readonly IImageService imageServiceMock;
         private PricePredictionViewModel viewModel;
 
-        [SetUp]
-        public void Setup()
+        public PricePredictionViewModelTests()
         {
             this.itemSearchOptionsMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
             this.itemSearchOptionsMock
@@ -48,7 +49,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
         public async Task LoadAsyncShouldNotSendGetGetPoePricesInfoPredictionQueryIfPricePredictionIsDisabled()
         {
             // arrange
-            EquippableItem item = new EquippableItem(ItemRarity.Rare)
+            EquippableItem item = new(ItemRarity.Rare)
             {
                 ExtendedItemText = "abc",
             };
@@ -97,10 +98,10 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
         public void ShouldResetPricePredictionIfPricePredictionOptionChangesToDisabled()
         {
             // arrange
-            Action<ItemSearchOptions, string> listener = null;
+            Action<ItemSearchOptions, string>? listener = null;
             this.itemSearchOptionsMock
-                .When(x => x.OnChange(Arg.Any<Action<ItemSearchOptions, string>>()))
-                .Do(ctx => listener = ctx.Arg<Action<ItemSearchOptions, string>>());
+                .When(x => x.OnChange(Arg.Any<Action<ItemSearchOptions, string?>>()))
+                .Do(ctx => listener = ctx.Arg<Action<ItemSearchOptions, string?>>());
 
             this.viewModel = this.CreateViewModel();
             this.viewModel.Currency = "chaos";
@@ -109,26 +110,22 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
             this.viewModel.CurrencyImage = Substitute.For<IImage>();
 
             // act
-            listener(
+            listener?.Invoke(
                 new ItemSearchOptions
                 {
                     PricePredictionEnabled = false,
                 },
-                null);
+                string.Empty);
 
             // assert
-            Assert.That(this.viewModel.Currency, Is.Empty);
-            Assert.That(this.viewModel.Prediction, Is.Empty);
-            Assert.That(this.viewModel.ConfidenceScore, Is.Empty);
-            Assert.That(this.viewModel.CurrencyImage, Is.Null);
-            Assert.That(this.viewModel.HasValue, Is.False);
+            this.viewModel.Should().BeEquivalentTo(this.CreateViewModel());
         }
 
         [Test]
         public async Task LoadAsyncShouldCatchExceptionFromGetPoePricesInfoPredictionQuery()
         {
             // arrange
-            EquippableItem item = new EquippableItem(ItemRarity.Rare)
+            EquippableItem item = new(ItemRarity.Rare)
             {
                 ExtendedItemText = "text",
             };
@@ -143,7 +140,10 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
                 .Throws<Exception>();
 
             // act
-            await this.viewModel.LoadAsync(item, default);
+            Func<Task> action = () => this.viewModel.LoadAsync(item, default);
+
+            // assert
+            await action.Should().NotThrowAsync();
         }
 
         private PricePredictionViewModel CreateViewModel() => new(

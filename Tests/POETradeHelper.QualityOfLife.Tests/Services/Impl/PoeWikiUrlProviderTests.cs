@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using FluentAssertions;
+
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -13,17 +15,19 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
     {
         private const string RootUrl = "https://pathofexile.gamepedia.com/";
 
-        private PoeWikiUrlProvider wikiUrlProvider;
+        private readonly PoeWikiUrlProvider wikiUrlProvider;
 
-        [SetUp]
-        public void Setup() => this.wikiUrlProvider = new PoeWikiUrlProvider();
+        public PoeWikiUrlProviderTests()
+        {
+            this.wikiUrlProvider = new PoeWikiUrlProvider();
+        }
 
         [Test]
         public void WikiTyperReturnsPoeWiki()
         {
             WikiType result = this.wikiUrlProvider.HandledWikiType;
 
-            Assert.That(result, Is.EqualTo(WikiType.PoeWiki));
+            result.Should().Be(WikiType.PoeWiki);
         }
 
         [TestCaseSource(nameof(GetNonUniqueItems))]
@@ -33,7 +37,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
 
             Uri result = this.wikiUrlProvider.GetUrl(item);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -47,7 +51,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Services.Impl
 
             Uri result = this.wikiUrlProvider.GetUrl(item);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         private static IEnumerable<Item> GetNonUniqueItems()
