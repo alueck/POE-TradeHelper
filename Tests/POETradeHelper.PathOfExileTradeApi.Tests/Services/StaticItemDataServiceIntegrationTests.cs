@@ -1,6 +1,9 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
+using FluentAssertions;
 
 using NSubstitute;
 
@@ -19,11 +22,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
     /// </summary>
     public class StaticItemDataServiceIntegrationTests
     {
-        private StaticDataService staticDataService;
-        private IHttpClientWrapper httpClientWrapperMock;
+        private readonly StaticDataService staticDataService;
+        private readonly IHttpClientWrapper httpClientWrapperMock;
 
-        [SetUp]
-        public void Setup()
+        public StaticItemDataServiceIntegrationTests()
         {
             this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
             IHttpClientFactoryWrapper httpClientFactoryWrapperMock = Substitute.For<IHttpClientFactoryWrapper>();
@@ -44,7 +46,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     Content = new StringContent(Resources.StaticDataJson),
                 });
 
-            await this.staticDataService.OnInitAsync();
+            Func<Task> action = () => this.staticDataService.OnInitAsync();
+
+            await action.Should().NotThrowAsync();
         }
     }
 }

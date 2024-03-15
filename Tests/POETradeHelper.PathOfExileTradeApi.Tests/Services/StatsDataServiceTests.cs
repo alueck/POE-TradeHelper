@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
 using FluentAssertions;
+
 using Microsoft.Extensions.Logging;
 
 using NSubstitute;
@@ -24,12 +27,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class StatsDataServiceTests
     {
-        private IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
-        private StatsDataService statsDataService;
-        private IHttpClientWrapper httpClientWrapperMock;
+        private readonly IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
+        private readonly StatsDataService statsDataService;
+        private readonly IHttpClientWrapper httpClientWrapperMock;
 
-        [SetUp]
-        public void Setup()
+        public StatsDataServiceTests()
         {
             this.httpClientWrapperMock = Substitute.For<IHttpClientWrapper>();
             this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
@@ -79,7 +81,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
-        public void OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
+        public async Task OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
         {
             this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(new HttpResponseMessage
@@ -87,11 +89,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     StatusCode = HttpStatusCode.BadRequest,
                 });
 
-            AsyncTestDelegate testDelegate = async () => await this.statsDataService.OnInitAsync();
+            Func<Task> action = () => this.statsDataService.OnInitAsync();
 
-            PoeTradeApiCommunicationException
-                exception = Assert.CatchAsync<PoeTradeApiCommunicationException>(testDelegate);
-            Assert.That(exception.Message, Contains.Substring(Resources.PoeTradeApiStatsDataEndpoint));
+            await action.Should()
+                .ThrowAsync<PoeTradeApiCommunicationException>()
+                .Where(x => x.Message.Contains(Resources.PoeTradeApiStatsDataEndpoint));
         }
 
         [TestCase("+39 to maximum life", "# to maximum life")]
@@ -102,14 +104,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             string statCategory = StatCategory.Explicit.GetDisplayName();
 
-            StatData expected = new()
-                { Id = "explicit.stat_3299347043", Text = statDataText, Type = statCategory.ToLower() };
+            StatData expected = new() { Id = "explicit.stat_3299347043", Text = statDataText, Type = statCategory.ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StatData>>
                 {
-                    Result = new List<Data<StatData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = statCategory,
@@ -123,14 +124,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 expected,
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(statText, false, statCategory);
+            StatData? result = this.statsDataService.GetStatData(statText, false, statCategory);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -139,14 +140,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             string statCategory = StatCategory.Explicit.GetDisplayName();
             const string itemStatText = "Adds 10 to 20 Chaos Damage";
 
-            StatData expected = new()
-                { Id = "explicit.stat_3299347043", Text = "Adds # to # Chaos Damage", Type = statCategory.ToLower() };
+            StatData expected = new() { Id = "explicit.stat_3299347043", Text = "Adds # to # Chaos Damage", Type = statCategory.ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StatData>>
                 {
-                    Result = new List<Data<StatData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = statCategory,
@@ -160,14 +160,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 expected,
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStatText, false, statCategory);
+            StatData? result = this.statsDataService.GetStatData(itemStatText, false, statCategory);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -186,8 +186,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StatData>>
                 {
-                    Result = new List<Data<StatData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = statCategory,
@@ -202,14 +202,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 expected,
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStatText, false, statCategory);
+            StatData? result = this.statsDataService.GetStatData(itemStatText, false, statCategory);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -231,8 +231,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             const StatCategory statCategory = StatCategory.Crafted;
             ItemStat craftedItemStat = new(statCategory) { Text = "10% increased Movement Speed" };
 
-            StatData expected = new()
-                { Id = "stat_1234", Text = "#% increased Movement Speed", Type = statCategory.GetDisplayName().ToLower() };
+            StatData expected = new() { Id = "stat_1234", Text = "#% increased Movement Speed", Type = statCategory.GetDisplayName().ToLower() };
 
             await this.GetStatDataShouldReturnCorrectStatData(craftedItemStat, expected);
         }
@@ -243,8 +242,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             const StatCategory statCategory = StatCategory.Enchant;
             ItemStat craftedItemStat = new(statCategory) { Text = "10% increased Movement Speed" };
 
-            StatData expected = new()
-                { Id = "stat_1234", Text = "#% increased Movement Speed", Type = statCategory.GetDisplayName().ToLower() };
+            StatData expected = new() { Id = "stat_1234", Text = "#% increased Movement Speed", Type = statCategory.GetDisplayName().ToLower() };
 
             await this.GetStatDataShouldReturnCorrectStatData(craftedItemStat, expected);
         }
@@ -284,14 +282,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         {
             string statCategoryToSearch = StatCategory.Implicit.GetDisplayName();
             const string itemStatText = "3% increased Movement Speed";
-            StatData expectedStatData = new()
-                { Id = "expectedId", Text = "#% increased Movement Speed", Type = statCategoryToSearch.ToLower() };
+            StatData expectedStatData = new() { Id = "expectedId", Text = "#% increased Movement Speed", Type = statCategoryToSearch.ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StatData>>
                 {
-                    Result = new List<Data<StatData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
@@ -312,26 +309,25 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 expectedStatData,
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatData(itemStatText, false, statCategoryToSearch);
+            StatData? result = this.statsDataService.GetStatData(itemStatText, false, statCategoryToSearch);
 
-            Assert.That(result, Is.EqualTo(expectedStatData));
+            result.Should().Be(expectedStatData);
         }
 
         [TestCase("")]
-        [TestCase(null)]
         [TestCase("non existing id")]
         public async Task GetStatDataWithIdShouldReturnNull(string itemStatId)
         {
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StatData>>
                 {
-                    Result = new List<Data<StatData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
@@ -344,12 +340,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatDataById(itemStatId);
+            StatData? result = this.statsDataService.GetStatDataById(itemStatId);
 
             result.Should().BeNull();
         }
@@ -357,14 +353,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public async Task GetStatDataWithIdShouldReturnCorrectStatData()
         {
-            StatData expected = new()
-                { Id = "expectedId", Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() };
+            StatData expected = new() { Id = "expectedId", Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower() };
 
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StatData>>
                 {
-                    Result = new List<Data<StatData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
@@ -378,14 +373,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 expected,
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result = this.statsDataService.GetStatDataById(expected.Id);
+            StatData? result = this.statsDataService.GetStatDataById(expected.Id);
 
-            Assert.That(result, Is.EqualTo(expected));
+            result.Should().Be(expected);
         }
 
         [Test]
@@ -397,8 +392,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StatData>>
                 {
-                    Result = new List<Data<StatData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
@@ -412,13 +407,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 },
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.statsDataService.OnInitAsync();
 
             // act
-            StatData result = this.statsDataService.GetStatData(itemStatText, false);
+            StatData? result = this.statsDataService.GetStatData(itemStatText, false);
 
             // assert
             result.Should().BeNull();
@@ -439,8 +434,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StatData>>
                 {
-                    Result = new List<Data<StatData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = StatCategory.Explicit.GetDisplayName(),
@@ -450,16 +445,16 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 expectedStatData,
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.statsDataService.OnInitAsync();
 
             // act
-            StatData result = this.statsDataService.GetStatData(itemStatText, true);
+            StatData? result = this.statsDataService.GetStatData(itemStatText, true);
 
             // assert
-            Assert.That(result, Is.EqualTo(expectedStatData));
+            result.Should().Be(expectedStatData);
         }
 
         private async Task GetStatDataShouldReturnCorrectStatData(ItemStat itemStat, StatData expectedStatData)
@@ -469,8 +464,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
                 .Returns(new QueryResult<Data<StatData>>
                 {
-                    Result = new List<Data<StatData>>
-                    {
+                    Result =
+                    [
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
@@ -491,15 +486,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                 expectedStatData,
                             },
                         },
-                    },
+                    ],
                 });
 
             await this.statsDataService.OnInitAsync();
 
-            StatData result =
-                this.statsDataService.GetStatData(itemStat.Text, false, itemStat.StatCategory.GetDisplayName());
+            StatData? result = this.statsDataService.GetStatData(itemStat.Text, false, itemStat.StatCategory.GetDisplayName());
 
-            Assert.That(result, Is.EqualTo(expectedStatData));
+            result.Should().Be(expectedStatData);
         }
     }
 }

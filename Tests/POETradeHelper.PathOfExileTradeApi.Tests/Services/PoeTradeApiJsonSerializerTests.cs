@@ -7,7 +7,6 @@ using NSubstitute;
 
 using NUnit.Framework;
 
-using POETradeHelper.Common;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
@@ -15,11 +14,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class PoeTradeApiJsonSerializerTests
     {
-        private IJsonSerializerWrapper jsonSerializerWrapperMock;
-        private PoeTradeApiJsonSerializer poeTradeApiJsonSerializer;
+        private readonly IJsonSerializerWrapper jsonSerializerWrapperMock;
+        private readonly PoeTradeApiJsonSerializer poeTradeApiJsonSerializer;
 
-        [SetUp]
-        public void Setup()
+        public PoeTradeApiJsonSerializerTests()
         {
             this.jsonSerializerWrapperMock = Substitute.For<IJsonSerializerWrapper>();
             this.poeTradeApiJsonSerializer = new PoeTradeApiJsonSerializer(this.jsonSerializerWrapperMock);
