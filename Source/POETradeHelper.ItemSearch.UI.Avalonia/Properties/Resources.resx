@@ -276,4 +276,7 @@
   <data name="CriticalStrikeChance" xml:space="preserve">
     <value>Critical Strike Chance</value>
   </data>
+  <data name="Synthesised" xml:space="preserve">
+    <value>Synthesised</value>
+  </data>
 </root>

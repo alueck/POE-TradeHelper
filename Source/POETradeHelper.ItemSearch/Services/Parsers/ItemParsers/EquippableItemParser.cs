@@ -55,14 +55,14 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                 Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
                 IsCorrupted = this.IsCorrupted(itemStringLines),
+                IsSynthesised = IsSynthesisedItem(itemStringLines),
                 ItemLevel = GetIntegerFromFirstStringContaining(itemStringLines, Resources.ItemLevelDescriptor),
                 Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 Influence = GetInfluenceType(itemStringLines),
                 Sockets = this.GetSockets(itemStringLines),
             };
 
-            equippableItem.Type =
-                this.itemTypeParser.ParseType(itemStringLines, equippableItem.Rarity, equippableItem.IsIdentified);
+            equippableItem.Type = this.itemTypeParser.ParseType(itemStringLines, equippableItem.Rarity, equippableItem.IsIdentified);
             if (!string.IsNullOrEmpty(equippableItem.Type))
             {
                 equippableItem.Category =
@@ -85,18 +85,20 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         }
 
         private static bool HasItemLevel(string[] itemStringLines) =>
-            itemStringLines.Any(l => l.Contains(Resources.ItemLevelDescriptor));
+            Array.Exists(itemStringLines, l => l.Contains(Resources.ItemLevelDescriptor));
 
         private static bool IsMapOrOrganItem(string[] itemStringLines) =>
-            itemStringLines.Any(l => l.Contains(Resources.MapTierDescriptor)
-                                     || l.Contains(Resources.OrganItemDescriptor));
+            Array.Exists(itemStringLines, l => l.Contains(Resources.MapTierDescriptor)
+                                               || l.Contains(Resources.OrganItemDescriptor));
 
         private static bool TypeOrNameContains(string[] itemStringLines, params string[] keywords) =>
-            itemStringLines.Skip(2).Take(2).Any(line => keywords.Any(line.Contains));
+            itemStringLines.Skip(2).Take(2).Any(line => Array.Exists(keywords, line.Contains));
+
+        private static bool IsSynthesisedItem(string[] itemStringLines) => itemStringLines[^1].StartsWith(Resources.SynthesisedKeyword);
 
         private ItemSockets GetSockets(string[] itemStringLines)
         {
-            string? socketsLine = itemStringLines.FirstOrDefault(l => l.Contains(Resources.SocketsDescriptor));
+            string? socketsLine = Array.Find(itemStringLines, l => l.Contains(Resources.SocketsDescriptor));
             string? socketsString = socketsLine?.Replace(Resources.SocketsDescriptor, string.Empty).Trim();
 
             return this.socketsParser.Parse(socketsString);

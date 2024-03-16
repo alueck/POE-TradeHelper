@@ -2,7 +2,7 @@
 
 namespace POETradeHelper.ItemSearch.Contract.Models
 {
-    public class EquippableItem : ItemWithStats, ICorruptableItem, IIdentifiableItem, IQualityItem
+    public class EquippableItem : ItemWithStats, ICorruptableItem, IIdentifiableItem, IQualityItem, ISynthesisableItem
     {
         public EquippableItem(ItemRarity rarity) : base(rarity)
         {
@@ -25,6 +25,8 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         public bool IsCorrupted { get; set; }
 
         public bool IsIdentified { get; set; }
+
+        public bool IsSynthesised { get; set; }
 
         public EquippableItemCategory Category { get; set; }
 

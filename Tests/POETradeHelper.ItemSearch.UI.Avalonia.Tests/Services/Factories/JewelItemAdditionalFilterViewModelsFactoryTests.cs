@@ -68,6 +68,23 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 queryRequestFilter);
         }
 
+        [TestCaseSource(nameof(GetBoolOptionFilterTestCases))]
+        public void CreateShouldReturnSynthesisedFilterViewModel(BoolOptionFilter queryRequestFilter)
+        {
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.SynthesisedItem;
+            JewelItem jewelItem = new(ItemRarity.Rare)
+            {
+                IsSynthesised = !queryRequestFilter.Option,
+            };
+
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
+                expectedBindingExpression,
+                jewelItem,
+                Resources.Synthesised,
+                queryRequestFilter);
+        }
+
         private static IEnumerable<Item> GetNonJewelItems()
         {
             yield return new CurrencyItem();

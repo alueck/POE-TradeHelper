@@ -129,7 +129,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         }
 
         [TestCaseSource(nameof(GetInfluenceTestCases))]
-        public void MapQueryItemShouldMapInfluence(InfluenceType influenceType, BoolOptionAccessor filterOptionAccessor)
+        public void MapToQueryRequestShouldMapInfluence(InfluenceType influenceType, BoolOptionAccessor filterOptionAccessor)
         {
             EquippableItem item = new(ItemRarity.Normal)
             {
@@ -144,7 +144,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         }
 
         [Test]
-        public void MapQueryItemShouldMapItemLevelIfThresholdIsReached()
+        public void MapToQueryRequestShouldMapItemLevelIfThresholdIsReached()
         {
             const int itemLevel = 86;
             EquippableItem item = new(ItemRarity.Normal)
@@ -166,7 +166,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         }
 
         [Test]
-        public void MapQueryItemShouldNotMapItemLevelIfThresholdIsNotReached()
+        public void MapToQueryRequestShouldNotMapItemLevelIfThresholdIsNotReached()
         {
             const int itemLevel = 86;
             EquippableItem item = new(ItemRarity.Normal)
@@ -184,6 +184,21 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
 
             result.Query.Filters.MiscFilters.ItemLevel.Should().BeNull();
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MapToQueryRequestShouldMapSynthesised(bool synthesised)
+        {
+            EquippableItem item = new(ItemRarity.Normal)
+            {
+                IsSynthesised = synthesised,
+            };
+
+            SearchQueryRequest result = this.equippableItemToQueryRequestMapper.MapToQueryRequest(item);
+
+            result.Query.Filters.MiscFilters.SynthesisedItem.Should()
+                .BeEquivalentTo(new BoolOptionFilter { Option = synthesised });
         }
 
         private static IEnumerable GetInfluenceTestCases()

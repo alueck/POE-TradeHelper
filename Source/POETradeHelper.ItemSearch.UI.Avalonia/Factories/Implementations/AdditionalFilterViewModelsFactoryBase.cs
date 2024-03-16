@@ -47,6 +47,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.Corrupted?.Option,
             };
 
+        protected FilterViewModelBase GetSynthesisedFilterViewModel(SearchQueryRequest searchQueryRequest) =>
+            new BindableFilterViewModel<BoolOptionFilter>(x => x.Query.Filters.MiscFilters.SynthesisedItem)
+            {
+                Text = Resources.Synthesised,
+                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.SynthesisedItem?.Option,
+            };
+
         protected BindableMinMaxFilterViewModel CreateBindableMinMaxFilterViewModel(
             Expression<Func<SearchQueryRequest, MinMaxFilter?>> bindingExpression,
             string text,

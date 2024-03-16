@@ -36,6 +36,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             MapItemLinks(result, equippableItem);
             MapInfluence(result, equippableItem);
             this.MapItemLevel(result, equippableItem);
+            MapSynthesised(result, equippableItem);
 
             return result;
         }

@@ -22,10 +22,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
             }
 
             bool itemHasName = isIdentified && itemRarity >= ItemRarity.Rare;
+            int typeIndex = itemHasName ? NamedItemTypeIndex : NamedItemTypeIndex - 1;
 
-            return itemHasName
-                ? itemStringLines[NamedItemTypeIndex]
-                : this.itemDataService.GetType(itemStringLines[NamedItemTypeIndex - 1])?.Type ?? string.Empty;
+            return this.itemDataService.GetType(itemStringLines[typeIndex])?.Type ?? string.Empty;
         }
     }
 }

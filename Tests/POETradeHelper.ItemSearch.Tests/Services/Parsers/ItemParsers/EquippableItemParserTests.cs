@@ -238,6 +238,28 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             result.IsCorrupted.Should().BeFalse();
         }
 
+        [Test]
+        public void ParseShouldParseSynthesised()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                .WithSynthesised()
+                .BuildLines();
+
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
+
+            result.IsSynthesised.Should().BeTrue();
+        }
+
+        [Test]
+        public void ParseShouldParseNotSynthesised()
+        {
+            string[] itemStringLines = this.itemStringBuilder.BuildLines();
+
+            EquippableItem result = (EquippableItem)this.ItemParser.Parse(itemStringLines);
+
+            result.IsSynthesised.Should().BeFalse();
+        }
+
         [TestCase(74)]
         [TestCase(100)]
         public void ParseShouldParseItemLevel(int expected)

@@ -184,6 +184,28 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
+        public void ParseShouldParseSynthesised()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                .WithSynthesised()
+                .BuildLines();
+
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
+
+            result.IsSynthesised.Should().BeTrue();
+        }
+
+        [Test]
+        public void ParseShouldParseNotSynthesised()
+        {
+            string[] itemStringLines = this.itemStringBuilder.BuildLines();
+
+            JewelItem result = (JewelItem)this.ItemParser.Parse(itemStringLines);
+
+            result.IsSynthesised.Should().BeFalse();
+        }
+
+        [Test]
         public void ParseShouldCallParseOnItemStatsParserIfItemIsIdentified()
         {
             string[] itemStringLines = this.itemStringBuilder

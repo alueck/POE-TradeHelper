@@ -36,6 +36,14 @@ public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMappe
         return result;
     }
 
+    protected static void MapSynthesised(SearchQueryRequest result, ISynthesisableItem item)
+    {
+        result.Query.Filters.MiscFilters.SynthesisedItem = new BoolOptionFilter
+        {
+            Option = item.IsSynthesised,
+        };
+    }
+
     protected virtual void MapItemName(SearchQueryRequest result, Item item)
     {
         if (item.Rarity == ItemRarity.Unique && item is IIdentifiableItem { IsIdentified: true })
