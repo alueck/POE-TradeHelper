@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -65,9 +66,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         [TestCaseSource(nameof(GetNonUniqueItemRarities))]
         public void MapToQueryItemShouldNotMapItemNameForNonUniqueItems(ItemRarity itemRarity)
         {
-            EquippableItem item = new(itemRarity)
+            JewelItem item = new(itemRarity)
             {
-                Name = "Dire Nock",
+                Name = "Cobalt Jewel",
             };
 
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
@@ -93,6 +94,21 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
             result.Query.Filters.TypeFilters.Rarity.Should().BeEquivalentTo(new OptionFilter { Option = ItemRarityFilterOptions.NonUnique });
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MapToQueryRequestShouldMapSynthesised(bool synthesised)
+        {
+            JewelItem item = new(ItemRarity.Normal)
+            {
+                IsSynthesised = synthesised,
+            };
+
+            SearchQueryRequest result = this.jewelItemSearchQueryRequestMapper.MapToQueryRequest(item);
+
+            result.Query.Filters.MiscFilters.SynthesisedItem.Should()
+                .BeEquivalentTo(new BoolOptionFilter { Option = synthesised });
         }
     }
 }

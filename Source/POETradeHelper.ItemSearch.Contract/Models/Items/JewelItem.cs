@@ -2,7 +2,7 @@
 
 namespace POETradeHelper.ItemSearch.Contract.Models
 {
-    public class JewelItem : ItemWithStats, IIdentifiableItem, ICorruptableItem
+    public class JewelItem : ItemWithStats, IIdentifiableItem, ICorruptableItem, ISynthesisableItem
     {
         public JewelItem(ItemRarity rarity) : base(rarity)
         {
@@ -17,5 +17,7 @@ namespace POETradeHelper.ItemSearch.Contract.Models
         public bool IsIdentified { get; set; }
 
         public bool IsCorrupted { get; set; }
+
+        public bool IsSynthesised { get; set; }
     }
 }

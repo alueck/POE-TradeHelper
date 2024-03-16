@@ -26,11 +26,14 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                 Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
                 IsCorrupted = this.IsCorrupted(itemStringLines),
+                IsSynthesised = IsSynthesisedItem(itemStringLines),
             };
 
             jewelItem.Type = this.itemTypeParser.ParseType(itemStringLines, jewelItem.Rarity, jewelItem.IsIdentified);
 
             return jewelItem;
         }
+
+        private static bool IsSynthesisedItem(string[] itemStringLines) => itemStringLines[^1].StartsWith(Resources.SynthesisedKeyword);
     }
 }

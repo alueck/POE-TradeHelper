@@ -25,7 +25,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         protected static ItemRarity? GetRarity(string[] itemStringLines)
         {
             string rarityDescriptor = Resources.RarityDescriptor;
-            string? rarityLine = itemStringLines.FirstOrDefault(line => line.Contains(rarityDescriptor));
+            string? rarityLine = Array.Find(itemStringLines, line => line.Contains(rarityDescriptor));
 
             return rarityLine?.Replace(rarityDescriptor, string.Empty).Trim().ParseToEnumByDisplayName<ItemRarity>();
         }
@@ -33,7 +33,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         protected static int GetIntegerFromFirstStringContaining(string[] itemStringLines, string containsString)
         {
             int result = 0;
-            string? matchingLine = itemStringLines.FirstOrDefault(l => l.Contains(containsString));
+            string? matchingLine = Array.Find(itemStringLines, l => l.Contains(containsString));
 
             if (matchingLine != null)
             {
@@ -48,9 +48,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
             return result;
         }
 
-        protected bool IsCorrupted(string[] lines) => lines.Any(l => l == Resources.CorruptedKeyword);
+        protected bool IsCorrupted(string[] lines) => Array.Exists(lines, l => l == Resources.CorruptedKeyword);
 
-        protected bool IsIdentified(string[] itemStringLines) => !itemStringLines.Any(l => l.Contains(Resources.UnidentifiedKeyword));
+        protected bool IsIdentified(string[] itemStringLines) => !Array.Exists(itemStringLines, l => l.Contains(Resources.UnidentifiedKeyword));
 
         protected abstract Item ParseItem(string[] itemStringLines);
     }

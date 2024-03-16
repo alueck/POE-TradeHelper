@@ -44,6 +44,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
             result.AddIfNotNull(GetInfluenceFilterViewModel(equippableItem, searchQueryRequest));
             result.Add(this.GetIdentifiedFilterViewModel(searchQueryRequest));
             result.Add(this.GetCorruptedFilterViewModel(searchQueryRequest));
+            result.Add(this.GetSynthesisedFilterViewModel(searchQueryRequest));
 
             return result;
         }

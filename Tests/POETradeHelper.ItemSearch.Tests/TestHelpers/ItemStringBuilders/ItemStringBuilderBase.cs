@@ -13,6 +13,8 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 
         public bool IsIdentified { get; protected set; } = true;
 
+        public bool IsSynthesised { get; protected set; }
+
         public T WithRarity(string rarity)
         {
             this.NameAndRarityGroup.Rarity = rarity;
@@ -52,6 +54,12 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
         public T WithIdentified(bool isIdentified)
         {
             this.IsIdentified = isIdentified;
+            return (T)this;
+        }
+
+        public T WithSynthesised(bool synthesised = true)
+        {
+            this.IsSynthesised = synthesised;
             return (T)this;
         }
 

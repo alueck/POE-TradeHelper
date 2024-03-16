@@ -93,7 +93,9 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.IsCorrupted)
                 .AppendLine(Resources.CorruptedKeyword, () => this.IsCorrupted)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.InfluenceType != InfluenceType.None)
-                .AppendLine(this.InfluenceType.GetDisplayName(), () => this.InfluenceType != InfluenceType.None);
+                .AppendLine(this.InfluenceType.GetDisplayName(), () => this.InfluenceType != InfluenceType.None)
+                .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.IsSynthesised)
+                .AppendLine($"{Resources.SynthesisedKeyword} Item", () => this.IsSynthesised);
 
             return stringBuilder.ToString();
         }

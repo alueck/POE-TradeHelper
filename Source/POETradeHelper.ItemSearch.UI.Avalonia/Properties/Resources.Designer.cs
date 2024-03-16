@@ -519,6 +519,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Synthesised.
+        /// </summary>
+        public static string Synthesised {
+            get {
+                return ResourceManager.GetString("Synthesised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ward.
         /// </summary>
         public static string Ward {

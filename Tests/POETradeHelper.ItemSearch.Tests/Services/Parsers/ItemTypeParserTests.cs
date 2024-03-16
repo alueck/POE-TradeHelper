@@ -5,6 +5,7 @@ using NSubstitute;
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -74,17 +75,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         public void ParseTypeShouldReturnTypeForIdentifiedRareOrUniqueItem(ItemRarity itemRarity)
         {
             const string expected = "Item type";
+            string type = $"{Resources.SynthesisedKeyword} {expected}";
             string[] itemStringLines = this.itemStringBuilder
                 .WithName("Item name")
-                .WithType(expected)
+                .WithType(type)
                 .BuildLines();
+
+            this.itemDataServiceMock
+                .GetType(type)
+                .Returns(new ItemType(expected));
 
             string result = this.itemTypeParser.ParseType(itemStringLines, itemRarity, true);
 
             result.Should().Be(expected);
-            this.itemDataServiceMock
-                .DidNotReceive()
-                .GetType(Arg.Any<string>());
         }
 
         [TestCase(ItemRarity.Normal)]
