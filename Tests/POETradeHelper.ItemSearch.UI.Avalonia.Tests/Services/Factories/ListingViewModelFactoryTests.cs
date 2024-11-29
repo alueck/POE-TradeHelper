@@ -144,7 +144,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateWithExchangeListingShouldReturnResultWithAccountName()
         {
             const string expectedName = "xXFighterXx";
-            ExchangeListing exchangeListing = new(DateTime.Now, new Account { Name = expectedName }, new List<ExchangeOffer>());
+            ExchangeListing exchangeListing = new(DateTime.Now, new Account { Name = expectedName }, []);
 
             SimpleListingViewModel result = await this.listingViewModelFactory.CreateAsync(exchangeListing);
 
@@ -154,7 +154,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public async Task CreateWithExchangeListingShouldReturnResultWithAge()
         {
-            ExchangeListing exchangeListing = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
+            ExchangeListing exchangeListing = new(DateTime.Now, new Account(), []);
 
             SimpleListingViewModel result = await this.listingViewModelFactory.CreateAsync(exchangeListing);
 
@@ -168,7 +168,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             Price exchangePrice = new() { Amount = 5 };
             Price expectedPrice = itemPrice with { Amount = itemPrice.Amount / exchangePrice.Amount };
             ExchangeOffer exchangeOffer = new(itemPrice, exchangePrice);
-            ExchangeListing exchangeListing = new(DateTime.Now, new Account(), new List<ExchangeOffer> { exchangeOffer });
+            ExchangeListing exchangeListing = new(DateTime.Now, new Account(), [exchangeOffer]);
             CancellationTokenSource cts = new();
 
             await this.listingViewModelFactory.CreateAsync(exchangeListing, cts.Token);
@@ -182,7 +182,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateWithExchangeListingShouldReturnResultWithPrice()
         {
             PriceViewModel expected = new() { Currency = "chaos" };
-            ExchangeListing exchangeListing = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
+            ExchangeListing exchangeListing = new(DateTime.Now, new Account(), []);
 
             this.priceViewModelFactoryMock
                 .CreateAsync(Arg.Any<Price>(), Arg.Any<CancellationToken>())

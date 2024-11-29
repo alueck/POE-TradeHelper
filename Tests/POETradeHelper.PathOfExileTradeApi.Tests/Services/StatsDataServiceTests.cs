@@ -89,7 +89,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     StatusCode = HttpStatusCode.BadRequest,
                 });
 
-            Func<Task> action = () => this.statsDataService.OnInitAsync();
+            Func<Task> action = this.statsDataService.OnInitAsync;
 
             await action.Should()
                 .ThrowAsync<PoeTradeApiCommunicationException>()
@@ -114,15 +114,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = statCategory,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 new()
                                 {
                                     Id = "explicit.stat_4220027924", Text = "#% to Cold Resistance",
                                     Type = statCategory.ToLower(),
                                 },
                                 expected,
-                            },
+                            ],
                         },
                     ],
                 });
@@ -150,15 +150,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = statCategory,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 new()
                                 {
                                     Id = "explicit.stat_4220027924", Text = "Adds # to # Chaos Damage to Attacks",
                                     Type = statCategory.ToLower(),
                                 },
                                 expected,
-                            },
+                            ],
                         },
                     ],
                 });
@@ -191,8 +191,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = statCategory,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 new()
                                 {
                                     Id = "explicit.stat_4220027924",
@@ -200,7 +200,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                                     Type = statCategory.ToLower(),
                                 },
                                 expected,
-                            },
+                            ],
                         },
                     ],
                 });
@@ -292,22 +292,22 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 new()
                                 {
                                     Id = "random id", Text = expectedStatData.Text,
                                     Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower(),
                                 },
-                            },
+                            ],
                         },
                         new()
                         {
                             Id = statCategoryToSearch,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 expectedStatData,
-                            },
+                            ],
                         },
                     ],
                 });
@@ -331,14 +331,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 new()
                                 {
                                     Id = "random id",
                                     Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower(),
                                 },
-                            },
+                            ],
                         },
                     ],
                 });
@@ -363,15 +363,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 new()
                                 {
                                     Id = "random id",
                                     Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower(),
                                 },
                                 expected,
-                            },
+                            ],
                         },
                     ],
                 });
@@ -397,15 +397,15 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 new()
                                 {
                                     Id = "random id",
                                     Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower(),
                                     Text = "Enemies you Shock have #% reduced Cast Speed",
                                 },
-                            },
+                            ],
                         },
                     ],
                 });
@@ -439,11 +439,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = StatCategory.Explicit.GetDisplayName(),
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 new() { Id = "random id", Type = expectedStatData.Type, Text = itemStatText },
                                 expectedStatData,
-                            },
+                            ],
                         },
                     ],
                 });
@@ -469,22 +469,22 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 new()
                                 {
                                     Id = "random id", Text = expectedStatData.Text,
                                     Type = ItemSearch.Contract.Properties.Resources.StatCategoryExplicit.ToLower(),
                                 },
-                            },
+                            ],
                         },
                         new()
                         {
                             Id = statCategory,
-                            Entries = new List<StatData>
-                            {
+                            Entries =
+                            [
                                 expectedStatData,
-                            },
+                            ],
                         },
                     ],
                 });

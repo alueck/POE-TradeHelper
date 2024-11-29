@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -46,8 +47,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            result.AllStats.Should().HaveCount(1);
-            result.AllStats.First().Text.Should().Be(expected);
+            result.AllStats.Should().ContainSingle(x => x.Text == expected);
         }
 
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage", "Minions deal # to # additional Physical Damage")]
@@ -68,8 +68,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            result.AllStats.Should().HaveCount(1);
-            result.AllStats.First().TextWithPlaceholders.Should().Be(expected);
+            result.AllStats.Should().ContainSingle(x => x.TextWithPlaceholders == expected);
         }
 
         [TestCase("Minions deal 1 to 15 additional Physical Damage", StatCategory.Explicit)]
@@ -90,8 +89,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            result.AllStats.Should().HaveCount(1);
-            result.AllStats.First().StatCategory.Should().Be(expected);
+            result.AllStats.Should().ContainSingle(x => x.StatCategory == expected);
         }
 
         [Test]
@@ -180,8 +178,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            result.AllStats.Should().HaveCount(1);
-            result.AllStats.First().Id.Should().Be(expected);
+            result.AllStats.Should().ContainSingle(x => x.Id == expected);
         }
 
         [TestCase(StatCategory.Enchant, "Trigger Edict of Frost on Kill", "#% chance to Trigger Edict of Frost on Kill")]
@@ -202,8 +199,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            result.AllStats.Should().HaveCount(1);
-            result.AllStats.First().Should().BeOfType<ItemStat>();
+            result.AllStats.Should().ContainSingle(x => x.GetType() == typeof(ItemStat));
         }
 
         [Test]
@@ -223,8 +219,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            result.AllStats.Should().HaveCount(1);
-            result.AllStats.First().Should().BeOfType<SingleValueItemStat>();
+            result.AllStats.Should().ContainSingle(x => x is SingleValueItemStat);
         }
 
         [Test]
@@ -244,8 +239,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
-            result.AllStats.Should().HaveCount(1);
-            result.AllStats.First().Should().BeOfType<MinMaxValueItemStat>();
+            result.AllStats.Should().ContainSingle(x => x is MinMaxValueItemStat);
         }
 
         [TestCase(StatCategory.Explicit, "+25% to Cold Resistance", "#% to Cold Resistance", 25)]
@@ -424,7 +418,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 Value = 10,
             };
 
-            ItemStat[] itemStats = { expectedExplicitItemStat, expectedImplicitItemStat, expectedCraftedItemStat, expectedEnchantedItemStat };
+            ItemStat[] itemStats = [expectedExplicitItemStat, expectedImplicitItemStat, expectedCraftedItemStat, expectedEnchantedItemStat];
 
             foreach (ItemStat itemStat in itemStats)
             {
@@ -435,7 +429,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                         Arg.Any<string[]>())
                     .Returns(new StatData
                     {
-                        Id = itemStat.Id, Text = itemStat.TextWithPlaceholders,
+                        Id = itemStat.Id,
+                        Text = itemStat.TextWithPlaceholders,
                         Type = itemStat.StatCategory.GetDisplayName(),
                     });
             }
@@ -468,7 +463,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         public void ParseShouldParseItemWithExtendedItemTextCorrectly()
         {
             // arrange
-            string itemText = """
+            const string itemText = """
                               Item Class: Boots
                               Rarity: Rare
                               Honour Stride
@@ -553,7 +548,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         public void ParseShouldParseUniqueItemWithExtendedItemTextCorrectly()
         {
             // arrange
-            string itemText = """
+            const string itemText = """
                               Item Class: Gloves
                               Rarity: Unique
                               The Embalmer

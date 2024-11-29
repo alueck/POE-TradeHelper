@@ -27,28 +27,28 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         }
 
         [Reactive]
-        public IList<StatFilterViewModel> EnchantedItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
+        public IList<StatFilterViewModel> EnchantedItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> FracturedItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
+        public IList<StatFilterViewModel> FracturedItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> ImplicitItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
+        public IList<StatFilterViewModel> ImplicitItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> ExplicitItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
+        public IList<StatFilterViewModel> ExplicitItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> CraftedItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
+        public IList<StatFilterViewModel> CraftedItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> MonsterItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
+        public IList<StatFilterViewModel> MonsterItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> PseudoItemStatFilters { get; private set; } = new List<StatFilterViewModel>();
+        public IList<StatFilterViewModel> PseudoItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<FilterViewModelBase> AdditionalFilters { get; private set; } = new List<FilterViewModelBase>();
+        public IList<FilterViewModelBase> AdditionalFilters { get; private set; } = [];
 
         public IEnumerable<StatFilterViewModel> AllStatFilters => this.EnchantedItemStatFilters
             .Concat(this.FracturedItemStatFilters)
@@ -98,14 +98,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 
         private void Reset()
         {
-            this.EnchantedItemStatFilters = new List<StatFilterViewModel>();
-            this.FracturedItemStatFilters = new List<StatFilterViewModel>();
-            this.ImplicitItemStatFilters = new List<StatFilterViewModel>();
-            this.ExplicitItemStatFilters = new List<StatFilterViewModel>();
-            this.CraftedItemStatFilters = new List<StatFilterViewModel>();
-            this.MonsterItemStatFilters = new List<StatFilterViewModel>();
-            this.PseudoItemStatFilters = new List<StatFilterViewModel>();
-            this.AdditionalFilters = new List<FilterViewModelBase>();
+            this.EnchantedItemStatFilters = [];
+            this.FracturedItemStatFilters = [];
+            this.ImplicitItemStatFilters = [];
+            this.ExplicitItemStatFilters = [];
+            this.CraftedItemStatFilters = [];
+            this.MonsterItemStatFilters = [];
+            this.PseudoItemStatFilters = [];
+            this.AdditionalFilters = [];
         }
     }
 }

@@ -19,7 +19,7 @@ namespace POETradeHelper
         {
             if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                MainWindowViewModel viewModel = new MainWindowViewModel(
+                MainWindowViewModel viewModel = new(
                     Locator.Current.GetServices<ISettingsViewModel>(),
                     Locator.Current.GetServices<IInitializable>());
                 desktop.MainWindow = new MainWindow

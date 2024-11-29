@@ -17,7 +17,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
         public IEnumerable<ItemStat> Parse(IEnumerable<ItemStat> itemStats)
         {
-            IList<ItemStat> result = new List<ItemStat>();
+            IList<ItemStat> result = [];
             foreach (KeyValuePair<StatData, IList<ItemStat>> entry in this.GetRelevantPseudoStatDataMappings(itemStats))
             {
                 switch (entry.Value[0])
@@ -55,7 +55,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
                 {
                     if (!pseudoStatDataMapping.TryGetValue(pseudoStatData, out IList<ItemStat>? mappedItemStats))
                     {
-                        pseudoStatDataMapping[pseudoStatData] = mappedItemStats = new List<ItemStat>();
+                        pseudoStatDataMapping[pseudoStatData] = mappedItemStats = [];
                     }
 
                     mappedItemStats.Add(itemStat);

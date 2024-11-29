@@ -7,7 +7,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
     {
         public string Name { get; set; } = string.Empty;
 
-        public IList<IList<JsonElement>> Values { get; set; } = new List<IList<JsonElement>>();
+        public IList<IList<JsonElement>> Values { get; set; } = [];
 
         public decimal Progress { get; set; }
     }

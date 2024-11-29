@@ -23,11 +23,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
         public QueryRequestFactoryTests()
         {
-            this.itemSearchQueryRequestMapperMocks = new List<IItemSearchQueryRequestMapper>
-            {
+            this.itemSearchQueryRequestMapperMocks =
+            [
                 Substitute.For<IItemSearchQueryRequestMapper>(),
                 Substitute.For<IItemSearchQueryRequestMapper>(),
-            };
+            ];
 
             this.searchQueryRequestFactory = new SearchQueryRequestFactory(this.itemSearchQueryRequestMapperMocks);
         }
@@ -167,7 +167,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public void CreateShouldCreateMultipleFilters()
         {
             StatFilterViewModel[] filters =
-            {
+            [
                 new MinMaxStatFilterViewModel
                 {
                     Id = "statId1",
@@ -183,7 +183,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                     Id = "statId3",
                     IsEnabled = true,
                 },
-            };
+            ];
             IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(filters, null);
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
@@ -252,7 +252,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 Text = "Trigger Edict of Frost on Kill",
                 IsEnabled = true,
             };
-            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel(new[] { statFilterViewModel }, null);
+            IAdvancedFiltersViewModel advancedFiltersViewModel = GetAdvancedFiltersViewModel([statFilterViewModel], null);
 
             SearchQueryRequest result = this.searchQueryRequestFactory.Create(new SearchQueryRequest(), advancedFiltersViewModel);
 
@@ -532,9 +532,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             IAdvancedFiltersViewModel mock = Substitute.For<IAdvancedFiltersViewModel>();
             mock.AllStatFilters
-                .Returns(statFilters ?? new List<StatFilterViewModel>());
+                .Returns(statFilters ?? []);
             mock.AdditionalFilters
-                .Returns(additionalFilters?.ToList() ?? new List<FilterViewModelBase>());
+                .Returns(additionalFilters?.ToList() ?? []);
 
             return mock;
         }

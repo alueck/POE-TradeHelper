@@ -37,7 +37,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             this.wikiOptionsMock = Substitute.For<IOptionsMonitor<WikiOptions>>();
             this.wikiOptionsMock.CurrentValue
                 .Returns(new WikiOptions());
-            this.wikiUrlProviderMocks = this.SetupWikiUrlProviderMocks();
+            this.wikiUrlProviderMocks = SetupWikiUrlProviderMocks();
 
             this.handler = new OpenWikiCommandHandler(
                 this.mediatorMock,
@@ -128,7 +128,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             await action.Should().NotThrowAsync();
         }
 
-        private IWikiUrlProvider[] SetupWikiUrlProviderMocks()
+        private static IWikiUrlProvider[] SetupWikiUrlProviderMocks()
         {
             var poeWikiWikiUrlProviderMock = Substitute.For<IWikiUrlProvider>();
             poeWikiWikiUrlProviderMock

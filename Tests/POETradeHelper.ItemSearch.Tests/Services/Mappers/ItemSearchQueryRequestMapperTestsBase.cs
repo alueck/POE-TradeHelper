@@ -90,7 +90,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             SearchQueryRequest result = this.ItemSearchQueryRequestMapper.MapToQueryRequest(item);
 
-            result.Query.Stats.Should().HaveCount(1);
+            result.Query.Stats.Should().ContainSingle();
             result.Query.Stats[0].Filters.Should().SatisfyRespectively(
                 x => x.Should().BeEquivalentTo(new StatFilter
                 {

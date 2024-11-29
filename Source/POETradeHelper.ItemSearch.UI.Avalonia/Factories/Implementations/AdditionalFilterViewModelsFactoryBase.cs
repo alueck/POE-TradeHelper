@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -15,7 +16,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 {
     public abstract class AdditionalFilterViewModelsFactoryBase : IAdditionalFilterViewModelsFactory
     {
-        private static readonly Dictionary<Expression<Func<SearchQueryRequest, MinMaxFilter?>>, Func<SearchQueryRequest, MinMaxFilter?>> GettersCache = new();
+        private static readonly ConcurrentDictionary<Expression<Func<SearchQueryRequest, MinMaxFilter?>>, Func<SearchQueryRequest, MinMaxFilter?>> GettersCache = [];
 
         protected AdditionalFilterViewModelsFactoryBase(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {

@@ -8,7 +8,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
     public abstract class FiltersBase<TType> : ICloneable
         where TType : FiltersBase<TType>, new()
     {
-        private readonly Dictionary<string, object> filters = new();
+        private readonly Dictionary<string, object> filters = [];
 
         /// <summary>
         /// Gets the filters.
@@ -20,7 +20,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 
         public object Clone()
         {
-            TType result = new TType();
+            TType result = new();
 
             foreach (KeyValuePair<string, object> entry in this.filters)
             {

@@ -6,7 +6,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models.Filters
 {
     public class StatFilters : ICloneable
     {
-        public IList<StatFilter> Filters { get; private set; } = new List<StatFilter>();
+        public IList<StatFilter> Filters { get; private set; } = [];
 
         public string Type => "and";
 

@@ -42,11 +42,11 @@ public class PoeTradeApiClient : IPoeTradeApiClient
                 result = result with
                 {
                     CurrentPage = 2,
-                    Result = new List<ListingResult>
-                    {
-                        result.Result,
-                        result2.Result,
-                    },
+                    Result =
+                    [
+                        ..result.Result,
+                        ..result2.Result,
+                    ],
                 };
             }
 
@@ -170,11 +170,6 @@ public class PoeTradeApiClient : IPoeTradeApiClient
         string json = await httpContent.ReadAsStringAsync().ConfigureAwait(false);
         TResult? result = this.jsonSerializer.Deserialize<TResult>(json);
 
-        if (result == null)
-        {
-            throw new PoeTradeApiCommunicationException("Deserialized null result from POE Trade API response.");
-        }
-
-        return result;
+        return result ?? throw new PoeTradeApiCommunicationException("Deserialized null result from POE Trade API response.");
     }
 }

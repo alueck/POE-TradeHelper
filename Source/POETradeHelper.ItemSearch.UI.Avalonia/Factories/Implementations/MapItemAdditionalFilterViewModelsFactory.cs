@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 
         public override IEnumerable<FilterViewModelBase> Create(Item item, SearchQueryRequest searchQueryRequest)
         {
-            List<FilterViewModelBase> result = new List<FilterViewModelBase>();
+            List<FilterViewModelBase> result = [];
 
             if (item is MapItem mapItem)
             {

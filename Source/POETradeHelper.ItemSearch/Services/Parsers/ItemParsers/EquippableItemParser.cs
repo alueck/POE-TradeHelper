@@ -13,7 +13,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
     {
         private const int NameLineIndex = 2;
 
-        private static readonly IReadOnlyDictionary<string, Action<ArmourValues, int>> ArmourMappings = new Dictionary<string, Action<ArmourValues, int>>
+        private static readonly Dictionary<string, Action<ArmourValues, int>> ArmourMappings = new()
         {
             [Resources.ArmourDescriptor] = (armourValues, value) => armourValues.Armour = value,
             [Resources.BlockChanceDescriptor] = (armourValues, value) => armourValues.BlockChance = value,

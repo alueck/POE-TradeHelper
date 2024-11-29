@@ -73,7 +73,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
         public async Task LoadAsyncShouldNotSendGetPoePricesInfoPredictionQueryIfItemTextDidNotChange()
         {
             // arrange
-            EquippableItem item = new EquippableItem(ItemRarity.Rare)
+            EquippableItem item = new(ItemRarity.Rare)
             {
                 ExtendedItemText = "text",
             };

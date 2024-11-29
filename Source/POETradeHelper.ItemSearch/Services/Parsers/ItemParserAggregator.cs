@@ -7,6 +7,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 {
     public class ItemParserAggregator : IItemParserAggregator
     {
+        private static readonly char[] LineEndingCharacters = ['\r', '\n'];
+
         private readonly IEnumerable<IItemParser> parsers;
 
         public ItemParserAggregator(IEnumerable<IItemParser> parsers)
@@ -34,7 +36,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers
 
         private static string[] GetLines(string itemString)
         {
-            return itemString.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            return itemString.Split(LineEndingCharacters, StringSplitOptions.RemoveEmptyEntries);
         }
 
         private static void VerifyMatchingParsers(string itemString, IList<IItemParser> parsers)

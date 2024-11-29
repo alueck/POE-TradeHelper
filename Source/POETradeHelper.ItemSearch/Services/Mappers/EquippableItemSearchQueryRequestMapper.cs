@@ -9,8 +9,8 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class EquippableItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
-        private static readonly IDictionary<InfluenceType, Action<MiscFilters>?> InfluenceMappings =
-            new Dictionary<InfluenceType, Action<MiscFilters>?>
+        private static readonly Dictionary<InfluenceType, Action<MiscFilters>?> InfluenceMappings =
+            new()
             {
                 [InfluenceType.None] = null,
                 [InfluenceType.Crusader] = miscFilters => miscFilters.CrusaderItem = new BoolOptionFilter { Option = true },

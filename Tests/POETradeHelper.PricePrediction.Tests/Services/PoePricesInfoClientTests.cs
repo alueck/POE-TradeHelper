@@ -111,7 +111,7 @@ namespace POETradeHelper.PricePrediction.Tests.Services
         public async Task GetPricePredictionAsyncShouldReturnResultFromJsonSerializer()
         {
             // arrange
-            PoePricesInfoPrediction expected = new PoePricesInfoPrediction
+            PoePricesInfoPrediction expected = new()
             {
                 Min = 0.15m,
                 Max = 0.25m,

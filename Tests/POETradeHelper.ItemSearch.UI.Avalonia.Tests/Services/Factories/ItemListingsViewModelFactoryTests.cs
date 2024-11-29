@@ -50,11 +50,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             // arrange
             ItemListingsQueryResult itemListingsQueryResult = new()
             {
-                Result = new List<ListingResult>
-                {
+                Result =
+                [
                     new(),
                     new(),
-                },
+                ],
             };
             EquippableItem item = new(ItemRarity.Rare);
 
@@ -79,11 +79,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             // arrange
             ItemListingsQueryResult itemListingsQueryResult = new()
             {
-                Result = new List<ListingResult>
-                {
+                Result =
+                [
                     new(),
                     new(),
-                },
+                ],
             };
             EquippableItem item = new(ItemRarity.Rare);
 
@@ -110,17 +110,17 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             // arrange
             ItemListingsQueryResult itemListingsQueryResult = new()
             {
-                Result = new List<ListingResult>
-                {
+                Result =
+                [
                     new(),
                     new(),
-                },
+                ],
             };
             SimpleListingViewModel[] expected =
-            {
+            [
                 new() { AccountName = "Test" },
                 new() { AccountName = "Test1" },
-            };
+            ];
             this.listingViewModelFactoryMock
                 .CreateAsync(Arg.Any<ListingResult>(), Arg.Any<Item>(), Arg.Any<CancellationToken>())
                 .Returns(expected[0], expected[1]);
@@ -137,7 +137,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         [Test]
         public async Task CreateAsyncWithExchangeQueryResultShouldSetUri()
         {
-            ExchangeQueryResult exchangeQueryResult = new(string.Empty, 1, new Dictionary<string, ExchangeQueryResultListing>())
+            ExchangeQueryResult exchangeQueryResult = new(string.Empty, 1, [])
             {
                 Uri = new Uri("https://result.link"),
             };
@@ -151,8 +151,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateAsyncWithExchangeQueryResultShouldCallCreateOnListingViewModelFactory()
         {
             // arrange
-            ExchangeListing exchangeListing1 = new(DateTime.Now, new Account { Name = "Test" }, new List<ExchangeOffer>());
-            ExchangeListing exchangeListing2 = new(DateTime.Now, new Account { Name = "Test2" }, new List<ExchangeOffer>());
+            ExchangeListing exchangeListing1 = new(DateTime.Now, new Account { Name = "Test" }, []);
+            ExchangeListing exchangeListing2 = new(DateTime.Now, new Account { Name = "Test2" }, []);
             ExchangeQueryResult exchangeQueryResult = new(
                 string.Empty,
                 1,
@@ -179,8 +179,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateAsyncWithExchangeQueryResultShouldThrowIfCancellationRequested()
         {
             // arrange
-            ExchangeListing exchangeListing1 = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
-            ExchangeListing exchangeListing2 = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
+            ExchangeListing exchangeListing1 = new(DateTime.Now, new Account(), []);
+            ExchangeListing exchangeListing2 = new(DateTime.Now, new Account(), []);
             ExchangeQueryResult exchangeQueryResult = new(
                 string.Empty,
                 1,
@@ -209,8 +209,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         public async Task CreateAsyncWithExchangeQueryResultShouldSetListingsOnResult()
         {
             // arrange
-            ExchangeListing exchangeListing1 = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
-            ExchangeListing exchangeListing2 = new(DateTime.Now, new Account(), new List<ExchangeOffer>());
+            ExchangeListing exchangeListing1 = new(DateTime.Now, new Account(), []);
+            ExchangeListing exchangeListing2 = new(DateTime.Now, new Account(), []);
             ExchangeQueryResult exchangeQueryResult = new(
                 string.Empty,
                 1,
@@ -221,10 +221,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 });
 
             SimpleListingViewModel[] expected =
-            {
+            [
                 new() { AccountName = "a" },
                 new() { AccountName = "b" },
-            };
+            ];
             this.listingViewModelFactoryMock
                 .CreateAsync(Arg.Any<ExchangeListing>(), Arg.Any<CancellationToken>())
                 .Returns(expected[0], expected[1]);

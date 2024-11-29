@@ -12,9 +12,9 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
     {
         public ItemStatsGroup ItemStatsGroup { get; private set; } = new ItemStatsGroup();
 
-        public IList<ItemStat> ItemStats { get; } = new List<ItemStat>();
+        public IList<ItemStat> ItemStats { get; } = [];
 
-        public ICollection<string> Descriptions { get; private set; } = new List<string>();
+        public ICollection<string> Descriptions { get; private set; } = [];
 
         public int ItemLevel { get; private set; }
 

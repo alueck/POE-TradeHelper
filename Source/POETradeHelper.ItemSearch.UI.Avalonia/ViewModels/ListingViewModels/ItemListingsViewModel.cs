@@ -8,6 +8,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         public Uri? ListingsUri { get; set; }
 
         // object type is required for auto-generating columns
-        public ObservableCollection<object> Listings { get; } = new();
+        public ObservableCollection<object> Listings { get; } = [];
     }
 }

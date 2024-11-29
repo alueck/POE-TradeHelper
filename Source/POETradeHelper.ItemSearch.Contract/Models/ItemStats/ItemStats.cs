@@ -5,7 +5,7 @@ namespace POETradeHelper.ItemSearch.Contract.Models
 {
     public class ItemStats
     {
-        public IList<ItemStat> AllStats { get; } = new List<ItemStat>();
+        public IList<ItemStat> AllStats { get; } = [];
 
         public IReadOnlyList<ItemStat> ExplicitStats => this.AllStats.Where(s => s.StatCategory == StatCategory.Explicit).ToList();
 

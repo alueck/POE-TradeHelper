@@ -19,7 +19,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
         public ItemType? GetType(string name)
         {
-            List<ItemData> matches = new();
+            List<ItemData> matches = [];
 
             foreach (ItemData? entry in this.Data.SelectMany(x => x.Entries))
             {

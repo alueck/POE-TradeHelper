@@ -88,7 +88,7 @@ namespace POETradeHelper
                 .Enrich.WithExceptionDetails()
                 .WriteTo.Debug()
                 .WriteTo.Console()
-                .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), rollOnFileSizeLimit: true, retainedFileCountLimit: 1, fileSizeLimitBytes: 104857600).CreateLogger();
+                .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), fileSizeLimitBytes: 104857600, rollOnFileSizeLimit: true, retainedFileCountLimit: 1).CreateLogger();
 
             serviceCollection.AddLogging(builder => builder.AddSerilog());
             serviceCollection.AddMemoryCache();

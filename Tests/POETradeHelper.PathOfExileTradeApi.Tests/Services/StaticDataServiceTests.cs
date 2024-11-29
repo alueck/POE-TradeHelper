@@ -82,7 +82,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     StatusCode = HttpStatusCode.BadRequest,
                 });
 
-            Func<Task> action = () => this.staticDataService.OnInitAsync();
+            Func<Task> action = this.staticDataService.OnInitAsync;
 
             await action.Should()
                 .ThrowAsync<PoeTradeApiCommunicationException>()
@@ -103,11 +103,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = "Currency",
-                            Entries = new List<StaticData>
-                            {
+                            Entries =
+                            [
                                 new() { Id = "alt", Text = "Orb of Alteration" },
                                 new() { Id = expected, Text = itemName },
-                            },
+                            ],
                         },
                     ],
                 });
@@ -141,11 +141,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = "Currency",
-                            Entries = new List<StaticData>
-                            {
+                            Entries =
+                            [
                                 new() { Id = "alt", Text = "Orb of Alteration" },
                                 new() { Id = id, Text = expected },
-                            },
+                            ],
                         },
                     ],
                 });
@@ -188,11 +188,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                         new()
                         {
                             Id = "Currency",
-                            Entries = new List<StaticData>
-                            {
+                            Entries =
+                            [
                                 new() { Id = "alt", Image = "abc" },
                                 new() { Id = id, Image = entryUrl },
-                            },
+                            ],
                         },
                     ],
                 });

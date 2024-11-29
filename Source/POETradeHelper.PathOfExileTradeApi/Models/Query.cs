@@ -16,7 +16,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 
         public QueryFilters Filters { get; private set; } = new();
 
-        public IList<StatFilters> Stats { get; private set; } = new List<StatFilters>();
+        public IList<StatFilters> Stats { get; private set; } = [];
 
         public OptionFilter Status { get; private set; } = new() { Option = "online" };
 

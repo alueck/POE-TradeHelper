@@ -8,7 +8,7 @@ using POETradeHelper.Common.Contract;
 namespace POETradeHelper.Win32
 {
     [ExcludeFromCodeCoverage]
-    public class PathOfExileProcessHelper : IPathOfExileProcessHelper
+    public partial class PathOfExileProcessHelper : IPathOfExileProcessHelper
     {
         private const string PathOfExileProcessTitle = "Path of Exile";
 
@@ -20,10 +20,10 @@ namespace POETradeHelper.Win32
             return processToCheck.MainWindowTitle == PathOfExileProcessTitle;
         }
 
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr GetForegroundWindow();
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
+        [LibraryImport("user32.dll", SetLastError = true)]
+        private static partial uint GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
     }
 }
