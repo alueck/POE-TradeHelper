@@ -38,9 +38,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
         {
             await base.OnInitAsync();
 
+            const string separatorId = "sep";
+
             this.idToStaticDataMappings = this.Data
                 .Where(x => !x.Id.StartsWith("Map"))
                 .SelectMany(x => x.Entries)
+                .Where(x => x.Id != separatorId)
                 .ToDictionary(x => x.Id);
         }
     }
