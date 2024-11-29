@@ -12,10 +12,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
-      - name: Setup .NET 8.0
+      - name: Setup .NET 9.0
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.x
+          dotnet-version: 9.x
       - name: Build project
         run: |
           dotnet publish .\Source\POETradeHelper\POETradeHelper.csproj -c Release -r win-x64 -o Publish -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
