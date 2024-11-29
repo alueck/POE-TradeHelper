@@ -24,7 +24,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers
         {
             this.gemItemParserMock = Substitute.For<IItemParser>();
             this.currencyItemParserMock = Substitute.For<IItemParser>();
-            this.itemParserAggregator = new ItemParserAggregator(new[] { this.gemItemParserMock, this.currencyItemParserMock });
+            this.itemParserAggregator = new ItemParserAggregator([this.gemItemParserMock, this.currencyItemParserMock]);
             this.itemStringBuilder = new ItemStringBuilder();
         }
 

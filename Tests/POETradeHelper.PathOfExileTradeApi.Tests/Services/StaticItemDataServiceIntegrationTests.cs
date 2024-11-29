@@ -46,7 +46,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                     Content = new StringContent(Resources.StaticDataJson),
                 });
 
-            Func<Task> action = () => this.staticDataService.OnInitAsync();
+            Func<Task> action = this.staticDataService.OnInitAsync;
 
             await action.Should().NotThrowAsync();
         }

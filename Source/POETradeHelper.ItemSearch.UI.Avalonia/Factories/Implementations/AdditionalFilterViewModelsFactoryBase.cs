@@ -15,7 +15,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 {
     public abstract class AdditionalFilterViewModelsFactoryBase : IAdditionalFilterViewModelsFactory
     {
-        private static readonly Dictionary<Expression<Func<SearchQueryRequest, MinMaxFilter?>>, Func<SearchQueryRequest, MinMaxFilter?>> GettersCache = new();
+        private static readonly Dictionary<Expression<Func<SearchQueryRequest, MinMaxFilter?>>, Func<SearchQueryRequest, MinMaxFilter?>> GettersCache = [];
 
         protected AdditionalFilterViewModelsFactoryBase(IOptionsMonitor<ItemSearchOptions> itemSearchOptions)
         {

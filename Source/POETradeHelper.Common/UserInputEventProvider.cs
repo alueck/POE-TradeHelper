@@ -20,7 +20,7 @@ namespace POETradeHelper.Common
         private readonly IReactiveGlobalHook hook;
         private readonly IPathOfExileProcessHelper pathOfExileProcessHelper;
         private readonly IMediator mediator;
-        private readonly CompositeDisposable disposables = new();
+        private readonly CompositeDisposable disposables = [];
 
         public UserInputEventProvider(IReactiveGlobalHook hook, IPathOfExileProcessHelper pathOfExileProcessHelper, IMediator mediator)
         {

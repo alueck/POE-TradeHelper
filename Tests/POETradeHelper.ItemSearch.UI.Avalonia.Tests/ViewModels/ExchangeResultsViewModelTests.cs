@@ -67,7 +67,7 @@ public class ExchangeResultsViewModelTests
     [Test]
     public async Task InitializeCallsCreateAsyncOnItemListingsViewModelFactory()
     {
-        ExchangeQueryResult expectedQueryResult = new("a", 1, new Dictionary<string, ExchangeQueryResultListing>());
+        ExchangeQueryResult expectedQueryResult = new("a", 1, []);
         this.poeTradeApiClientMock
             .GetListingsAsync(Arg.Any<ExchangeQueryRequest>(), Arg.Any<CancellationToken>())
             .Returns(expectedQueryResult);

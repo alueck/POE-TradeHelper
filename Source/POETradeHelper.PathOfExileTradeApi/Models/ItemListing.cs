@@ -14,8 +14,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 
         public int? StackSize { get; set; }
 
-        public IList<Property> Properties { get; set; } = new List<Property>();
+        public IList<Property> Properties { get; set; } = [];
 
-        public IList<Property> AdditionalProperties { get; set; } = new List<Property>();
+        public IList<Property> AdditionalProperties { get; set; } = [];
     }
 }

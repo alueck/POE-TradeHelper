@@ -11,7 +11,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Converters
 {
     public class ItemRarityToBrushConverter : IValueConverter
     {
-        private static readonly IDictionary<ItemRarity, IBrush> ItemRarityColorMappings = new Dictionary<ItemRarity, IBrush>
+        private static readonly Dictionary<ItemRarity, IBrush> ItemRarityColorMappings = new()
         {
             [ItemRarity.Normal] = new SolidColorBrush(Color.FromRgb(200, 200, 200)),
             [ItemRarity.Magic] = new SolidColorBrush(Color.FromRgb(136, 136, 255)),

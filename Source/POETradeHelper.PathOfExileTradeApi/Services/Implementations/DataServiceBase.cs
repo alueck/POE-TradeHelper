@@ -22,7 +22,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             this.poeTradeApiJsonSerializer = poeTradeApiJsonSerializer;
         }
 
-        protected IList<TDataType> Data { get; private set; } = new List<TDataType>();
+        protected IList<TDataType> Data { get; private set; } = [];
 
         public virtual async Task OnInitAsync()
         {

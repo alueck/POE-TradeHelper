@@ -14,6 +14,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 
         public string Label { get; set; } = string.Empty;
 
-        public IList<TType> Entries { get; set; } = new List<TType>();
+        public IList<TType> Entries { get; set; } = [];
     }
 }

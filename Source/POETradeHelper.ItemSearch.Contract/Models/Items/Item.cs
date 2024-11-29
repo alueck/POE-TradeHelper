@@ -7,6 +7,8 @@ namespace POETradeHelper.ItemSearch.Contract.Models
 {
     public abstract class Item
     {
+        private static readonly char[] LineEndingCharacters = ['\r', '\n'];
+
         protected Item(ItemRarity rarity)
         {
             this.Rarity = rarity;
@@ -40,7 +42,7 @@ namespace POETradeHelper.ItemSearch.Contract.Models
             get
             {
                 string text = string.Join(Environment.NewLine, this.ExtendedItemText
-                        .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Split(LineEndingCharacters, StringSplitOptions.RemoveEmptyEntries)
                         .Where(x => !x.StartsWith('{') && !x.StartsWith('(')))
                     .RemoveStatRanges()
                     .Replace(Resources.UnscalableValueSuffix, string.Empty);

@@ -21,7 +21,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
         {
             OrganItem organItem = (OrganItem)item;
 
-            SearchQueryRequest result = new SearchQueryRequest
+            SearchQueryRequest result = new()
             {
                 League = this.itemSearchOptions.CurrentValue.League!.Id,
             };

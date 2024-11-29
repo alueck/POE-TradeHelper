@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO.Hashing;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
@@ -23,7 +23,7 @@ public class CacheResultAttributeInterceptor : IInterceptor
         TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
     };
 
-    private static readonly IDictionary<MethodInfo, CacheResultAttribute?> AttributeCache = new ConcurrentDictionary<MethodInfo, CacheResultAttribute?>();
+    private static readonly ConcurrentDictionary<MethodInfo, CacheResultAttribute?> AttributeCache = new();
 
     private readonly IMemoryCache memoryCache;
 
@@ -101,8 +101,7 @@ public class CacheResultAttributeInterceptor : IInterceptor
             invocation.MethodInvocationTarget.Name,
             JsonSerializer.Serialize(invocation.Arguments.Where(a => a is not CancellationToken), JsonSerializerOptions));
 
-        using var sha256 = SHA256.Create();
-        byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(methodKey));
+        byte[] hashBytes = XxHash128.Hash(Encoding.UTF8.GetBytes(methodKey));
 
         return Convert.ToHexString(hashBytes);
     }

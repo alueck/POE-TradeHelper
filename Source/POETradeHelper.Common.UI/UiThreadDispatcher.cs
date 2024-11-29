@@ -33,9 +33,4 @@ public class UiThreadDispatcher : IUiThreadDispatcher
     {
         return Dispatcher.UIThread.InvokeAsync(function, priority);
     }
-
-    public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = default)
-    {
-        return Dispatcher.UIThread.InvokeAsync(function, priority);
-    }
 }

@@ -7,7 +7,7 @@ using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
-    public abstract class ItemParserBase : IItemParser
+    public abstract partial class ItemParserBase : IItemParser
     {
         public Item Parse(string[] itemStringLines)
         {
@@ -37,7 +37,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
             if (matchingLine != null)
             {
-                Match match = Regex.Match(matchingLine, @"[\+\-]?\d+");
+                Match match = NumberRegex().Match(matchingLine);
 
                 if (match.Success)
                 {
@@ -53,5 +53,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         protected bool IsIdentified(string[] itemStringLines) => !Array.Exists(itemStringLines, l => l.Contains(Resources.UnidentifiedKeyword));
 
         protected abstract Item ParseItem(string[] itemStringLines);
+
+        [GeneratedRegex(@"[\+\-]?\d+")]
+        private static partial Regex NumberRegex();
     }
 }

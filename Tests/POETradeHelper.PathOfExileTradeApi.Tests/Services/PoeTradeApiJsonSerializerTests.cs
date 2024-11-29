@@ -40,7 +40,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public void SerializeShouldCallSerializeOnJsonSerializerWithSnakeCaseNamingPolicy()
         {
-            IEnumerable<string> obj = new List<string>();
+            IEnumerable<string> obj = [];
 
             this.poeTradeApiJsonSerializer.Serialize(obj);
 
@@ -52,7 +52,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public void SerializeShouldCallSerializeOnJsonSerializerWithJsonStringEnumConverter()
         {
-            IEnumerable<string> obj = new List<string>();
+            IEnumerable<string> obj = [];
 
             this.poeTradeApiJsonSerializer.Serialize(obj);
 
@@ -64,7 +64,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         [Test]
         public void SerializeShouldCallSerializeOnJsonSerializerWithIgnoreNullValues()
         {
-            IEnumerable<string> obj = new List<string>();
+            IEnumerable<string> obj = [];
 
             this.poeTradeApiJsonSerializer.Serialize(obj);
 

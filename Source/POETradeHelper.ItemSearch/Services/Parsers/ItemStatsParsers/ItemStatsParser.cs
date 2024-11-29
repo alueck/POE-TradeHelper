@@ -31,8 +31,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             string[] statTextLines = itemStringLines.Skip(statsStartIndex).ToArray();
 
             int? tier = null;
-            List<string> statTexts = new();
-            List<ItemStat> itemStats = new();
+            List<string> statTexts = [];
+            List<ItemStat> itemStats = [];
             foreach (string statTextLine in statTextLines)
             {
                 if ((statTexts.Count > 0 && statTextLine.StartsWith('{')) || statTextLine.StartsWith('(') || statTextLine == ParserConstants.PropertyGroupSeparator)
@@ -81,7 +81,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
         private IEnumerable<ItemStat> GetItemStats(bool preferLocalStats, IReadOnlyCollection<string> statTexts, int? tier)
         {
-            List<ItemStat> result = new();
+            List<ItemStat> result = [];
             ItemStat? stat = this.ParseStatText(string.Join('\n', statTexts), tier, preferLocalStats);
             if (stat != null)
             {

@@ -59,7 +59,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         private static int GetExperiencePercent(string[] itemStringLines)
         {
             int experiencePercent = 0;
-            string? experienceLine = itemStringLines.FirstOrDefault(l => l.Contains(Resources.ExperienceDescriptor));
+            string? experienceLine = Array.Find(itemStringLines, l => l.Contains(Resources.ExperienceDescriptor));
 
             if (experienceLine != null)
             {

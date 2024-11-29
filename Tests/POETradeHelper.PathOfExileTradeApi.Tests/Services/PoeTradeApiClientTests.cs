@@ -183,7 +183,7 @@ public class PoeTradeApiClientTests
         this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult
             {
-                Result = new List<string> { "123" },
+                Result = ["123"],
                 Total = 1,
             });
 
@@ -218,16 +218,16 @@ public class PoeTradeApiClientTests
         SearchQueryResult searchQueryResult = new()
         {
             Id = id,
-            Result = new List<string> { "123" },
+            Result = ["123"],
             Total = 1,
         };
 
         ItemListingsQueryResult expected = new()
         {
-            Result = new List<ListingResult>
-            {
+            Result =
+            [
                 new() { Id = "Test" },
-            },
+            ],
             CurrentPage = 1,
             TotalCount = 1,
             Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{league}/{id}"),
@@ -346,7 +346,7 @@ public class PoeTradeApiClientTests
         this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
             .Returns(new SearchQueryResult
             {
-                Result = new List<string> { "123" },
+                Result = ["123"],
                 Total = 1,
             });
 
@@ -398,7 +398,7 @@ public class PoeTradeApiClientTests
             .Returns(expected);
 
         this.poeTradeApiJsonSerializerMock.Deserialize<ExchangeQueryResult>(Arg.Any<string>())
-            .Returns(new ExchangeQueryResult("a", 1, new Dictionary<string, ExchangeQueryResultListing>()));
+            .Returns(new ExchangeQueryResult("a", 1, []));
 
         // act
         await this.poeTradeApiClient.GetListingsAsync(new ExchangeQueryRequest(), cts.Token);
@@ -453,7 +453,7 @@ public class PoeTradeApiClientTests
 
         this.poeTradeApiJsonSerializerMock
             .Deserialize<ExchangeQueryResult>(Arg.Any<string>())
-            .Returns(new ExchangeQueryResult("a", 1, new Dictionary<string, ExchangeQueryResultListing>()));
+            .Returns(new ExchangeQueryResult("a", 1, []));
 
         this.httpClientWrapperMock
             .PostAsync(Arg.Any<string>(), Arg.Any<HttpContent>(), Arg.Any<CancellationToken>())
@@ -479,7 +479,7 @@ public class PoeTradeApiClientTests
         const string expectedId = "abdef";
         this.poeTradeApiJsonSerializerMock
             .Deserialize<ExchangeQueryResult>(Arg.Any<string>())
-            .Returns(new ExchangeQueryResult(expectedId, 1, new Dictionary<string, ExchangeQueryResultListing>()));
+            .Returns(new ExchangeQueryResult(expectedId, 1, []));
         Uri expectedUri =
             new(
                 $"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiExchangeEndpoint}/{queryRequest.League}/{expectedId}");

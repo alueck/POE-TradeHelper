@@ -95,7 +95,7 @@ public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMappe
                         { Min = minMaxValueItemStat.MinValue, Max = minMaxValueItemStat.MaxValue },
                     _ => new MinMaxFilter(),
                 },
-            }) ?? Enumerable.Empty<StatFilter>();
+            }) ?? [];
 
         StatFilters filters = new();
         filters.Filters.AddRange(statFilters);

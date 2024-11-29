@@ -22,11 +22,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
         public AdvancedFiltersViewModelTests()
         {
             this.statFilterViewModelFactoryMock = Substitute.For<IStatFilterViewModelFactory>();
-            this.additionalFiltersViewModelFactoryMocks = new List<IAdditionalFilterViewModelsFactory>
-            {
+            this.additionalFiltersViewModelFactoryMocks =
+            [
                 Substitute.For<IAdditionalFilterViewModelsFactory>(),
                 Substitute.For<IAdditionalFilterViewModelsFactory>(),
-            };
+            ];
             this.advancedFiltersViewModel = new AdvancedFiltersViewModel(
                 this.statFilterViewModelFactoryMock,
                 this.additionalFiltersViewModelFactoryMocks);

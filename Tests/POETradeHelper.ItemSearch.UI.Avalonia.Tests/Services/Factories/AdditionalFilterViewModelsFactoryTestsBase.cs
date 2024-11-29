@@ -133,7 +133,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 IsEnabled = queryRequestFilter != null,
             };
 
-            SearchQueryRequest searchQueryRequest = new SearchQueryRequest();
+            SearchQueryRequest searchQueryRequest = new();
             if (queryRequestFilter != null)
             {
                 SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);

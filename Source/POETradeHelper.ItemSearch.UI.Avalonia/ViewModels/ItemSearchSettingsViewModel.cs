@@ -30,7 +30,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         public bool IsBusy { get; private set; }
 
         [Reactive]
-        public IList<League> Leagues { get; private set; } = new List<League>();
+        public IList<League> Leagues { get; private set; } = [];
 
         [Reactive]
         public League? SelectedLeague { get; set; }

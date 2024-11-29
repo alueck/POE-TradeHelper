@@ -8,7 +8,7 @@ public sealed record WeaponValues
 {
     public MinMaxValue? PhysicalDamage { get; set; }
 
-    public IReadOnlyList<MinMaxValue> ElementalDamage { get; set; } = Array.Empty<MinMaxValue>();
+    public IReadOnlyList<MinMaxValue> ElementalDamage { get; set; } = [];
 
     public decimal? AttacksPerSecond { get; set; }
 
