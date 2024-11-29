@@ -41,10 +41,7 @@
 
     <commonUiControls:BusyIndicator DisplayAfter="0:0:0.500" IsBusy="{Binding IsBusy}">
 
-        <Grid
-            MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource DoubleOffsetConverter}, ConverterParameter=-20}"
-            MaxHeight="{Binding $parent[Window].MaxHeight, Converter={StaticResource DoubleOffsetConverter}, ConverterParameter=-20}"
-            Margin="10">
+        <Grid Margin="10">
 
             <commonUiControls:MessageTextBlock VerticalAlignment="Center" Message="{Binding Message}" />
 
