@@ -74,6 +74,37 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
+        public async Task OnInitShouldFilterOutSeparatorEntries()
+        {
+            const string separatorId = "sep";
+
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StaticData>>>(Arg.Any<string>())
+                .Returns(new QueryResult<Data<StaticData>>
+                {
+                    Result =
+                    [
+                        new()
+                        {
+                            Id = "Currency",
+                            Entries =
+                            [
+                                new() { Id = "alt", Text = "Orb of Alteration" },
+                                new() { Id = separatorId, Text = string.Empty },
+                                new() { Id = "wis", Text = "Scroll of Wisdom" },
+                                new() { Id = separatorId, Text = string.Empty },
+                            ],
+                        },
+                    ],
+                });
+
+            await this.staticDataService.OnInitAsync();
+
+            string? result = this.staticDataService.GetId(separatorId);
+
+            result.Should().BeNull();
+        }
+
+        [Test]
         public async Task OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
         {
             this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
