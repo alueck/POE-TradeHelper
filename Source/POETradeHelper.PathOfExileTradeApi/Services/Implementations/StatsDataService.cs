@@ -21,7 +21,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         private static readonly Regex NumberRegex = new(@"[\+\-]?\d+(\.\d+)?", RegexOptions.Compiled);
         private readonly ILogger<StatsDataService> logger;
 
-        public StatsDataService(IHttpClientFactoryWrapper httpclientFactory, IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer, ILogger<StatsDataService> logger)
+        public StatsDataService(
+            IHttpClientFactoryWrapper httpclientFactory,
+            IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer,
+            ILogger<StatsDataService> logger)
             : base(Resources.PoeTradeApiStatsDataEndpoint, httpclientFactory, poeTradeApiJsonSerializer)
         {
             this.logger = logger;
@@ -31,7 +34,12 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
         {
             await base.OnInitAsync();
 
-            this.statsDataDictionary = this.Data.SelectMany(x => x.Entries).ToDictionary(statData => statData.Id);
+            // This is a bit hacky, but it seems that if there are multiple entries with the same ID
+            // the last one is the relevant one.
+            this.statsDataDictionary = this.Data
+                .SelectMany(x => x.Entries)
+                .GroupBy(statData => statData.Id)
+                .ToDictionary(group => group.Key, group => group.Last());
         }
 
         public StatData? GetStatData(string itemStatText, bool preferLocalStat, params string[] statCategoriesToSearch)
@@ -55,7 +63,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
             if (statCategoriesToSearch.Length != 0)
             {
-                result = this.Data.Where(x => statCategoriesToSearch.Any(statCategory => string.Equals(x.Id, statCategory, StringComparison.OrdinalIgnoreCase)));
+                result = this.Data.Where(x =>
+                    statCategoriesToSearch.Any(statCategory => string.Equals(x.Id, statCategory, StringComparison.OrdinalIgnoreCase)));
             }
 
             return result ?? this.Data;
