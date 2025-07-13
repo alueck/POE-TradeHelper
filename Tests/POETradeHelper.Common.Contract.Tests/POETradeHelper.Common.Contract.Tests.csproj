@@ -8,10 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.1.1" />
-        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-        <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
+        <PackageReference Include="Autofac" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+        <PackageReference Include="Autofac.Extras.DynamicProxy" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     </ItemGroup>
 
     <ItemGroup>

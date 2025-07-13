@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.1.1" />
-        <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
-        <PackageReference Include="Avalonia" Version="11.2.2" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.0" />
+        <PackageReference Include="Autofac" />
+        <PackageReference Include="Autofac.Extras.DynamicProxy" />
+        <PackageReference Include="Avalonia" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
     </ItemGroup>
 
     <ItemGroup>

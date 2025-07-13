@@ -43,6 +43,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CodeCoverage.runsettings = CodeCoverage.runsettings
 		Directory.build.props = Directory.build.props
 		POETradeHelper.ruleset = POETradeHelper.ruleset
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POETradeHelper.Common.UI.Tests", "Tests\POETradeHelper.Common.UI.Tests\POETradeHelper.Common.UI.Tests.csproj", "{2D47ECD3-D334-44D1-9A7D-6FF1E239D65D}"
