@@ -71,6 +71,4 @@
   <ItemGroup>
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
   </ItemGroup>
-
-  <!-- Note: Microsoft.NETCore.Targets is excluded from central package management as it's a special .NET internal package -->
 </Project>
