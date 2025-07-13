@@ -1,6 +1,6 @@
 ﻿namespace POETradeHelper.PathOfExileTradeApi.Models
 {
-    public class StatData
+    public sealed record StatData
     {
         public string Id { get; set; } = string.Empty;
 

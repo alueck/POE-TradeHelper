@@ -457,6 +457,44 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             result.Should().Be(expectedStatData);
         }
 
+        [Test]
+        public async Task GetStatDataShouldReturnLastIfMultipleWithSameId()
+        {
+            // arrange
+            const string itemStatText = "+15 % attack speed";
+            StatData expectedStatData = new()
+            {
+                Id = "expected id",
+                Text = $"{itemStatText}",
+                Type = StatCategory.Explicit.GetDisplayName().ToLower(),
+            };
+
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result =
+                    [
+                        new()
+                        {
+                            Id = StatCategory.Explicit.GetDisplayName(),
+                            Entries =
+                            [
+                                expectedStatData with { Id = "other id" },
+                                expectedStatData,
+                            ],
+                        },
+                    ],
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            // act
+            StatData? result = this.statsDataService.GetStatData(itemStatText, true);
+
+            // assert
+            result.Should().Be(expectedStatData);
+        }
+
         private async Task GetStatDataShouldReturnCorrectStatData(ItemStat itemStat, StatData expectedStatData)
         {
             string statCategory = itemStat.StatCategory.GetDisplayName();
