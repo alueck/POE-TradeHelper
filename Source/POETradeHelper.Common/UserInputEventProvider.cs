@@ -10,7 +10,7 @@ using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
 
 using SharpHook;
-using SharpHook.Native;
+using SharpHook.Data;
 using SharpHook.Reactive;
 
 namespace POETradeHelper.Common
@@ -62,7 +62,7 @@ namespace POETradeHelper.Common
         private static bool TryGetRequest(KeyboardHookEventArgs eventArgs, [NotNullWhen(true)] out IRequest? request)
         {
             request = null;
-            if (IsModifierPressed(eventArgs, ModifierMask.Ctrl) && eventArgs.Data.KeyCode == KeyCode.VcD)
+            if (IsModifierPressed(eventArgs, EventMask.Ctrl) && eventArgs.Data.KeyCode == KeyCode.VcD)
             {
                 request = new SearchItemCommand();
             }
@@ -70,7 +70,7 @@ namespace POETradeHelper.Common
             {
                 request = new GotoHideoutCommand();
             }
-            else if (IsModifierPressed(eventArgs, ModifierMask.Alt) && eventArgs.Data.KeyCode == KeyCode.VcW)
+            else if (IsModifierPressed(eventArgs, EventMask.Alt) && eventArgs.Data.KeyCode == KeyCode.VcW)
             {
                 request = new OpenWikiCommand();
             }
@@ -78,9 +78,9 @@ namespace POETradeHelper.Common
             return request != null;
         }
 
-        private static bool IsModifierPressed(HookEventArgs eventArgs, ModifierMask modifier)
+        private static bool IsModifierPressed(HookEventArgs eventArgs, EventMask modifier)
         {
-            return (eventArgs.RawEvent.Mask & modifier) != ModifierMask.None;
+            return (eventArgs.RawEvent.Mask & modifier) != EventMask.None;
         }
     }
 }

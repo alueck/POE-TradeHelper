@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO.Hashing;
 using System.Linq;
 using System.Reflection;
@@ -35,7 +34,9 @@ public class CacheResultAttributeInterceptor : IInterceptor
     public void Intercept(IInvocation invocation)
     {
         CacheResultAttribute? attribute = GetAttribute(invocation);
-        if (attribute == null || invocation.MethodInvocationTarget.ReturnType == typeof(void) || invocation.MethodInvocationTarget.ReturnType == typeof(Task))
+        if (attribute == null
+            || invocation.MethodInvocationTarget!.ReturnType == typeof(void)
+            || invocation.MethodInvocationTarget.ReturnType == typeof(Task))
         {
             invocation.Proceed();
             return;
@@ -70,7 +71,7 @@ public class CacheResultAttributeInterceptor : IInterceptor
     private void HandleAsyncInvocation(IInvocation invocation, string cacheKey, int cacheDurationSeconds)
     {
         invocation.Proceed();
-        Task task = (Task)invocation.ReturnValue;
+        Task task = (Task)invocation.ReturnValue!;
         task.ContinueWith(
             t =>
             {
@@ -97,8 +98,8 @@ public class CacheResultAttributeInterceptor : IInterceptor
     {
         string methodKey = string.Join(
             '-',
-            invocation.TargetType.FullName,
-            invocation.MethodInvocationTarget.Name,
+            invocation.TargetType!.FullName,
+            invocation.MethodInvocationTarget!.Name,
             JsonSerializer.Serialize(invocation.Arguments.Where(a => a is not CancellationToken), JsonSerializerOptions));
 
         byte[] hashBytes = XxHash128.Hash(Encoding.UTF8.GetBytes(methodKey));
@@ -108,7 +109,8 @@ public class CacheResultAttributeInterceptor : IInterceptor
 
     private static CacheResultAttribute? GetAttribute(IInvocation invocation)
     {
-        if (!AttributeCache.TryGetValue(invocation.MethodInvocationTarget, out var attribute))
+        CacheResultAttribute? attribute = null;
+        if (invocation.MethodInvocationTarget != null && !AttributeCache.TryGetValue(invocation.MethodInvocationTarget, out attribute))
         {
             AttributeCache[invocation.MethodInvocationTarget] = attribute = invocation.MethodInvocationTarget.GetCustomAttribute<CacheResultAttribute>();
         }

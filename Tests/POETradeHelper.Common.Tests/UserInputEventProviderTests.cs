@@ -15,7 +15,7 @@ using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
 
 using SharpHook;
-using SharpHook.Native;
+using SharpHook.Data;
 using SharpHook.Reactive;
 
 namespace POETradeHelper.Common.Tests
@@ -62,7 +62,7 @@ namespace POETradeHelper.Common.Tests
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcD },
-                Mask = ModifierMask.Ctrl,
+                Mask = EventMask.Ctrl,
                 Type = EventType.KeyPressed,
             });
             this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
@@ -82,7 +82,7 @@ namespace POETradeHelper.Common.Tests
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcD },
-                Mask = ModifierMask.Ctrl,
+                Mask = EventMask.Ctrl,
                 Type = EventType.KeyPressed,
             });
 
@@ -174,7 +174,7 @@ namespace POETradeHelper.Common.Tests
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcW },
-                Mask = ModifierMask.Alt,
+                Mask = EventMask.Alt,
                 Type = EventType.KeyPressed,
             });
             this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
@@ -194,7 +194,7 @@ namespace POETradeHelper.Common.Tests
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcW },
-                Mask = ModifierMask.Alt,
+                Mask = EventMask.Alt,
                 Type = EventType.KeyPressed,
             });
 

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using POETradeHelper.Common.Contract;
 
 using SharpHook;
-using SharpHook.Native;
+using SharpHook.Data;
 
 namespace POETradeHelper.Common
 {
