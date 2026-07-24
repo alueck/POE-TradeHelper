@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-using MediatR;
+using Mediator;
 
 using POETradeHelper.Common.Contract.Commands;
 using POETradeHelper.Common.UI;
@@ -16,13 +16,13 @@ namespace POETradeHelper.ViewModels
     {
         public DebugSettingsViewModel(IMediator mediator)
         {
-            this.SearchItemFromClipboardCommand = ReactiveCommand.CreateFromTask(() => mediator.Send(new SearchItemCommand()));
-            this.OpenWikiCommand = ReactiveCommand.CreateFromTask(() => mediator.Send(new OpenWikiCommand()));
+            this.SearchItemFromClipboardCommand = ReactiveCommand.CreateFromTask(async () => await mediator.Send(new SearchItemCommand()));
+            this.OpenWikiCommand = ReactiveCommand.CreateFromTask(async () => await mediator.Send(new OpenWikiCommand()));
         }
 
-        public ReactiveCommand<Unit, Unit> SearchItemFromClipboardCommand { get; }
+        public ReactiveCommand<Unit, Mediator.Unit> SearchItemFromClipboardCommand { get; }
 
-        public ReactiveCommand<Unit, Unit> OpenWikiCommand { get; }
+        public ReactiveCommand<Unit, Mediator.Unit> OpenWikiCommand { get; }
 
         public string Title => Resources.DebugSettingsHeader;
 

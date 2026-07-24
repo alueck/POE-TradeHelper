@@ -47,7 +47,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
                 .GetTextAsync()
                 .Returns(null, null, null, null, null, null, null, null, null, null, "string");
 
-            Func<Task> action = () => this.handler.Handle(new GetItemTextFromCursorQuery(), default);
+            Func<Task> action = async () => await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
             action.ExecutionTime().Should().BeCloseTo(1600.Milliseconds(), 100.Milliseconds());
             await this.clipboardHelperMock

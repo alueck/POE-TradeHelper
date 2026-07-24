@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+
+using Mediator;
 
 namespace POETradeHelper.Common.Commands;
 
@@ -20,7 +21,7 @@ public class OpenUrlInBrowserCommand : IRequest
 [ExcludeFromCodeCoverage]
 public class OpenUrlInBrowserCommandHandler : IRequestHandler<OpenUrlInBrowserCommand>
 {
-    public Task Handle(OpenUrlInBrowserCommand request, CancellationToken cancellationToken)
+    public ValueTask<Unit> Handle(OpenUrlInBrowserCommand request, CancellationToken cancellationToken)
     {
         Process.Start(new ProcessStartInfo
         {
@@ -28,6 +29,6 @@ public class OpenUrlInBrowserCommandHandler : IRequestHandler<OpenUrlInBrowserCo
             UseShellExecute = true,
         });
 
-        return Task.CompletedTask;
+        return ValueTask.FromResult(Unit.Value);
     }
 }

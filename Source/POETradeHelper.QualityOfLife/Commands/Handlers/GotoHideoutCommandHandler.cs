@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Mediator;
 
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
@@ -15,7 +15,7 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
             this.userInputSimulator = userInputSimulator;
         }
 
-        public async Task Handle(GotoHideoutCommand request, CancellationToken cancellationToken)
+        public async ValueTask<Unit> Handle(GotoHideoutCommand request, CancellationToken cancellationToken)
         {
             if (!this.isExecuting)
             {
@@ -29,6 +29,8 @@ namespace POETradeHelper.QualityOfLife.Commands.Handlers
                     this.isExecuting = false;
                 }
             }
+
+            return Unit.Value;
         }
     }
 }

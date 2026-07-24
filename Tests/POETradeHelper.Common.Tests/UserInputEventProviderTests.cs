@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using MediatR;
+using Mediator;
 
 using NSubstitute;
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Reactive;
 
-using MediatR;
+using Mediator;
 
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -235,7 +235,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
         {
             this.mediatorMock
                 .Send(Arg.Any<GetItemFromCursorQuery>(), Arg.Any<CancellationToken>())
-                .Returns(Task.FromException<Item>(new Exception()), Task.FromResult<Item>(new CurrencyItem()));
+                .Returns(ValueTask.FromException<Item>(new Exception()), ValueTask.FromResult<Item>(new CurrencyItem()));
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
             this.itemSearchOverlayViewModel.Message.Should().NotBeNull();
 

@@ -1,7 +1,11 @@
 ﻿using FluentAssertions;
-using MediatR;
+
+using Mediator;
+
 using NSubstitute;
+
 using NUnit.Framework;
+
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Exceptions;
@@ -61,7 +65,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
                 .IsParseable(Arg.Any<string>())
                 .Returns(false);
 
-            Func<Task> action = () => this.handler.Handle(new GetItemFromCursorQuery(), default);
+            Func<Task> action = async () => await this.handler.Handle(new GetItemFromCursorQuery(), default);
 
             await action.Should().ThrowAsync<InvalidItemStringException>();
         }

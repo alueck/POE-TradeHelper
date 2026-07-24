@@ -6,7 +6,7 @@ using Avalonia.Media;
 
 using FluentAssertions;
 
-using MediatR;
+using Mediator;
 
 using Microsoft.Extensions.Options;
 

@@ -1,5 +1,7 @@
 ﻿using Autofac.Extras.DynamicProxy;
-using MediatR;
+
+using Mediator;
+
 using POETradeHelper.Common.Contract.Attributes;
 using POETradeHelper.ItemSearch.Contract;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -32,7 +34,7 @@ public class GetPoePricesInfoPredictionQueryHandler : IRequestHandler<GetPoePric
     }
 
     [CacheResult(DurationSeconds = 30 * 60)]
-    public async Task<PoePricesInfoPrediction?> Handle(GetPoePricesInfoPredictionQuery request, CancellationToken cancellationToken)
+    public async ValueTask<PoePricesInfoPrediction?> Handle(GetPoePricesInfoPredictionQuery request, CancellationToken cancellationToken)
     {
         PoePricesInfoPrediction? prediction = null;
 

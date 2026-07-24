@@ -12,8 +12,6 @@ using Autofac.Extras.DynamicProxy;
 
 using Castle.DynamicProxy;
 
-using MediatR;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -59,8 +57,6 @@ namespace POETradeHelper
             RegisterNonSingletonTypes(builder, assemblies);
             RegisterSingletonTypes(builder, assemblies);
 
-            RegisterMediatR(builder);
-
             builder.Populate(serviceCollection);
 
             Locator.CurrentMutable.InitializeSplat();
@@ -80,6 +76,7 @@ namespace POETradeHelper
 
             serviceCollection.AddLogging(builder => builder.AddSerilog());
             serviceCollection.AddMemoryCache();
+            serviceCollection.AddMediator();
 
             ConfigureOptions(serviceCollection);
             RegisterModules(serviceCollection, applicationAssemblies);
@@ -128,14 +125,6 @@ namespace POETradeHelper
                 .Where(t => t.HasSingletonAttribute() && !t.GetCustomAttributes<InterceptAttribute>().Any())
                 .AsImplementedInterfaces()
                 .SingleInstance();
-        }
-
-        private static void RegisterMediatR(ContainerBuilder builder)
-        {
-            builder
-                .RegisterType<Mediator>()
-                .As<IMediator>()
-                .InstancePerLifetimeScope();
         }
 
         private static void ConfigureOptions(ServiceCollection serviceCollection)

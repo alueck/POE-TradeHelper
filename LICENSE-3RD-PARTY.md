@@ -12,6 +12,8 @@ applies to:
 - coverlet.collector, Copyright (c) 2018 Toni Solarin-Sodara
 - dotNext, Copyright © .NET Foundation and Contributors
 - FluentAssertions.Analyzers, Copyright (c) 2017 Meir Blachman
+- Mediator.Abstractions, Copyright (c) 2022 Martin Othamar
+- Mediator.SourceGenerator Copyright (c) 2022 Martin Othamar
 - Microsoft.NET.Test.Sdk
 - NUnit, Copyright (c) 2009-2019 Charlie Poole, 2014-2025 Rob Prouse, 2026 Terje Sandstrom and Contributors.
 - NUnit.Analyzers
