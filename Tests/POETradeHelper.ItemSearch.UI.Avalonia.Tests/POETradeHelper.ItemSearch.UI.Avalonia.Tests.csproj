@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions.Reactive" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Source\POETradeHelper.Common\POETradeHelper.Common.csproj" />
     <ProjectReference Include="..\..\Source\POETradeHelper.ItemSearch.UI.Avalonia\POETradeHelper.ItemSearch.UI.Avalonia.csproj" />
   </ItemGroup>

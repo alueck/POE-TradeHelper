@@ -3,8 +3,7 @@ using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 
-using FluentAssertions;
-using FluentAssertions.Reactive;
+using AwesomeAssertions;
 
 using Mediator;
 
@@ -90,11 +89,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
                 .Invoke(this.itemSearchOverlayViewModel)
                 .Returns(expectedViewModel);
 
-            using var observer = this.itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
+            using var subscription = this.itemSearchOverlayViewModel.Router.NavigateAndReset
+                .Subscribe(x => x.Should().Be(expectedViewModel));
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            await observer.Should().PushMatchAsync(x => x == expectedViewModel);
             this.itemSearchOverlayViewModel.ResultsViewModel.Should().Be(expectedViewModel);
         }
 
@@ -127,11 +126,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             IExchangeResultsViewModel expectedViewModel = Substitute.For<IExchangeResultsViewModel>();
             this.itemSearchOverlayViewModel.Router.NavigationStack.Add(expectedViewModel);
 
-            using var observer = this.itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
+            using var subscription = this.itemSearchOverlayViewModel.Router.NavigateAndReset
+                .Subscribe(_ => Assert.Fail("NavigateAndReset should not be called"));
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            observer.Should().NotPush();
             this.exchangeResultsViewModelFactoryMock
                 .DidNotReceive()
                 .Invoke(Arg.Any<IItemSearchResultOverlayViewModel>());
@@ -148,11 +147,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
                 .Invoke(this.itemSearchOverlayViewModel)
                 .Returns(expectedViewModel);
 
-            using var observer = this.itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
+            using var subscription = this.itemSearchOverlayViewModel.Router.NavigateAndReset
+                .Subscribe(x => x.Should().Be(expectedViewModel));
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            await observer.Should().PushMatchAsync(x => x == expectedViewModel);
             this.itemSearchOverlayViewModel.ResultsViewModel.Should().Be(expectedViewModel);
         }
 
@@ -185,11 +184,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             IItemResultsViewModel expectedViewModel = Substitute.For<IItemResultsViewModel>();
             this.itemSearchOverlayViewModel.Router.NavigationStack.Add(expectedViewModel);
 
-            using var observer = this.itemSearchOverlayViewModel.Router.NavigateAndReset.Observe();
+            using var subscription = this.itemSearchOverlayViewModel.Router.NavigateAndReset
+                .Subscribe(_ => Assert.Fail("NavigateAndReset should not be called"));
 
             await this.itemSearchOverlayViewModel.SetListingForItemUnderCursorAsync();
 
-            observer.Should().NotPush();
             this.itemResultsViewModelFactoryMock
                 .DidNotReceive()
                 .Invoke(Arg.Any<IItemSearchResultOverlayViewModel>());

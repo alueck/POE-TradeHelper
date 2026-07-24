@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using Microsoft.Extensions.Options;
 

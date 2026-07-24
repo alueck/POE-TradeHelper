@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using Avalonia.Threading;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;

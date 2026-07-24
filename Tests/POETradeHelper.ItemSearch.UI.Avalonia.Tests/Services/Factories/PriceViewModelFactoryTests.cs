@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using NSubstitute;
 

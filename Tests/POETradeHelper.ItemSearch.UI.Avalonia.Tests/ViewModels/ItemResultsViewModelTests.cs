@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;

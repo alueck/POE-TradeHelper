@@ -1,5 +1,5 @@
-using FluentAssertions;
-using FluentAssertions.Extensions;
+using AwesomeAssertions;
+using AwesomeAssertions.Extensions;
 using NSubstitute;
 using NUnit.Framework;
 using POETradeHelper.Common.Contract;

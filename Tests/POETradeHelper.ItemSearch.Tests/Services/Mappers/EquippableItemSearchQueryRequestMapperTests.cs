@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using NSubstitute;
 
