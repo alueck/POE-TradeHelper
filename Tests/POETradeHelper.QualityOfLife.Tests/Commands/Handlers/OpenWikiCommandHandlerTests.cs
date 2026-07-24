@@ -112,7 +112,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
             await this.mediatorMock
                 .Received()
                 .Send(
-                    Arg.Is<OpenUrlInBrowserCommand>(c => c.Url == expectedUrl),
+                    Arg.Is<OpenUrlInBrowserCommand>(c => c!.Url == expectedUrl),
                     Arg.Any<CancellationToken>());
         }
 

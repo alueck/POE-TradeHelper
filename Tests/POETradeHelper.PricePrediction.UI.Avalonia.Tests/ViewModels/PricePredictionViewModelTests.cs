@@ -22,10 +22,13 @@ using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PricePrediction.Queries;
 using POETradeHelper.PricePrediction.UI.Avalonia.ViewModels;
 
+using ReactiveUI.Builder;
+
 namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
 {
     public class PricePredictionViewModelTests
     {
+        private readonly IReactiveUIBuilder builder;
         private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptionsMock;
         private readonly IMediator mediatorMock;
         private readonly IStaticDataService staticDataServiceMock;
@@ -34,6 +37,11 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.Tests.ViewModels
 
         public PricePredictionViewModelTests()
         {
+            this.builder = RxAppBuilder.CreateReactiveUIBuilder()
+                .WithCoreServices()
+                .UseCurrentSplatLocator()
+                .BuildApp();
+
             this.itemSearchOptionsMock = Substitute.For<IOptionsMonitor<ItemSearchOptions>>();
             this.itemSearchOptionsMock
                 .CurrentValue

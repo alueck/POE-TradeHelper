@@ -13,11 +13,11 @@ namespace POETradeHelper.Common
     [ExcludeFromCodeCoverage]
     internal class CommonModule : IModule, IDisposable
     {
-        private readonly SimpleReactiveGlobalHook hook = new();
+        private readonly ReactiveGlobalHook hook = new();
 
         public void RegisterServices(IServiceCollection serviceCollection)
         {
-            this.hook.RunAsync().Subscribe();
+            this.hook.RunAsync();
             serviceCollection.AddSingleton<IReactiveGlobalHook>(this.hook);
             serviceCollection.AddSingleton<IEventSimulator, EventSimulator>();
         }

@@ -122,7 +122,7 @@ namespace POETradeHelper.Common.Tests
             Action? onHandledAction = null;
             this.mediatorMock
                 .When(x => x.Send(Arg.Any<HideOverlayCommand>(), Arg.Any<CancellationToken>()))
-                .Do(ctx => onHandledAction = ctx.Arg<HideOverlayCommand>().OnHandled);
+                .Do(ctx => onHandledAction = ctx.Arg<HideOverlayCommand>()!.OnHandled);
 
             this.keyPressed.OnNext(keyEventArgs);
 

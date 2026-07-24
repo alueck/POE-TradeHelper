@@ -36,7 +36,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Views
             set => this.SetValue(WatermarkProperty, value);
         }
 
-        public void TextBox_GotFocus(object sender, GotFocusEventArgs eventArgs)
+        public void TextBox_GotFocus(object sender, FocusChangedEventArgs eventArgs)
         {
             if (this.TextBox.Text != null)
             {

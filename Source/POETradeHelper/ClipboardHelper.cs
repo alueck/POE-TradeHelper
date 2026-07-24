@@ -16,7 +16,7 @@ namespace POETradeHelper
 
         public Task ClearAsync() => this.clipboard.ClearAsync();
 
-        public Task<string?> GetTextAsync() => this.clipboard.GetTextAsync();
+        public Task<string?> GetTextAsync() => this.clipboard.TryGetTextAsync();
 
         public Task SetTextAsync(string? text) => this.clipboard.SetTextAsync(text);
     }
