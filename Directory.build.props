@@ -15,6 +15,10 @@
     </ItemGroup>
 
     <ItemGroup Condition="$(ProjectName.EndsWith('Tests'))">
+        <PackageReference Update="coverlet.collector">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="FluentAssertions" />
         <PackageReference Include="FluentAssertions.Analyzers">
           <PrivateAssets>all</PrivateAssets>
@@ -31,6 +35,5 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.collector"/>
     </ItemGroup>
 </Project>

@@ -12,10 +12,6 @@
         <PackageReference Include="Autofac.Extensions.DependencyInjection" />
         <PackageReference Include="Autofac.Extras.DynamicProxy" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
-        <PackageReference Update="coverlet.collector">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>

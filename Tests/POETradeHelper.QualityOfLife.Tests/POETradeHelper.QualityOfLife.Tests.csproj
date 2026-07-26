@@ -11,11 +11,4 @@
     <ProjectReference Include="..\..\Source\POETradeHelper.ItemSearch.Contract\POETradeHelper.ItemSearch.Contract.csproj" />
     <ProjectReference Include="..\..\Source\POETradeHelper.QualityOfLife\POETradeHelper.QualityOfLife.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Update="coverlet.collector">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 </Project>

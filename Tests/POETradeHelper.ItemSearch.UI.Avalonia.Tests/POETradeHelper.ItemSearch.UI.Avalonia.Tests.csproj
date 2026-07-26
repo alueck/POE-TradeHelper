@@ -10,10 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions.Reactive" />
-    <PackageReference Update="coverlet.collector">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

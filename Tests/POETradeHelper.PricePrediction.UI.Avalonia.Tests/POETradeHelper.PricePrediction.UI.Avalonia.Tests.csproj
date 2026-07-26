@@ -10,11 +10,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Source\POETradeHelper.PricePrediction.UI.Avalonia\POETradeHelper.PricePrediction.UI.Avalonia.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="coverlet.collector">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 </Project>
