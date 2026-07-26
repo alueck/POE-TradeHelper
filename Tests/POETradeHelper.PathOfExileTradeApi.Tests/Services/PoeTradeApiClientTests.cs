@@ -373,13 +373,12 @@ public class PoeTradeApiClientTests
     }
 
     [Test]
-    public async Task
-        GetListingsAsyncWithSearchQueryRequestShouldThrowPoeTradeApiCommunicationExceptionIfAnyExceptionOccurs()
+    public async Task GetListingsAsyncWithSearchQueryRequestShouldThrowPoeTradeApiCommunicationExceptionIfAnyExceptionOccurs()
     {
         Exception expectedInnerException = new();
         this.poeTradeApiJsonSerializerMock
             .Deserialize<SearchQueryResult>(Arg.Any<string>())
-            ?.Throws(expectedInnerException);
+            !.Throws(expectedInnerException);
 
         Func<Task> action = () => this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest());
 
