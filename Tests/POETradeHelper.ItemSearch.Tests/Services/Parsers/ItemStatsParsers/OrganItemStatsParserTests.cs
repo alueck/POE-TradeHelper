@@ -28,7 +28,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                     ctx => new StatData
                     {
                         Type = StatCategory.Monster.GetDisplayName().ToLower(),
-                        Text = ctx.Arg<string>(),
+                        Text = ctx.Arg<string>()!,
                     });
 
             this.organItemStatsParser = new OrganItemStatsParser(this.statsDataServiceMock);

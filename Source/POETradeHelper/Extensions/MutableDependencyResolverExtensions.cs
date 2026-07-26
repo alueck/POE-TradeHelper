@@ -1,10 +1,6 @@
 using System;
 
-using Avalonia.ReactiveUI;
-
 using Microsoft.Extensions.Logging;
-
-using ReactiveUI;
 
 using Splat;
 using Splat.Microsoft.Extensions.Logging;
@@ -13,13 +9,6 @@ namespace POETradeHelper.Extensions;
 
 public static class MutableDependencyResolverExtensions
 {
-    public static void InitializeAvalonia(this IMutableDependencyResolver resolver)
-    {
-        resolver.RegisterConstant(new AvaloniaActivationForViewFetcher(), typeof(IActivationForViewFetcher));
-        resolver.RegisterConstant(new AutoDataTemplateBindingHook(), typeof(IPropertyBindingHook));
-        RxApp.MainThreadScheduler = AvaloniaScheduler.Instance;
-    }
-
     public static void UseMicrosoftExtensionsLoggingWithWrappingFullLogger(
         this IMutableDependencyResolver instance,
         Func<ILoggerFactory> loggerFactoryGetter)

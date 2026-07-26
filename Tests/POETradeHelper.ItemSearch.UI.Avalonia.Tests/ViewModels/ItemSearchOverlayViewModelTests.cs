@@ -21,11 +21,13 @@ using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 
 using ReactiveUI;
+using ReactiveUI.Builder;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 {
     public class ItemSearchOverlayViewModelTests
     {
+        private readonly IReactiveUIBuilder builder;
         private readonly IMediator mediatorMock;
         private readonly Func<IItemSearchResultOverlayViewModel, IItemResultsViewModel> itemResultsViewModelFactoryMock;
         private readonly Func<IItemSearchResultOverlayViewModel, IExchangeResultsViewModel> exchangeResultsViewModelFactoryMock;
@@ -33,6 +35,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
         public ItemSearchOverlayViewModelTests()
         {
+            this.builder = RxAppBuilder.CreateReactiveUIBuilder()
+                .WithCoreServices()
+                .UseCurrentSplatLocator()
+                .BuildApp();
+
             this.mediatorMock = Substitute.For<IMediator>();
             this.itemResultsViewModelFactoryMock = Substitute.For<Func<IScreen, IItemResultsViewModel>>();
             this.itemResultsViewModelFactoryMock
@@ -43,7 +50,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
                 .Invoke(Arg.Any<IItemSearchResultOverlayViewModel>())
                 .Returns(Substitute.For<IExchangeResultsViewModel>());
 
-            this.itemSearchOverlayViewModel = new ItemSearchResultOverlayViewModel(this.mediatorMock, this.itemResultsViewModelFactoryMock, this.exchangeResultsViewModelFactoryMock);
+            this.itemSearchOverlayViewModel =
+                new ItemSearchResultOverlayViewModel(this.mediatorMock, this.itemResultsViewModelFactoryMock, this.exchangeResultsViewModelFactoryMock);
         }
 
         [Test]

@@ -6,12 +6,25 @@ The MIT License (MIT)
 applies to: 
 - Autofac, Copyright © 2014 Autofac Project
 - Autofac.Extensions.DependencyInjection, Copyright © 2014 Autofac Project
-- Avalonia, Copyright (c) 2014 Steven Kirk
+- Avalonia, Copyright (c) AvaloniaUI OÜ All Rights Reserved
+- Avalonia.Controls.DataGrid, Copyright (c) AvaloniaUI OÜ All Rights Reserved
+- Avalonia.Themes.Simple, Copyright (c) AvaloniaUI OÜ All Rights Reserved
+- coverlet.collector, Copyright (c) 2018 Toni Solarin-Sodara
+- dotNext, Copyright © .NET Foundation and Contributors
+- FluentAssertions.Analyzers, Copyright (c) 2017 Meir Blachman
+- Microsoft.NET.Test.Sdk
+- NUnit, Copyright (c) 2009-2019 Charlie Poole, 2014-2025 Rob Prouse, 2026 Terje Sandstrom and Contributors.
+- NUnit.Analyzers
+- NUnit3TestAdapter, Copyright (c) 2011-2020 Charlie Poole, 2014-2026 Terje Sandstrom
+- ReactiveUI.Avalonia, Copyright (c) 2019-2026 ReactiveUI and Avalonia Teams, and Contributors
+- ReactiveUI.Avalonia.Autofac, Copyright (c) 2019-2026 ReactiveUI and Avalonia Teams, and Contributors
 - ReactiveUI.Fody, Copyright (c) 2014 Kirk Woll
 - Serilog.Exceptions, Copyright (c) 2015 Muhammad Rehan Saeed
 - Splat.Autofac, Copyright (c) .NET Foundation and Contributors
 - Splat.Microsoft.Extensions.Logging, Copyright (c) .NET Foundation and Contributors
-- SharpHook, Copyright (c) 2021 Anatoliy Pylypchuk
+- SharpHook.Reactive, Copyright (c) 2021 Anatoliy Pylypchuk
+- System.IO.Hashing
+- Xaml.Behaviors.Avalonia, Copyright (c) Wiesław Šoltés
 
 -----------------------------------------------------------------------------
 
@@ -39,7 +52,10 @@ THE SOFTWARE.
 Apache 2.0 License
 
 applies to:
+- Castle.Core, Copyright 2004-2021 Castle Project
 - MediatR
+- FluentAssertions
+- FluentAssertions.Reactive
 - Microsoft.Extensions.Caching.Abstractions
 - Microsoft.Extensions.Caching.Memory
 - Microsoft.Extensions.Configuration
@@ -48,8 +64,11 @@ applies to:
 - Microsoft.Extensions.Http
 - Microsoft.Extensions.Http.Polly
 - Microsoft.Extensions.Options.ConfigurationExtensions
-- Serilog
+- Serilog.Extensions.Logging
+- Serilog.Sinks.Console
+- Serilog.Sinks.Debug
 - Serilog.Sinks.File
+- StyleCop.Analyzers
 
 -----------------------------------------------------------------------------
 
@@ -251,6 +270,7 @@ third-party archives.
 BSD 3.0 License
 
 applies to:
+- NSubstitute, Copyright (c) 2009 Anthony Egerton (nsubstitute@delfish.com) and David Tchepak (dave@davesquared.net) All rights reserved.
 - Polly Copyright (c) 2015-2020, App vNext All rights reserved.
 - Polly.Extensions.Http Copyright (c) 2015-2018, App vNext All rights reserved.
 

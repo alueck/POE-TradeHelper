@@ -32,7 +32,7 @@ namespace POETradeHelper.ViewModels
                         {
                             Message successMessage = new() { Type = MessageType.Success, Text = Resources.SavedMessageText };
                             return Observable.Return(successMessage).Concat(
-                                Observable.Return((Message?)null).Delay(TimeSpan.FromSeconds(3), RxApp.MainThreadScheduler));
+                                Observable.Return((Message?)null).Delay(TimeSpan.FromSeconds(3), RxSchedulers.MainThreadScheduler));
                         }
 
                         Message failedMessage = new() { Type = MessageType.Error, Text = Resources.FailedToSaveSettingsMessageText };

@@ -18,6 +18,6 @@
              Margin="5"
              TextAlignment="Right"
              GotFocus="TextBox_GotFocus"
-             Watermark="{Binding Watermark}"
+             PlaceholderText="{Binding Watermark}"
     />
 </UserControl>

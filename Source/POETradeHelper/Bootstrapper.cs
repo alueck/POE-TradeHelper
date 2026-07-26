@@ -25,23 +25,20 @@ using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.ViewModels;
 
-using ReactiveUI;
-
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 
 using Splat;
-using Splat.Autofac;
 
 namespace POETradeHelper
 {
     [ExcludeFromCodeCoverage]
     public class Bootstrapper : IEnableLogger
     {
-        public static void Configure()
+        public static void Configure(ContainerBuilder builder)
         {
-            RegisterDependencies();
+            RegisterDependencies(builder);
         }
 
         public static void Shutdown()
@@ -53,14 +50,10 @@ namespace POETradeHelper
             }
         }
 
-        private static void RegisterDependencies()
+        private static void RegisterDependencies(ContainerBuilder builder)
         {
             Assembly[] assemblies = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "POETradeHelper*.dll").Select(Assembly.LoadFrom).ToArray();
             ServiceCollection serviceCollection = ConfigureServiceCollection(assemblies);
-
-            var builder = new ContainerBuilder();
-            var autofacResolver = builder.UseAutofacDependencyResolver();
-            builder.RegisterInstance(autofacResolver);
 
             RegisterInterceptors(builder, assemblies);
             RegisterNonSingletonTypes(builder, assemblies);
@@ -71,12 +64,7 @@ namespace POETradeHelper
             builder.Populate(serviceCollection);
 
             Locator.CurrentMutable.InitializeSplat();
-            Locator.CurrentMutable.InitializeReactiveUI();
-            Locator.CurrentMutable.InitializeAvalonia();
             Locator.CurrentMutable.UseMicrosoftExtensionsLoggingWithWrappingFullLogger(() => Locator.Current.GetService<ILoggerFactory>()!);
-
-            var container = builder.Build();
-            autofacResolver.SetLifetimeScope(container);
         }
 
         private static ServiceCollection ConfigureServiceCollection(params Assembly[] applicationAssemblies)

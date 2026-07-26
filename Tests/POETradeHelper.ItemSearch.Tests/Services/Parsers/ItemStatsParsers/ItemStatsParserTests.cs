@@ -334,7 +334,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             this.pseudoItemStatsParserMock
                 .Received()
-                .Parse(Arg.Is<IEnumerable<ItemStat>>(enumerable => enumerable.SequenceEqual(result.AllStats)));
+                .Parse(Arg.Is<IEnumerable<ItemStat>>(enumerable => enumerable!.SequenceEqual(result.AllStats)));
         }
 
         [Test]
@@ -497,13 +497,13 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                               (Attributes are Strength, Dexterity, and Intelligence)
                               """;
             this.statsDataServiceMock
-                .GetStatData(Arg.Is<string>(s => !s.Contains("Movement") && !string.IsNullOrWhiteSpace(s)), Arg.Any<bool>(), Arg.Any<string[]>())
+                .GetStatData(Arg.Is<string>(s => !s!.Contains("Movement") && !string.IsNullOrWhiteSpace(s)), Arg.Any<bool>(), Arg.Any<string[]>())
                 .Returns(new StatData { Type = StatCategory.Explicit.GetDisplayName() });
             this.statsDataServiceMock
-                .GetStatData(Arg.Is<string>(s => s.Contains("6%")), Arg.Any<bool>(), Arg.Any<string[]>())
+                .GetStatData(Arg.Is<string>(s => s!.Contains("6%")), Arg.Any<bool>(), Arg.Any<string[]>())
                 .Returns(new StatData { Type = StatCategory.Enchant.GetDisplayName() });
             this.statsDataServiceMock
-                .GetStatData(Arg.Is<string>(s => s.Contains("23")), Arg.Any<bool>(), Arg.Any<string[]>())
+                .GetStatData(Arg.Is<string>(s => s!.Contains("23")), Arg.Any<bool>(), Arg.Any<string[]>())
                 .Returns(new StatData { Type = StatCategory.Crafted.GetDisplayName() });
 
             // act

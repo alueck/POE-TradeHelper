@@ -141,4 +141,7 @@
   <data name="DebugSettingsHeader" xml:space="preserve">
     <value>Debug</value>
   </data>
+  <data name="OpenWikiText" xml:space="preserve">
+    <value>Open wiki</value>
+  </data>
 </root>

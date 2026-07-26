@@ -8,8 +8,9 @@
              x:Class="POETradeHelper.Views.DebugSettingsView"
              x:DataType="localVms:DebugSettingsViewModel">
 
-    <Grid>
+    <Grid ColumnSpacing="5">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
@@ -18,5 +19,6 @@
         </Grid.RowDefinitions>
 
         <Button Command="{Binding SearchItemFromClipboardCommand}" Content="{x:Static resources:Resources.SearchFromClipboardText}" />
+        <Button Grid.Column="1" Command="{Binding OpenWikiCommand}" Content="{x:Static resources:Resources.OpenWikiText}" />
     </Grid>
 </UserControl>

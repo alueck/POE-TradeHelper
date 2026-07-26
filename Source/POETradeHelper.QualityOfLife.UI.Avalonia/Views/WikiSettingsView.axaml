@@ -5,7 +5,8 @@
              xmlns:resources="clr-namespace:POETradeHelper.QualityOfLife.UI.Avalonia.Properties"
              xmlns:viewModels="clr-namespace:POETradeHelper.QualityOfLife.UI.Avalonia.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="POETradeHelper.QualityOfLife.UI.Avalonia.Views.WikiSettingsView">
+             x:Class="POETradeHelper.QualityOfLife.UI.Avalonia.Views.WikiSettingsView"
+             x:DataType="{x:Type viewModels:WikiSettingsViewModel}">
 
     <Grid>
         <Grid.ColumnDefinitions>

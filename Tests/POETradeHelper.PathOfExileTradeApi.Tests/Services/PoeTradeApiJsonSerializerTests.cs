@@ -34,7 +34,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 .Received()
                 .Deserialize<object>(
                     json,
-                    Arg.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy == JsonNamingPolicy.CamelCase));
+                    Arg.Is<JsonSerializerOptions>(o => o!.PropertyNamingPolicy == JsonNamingPolicy.CamelCase));
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.jsonSerializerWrapperMock
                 .Received()
-                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o.PropertyNamingPolicy == JsonNamingPolicy.SnakeCaseLower));
+                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o!.PropertyNamingPolicy == JsonNamingPolicy.SnakeCaseLower));
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             this.jsonSerializerWrapperMock
                 .Received()
-                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o.Converters.OfType<JsonStringEnumConverter>().Any()));
+                .Serialize(obj, Arg.Is<JsonSerializerOptions>(o => o!.Converters.OfType<JsonStringEnumConverter>().Any()));
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 .Received()
                 .Serialize(
                     obj,
-                    Arg.Is<JsonSerializerOptions>(o => o.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull));
+                    Arg.Is<JsonSerializerOptions>(o => o!.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull));
         }
     }
 }
