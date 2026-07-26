@@ -11,7 +11,7 @@ applies to:
 - Avalonia.Themes.Simple, Copyright (c) AvaloniaUI OÜ All Rights Reserved
 - coverlet.collector, Copyright (c) 2018 Toni Solarin-Sodara
 - dotNext, Copyright © .NET Foundation and Contributors
-- FluentAssertions.Analyzers, Copyright (c) 2017 Meir Blachman
+- AwesomeAssertions.Analyzers, Copyright (c) 2017 Meir Blachman
 - Mediator.Abstractions, Copyright (c) 2022 Martin Othamar
 - Mediator.SourceGenerator Copyright (c) 2022 Martin Othamar
 - Microsoft.NET.Test.Sdk
@@ -54,10 +54,9 @@ THE SOFTWARE.
 Apache 2.0 License
 
 applies to:
+- AwesomeAssertions
 - Castle.Core, Copyright 2004-2021 Castle Project
 - MediatR
-- FluentAssertions
-- FluentAssertions.Reactive
 - Microsoft.Extensions.Caching.Abstractions
 - Microsoft.Extensions.Caching.Memory
 - Microsoft.Extensions.Configuration
