@@ -10,7 +10,6 @@
     <PackageReference Include="Avalonia" />
     <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="ReactiveUI.Fody" />
-    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,7 +8,6 @@
   <ItemGroup>
     <PackageReference Include="DotNext" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" />
-    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup>

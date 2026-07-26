@@ -24,7 +24,6 @@ applies to:
 - Splat.Microsoft.Extensions.Logging, Copyright (c) .NET Foundation and Contributors
 - SharpHook.Reactive, Copyright (c) 2021 Anatoliy Pylypchuk
 - System.IO.Hashing
-- Sytem.Text.Json
 - Xaml.Behaviors.Avalonia, Copyright (c) Wiesław Šoltés
 
 -----------------------------------------------------------------------------
