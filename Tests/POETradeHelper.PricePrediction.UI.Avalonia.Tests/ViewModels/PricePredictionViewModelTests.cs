@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 using Avalonia.Media;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
-using MediatR;
+using Mediator;
 
 using Microsoft.Extensions.Options;
 

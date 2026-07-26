@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using MediatR;
+using Mediator;
 
 using POETradeHelper.Common.UI.Models;
 using POETradeHelper.ItemSearch.Contract.Models;

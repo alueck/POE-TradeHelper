@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
-using MediatR;
+using Mediator;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -123,7 +123,7 @@ namespace POETradeHelper.QualityOfLife.Tests.Commands.Handlers
                 .Send(Arg.Any<GetItemFromCursorQuery>(), Arg.Any<CancellationToken>())
                 .Throws<Exception>();
 
-            Func<Task> action = () => this.handler.Handle(new OpenWikiCommand(), default);
+            Func<Task> action = async () => await this.handler.Handle(new OpenWikiCommand(), default);
 
             await action.Should().NotThrowAsync();
         }

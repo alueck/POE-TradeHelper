@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 
 using NSubstitute;
 
@@ -453,10 +453,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             result.AllStats.Should().HaveCount(4);
-            result.ExplicitStats.Should().ContainEquivalentOf(expectedExplicitItemStat, opt => opt.RespectingRuntimeTypes());
-            result.ImplicitStats.Should().ContainEquivalentOf(expectedImplicitItemStat, opt => opt.RespectingRuntimeTypes());
-            result.CraftedStats.Should().ContainEquivalentOf(expectedCraftedItemStat, opt => opt.RespectingRuntimeTypes());
-            result.EnchantedStats.Should().ContainEquivalentOf(expectedEnchantedItemStat, opt => opt.RespectingRuntimeTypes());
+            result.ExplicitStats.Should().ContainEquivalentOf(expectedExplicitItemStat, opt => opt.IncludingAllRuntimeProperties());
+            result.ImplicitStats.Should().ContainEquivalentOf(expectedImplicitItemStat, opt => opt.IncludingAllRuntimeProperties());
+            result.CraftedStats.Should().ContainEquivalentOf(expectedCraftedItemStat, opt => opt.IncludingAllRuntimeProperties());
+            result.EnchantedStats.Should().ContainEquivalentOf(expectedEnchantedItemStat, opt => opt.IncludingAllRuntimeProperties());
         }
 
         [Test]

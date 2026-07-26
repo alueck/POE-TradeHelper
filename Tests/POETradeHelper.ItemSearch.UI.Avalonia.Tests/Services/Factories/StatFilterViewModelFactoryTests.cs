@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using Microsoft.Extensions.Options;
 

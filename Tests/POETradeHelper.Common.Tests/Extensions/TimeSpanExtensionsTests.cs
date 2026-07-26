@@ -1,6 +1,6 @@
 ﻿using System;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using NUnit.Framework;
 

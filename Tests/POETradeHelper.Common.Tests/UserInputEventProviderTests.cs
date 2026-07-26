@@ -3,9 +3,9 @@ using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
-using MediatR;
+using Mediator;
 
 using NSubstitute;
 

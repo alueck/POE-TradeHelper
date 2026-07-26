@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using MediatR;
+using Mediator;
 
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Attributes;
@@ -35,7 +35,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
 
         private IItemSearchResultOverlayView View => LazyInitializer.EnsureInitialized(ref this.view, this.CreateView);
 
-        public async Task Handle(SearchItemCommand request, CancellationToken cancellationToken)
+        public async ValueTask<Unit> Handle(SearchItemCommand request, CancellationToken cancellationToken)
         {
             await this.uiThreadDispatcher.InvokeAsync(async () =>
             {
@@ -54,9 +54,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
                     // do nothing
                 }
             });
+
+            return Unit.Value;
         }
 
-        public async Task Handle(HideOverlayCommand request, CancellationToken cancellationToken)
+        public async ValueTask<Unit> Handle(HideOverlayCommand request, CancellationToken cancellationToken)
         {
             await this.uiThreadDispatcher.InvokeAsync(() =>
             {
@@ -67,6 +69,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
                     this.View.Hide();
                 }
             });
+
+            return Unit.Value;
         }
 
         private IItemSearchResultOverlayView CreateView()

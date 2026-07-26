@@ -1,0 +1,43 @@
+<Solution>
+  <Folder Name="/Application/">
+    <Project Path="Source/POETradeHelper/POETradeHelper.csproj" />
+  </Folder>
+  <Folder Name="/Features/">
+    <Project Path="Source/POETradeHelper.ItemSearch.UI.Avalonia/POETradeHelper.ItemSearch.UI.Avalonia.csproj" />
+    <Project Path="Source/POETradeHelper.ItemSearch/POETradeHelper.ItemSearch.csproj" />
+    <Project Path="Source/POETradeHelper.PricePrediction.UI.Avalonia/POETradeHelper.PricePrediction.UI.Avalonia.csproj" />
+    <Project Path="Source/POETradeHelper.PricePrediction/POETradeHelper.PricePrediction.csproj" />
+    <Project Path="Source/POETradeHelper.QualityOfLife.UI.Avalonia/POETradeHelper.QualityOfLife.UI.Avalonia.csproj" />
+    <Project Path="Source/POETradeHelper.QualityOfLife/POETradeHelper.QualityOfLife.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="Source/POETradeHelper.Common.Contract/POETradeHelper.Common.Contract.csproj" />
+    <Project Path="Source/POETradeHelper.Common.UI/POETradeHelper.Common.UI.csproj" />
+    <Project Path="Source/POETradeHelper.Common/POETradeHelper.Common.csproj" />
+    <Project Path="Source/POETradeHelper.ItemSearch.Contract/POETradeHelper.ItemSearch.Contract.csproj" />
+    <Project Path="Source/POETradeHelper.PathOfExileTradeApi/POETradeHelper.PathOfExileTradeApi.csproj" />
+    <Project Path="Source/POETradeHelper.Win32/POETradeHelper.Win32.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="CodeCoverage.runsettings" />
+    <File Path="Directory.build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="POETradeHelper.ruleset" />
+  </Folder>
+  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/Features/">
+    <Project Path="Tests/POETradeHelper.ItemSearch.Tests/POETradeHelper.ItemSearch.Tests.csproj" />
+    <Project Path="Tests/POETradeHelper.ItemSearch.UI.Avalonia.Tests/POETradeHelper.ItemSearch.UI.Avalonia.Tests.csproj" />
+    <Project Path="Tests/POETradeHelper.PricePrediction.Tests/POETradeHelper.PricePrediction.Tests.csproj" />
+    <Project Path="Tests/POETradeHelper.PricePrediction.UI.Avalonia.Tests/POETradeHelper.PricePrediction.UI.Avalonia.Tests.csproj" />
+    <Project Path="Tests/POETradeHelper.QualityOfLife.Tests/POETradeHelper.QualityOfLife.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Libraries/">
+    <Project Path="Tests/POETradeHelper.Common.Contract.Tests/POETradeHelper.Common.Contract.Tests.csproj" />
+    <Project Path="Tests/POETradeHelper.Common.Tests/POETradeHelper.Common.Tests.csproj" />
+    <Project Path="Tests/POETradeHelper.Common.UI.Tests/POETradeHelper.Common.UI.Tests.csproj" />
+    <Project Path="Tests/POETradeHelper.PathOfExileTradeApi.Tests/POETradeHelper.PathOfExileTradeApi.Tests.csproj" />
+  </Folder>
+  <Project Path="Tests/POETradeHelper.IntegrationTests/POETradeHelper.IntegrationTests.csproj" />
+</Solution>

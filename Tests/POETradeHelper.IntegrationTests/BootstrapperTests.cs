@@ -4,8 +4,8 @@ using System.Linq;
 
 using Autofac;
 
-using FluentAssertions;
-using FluentAssertions.Execution;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 
 using NUnit.Framework;
 

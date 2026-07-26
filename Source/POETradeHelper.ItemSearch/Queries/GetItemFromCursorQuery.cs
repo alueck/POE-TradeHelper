@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
@@ -19,7 +19,7 @@ public class GetItemFromCursorQueryHandler : IRequestHandler<GetItemFromCursorQu
         this.itemParserAggregator = itemParserAggregator;
     }
 
-    public async Task<Item> Handle(GetItemFromCursorQuery request, CancellationToken cancellationToken)
+    public async ValueTask<Item> Handle(GetItemFromCursorQuery request, CancellationToken cancellationToken)
     {
         string itemString = await this.mediator.Send(new GetItemTextFromCursorQuery(), cancellationToken).ConfigureAwait(false);
         if (!this.itemParserAggregator.IsParseable(itemString))

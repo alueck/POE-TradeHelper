@@ -3,7 +3,7 @@ using System.Globalization;
 
 using Avalonia.Data;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using NUnit.Framework;
 

@@ -1,4 +1,5 @@
-using MediatR;
+using Mediator;
+
 using POETradeHelper.Common.Contract;
 
 namespace POETradeHelper.ItemSearch.Queries;
@@ -16,7 +17,7 @@ public class GetItemTextFromCursorQueryHandler : IRequestHandler<GetItemTextFrom
         this.userInputSimulator = userInputSimulator;
     }
 
-    public async Task<string> Handle(GetItemTextFromCursorQuery request, CancellationToken cancellationToken)
+    public async ValueTask<string> Handle(GetItemTextFromCursorQuery request, CancellationToken cancellationToken)
     {
         const int maxTries = 8;
         string? clipBoardTemp = await this.clipboardHelper.GetTextAsync();

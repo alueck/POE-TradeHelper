@@ -4,7 +4,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using MediatR;
+using Mediator;
 
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;

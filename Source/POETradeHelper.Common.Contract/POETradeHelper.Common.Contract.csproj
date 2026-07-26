@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Castle.Core" />
-    <PackageReference Include="MediatR" />
+    <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="System.IO.Hashing" />

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using Avalonia.Media;
 
-using MediatR;
+using Mediator;
 
 using Microsoft.Extensions.Options;
 
