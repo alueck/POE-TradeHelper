@@ -20,3 +20,6 @@ This is still work in progress. So if you decide to try it out, you can be sure 
 
 This software is licensed under the MIT license (see [LICENSE](LICENSE)) and uses third party libraries that are licensed under their own terms and conditions . (see [LICENSE-3RD-PARTY.md](LICENSE-3RD-PARTY.md)).
 
+# Mentions
+- using [poeprices.info](https://poeprices.info/) for price prediction
+- using some data from [RePoE](https://github.com/repoe-fork/repoe) for stat translations
