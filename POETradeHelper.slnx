@@ -24,7 +24,6 @@
     <File Path="CodeCoverage.runsettings" />
     <File Path="Directory.build.props" />
     <File Path="Directory.Packages.props" />
-    <File Path="POETradeHelper.ruleset" />
   </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Features/">

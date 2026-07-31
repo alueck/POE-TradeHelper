@@ -8,7 +8,7 @@
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="11.0.2" />
     <PackageVersion Include="Autofac.Extras.DynamicProxy" Version="8.0.1" />
     <PackageVersion Include="Castle.Core" Version="5.2.1" />
-    <PackageVersion Include="DotNext" Version="6.4.1" />
+    <PackageVersion Include="DotNext" Version="6.5.0" />
     <PackageVersion Include="Mediator.Abstractions" Version="3.0.2" />
     <PackageVersion Include="Mediator.SourceGenerator" Version="3.0.2" />
     <PackageVersion Include="SharpHook.Reactive" Version="7.1.3" />
@@ -17,11 +17,11 @@
   </ItemGroup>
   <!-- Avalonia UI Framework -->
   <ItemGroup>
-    <PackageVersion Include="Avalonia" Version="12.1.0" />
+    <PackageVersion Include="Avalonia" Version="12.1.1" />
     <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.1.0" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.1.0" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.1" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
-    <PackageVersion Include="Avalonia.Themes.Simple" Version="12.1.0" />
+    <PackageVersion Include="Avalonia.Themes.Simple" Version="12.1.1" />
     <PackageVersion Include="ReactiveUI.Avalonia" Version="12.0.3" />
     <PackageVersion Include="ReactiveUI.Avalonia.Autofac" Version="12.0.3" />
     <PackageVersion Include="ReactiveUI.Fody" Version="19.5.41" />

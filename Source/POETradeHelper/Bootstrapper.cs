@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,8 @@ using Autofac.Extras.DynamicProxy;
 
 using Castle.DynamicProxy;
 
+using Mediator;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,6 +23,7 @@ using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ItemSearch.UI.Avalonia.Controllers;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.ViewModels;
 
@@ -76,12 +80,25 @@ namespace POETradeHelper
 
             serviceCollection.AddLogging(builder => builder.AddSerilog());
             serviceCollection.AddMemoryCache();
-            serviceCollection.AddMediator();
+            AddMediator(serviceCollection);
 
             ConfigureOptions(serviceCollection);
             RegisterModules(serviceCollection, applicationAssemblies);
 
             return serviceCollection;
+        }
+
+        private static void AddMediator(ServiceCollection serviceCollection)
+        {
+            serviceCollection.AddMediator();
+
+            // There has to be a single instance of the overlay controller. AddMediator registers the type twice because it implements two IRequestHandlers.
+            // So we remove it again and let the Autofac registration handle this case.
+            var serviceDescriptors = serviceCollection.Where(x => x.ImplementationType == typeof(ItemSearchResultOverlayController)).ToArray();
+            foreach (ServiceDescriptor serviceDescriptor in serviceDescriptors)
+            {
+                serviceCollection.Remove(serviceDescriptor);
+            }
         }
 
         private static void RegisterInterceptors(ContainerBuilder builder, Assembly[] assemblies)
