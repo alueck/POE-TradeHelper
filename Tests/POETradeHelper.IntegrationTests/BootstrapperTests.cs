@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-
-using Autofac;
 
 using AwesomeAssertions;
 using AwesomeAssertions.Execution;
@@ -13,28 +10,15 @@ using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.Services;
 
 using Splat;
-using Splat.Autofac;
 
 namespace POETradeHelper.IntegrationTests
 {
-    public class BootstrapperTests : IDisposable
+    public class BootstrapperTests : IntegrationTestBase
     {
-        private readonly IContainer container;
-
-        public BootstrapperTests()
+        [OneTimeSetUp]
+        public static void OneTimeSetup()
         {
-            ContainerBuilder builder = new();
-            var autofacDependencyResolver = builder.UseAutofacDependencyResolver();
-            builder.RegisterInstance(autofacDependencyResolver);
-            Bootstrapper.Configure(builder);
-            this.container = builder.Build();
-            autofacDependencyResolver.SetLifetimeScope(this.container);
-        }
-
-        public void Dispose()
-        {
-            Bootstrapper.Shutdown();
-            this.container?.Dispose();
+            Setup();
         }
 
         [Test]

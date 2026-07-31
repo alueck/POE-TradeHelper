@@ -34,6 +34,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                 Level = GetIntegerFromFirstStringContaining(itemStringLines, Resources.LevelDescriptor),
                 ExperiencePercent = GetExperiencePercent(itemStringLines),
                 IsVaalVersion = !string.IsNullOrEmpty(vaalName),
+                IsImbued = Array.Exists(itemStringLines, l => l == Resources.ImbuedKeyword),
+                IsTransfigured = Array.Exists(itemStringLines, l => l == Resources.TransfiguredKeyword),
             };
 
             return gemItem;

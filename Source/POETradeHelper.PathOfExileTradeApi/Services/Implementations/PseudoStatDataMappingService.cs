@@ -17,9 +17,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             this.statsDataService = statsDataService;
         }
 
-        public IEnumerable<StatData> GetPseudoStatData(string itemStatId)
+        public IEnumerable<IStatData> GetPseudoStatData(string itemStatId)
         {
-            IEnumerable<StatData?> result = Enumerable.Empty<StatData>();
+            IEnumerable<IStatData?> result = [];
 
             var indexOfDot = itemStatId.IndexOf('.');
 
@@ -36,7 +36,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result.OfType<StatData>();
         }
 
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:Elements should appear in the correct order", Justification = "Readability")]
         private static readonly IReadOnlyDictionary<string, IReadOnlyCollection<string>> Mappings = new Dictionary<string, IReadOnlyCollection<string>>
         {
             [StatId.ColdResistance] = new[] { PseudoStatId.TotalColdResistance, PseudoStatId.TotalElementalResistance, PseudoStatId.TotalResistance },

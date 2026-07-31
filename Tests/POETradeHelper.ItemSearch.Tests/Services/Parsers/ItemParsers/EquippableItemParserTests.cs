@@ -358,9 +358,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [TestCase(EquippableItemCategory.Unknown, false)]
-        [TestCase(EquippableItemCategory.Accessories, false)]
+        [TestCase(EquippableItemCategory.Accessory, false)]
         [TestCase(EquippableItemCategory.Armour, true)]
-        [TestCase(EquippableItemCategory.Weapons, true)]
+        [TestCase(EquippableItemCategory.Weapon, true)]
         public void ParseShouldCallParseOnItemStatsParserWithPreferLocalStats(
             EquippableItemCategory itemCategory,
             bool expectedPreferLocalStats)
@@ -433,9 +433,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [TestCase(null, EquippableItemCategory.Unknown)]
-        [TestCase(EquippableItemCategory.Accessories, EquippableItemCategory.Accessories)]
+        [TestCase(EquippableItemCategory.Accessory, EquippableItemCategory.Accessory)]
         [TestCase(EquippableItemCategory.Armour, EquippableItemCategory.Armour)]
-        [TestCase(EquippableItemCategory.Weapons, EquippableItemCategory.Weapons)]
+        [TestCase(EquippableItemCategory.Weapon, EquippableItemCategory.Weapon)]
         public void ParseShouldSetCategoryFromItemDataService(EquippableItemCategory? itemCategory, EquippableItemCategory expectedItemCategory)
         {
             // arrange
@@ -455,9 +455,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [TestCase(EquippableItemCategory.Unknown, true)]
-        [TestCase(EquippableItemCategory.Accessories, false)]
+        [TestCase(EquippableItemCategory.Accessory, false)]
         [TestCase(EquippableItemCategory.Armour, true)]
-        [TestCase(EquippableItemCategory.Weapons, false)]
+        [TestCase(EquippableItemCategory.Weapon, false)]
         public void ParseSetsArmourValues(EquippableItemCategory itemCategory, bool valuesSet)
         {
             // arrange
@@ -508,9 +508,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [TestCase(EquippableItemCategory.Unknown, true)]
-        [TestCase(EquippableItemCategory.Accessories, false)]
+        [TestCase(EquippableItemCategory.Accessory, false)]
         [TestCase(EquippableItemCategory.Armour, false)]
-        [TestCase(EquippableItemCategory.Weapons, true)]
+        [TestCase(EquippableItemCategory.Weapon, true)]
         public void ParseSetsWeaponValues(EquippableItemCategory itemCategory, bool valuesSet)
         {
             // arrange

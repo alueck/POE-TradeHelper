@@ -34,6 +34,6 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             result.Query.Type.Should().BeNull();
         }
 
-        protected override bool MapsTier1ItemStats() => false;
+        protected override bool MapsHighTierItemStats() => false;
     }
 }

@@ -66,9 +66,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         }
 
         [Test]
-        public void MapShouldMapTier1Stats()
+        public void MapShouldMapHighTierStats()
         {
-            if (!this.MapsTier1ItemStats())
+            if (!this.MapsHighTierItemStats())
             {
                 Assert.Ignore("Item has no Tier 1 stats.");
             }
@@ -76,6 +76,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             ItemWithStats item = (ItemWithStats)GetItems().First(item => item.GetType() == typeof(TItemType));
             MinMaxValueItemStat minMaxValueItemStat = new(StatCategory.Explicit) { Id = "MinMaxValueStat", Tier = 1, MinValue = 2, MaxValue = 5 };
             SingleValueItemStat singleValueItemStat = new(StatCategory.Explicit) { Id = "SingleValueStat", Tier = 1, Value = 4 };
+            SingleValueItemStat highTierCrucibleStat = new(StatCategory.Crucible) { Id ="CrucibleStat", Tier = 5, Value = 3 };
 
             item.Stats = new ItemStats
             {
@@ -83,8 +84,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 {
                     minMaxValueItemStat,
                     singleValueItemStat,
+                    highTierCrucibleStat,
                     new MinMaxValueItemStat(StatCategory.Explicit) { Id = "Tier2MinMaxValueStat", Tier = 2 },
                     new SingleValueItemStat(StatCategory.Explicit) { Id = "Tier2SingleValueStat", Tier = 2 },
+                    new SingleValueItemStat(StatCategory.Crucible) { Id = "Tier1CrucibleStat", Tier = 1 },
                 },
             };
 
@@ -101,10 +104,15 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 {
                     Id = singleValueItemStat.Id,
                     Value = new MinMaxFilter { Min = singleValueItemStat.Value },
+                }),
+                x => x.Should().BeEquivalentTo(new StatFilter
+                {
+                    Id = highTierCrucibleStat.Id,
+                    Value = new MinMaxFilter{ Min = highTierCrucibleStat.Value },
                 }));
         }
 
-        protected virtual bool MapsTier1ItemStats() => typeof(TItemType).IsAssignableTo(typeof(ItemWithStats));
+        protected virtual bool MapsHighTierItemStats() => typeof(TItemType).IsAssignableTo(typeof(ItemWithStats));
 
         protected static IEnumerable<Item> GetNonMatchingItems() => GetItems().Where(item => item.GetType() != typeof(TItemType));
 

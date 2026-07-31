@@ -29,7 +29,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                 return null;
             }
 
-            bool shouldPreferLocalStats = item is EquippableItem { Category: EquippableItemCategory.Armour or EquippableItemCategory.Weapons };
+            bool shouldPreferLocalStats = item is EquippableItem { Category: EquippableItemCategory.Armour or EquippableItemCategory.Weapon };
 
             return this.itemStatsParser.Parse(itemStringLines, shouldPreferLocalStats);
         }

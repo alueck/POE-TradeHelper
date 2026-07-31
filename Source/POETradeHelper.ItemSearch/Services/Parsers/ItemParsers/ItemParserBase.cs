@@ -32,20 +32,18 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
         protected static int GetIntegerFromFirstStringContaining(string[] itemStringLines, string containsString)
         {
-            int result = 0;
             string? matchingLine = Array.Find(itemStringLines, l => l.Contains(containsString));
 
-            if (matchingLine != null)
-            {
-                Match match = NumberRegex().Match(matchingLine);
+            return matchingLine != null
+                ? GetIntegerFromLine(matchingLine)
+                : 0;
+        }
 
-                if (match.Success)
-                {
-                    result = int.Parse(match.Value);
-                }
-            }
+        protected static int GetIntegerFromLine(string line)
+        {
+            Match match = NumberRegex().Match(line);
 
-            return result;
+            return match.Success ? int.Parse(match.Value) : 0;
         }
 
         protected bool IsCorrupted(string[] lines) => Array.Exists(lines, l => l == Resources.CorruptedKeyword);

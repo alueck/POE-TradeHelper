@@ -6,8 +6,6 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models
 {
     public class MapItemStatsGroup : ItemStatsGroupBase
     {
-        public int MapTier { get; set; } = 1;
-
         public int ItemQuantity { get; set; }
 
         public int ItemRarity { get; set; }
@@ -19,7 +17,6 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models
             StringBuilder stringBuilder = new();
 
             stringBuilder
-                .AppendLine($"{Resources.MapTierDescriptor} {this.MapTier}")
                 .AppendLine($"{Resources.ItemQuantityDescriptor} +{this.ItemQuantity}% ({Resources.AugmentedDescriptor})", () => this.ItemQuantity > 0)
                 .AppendLine($"{Resources.ItemRarityDescriptor} +{this.ItemRarity}% ({Resources.AugmentedDescriptor})", () => this.ItemRarity > 0)
                 .AppendLine($"{Resources.MonsterPackSizeDescriptor} +{this.MonsterPackSize}% ({Resources.AugmentedDescriptor})", () => this.MonsterPackSize > 0)

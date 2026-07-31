@@ -31,7 +31,7 @@ public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMappe
         this.MapItemType(result, item);
         this.MapItemRarity(result, item);
         this.MapCorrupted(result, item);
-        this.MapTier1ItemStats(result, item);
+        MapHighTierItemStats(result, item);
 
         return result;
     }
@@ -54,7 +54,10 @@ public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMappe
 
     protected virtual void MapItemType(SearchQueryRequest result, Item item)
     {
-        result.Query.Type = new TypeFilter { Option = item.Type };
+        if (!string.IsNullOrWhiteSpace(item.Type))
+        {
+            result.Query.Type = new TypeFilter { Option = item.Type };
+        }
     }
 
     protected virtual void MapItemRarity(SearchQueryRequest result, Item item) =>
@@ -76,7 +79,7 @@ public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMappe
         }
     }
 
-    protected virtual void MapTier1ItemStats(SearchQueryRequest result, Item item)
+    private static void MapHighTierItemStats(SearchQueryRequest result, Item item)
     {
         if (item is not ItemWithStats itemWithStats)
         {
@@ -84,7 +87,7 @@ public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMappe
         }
 
         IEnumerable<StatFilter> statFilters = itemWithStats.Stats?.AllStats
-            .Where(x => x.Tier == 1)
+            .Where(x => x is { Tier: 1, StatCategory: not StatCategory.Crucible } or { Tier: 5, StatCategory: StatCategory.Crucible })
             .Select(x => new StatFilter
             {
                 Id = x.Id,

@@ -168,11 +168,11 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Accessories.
+        ///   Looks up a localized string similar to Accessory.
         /// </summary>
-        public static string EquippableItemCategory_Accessories {
+        public static string EquippableItemCategory_Accessory {
             get {
-                return ResourceManager.GetString("EquippableItemCategory_Accessories", resourceCulture);
+                return ResourceManager.GetString("EquippableItemCategory_Accessory", resourceCulture);
             }
         }
         
@@ -186,11 +186,11 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Weapons.
+        ///   Looks up a localized string similar to Weapon.
         /// </summary>
-        public static string EquippableItemCategory_Weapons {
+        public static string EquippableItemCategory_Weapon {
             get {
-                return ResourceManager.GetString("EquippableItemCategory_Weapons", resourceCulture);
+                return ResourceManager.GetString("EquippableItemCategory_Weapon", resourceCulture);
             }
         }
         
@@ -227,6 +227,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string HunterItem {
             get {
                 return ResourceManager.GetString("HunterItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Imbued.
+        /// </summary>
+        public static string ImbuedKeyword {
+            get {
+                return ResourceManager.GetString("ImbuedKeyword", resourceCulture);
             }
         }
         
@@ -366,7 +375,7 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Map Tier:.
+        ///   Looks up a localized string similar to Map (Tier.
         /// </summary>
         public static string MapTierDescriptor {
             get {
@@ -474,6 +483,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crucible.
+        /// </summary>
+        public static string StatCategoryCrucible {
+            get {
+                return ResourceManager.GetString("StatCategoryCrucible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enchant.
         /// </summary>
         public static string StatCategoryEnchant {
@@ -542,6 +560,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         public static string SynthesisedKeyword {
             get {
                 return ResourceManager.GetString("SynthesisedKeyword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transfigured.
+        /// </summary>
+        public static string TransfiguredKeyword {
+            get {
+                return ResourceManager.GetString("TransfiguredKeyword", resourceCulture);
             }
         }
         

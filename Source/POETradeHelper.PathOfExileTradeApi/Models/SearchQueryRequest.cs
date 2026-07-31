@@ -22,6 +22,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         [JsonIgnore]
         public string League { get; set; } = string.Empty;
 
+        [JsonIgnore]
+        public int PageSize { get; set; } = 10;
+
         public object Clone() =>
             new SearchQueryRequest
             {

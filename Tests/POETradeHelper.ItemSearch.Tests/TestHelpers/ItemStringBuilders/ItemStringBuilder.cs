@@ -8,9 +8,9 @@ using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 {
-    public class ItemStringBuilder : ItemStringBuilderBase<ItemStringBuilder>
+    public class ItemStringBuilder : ItemStringBuilderBase<ItemStringBuilder, NameAndRarityWithTypeGroup>
     {
-        public ItemStatsGroup ItemStatsGroup { get; private set; } = new ItemStatsGroup();
+        public ItemStatsGroup ItemStatsGroup { get; private set; } = new();
 
         public IList<ItemStat> ItemStats { get; } = [];
 
@@ -21,6 +21,12 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
         public InfluenceType InfluenceType { get; private set; }
 
         public string SocketsString { get; private set; } = string.Empty;
+
+        public ItemStringBuilder WithType(string type)
+        {
+            this.NameAndRarityGroup.Type = type;
+            return this;
+        }
 
         public ItemStringBuilder WithQuality(int quality)
         {
@@ -77,10 +83,10 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => !this.IsIdentified)
                 .AppendLine(Resources.UnidentifiedKeyword, () => !this.IsIdentified);
 
-            this.PrintItemStats(stringBuilder, StatCategory.Enchant);
-            this.PrintItemStats(stringBuilder, StatCategory.Implicit);
-            this.PrintItemStats(stringBuilder, StatCategory.Monster);
-            this.PrintItemStats(stringBuilder, StatCategory.Fractured, StatCategory.Explicit, StatCategory.Crafted);
+            stringBuilder.AppendItemStats(this.ItemStats, StatCategory.Enchant);
+            stringBuilder.AppendItemStats(this.ItemStats, StatCategory.Implicit);
+            stringBuilder.AppendItemStats(this.ItemStats, StatCategory.Monster);
+            stringBuilder.AppendItemStats(this.ItemStats, StatCategory.Fractured, StatCategory.Explicit, StatCategory.Crafted);
 
             foreach (var description in this.Descriptions)
             {
@@ -98,29 +104,6 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
                 .AppendLine($"{Resources.SynthesisedKeyword} Item", () => this.IsSynthesised);
 
             return stringBuilder.ToString();
-        }
-
-        private void PrintItemStats(StringBuilder stringBuilder, params StatCategory[] statCategories)
-        {
-            var groupedItemStats = this.ItemStats.GroupBy(x => x.StatCategory).ToArray();
-
-            var sb = new StringBuilder();
-
-            foreach (var statCategory in statCategories)
-            {
-                var itemStats = groupedItemStats.FirstOrDefault(x => x.Key == statCategory);
-
-                if (itemStats != null)
-                {
-                    sb.AppendLine(string.Join(Environment.NewLine, itemStats.Select(x => x.Text)));
-                }
-            }
-
-            if (sb.Length > 0)
-            {
-                stringBuilder.AppendLine(ParserConstants.PropertyGroupSeparator)
-                    .AppendLine(sb.ToString());
-            }
         }
     }
 }

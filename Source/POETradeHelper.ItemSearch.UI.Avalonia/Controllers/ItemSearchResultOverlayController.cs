@@ -16,6 +16,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
     [Singleton]
     public class ItemSearchResultOverlayController : IRequestHandler<SearchItemCommand>, IRequestHandler<HideOverlayCommand>
     {
+        private readonly object lockObj = new();
         private readonly IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel;
         private readonly IViewLocator viewLocator;
         private readonly IUiThreadDispatcher uiThreadDispatcher;
@@ -88,7 +89,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
 
         private void CancelSearchItemToken()
         {
-            lock (this)
+            lock (this.lockObj)
             {
                 this.searchItemCancellationTokenSource.Cancel();
                 this.searchItemCancellationTokenSource.Dispose();

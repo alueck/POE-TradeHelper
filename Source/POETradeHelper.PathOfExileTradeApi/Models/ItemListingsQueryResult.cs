@@ -4,8 +4,6 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 {
     public record ItemListingsQueryResult : QueryResult<ListingResult>
     {
-        public const int PageSize = 10;
-
         public Uri? Uri { get; init; }
 
         public int TotalCount { get; init; }
@@ -14,6 +12,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
 
         public int CurrentPage { get; init; }
 
-        public bool HasMorePages => this.CurrentPage < Math.Ceiling(this.TotalCount / (double)PageSize);
+        public bool HasMorePages => this.SearchQueryResult.Request.PageSize != 0
+                                    && this.CurrentPage < Math.Ceiling(this.TotalCount / (double)this.SearchQueryResult.Request.PageSize);
     }
 }

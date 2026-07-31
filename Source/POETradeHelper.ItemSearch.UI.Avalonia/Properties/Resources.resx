@@ -180,6 +180,9 @@
   <data name="MapBlighted" xml:space="preserve">
     <value>Blighted</value>
   </data>
+  <data name="MapAreaColumn" xml:space="preserve">
+    <value>Area</value>
+  </data>
   <data name="MapItemQuantity" xml:space="preserve">
     <value>Increased item quantity</value>
   </data>
@@ -278,5 +281,20 @@
   </data>
   <data name="Synthesised" xml:space="preserve">
     <value>Synthesised</value>
+  </data>
+  <data name="FilterCategory_Crucible" xml:space="preserve">
+    <value>Crucible</value>
+  </data>
+  <data name="FilterCategory_Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="UnidentifiedMap" xml:space="preserve">
+    <value>[Unidentified]</value>
+  </data>
+  <data name="Imbued" xml:space="preserve">
+      <value>Imbued</value>
+  </data>
+  <data name="Transfigured" xml:space="preserve">
+    <value>Transfigured</value>
   </data>
 </root>

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
 using POETradeHelper.Common.Extensions;
@@ -31,28 +30,32 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             string[] statTextLines = itemStringLines.Skip(statsStartIndex).ToArray();
 
             int? tier = null;
+            StatCategory? category = null;
             List<string> statTexts = [];
             List<ItemStat> itemStats = [];
-            foreach (string statTextLine in statTextLines)
+            foreach (var statTextLine in statTextLines)
             {
-                if ((statTexts.Count > 0 && statTextLine.StartsWith('{')) || statTextLine.StartsWith('(') || statTextLine == ParserConstants.PropertyGroupSeparator)
+                if ((statTexts.Count > 0 && statTextLine.StartsWith('{')) || statTextLine.StartsWith('(') ||
+                    statTextLine == ParserConstants.PropertyGroupSeparator)
                 {
-                    itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier));
+                    itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier, category));
                     statTexts.Clear();
                     tier = TryGetTier(statTextLine);
+                    category = TryGetCategory(statTextLine);
                     continue;
                 }
 
                 if (statTextLine.StartsWith('{'))
                 {
                     tier = TryGetTier(statTextLine);
+                    category = TryGetCategory(statTextLine);
                     continue;
                 }
 
-                statTexts.Add(statTextLine.Replace(Resources.UnscalableValueSuffix, string.Empty).RemoveStatRanges());
+                statTexts.Add(statTextLine.Replace(Resources.UnscalableValueSuffix, string.Empty).RemoveStatRanges().RemoveBracketedText());
             }
 
-            itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier));
+            itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier, category));
 
             IEnumerable<ItemStat> pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
@@ -62,88 +65,52 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return result;
         }
 
-        protected override ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
+        private IEnumerable<ItemStat> GetItemStats(bool preferLocalStats, IReadOnlyList<string> statTexts, int? tier, StatCategory? category)
         {
-            ItemStat? result = base.GetCompleteItemStat(itemStat, preferLocalStatData);
-
-            int? placeholderCount = result?.TextWithPlaceholders.Count(c => c == Placeholder);
-            if (placeholderCount == 1)
+            for (int index = 0; index < statTexts.Count; index++)
             {
-                result = GetSingleValueItemStat(itemStat);
-            }
-            else if (placeholderCount == 2)
-            {
-                result = GetMinMaxValueItemStat(itemStat);
-            }
+                var itemStat = this.GetCompleteItemStat(statTexts.Skip(index).ToArray(), preferLocalStats, tier, category);
 
-            return result;
-        }
-
-        private IEnumerable<ItemStat> GetItemStats(bool preferLocalStats, IReadOnlyCollection<string> statTexts, int? tier)
-        {
-            List<ItemStat> result = [];
-            ItemStat? stat = this.ParseStatText(string.Join('\n', statTexts), tier, preferLocalStats);
-            if (stat != null)
-            {
-                result.Add(stat);
-            }
-            else
-            {
-                result.AddRange(statTexts.Select(x => this.ParseStatText(x, tier, preferLocalStats)).OfType<ItemStat>());
-            }
-
-            return result;
-        }
-
-        private static int? TryGetTier(string statDescription)
-        {
-            Match match = Regex.Match(statDescription, @"(Rank|Tier): (?<tier>\d+)");
-
-            return int.TryParse(match.Groups["tier"].Value, out int tier)
-                ? tier
-                : null;
-        }
-
-        private ItemStat? ParseStatText(string statText, int? tier, bool preferLocalStats)
-        {
-            if (!TryGetItemStatForCategoryByMarker(statText, StatCategory.Enchant, out ItemStat? result)
-                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Implicit, out result)
-                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Crafted, out result)
-                && !TryGetItemStatForCategoryByMarker(statText, StatCategory.Fractured, out result))
-            {
-                result = new ItemStat(StatCategory.Unknown)
+                if (itemStat != null)
                 {
-                    Text = statText,
-                };
+                    int placeholderCount = itemStat.TextWithPlaceholders.Count(c => c == Placeholder);
+                    itemStat = placeholderCount switch
+                    {
+                        1 => GetSingleValueItemStat(itemStat),
+                        2 => GetMinMaxValueItemStat(itemStat),
+                        _ => itemStat,
+                    };
+
+                    index += itemStat.Lines - 1;
+
+                    yield return itemStat;
+                }
             }
-
-            result.Tier = tier;
-
-            return this.GetCompleteItemStat(result, preferLocalStats);
         }
 
-        private static bool TryGetItemStatForCategoryByMarker(
-            string statText,
-            StatCategory statCategory,
-            [NotNullWhen(true)] out ItemStat? itemStat)
+        private static StatCategory? TryGetCategory(string line)
         {
-            itemStat = null;
-
-            int statCategoryMarkerIndex =
-                statText.IndexOf($"({statCategory.GetDisplayName()})", StringComparison.OrdinalIgnoreCase);
-            if (statCategoryMarkerIndex >= 0)
+            if (line.Contains(nameof(StatCategory.Implicit), StringComparison.OrdinalIgnoreCase))
             {
-                statText = statText[..statCategoryMarkerIndex].Trim();
-
-                itemStat = new ItemStat(statCategory)
-                {
-                    Text = statText,
-                };
-
-                return true;
+                return StatCategory.Implicit;
             }
 
-            return false;
+            if (line.Contains(nameof(StatCategory.Crafted), StringComparison.OrdinalIgnoreCase))
+            {
+                return  StatCategory.Crafted;
+            }
+
+            if (line.Contains(nameof(StatCategory.Fractured), StringComparison.OrdinalIgnoreCase))
+            {
+                return StatCategory.Fractured;
+            }
+
+            if (line.Contains(nameof(StatCategory.Crucible), StringComparison.OrdinalIgnoreCase))
+            {
+                return StatCategory.Crucible;
+            }
+
+            return null;
         }
 
         private static ItemStat GetSingleValueItemStat(ItemStat itemStat)

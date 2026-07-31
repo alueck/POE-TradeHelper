@@ -192,7 +192,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             yield return new MinMaxFilter { Min = 45, Max = 97 };
         }
 
-        private static void SetValueByExpression<TFilter>(
+        protected static void SetValueByExpression<TFilter>(
             Expression<Func<SearchQueryRequest, TFilter?>> bindingExpression,
             SearchQueryRequest searchQueryRequest,
             TFilter value)

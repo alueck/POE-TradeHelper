@@ -8,14 +8,18 @@ using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 {
-    public class GemItemStringBuilder : ItemStringBuilderBase<GemItemStringBuilder>
+    public class GemItemStringBuilder : ItemStringBuilderBase<GemItemStringBuilder, NameAndRarityWithTypeGroup>
     {
         public GemItemStringBuilder()
         {
             this.NameAndRarityGroup.Rarity = ItemRarity.Gem.GetDisplayName();
         }
 
-        public GemItemStatsGroup ItemStatsGroup { get; } = new();
+        private GemItemStatsGroup ItemStatsGroup { get; } = new();
+
+        private bool Imbued { get; set; }
+
+        private bool Transfigured { get; set; }
 
         public GemItemStringBuilder WithGemLevel(int gemLevel)
         {
@@ -41,6 +45,18 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
             return this;
         }
 
+        public GemItemStringBuilder WithImbued(bool imbued = true)
+        {
+            this.Imbued = imbued;
+            return this;
+        }
+
+        public GemItemStringBuilder WithTransfigured(bool transfigured = true)
+        {
+            this.Transfigured = transfigured;
+            return this;
+        }
+
         public override string Build()
         {
             StringBuilder stringBuilder = new();
@@ -52,7 +68,11 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => !this.IsIdentified)
                 .AppendLine(Resources.UnidentifiedKeyword, () => !this.IsIdentified)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.IsCorrupted)
-                .AppendLine(Resources.CorruptedKeyword, () => this.IsCorrupted);
+                .AppendLine(Resources.CorruptedKeyword, () => this.IsCorrupted)
+                .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.Imbued)
+                .AppendLine(Resources.ImbuedKeyword, () => this.Imbued)
+                .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.Transfigured)
+                .AppendLine(Resources.TransfiguredKeyword, () => this.Transfigured);
 
             return stringBuilder.ToString();
         }

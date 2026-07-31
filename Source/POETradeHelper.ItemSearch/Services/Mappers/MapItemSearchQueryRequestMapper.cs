@@ -21,6 +21,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             SearchQueryRequest result = base.MapToQueryRequest(item);
 
             MapItem mapItem = (MapItem)item;
+            SetTypeFilter(result);
             MapIdentified(result, mapItem);
             MapTier(result, mapItem);
             MapBlighted(result, mapItem);
@@ -28,6 +29,9 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
             return result;
         }
+
+        private static void SetTypeFilter(SearchQueryRequest result) =>
+            result.Query.Filters.TypeFilters.Category = new OptionFilter { Option = "map" };
 
         private static void MapIdentified(SearchQueryRequest result, MapItem mapItem) =>
             result.Query.Filters.MiscFilters.Identified = new BoolOptionFilter

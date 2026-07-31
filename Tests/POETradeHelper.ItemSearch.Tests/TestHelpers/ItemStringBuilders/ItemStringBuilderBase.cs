@@ -4,16 +4,17 @@ using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 {
-    public abstract class ItemStringBuilderBase<T>
-        where T : ItemStringBuilderBase<T>
+    public abstract class ItemStringBuilderBase<T, TNameAndRarity>
+        where T : ItemStringBuilderBase<T, TNameAndRarity>
+        where TNameAndRarity: NameAndRarityGroupBase, new()
     {
-        public NameAndRarityGroup NameAndRarityGroup { get; } = new() { Rarity = "Normal", Type = "TestType" };
+        protected TNameAndRarity NameAndRarityGroup { get; } = new() { Rarity = "Normal" };
 
-        public bool IsCorrupted { get; protected set; }
+        protected bool IsCorrupted { get; private set; }
 
-        public bool IsIdentified { get; protected set; } = true;
+        protected bool IsIdentified { get; private set; } = true;
 
-        public bool IsSynthesised { get; protected set; }
+        protected bool IsSynthesised { get; private set; }
 
         public T WithRarity(string rarity)
         {
@@ -30,12 +31,6 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
         public T WithName(string name)
         {
             this.NameAndRarityGroup.Name = name;
-            return (T)this;
-        }
-
-        public T WithType(string type)
-        {
-            this.NameAndRarityGroup.Type = type;
             return (T)this;
         }
 

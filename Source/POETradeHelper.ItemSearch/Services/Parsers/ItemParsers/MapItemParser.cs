@@ -7,12 +7,10 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
     public class MapItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 2;
-        private readonly IItemTypeParser itemTypeParser;
 
-        public MapItemParser(IItemTypeParser itemTypeParser, IItemStatsParser<ItemWithStats> itemStatsParser) : base(
+        public MapItemParser(IItemStatsParser<ItemWithStats> itemStatsParser) : base(
             itemStatsParser)
         {
-            this.itemTypeParser = itemTypeParser;
         }
 
         public override bool CanParse(string[] itemStringLines) => itemStringLines.Any(l => l.Contains(Resources.MapTierDescriptor));
@@ -20,7 +18,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
         protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
             ItemRarity? rarity = GetRarity(itemStringLines);
-            MapItem mapItem = new MapItem(rarity!.Value)
+            var mapTierLine = itemStringLines.First(l => l.Contains(Resources.MapTierDescriptor));
+
+            MapItem mapItem = new(rarity!.Value)
             {
                 Name = itemStringLines[NameLineIndex],
                 IsIdentified = this.IsIdentified(itemStringLines),
@@ -30,11 +30,9 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                 MonsterPackSize = GetIntegerFromFirstStringContaining(itemStringLines, Resources.MonsterPackSizeDescriptor),
                 Quality = GetIntegerFromFirstStringContaining(itemStringLines, Resources.QualityDescriptor),
                 IsCorrupted = this.IsCorrupted(itemStringLines),
+                IsBlighted = mapTierLine.Contains(Resources.BlightedPrefix),
+                IsBlightRavaged = mapTierLine.Contains(Resources.BlightRavagedPrefix),
             };
-
-            mapItem.Type = this.itemTypeParser.ParseType(itemStringLines, mapItem.Rarity, mapItem.IsIdentified);
-            mapItem.IsBlighted = mapItem.Name.Contains(Resources.BlightedPrefix);
-            mapItem.IsBlightRavaged = mapItem.Name.Contains(Resources.BlightRavagedPrefix);
 
             return mapItem;
         }

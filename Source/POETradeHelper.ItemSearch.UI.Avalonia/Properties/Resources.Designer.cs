@@ -222,6 +222,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Crucible.
+        /// </summary>
+        public static string FilterCategory_Crucible {
+            get {
+                return ResourceManager.GetString("FilterCategory_Crucible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enchant.
         /// </summary>
         public static string FilterCategory_Enchant {
@@ -254,6 +263,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         public static string FilterCategory_Implicit {
             get {
                 return ResourceManager.GetString("FilterCategory_Implicit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Other.
+        /// </summary>
+        public static string FilterCategory_Other {
+            get {
+                return ResourceManager.GetString("FilterCategory_Other", resourceCulture);
             }
         }
         
@@ -312,6 +330,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Imbued.
+        /// </summary>
+        public static string Imbued {
+            get {
+                return ResourceManager.GetString("Imbued", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Item level.
         /// </summary>
         public static string ItemLevelColumn {
@@ -344,6 +371,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         public static string Links {
             get {
                 return ResourceManager.GetString("Links", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Area.
+        /// </summary>
+        public static string MapAreaColumn {
+            get {
+                return ResourceManager.GetString("MapAreaColumn", resourceCulture);
             }
         }
         
@@ -524,6 +560,24 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         public static string Synthesised {
             get {
                 return ResourceManager.GetString("Synthesised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transfigured.
+        /// </summary>
+        public static string Transfigured {
+            get {
+                return ResourceManager.GetString("Transfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [Unidentified].
+        /// </summary>
+        public static string UnidentifiedMap {
+            get {
+                return ResourceManager.GetString("UnidentifiedMap", resourceCulture);
             }
         }
         

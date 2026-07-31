@@ -22,6 +22,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <localViews:FiltersControl
@@ -55,19 +57,31 @@
                 Items="{Binding CraftedItemStatFilters}" />
 
             <localViews:FiltersControl
-                Name="MonsterItemStatFilters"
+                Name="CrucibleItemStatFilters"
                 Grid.Row="5"
+                Header="{x:Static resources:Resources.FilterCategory_Crucible}"
+                Items="{Binding CrucibleItemStatFilters}" />
+            
+            <localViews:FiltersControl
+                Name="OtherItemStatFilters"
+                Grid.Row="6"
+                Header="{x:Static resources:Resources.FilterCategory_Other}"
+                Items="{Binding OtherItemStatFilters}" />
+            
+            <localViews:FiltersControl
+                Name="MonsterItemStatFilters"
+                Grid.Row="7"
                 Items="{Binding MonsterItemStatFilters}" />
 
             <localViews:FiltersControl
                 Name="PseudoItemStatFilters"
-                Grid.Row="6"
+                Grid.Row="8"
                 Header="{x:Static resources:Resources.FilterCategory_Pseudo}"
                 Items="{Binding PseudoItemStatFilters}" />
 
             <localViews:FiltersControl
                 Name="AdditionalFilters"
-                Grid.Row="7"
+                Grid.Row="9"
                 Items="{Binding AdditionalFilters}" />
         </Grid>
     </ScrollViewer>

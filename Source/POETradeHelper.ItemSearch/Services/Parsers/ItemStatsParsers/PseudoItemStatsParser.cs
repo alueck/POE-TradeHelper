@@ -18,7 +18,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
         public IEnumerable<ItemStat> Parse(IEnumerable<ItemStat> itemStats)
         {
             IList<ItemStat> result = [];
-            foreach (KeyValuePair<StatData, IList<ItemStat>> entry in this.GetRelevantPseudoStatDataMappings(itemStats))
+            foreach (KeyValuePair<IStatData, IList<ItemStat>> entry in this.GetRelevantPseudoStatDataMappings(itemStats))
             {
                 switch (entry.Value[0])
                 {
@@ -35,23 +35,23 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return result;
         }
 
-        private IDictionary<StatData, IList<ItemStat>> GetRelevantPseudoStatDataMappings(IEnumerable<ItemStat> itemStats)
+        private IDictionary<IStatData, IList<ItemStat>> GetRelevantPseudoStatDataMappings(IEnumerable<ItemStat> itemStats)
         {
-            IDictionary<StatData, IList<ItemStat>> pseudoStatDataMapping = this.GetPseudoStatDataMappings(itemStats);
+            IDictionary<IStatData, IList<ItemStat>> pseudoStatDataMapping = this.GetPseudoStatDataMappings(itemStats);
 
             return pseudoStatDataMapping
                 .Where(x => x.Value.Count > 1)
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        private IDictionary<StatData, IList<ItemStat>> GetPseudoStatDataMappings(IEnumerable<ItemStat> itemStats)
+        private IDictionary<IStatData, IList<ItemStat>> GetPseudoStatDataMappings(IEnumerable<ItemStat> itemStats)
         {
-            IDictionary<StatData, IList<ItemStat>> pseudoStatDataMapping = new Dictionary<StatData, IList<ItemStat>>();
+            IDictionary<IStatData, IList<ItemStat>> pseudoStatDataMapping = new Dictionary<IStatData, IList<ItemStat>>();
             foreach (ItemStat itemStat in itemStats)
             {
-                IEnumerable<StatData> pseudoStatDataList = this.pseudoStatDataMappingService.GetPseudoStatData(itemStat.Id);
+                IEnumerable<IStatData> pseudoStatDataList = this.pseudoStatDataMappingService.GetPseudoStatData(itemStat.Id);
 
-                foreach (StatData pseudoStatData in pseudoStatDataList)
+                foreach (IStatData pseudoStatData in pseudoStatDataList)
                 {
                     if (!pseudoStatDataMapping.TryGetValue(pseudoStatData, out IList<ItemStat>? mappedItemStats))
                     {
@@ -65,7 +65,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return pseudoStatDataMapping;
         }
 
-        private static SingleValueItemStat GetSingleValueItemStat(KeyValuePair<StatData, IList<ItemStat>> entry) =>
+        private static SingleValueItemStat GetSingleValueItemStat(KeyValuePair<IStatData, IList<ItemStat>> entry) =>
             new(StatCategory.Pseudo)
             {
                 Id = entry.Key.Id,
@@ -73,14 +73,14 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
                 Value = GetSingleValueItemStatValue(entry),
             };
 
-        private static decimal GetSingleValueItemStatValue(KeyValuePair<StatData, IList<ItemStat>> entry)
+        private static decimal GetSingleValueItemStatValue(KeyValuePair<IStatData, IList<ItemStat>> entry)
         {
             Func<SingleValueItemStat, decimal> sumFunction = GetSingleValueItemStatValueSumFunction(entry.Key);
 
             return entry.Value.Cast<SingleValueItemStat>().Sum(sumFunction);
         }
 
-        private static Func<SingleValueItemStat, decimal> GetSingleValueItemStatValueSumFunction(StatData pseudoStatData)
+        private static Func<SingleValueItemStat, decimal> GetSingleValueItemStatValueSumFunction(IStatData pseudoStatData)
         {
             Func<SingleValueItemStat, decimal> sumFunction = itemStat => itemStat.Value;
 
@@ -104,7 +104,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return sumFunction;
         }
 
-        private static MinMaxValueItemStat GetMinMaxValueItemStat(KeyValuePair<StatData, IList<ItemStat>> entry) =>
+        private static MinMaxValueItemStat GetMinMaxValueItemStat(KeyValuePair<IStatData, IList<ItemStat>> entry) =>
             new(StatCategory.Pseudo)
             {
                 Id = entry.Key.Id,

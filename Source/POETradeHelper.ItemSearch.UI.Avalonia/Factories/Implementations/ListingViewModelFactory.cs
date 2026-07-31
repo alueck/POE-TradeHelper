@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.UI.Avalonia.Properties;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 
@@ -14,6 +15,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
         private const string QualityPropertyName = "Quality";
         private const string GemLevelPropertyName = "Level";
         private const string GemExperiencePropertyName = "Experience";
+        private const string MapAreaPropertyName = "Map Area";
+
         private readonly IPriceViewModelFactory priceViewModelFactory;
 
         public ListingViewModelFactory(IPriceViewModelFactory priceViewModelFactory)
@@ -32,6 +35,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 EquippableItem or OrganItem => CreateItemListingViewModelWithItemLevel(listingResult),
                 FlaskItem => CreateFlaskItemViewModel(listingResult),
                 DivinationCardItem => CreateDivinationCardItemViewModel(listingResult),
+                MapItem => CreateMapItemViewModel(listingResult),
                 _ => new SimpleListingViewModel(),
             };
 
@@ -102,11 +106,19 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 StackSize = listingResult.Item.StackSize.GetValueOrDefault(),
             };
 
+        private static SimpleListingViewModel CreateMapItemViewModel(ListingResult listingResult)
+        {
+            return new MapListingsViewModel
+            {
+                MapArea = GetPropertyStringValue(listingResult.Item, MapAreaPropertyName),
+            };
+        }
+
         private static string GetPropertyStringValue(ItemListing itemListing, string propertyName)
         {
-            Property? qualityProperty = itemListing.Properties.FirstOrDefault(p => p.Name == propertyName);
+            Property? property = itemListing.Properties.FirstOrDefault(p => p.Name == propertyName);
 
-            return qualityProperty?.Values[0][0].GetString() ?? string.Empty;
+            return property?.Values[0][0].GetString() ?? string.Empty;
         }
 
         private static SimpleListingViewModel CreateItemListingViewModelWithItemLevel(ListingResult listingResult) =>

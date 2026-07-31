@@ -8,5 +8,7 @@
         }
 
         public string Id { get; set; } = string.Empty;
+
+        public int? Tier { get; set; }
     }
 }

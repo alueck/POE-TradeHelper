@@ -17,5 +17,9 @@
         public bool IsCorrupted { get; set; }
 
         public bool IsVaalVersion { get; set; }
+
+        public bool IsImbued { get; set; }
+
+        public bool IsTransfigured { get; set; }
     }
 }

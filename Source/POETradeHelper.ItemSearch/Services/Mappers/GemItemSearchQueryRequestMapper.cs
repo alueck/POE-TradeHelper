@@ -23,6 +23,8 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
             MapGemLevel(result, gemItem);
             MapQuality(result, gemItem);
+            MapImbued(result, gemItem);
+            MapTransfigured(result, gemItem);
 
             return result;
         }
@@ -30,7 +32,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
         protected override void MapItemType(SearchQueryRequest result, Item item)
         {
             base.MapItemType(result, item);
-            result.Query.Type!.Discriminator = ((GemItem)item).TypeDiscriminator;
+            result.Query.Type?.Discriminator = ((GemItem)item).TypeDiscriminator;
         }
 
         protected override void MapItemRarity(SearchQueryRequest result, Item item)
@@ -48,6 +50,18 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             result.Query.Filters.MiscFilters.Quality = new MinMaxFilter
             {
                 Min = gemItem.Quality,
+            };
+
+        private static void MapImbued(SearchQueryRequest result, GemItem gemItem) =>
+            result.Query.Filters.MiscFilters.GemImbued = new BoolOptionFilter
+            {
+                Option = gemItem.IsImbued,
+            };
+
+        private static void MapTransfigured(SearchQueryRequest result, GemItem gemItem) =>
+            result.Query.Filters.MiscFilters.GemTransfigured = new BoolOptionFilter
+            {
+                Option = gemItem.IsTransfigured,
             };
     }
 }

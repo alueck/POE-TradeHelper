@@ -8,8 +8,8 @@ using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
-using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
@@ -23,12 +23,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         public OrganItemStatsParserTests()
         {
             this.statsDataServiceMock = Substitute.For<IStatsDataService>();
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
                 .Returns(
-                    ctx => new StatData
+                    ctx => new TestStatData
                     {
                         Type = StatCategory.Monster.GetDisplayName().ToLower(),
-                        Text = ctx.Arg<string>()!,
+                        Text = ctx.Arg<IReadOnlyCollection<string>>()!.FirstOrDefault()!,
                     });
 
             this.organItemStatsParser = new OrganItemStatsParser(this.statsDataServiceMock);
@@ -93,7 +93,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             {
                 this.statsDataServiceMock
                     .Received()
-                    .GetStatData(stat.Text, false, StatCategory.Monster.GetDisplayName());
+                    .TryGetStatData(Arg.Is<IReadOnlyCollection<string>>(s => s!.Contains(stat.Text)), false, StatCategory.Monster.GetDisplayName());
             }
         }
 
@@ -108,9 +108,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithDescription(Resources.OrganItemDescriptor)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
                 .Returns(
-                    new StatData
+                    new TestStatData
                     {
                         Id = expected,
                         Type = StatCategory.Monster.GetDisplayName(),
@@ -133,9 +133,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithDescription(Resources.OrganItemDescriptor)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), StatCategory.Monster.GetDisplayName())
                 .Returns(
-                    new StatData
+                    new TestStatData
                     {
                         Text = expected,
                         Type = StatCategory.Monster.GetDisplayName(),

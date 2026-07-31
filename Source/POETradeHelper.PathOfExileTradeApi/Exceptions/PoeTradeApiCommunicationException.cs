@@ -17,12 +17,30 @@ namespace POETradeHelper.PathOfExileTradeApi.Exceptions
         {
         }
 
-        public PoeTradeApiCommunicationException(string endpoint, HttpStatusCode httpStatusCode) : base($"Query to '{endpoint}' returned status code {httpStatusCode}")
+        public PoeTradeApiCommunicationException(string endpoint, HttpStatusCode statusCode) : base($"Query to '{endpoint}' returned status code {statusCode}")
         {
+            this.StatusCode = statusCode;
         }
 
-        public PoeTradeApiCommunicationException(string endpoint, string content, HttpStatusCode httpStatusCode) : base($"Query to '{endpoint}' returned status code {httpStatusCode}. Content: {content}")
+        public PoeTradeApiCommunicationException(string endpoint, HttpStatusCode statusCode, string response)
+            : base($"Query to '{endpoint}' returned status code {statusCode}.")
         {
+            this.StatusCode = statusCode;
+            this.Response = response;
         }
+
+        public PoeTradeApiCommunicationException(string endpoint, HttpStatusCode statusCode, string request, string response)
+            : base($"Query to '{endpoint}' returned status code {statusCode}.")
+        {
+            this.StatusCode = statusCode;
+            this.Request = request;
+            this.Response = response;
+        }
+
+        public HttpStatusCode StatusCode { get; }
+
+        public string? Request { get; }
+
+        public string? Response { get; }
     }
 }

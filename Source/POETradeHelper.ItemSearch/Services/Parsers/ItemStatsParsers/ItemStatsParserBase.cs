@@ -1,11 +1,13 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using System.Text.RegularExpressions;
+
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 {
-    public abstract class ItemStatsParserBase
+    public abstract partial class ItemStatsParserBase
     {
         private readonly IStatsDataService statsDataService;
 
@@ -14,24 +16,33 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             this.statsDataService = statsDataService;
         }
 
-        protected virtual ItemStat? GetCompleteItemStat(ItemStat itemStat, bool preferLocalStatData)
+        protected ItemStat? GetCompleteItemStat(IReadOnlyCollection<string> itemStatLines, bool preferLocalStatData, int? tier, StatCategory? statCategoryToSearch = null)
         {
-            string statCategoryToSearch = itemStat.StatCategory != StatCategory.Unknown
-                ? itemStat.StatCategory.GetDisplayName()
-                : StatCategory.Explicit.GetDisplayName();
-
-            var statData = this.statsDataService.GetStatData(itemStat.Text, preferLocalStatData, statCategoryToSearch);
+            var statData = this.statsDataService.TryGetStatData(itemStatLines, preferLocalStatData, statCategoryToSearch.HasValue ? [statCategoryToSearch.GetDisplayName()] : []);
 
             if (statData != null)
             {
-                itemStat.Id = statData.Id;
-                itemStat.StatCategory = statData.Type.ParseToEnumByDisplayName<StatCategory>(StringComparison.OrdinalIgnoreCase) ?? StatCategory.Unknown;
-                itemStat.TextWithPlaceholders = statData.Text;
+                string text = string.Join('\n', itemStatLines.Take(statData.Lines).Select(ReplaceStatCategoryMarkers));
 
-                return itemStat;
+                return new ItemStat(statData.Type.ParseToEnumByDisplayName<StatCategory>(StringComparison.OrdinalIgnoreCase) ?? StatCategory.Unknown)
+                {
+                    Id = statData.Id,
+                    TextWithPlaceholders = statData.Text,
+                    Text = text,
+                    Tier = tier ?? TryGetTier(statData.Text),
+                };
             }
 
             return null;
+        }
+
+        protected static int? TryGetTier(string statDescription)
+        {
+            Match match = GetTierRegex().Match(statDescription);
+
+            return int.TryParse(match.Groups["tier"].Value, out int tier)
+                ? tier
+                : null;
         }
 
         protected static int GetStatsStartIndex(string[] itemStringLines)
@@ -39,5 +50,14 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             int itemLevelLineIndex = Array.FindIndex(itemStringLines, l => l.StartsWith(Resources.ItemLevelDescriptor));
             return itemLevelLineIndex + 2; // skip property group separator
         }
+
+        private static string ReplaceStatCategoryMarkers(string line)
+        {
+            return Enum.GetValues<StatCategory>()
+                .Aggregate(line, (current, statCategory) => current.Replace($" ({statCategory.GetDisplayName()})", string.Empty, StringComparison.OrdinalIgnoreCase));
+        }
+
+        [GeneratedRegex(@"((Rank|Tier): (?<tier>\d+)|\(Tier (?<tier>\d+)\))")]
+        private static partial Regex GetTierRegex();
     }
 }

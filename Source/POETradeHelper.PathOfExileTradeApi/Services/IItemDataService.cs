@@ -1,8 +1,9 @@
-﻿using POETradeHelper.PathOfExileTradeApi.Models;
+﻿using POETradeHelper.Common.Contract;
+using POETradeHelper.PathOfExileTradeApi.Models;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
-    public interface IItemDataService
+    public interface IItemDataService : IInitializable
     {
         ItemType? GetType(string name);
 

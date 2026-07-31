@@ -181,7 +181,7 @@
     <value>Mana Flask</value>
   </data>
   <data name="MapTierDescriptor" xml:space="preserve">
-    <value>Map Tier:</value>
+    <value>Map (Tier</value>
   </data>
   <data name="MonsterPackSizeDescriptor" xml:space="preserve">
     <value>Monster Pack Size:</value>
@@ -240,6 +240,9 @@
   <data name="StatCategoryMonster" xml:space="preserve">
     <value>Monster</value>
   </data>
+  <data name="StatCategoryCrucible" xml:space="preserve">
+    <value>Crucible</value>
+  </data>
   <data name="StatCategoryPseudo" xml:space="preserve">
     <value>Pseudo</value>
   </data>
@@ -249,14 +252,14 @@
   <data name="StatCategoryFractured" xml:space="preserve">
     <value>Fractured</value>
   </data>
-  <data name="EquippableItemCategory_Accessories" xml:space="preserve">
-    <value>Accessories</value>
+  <data name="EquippableItemCategory_Accessory" xml:space="preserve">
+    <value>Accessory</value>
   </data>
   <data name="EquippableItemCategory_Armour" xml:space="preserve">
     <value>Armour</value>
   </data>
-  <data name="EquippableItemCategory_Weapons" xml:space="preserve">
-    <value>Weapons</value>
+  <data name="EquippableItemCategory_Weapon" xml:space="preserve">
+    <value>Weapon</value>
   </data>
   <data name="ItemClassDescriptor" xml:space="preserve">
     <value>Item Class:</value>
@@ -293,5 +296,11 @@
   </data>
   <data name="AttacksPerSecondDescriptor" xml:space="preserve">
     <value>Attacks per Second:</value>
+  </data>
+  <data name="ImbuedKeyword" xml:space="preserve">
+    <value>Imbued</value>
+  </data>
+  <data name="TransfiguredKeyword" xml:space="preserve">
+    <value>Transfigured</value>
   </data>
 </root>

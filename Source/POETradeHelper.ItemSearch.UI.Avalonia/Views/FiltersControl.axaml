@@ -155,6 +155,24 @@
       </Grid>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type localVMs:StatFilterViewModel}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="310" MaxWidth="310" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <localViews:SelectableFilterControl
+          Grid.Column="0"
+          Filter="{Binding .}" />
+        <TextBlock Grid.Column="1"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"
+                   Text="{Binding Tier, StringFormat={}T{0}}"
+                   IsVisible="{Binding Tier, Converter={x:Static ObjectConverters.IsNotNull}}" />
+      </Grid>
+    </DataTemplate>
+    
     <DataTemplate DataType="{x:Type localVMs:FilterViewModelBase}">
       <Grid>
         <Grid.ColumnDefinitions>

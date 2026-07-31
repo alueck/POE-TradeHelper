@@ -1,14 +1,13 @@
 <Project>
-    <PropertyGroup>
-        <CodeAnalysisRuleSet>../../POETradeHelper.ruleset</CodeAnalysisRuleSet>
-    </PropertyGroup>
-
+	<PropertyGroup>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	</PropertyGroup>
     <PropertyGroup Condition="$(Configuration) == 'Release'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="StyleCop.Analyzers">
+        <PackageReference Include="Roslynator.Analyzers">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

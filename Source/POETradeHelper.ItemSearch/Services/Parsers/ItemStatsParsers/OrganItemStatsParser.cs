@@ -28,14 +28,22 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             var groupedItemStatLines = itemStringLines
                 .Skip(statsStartIndex)
                 .TakeWhile(l => l != ParserConstants.PropertyGroupSeparator)
-                .GroupBy(x => x);
+                .GroupBy(x => x.Replace(Resources.UnscalableValueSuffix, string.Empty));
 
-            var itemStats = groupedItemStatLines.Select(group => new SingleValueItemStat(StatCategory.Monster)
+            var itemStats = groupedItemStatLines
+                .Select(group =>
                 {
-                    Text = group.Key.Replace(Resources.UnscalableValueSuffix, string.Empty),
-                    Value = group.Count(),
+                    var itemStat = this.GetCompleteItemStat([group.Key], false, null, StatCategory.Monster);
+                    if (itemStat != null)
+                    {
+                        return new SingleValueItemStat(itemStat)
+                        {
+                            Value = group.Count(),
+                        };
+                    }
+
+                    return null;
                 })
-                .Select(s => this.GetCompleteItemStat(s, false))
                 .OfType<ItemStat>()
                 .ToList();
 
