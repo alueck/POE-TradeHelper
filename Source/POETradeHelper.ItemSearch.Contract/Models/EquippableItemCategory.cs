@@ -8,13 +8,13 @@ namespace POETradeHelper.ItemSearch.Contract.Models
     {
         Unknown,
 
-        [Display(Name = nameof(Resources.EquippableItemCategory_Accessories), ResourceType = typeof(Resources))]
-        Accessories,
+        [Display(Name = nameof(Resources.EquippableItemCategory_Accessory), ResourceType = typeof(Resources))]
+        Accessory,
 
         [Display(Name = nameof(Resources.EquippableItemCategory_Armour), ResourceType = typeof(Resources))]
         Armour,
 
-        [Display(Name = nameof(Resources.EquippableItemCategory_Weapons), ResourceType = typeof(Resources))]
-        Weapons,
+        [Display(Name = nameof(Resources.EquippableItemCategory_Weapon), ResourceType = typeof(Resources))]
+        Weapon,
     }
 }

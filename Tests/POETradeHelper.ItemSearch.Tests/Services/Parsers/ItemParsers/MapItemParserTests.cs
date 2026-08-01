@@ -7,23 +7,21 @@ using NUnit.Framework;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
-using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
+using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models;
 
 namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
 {
     public class MapItemParserTests : ItemParserTestsBase
     {
-        private readonly IItemTypeParser itemTypeParserMock;
         private readonly IItemStatsParser<ItemWithStats> itemStatsParserMock;
         private readonly MapItemStringBuilder mapItemStringBuilder;
 
         public MapItemParserTests()
         {
-            this.itemTypeParserMock = Substitute.For<IItemTypeParser>();
             this.itemStatsParserMock = Substitute.For<IItemStatsParser<ItemWithStats>>();
-            this.ItemParser = new MapItemParser(this.itemTypeParserMock, this.itemStatsParserMock);
+            this.ItemParser = new MapItemParser(this.itemStatsParserMock);
             this.mapItemStringBuilder = new MapItemStringBuilder();
         }
 
@@ -138,61 +136,17 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         [TestCase(ItemRarity.Magic, false)]
         [TestCase(ItemRarity.Rare, false)]
         [TestCase(ItemRarity.Unique, false)]
-        public void ParseShouldSetTypeFromItemTypeParser(ItemRarity itemRarity, bool isIdentified)
+        public void ParseShouldNotSetType(ItemRarity itemRarity, bool isIdentified)
         {
-            const string expected = "Result from ItemTypeParser";
             string[] itemStringLines = this.mapItemStringBuilder
                 .WithRarity(itemRarity)
                 .WithIdentified(isIdentified)
                 .WithName("Dig Map")
                 .BuildLines();
 
-            this.itemTypeParserMock.ParseType(itemStringLines, itemRarity, isIdentified)
-                .Returns(expected);
-
             MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
 
-            result.Type.Should().Be(expected);
-        }
-
-        [TestCase("Blighted Dig Map", true)]
-        [TestCase("Dig Map", false)]
-        [TestCase("Blight-ravaged Dig Map", false)]
-        public void ParseShouldParseBlightedMap(string type, bool expected)
-        {
-            string[] itemStringLines = this.mapItemStringBuilder
-                .WithType(type)
-                .BuildLines();
-
-            MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
-
-            result.IsBlighted.Should().Be(expected);
-        }
-
-        [Test]
-        public void ParseShouldParseSuperiorBlightedMap()
-        {
-            string[] itemStringLines = this.mapItemStringBuilder
-                .WithType($"{Resources.SuperiorPrefix} {Resources.BlightedPrefix} Dig Map")
-                .BuildLines();
-
-            MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
-
-            result.IsBlighted.Should().BeTrue();
-        }
-
-        [TestCase("Blight-ravaged Dig Map", true)]
-        [TestCase("Dig Map", false)]
-        [TestCase("Blighted Dig Map", false)]
-        public void ParseShouldParseBlightRavagedMap(string type, bool expected)
-        {
-            string[] itemStringLines = this.mapItemStringBuilder
-                .WithType(type)
-                .BuildLines();
-
-            MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
-
-            result.IsBlightRavaged.Should().Be(expected);
+            result.Type.Should().BeEmpty();
         }
 
         [TestCase(true)]
@@ -228,7 +182,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             string[] itemStringLines = this.mapItemStringBuilder
                 .WithRarity(ItemRarity.Normal)
-                .WithType("Thicket Map")
+                .WithName("Desolate Cradle")
                 .BuildLines();
 
             this.ItemParser.Parse(itemStringLines);
@@ -243,7 +197,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         {
             string[] itemStringLines = this.mapItemStringBuilder
                 .WithRarity(ItemRarity.Normal)
-                .WithType("Thicket Map")
+                .WithName("Desolate Cradle")
                 .WithUnidentified()
                 .BuildLines();
 
@@ -260,7 +214,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             ItemStats expected = new();
             string[] itemStringLines = this.mapItemStringBuilder
                 .WithRarity(ItemRarity.Normal)
-                .WithType("Thicket Map")
+                .WithName("Desolate Cradle")
                 .BuildLines();
 
             this.itemStatsParserMock.Parse(Arg.Any<string[]>(), Arg.Any<bool>())
@@ -271,11 +225,41 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             result.Stats.Should().BeSameAs(expected);
         }
 
+        [Test]
+        public void ParseShouldParseBlightedMap()
+        {
+            string[] itemStringLines = this.mapItemStringBuilder
+                .WithRarity(ItemRarity.Normal)
+                .WithName("Cemetery")
+                .WithBlighted(MapBlightedStatus.Blighted)
+                .BuildLines();
+
+            MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
+
+            result.IsBlighted.Should().BeTrue();
+            result.IsBlightRavaged.Should().BeFalse();
+        }
+
+        [Test]
+        public void ParseShouldParseBlightRavagedMap()
+        {
+            string[] itemStringLines = this.mapItemStringBuilder
+                .WithRarity(ItemRarity.Normal)
+                .WithName("Cemetery")
+                .WithBlighted(MapBlightedStatus.BlightRavaged)
+                .BuildLines();
+
+            MapItem result = (MapItem)this.ItemParser.Parse(itemStringLines);
+
+            result.IsBlightRavaged.Should().BeTrue();
+            result.IsBlighted.Should().BeFalse();
+        }
+
         protected override string[] GetValidItemStringLines()
         {
             return this.mapItemStringBuilder
                 .WithRarity(ItemRarity.Normal)
-                .WithType("Thicket Map")
+                .WithName("Desolate Cradle")
                 .WithUnidentified()
                 .BuildLines();
         }

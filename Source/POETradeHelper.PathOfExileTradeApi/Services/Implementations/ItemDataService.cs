@@ -8,7 +8,7 @@ using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
-    public class ItemDataService : DataServiceBase<Data<ItemData>>, IItemDataService
+    internal sealed class ItemDataService : DataServiceBase<Data<ItemData>>, IItemDataService
     {
         public ItemDataService(
             IHttpClientFactoryWrapper httpClientFactory,

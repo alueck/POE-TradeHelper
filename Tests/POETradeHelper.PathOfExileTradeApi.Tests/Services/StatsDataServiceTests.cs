@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -8,8 +9,10 @@ using System.Threading.Tasks;
 using AwesomeAssertions;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Testing;
 
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using NUnit.Framework;
 
@@ -22,12 +25,16 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PathOfExileTradeApi.Services.Implementations;
+using POETradeHelper.RePoE.Models;
+using POETradeHelper.RePoE.Services;
 
 namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 {
     public class StatsDataServiceTests
     {
         private readonly IPoeTradeApiJsonSerializer poeTradeApiJsonSerializerMock;
+        private readonly IAlternativeStatTextsService alternativeStatTextsServiceMock;
+        private readonly FakeLogger<StatsDataService> loggerMock;
         private readonly StatsDataService statsDataService;
         private readonly IHttpClientWrapper httpClientWrapperMock;
 
@@ -45,15 +52,18 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 .Returns(this.httpClientWrapperMock);
 
             this.poeTradeApiJsonSerializerMock = Substitute.For<IPoeTradeApiJsonSerializer>();
+            this.alternativeStatTextsServiceMock = Substitute.For<IAlternativeStatTextsService>();
+            this.loggerMock = new FakeLogger<StatsDataService>();
 
             this.statsDataService = new StatsDataService(
                 httpClientFactoryWrapperMock,
                 this.poeTradeApiJsonSerializerMock,
-                Substitute.For<ILogger<StatsDataService>>());
+                this.alternativeStatTextsServiceMock,
+                this.loggerMock);
         }
 
         [Test]
-        public async Task OnInitShouldCallGetAsyncOnHttpClientWrapper()
+        public async Task OnInit_ShouldCallGetAsyncOnHttpClientWrapper()
         {
             await this.statsDataService.OnInitAsync();
 
@@ -63,7 +73,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
-        public async Task OnInitShouldDeserializeGetAsyncResponseAsQueryResult()
+        public async Task OnInit_ShouldDeserializeGetAsyncResponseAsQueryResult()
         {
             const string content = "serialized content";
 
@@ -81,7 +91,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
         }
 
         [Test]
-        public async Task OnInitShouldThrowPoeTradeApiCommunicationExceptionIfStatusCodeIsNotSuccess()
+        public async Task OnInit_ShouldThrowPoeTradeApiCommunicationException_IfStatusCodeIsNotSuccess()
         {
             this.httpClientWrapperMock.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
                 .Returns(new HttpResponseMessage
@@ -96,11 +106,49 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 .Where(x => x.Message.Contains(Resources.PoeTradeApiStatsDataEndpoint));
         }
 
+        [Test]
+        public async Task OnInit_ShouldFetchAlternativeStatTexts()
+        {
+            // arrange
+            this.poeTradeApiJsonSerializerMock
+                .Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
+                .Returns(new QueryResult<Data<StatData>>());
+
+            // act
+            await this.statsDataService.OnInitAsync();
+
+            // assert
+            this.alternativeStatTextsServiceMock
+                .Received()
+                .GetAlternativeStatTexts();
+        }
+
+        [Test]
+        public async Task OnInit_ShouldCatchAndLogExceptionFromAlternativeStatTextsService()
+        {
+            // arrange
+            this.poeTradeApiJsonSerializerMock
+                .Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
+                .Returns(new QueryResult<Data<StatData>>());
+
+            Exception exception = new("Test exception");
+            this.alternativeStatTextsServiceMock
+                .GetAlternativeStatTexts()
+                .Throws(exception);
+
+            // act
+            await this.statsDataService.OnInitAsync();
+
+            // assert
+            this.loggerMock.LatestRecord.Level.Should().Be(LogLevel.Warning);
+            this.loggerMock.LatestRecord.Exception.Should().Be(exception);
+        }
+
         [TestCase("+39 to maximum life", "# to maximum life")]
         [TestCase("60% chance for Poisons inflicted with this Weapon to deal 100% more Damage", "#% chance for Poisons inflicted with this Weapon to deal 100% more Damage")]
         [TestCase("0.37% of Physical Attack Damage Leeched as Life", "#% of Physical Attack Damage Leeched as Life")]
         [TestCase("Added Small Passive Skills also grant: +8 to Maximum Mana", "Added Small Passive Skills also grant: +# to Maximum Mana")]
-        public async Task GetStatDataShouldReturnCorrectStatDataForExplicitStat(string statText, string statDataText)
+        public async Task TryGetStatData_ShouldReturnCorrectStatDataForExplicitStat(string statText, string statDataText)
         {
             string statCategory = StatCategory.Explicit.GetDisplayName();
 
@@ -129,13 +177,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData? result = this.statsDataService.GetStatData(statText, false, statCategory);
+            IStatData? result = this.statsDataService.TryGetStatData([statText], false, statCategory);
 
             result.Should().Be(expected);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnCorrectStatData()
+        public async Task TryGetStatData_ShouldReturnCorrectStatData()
         {
             string statCategory = StatCategory.Explicit.GetDisplayName();
             const string itemStatText = "Adds 10 to 20 Chaos Damage";
@@ -165,13 +213,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData? result = this.statsDataService.GetStatData(itemStatText, false, statCategory);
+            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], false, statCategory);
 
             result.Should().Be(expected);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnCorrectStatDataForExplicitStatWithFixedValues()
+        public async Task TryGetStatData_ShouldReturnCorrectStatDataForExplicitStatWithFixedValues()
         {
             string statCategory = StatCategory.Explicit.GetDisplayName();
             const string itemStatText = "60% chance for Poisons inflicted with this Weapon to deal 100% more Damage";
@@ -207,13 +255,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData? result = this.statsDataService.GetStatData(itemStatText, false, statCategory);
+            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], false, statCategory);
 
             result.Should().Be(expected);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnCorrectStatDataForImplicitStat()
+        public async Task TryGetStatData_ShouldReturnCorrectStatDataForImplicitStat()
         {
             const StatCategory statCategory = StatCategory.Implicit;
             ItemStat implicitItemStat = new(statCategory) { Text = "3% increased Movement Speed" };
@@ -222,33 +270,33 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Id = "stat_12345678", Text = "#% increased Movement Speed", Type = statCategory.GetDisplayName().ToLower(),
             };
 
-            await this.GetStatDataShouldReturnCorrectStatData(implicitItemStat, expected);
+            await this.TryGetStatData_ShouldReturnCorrectStatData(implicitItemStat, expected);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnCorrectStatDataForCraftedStat()
+        public async Task TryGetStatData_ShouldReturnCorrectStatDataForCraftedStat()
         {
             const StatCategory statCategory = StatCategory.Crafted;
             ItemStat craftedItemStat = new(statCategory) { Text = "10% increased Movement Speed" };
 
             StatData expected = new() { Id = "stat_1234", Text = "#% increased Movement Speed", Type = statCategory.GetDisplayName().ToLower() };
 
-            await this.GetStatDataShouldReturnCorrectStatData(craftedItemStat, expected);
+            await this.TryGetStatData_ShouldReturnCorrectStatData(craftedItemStat, expected);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnCorrectStatDataForEnchantedStat()
+        public async Task TryGetStatData_ShouldReturnCorrectStatDataForEnchantedStat()
         {
             const StatCategory statCategory = StatCategory.Enchant;
             ItemStat craftedItemStat = new(statCategory) { Text = "10% increased Movement Speed" };
 
             StatData expected = new() { Id = "stat_1234", Text = "#% increased Movement Speed", Type = statCategory.GetDisplayName().ToLower() };
 
-            await this.GetStatDataShouldReturnCorrectStatData(craftedItemStat, expected);
+            await this.TryGetStatData_ShouldReturnCorrectStatData(craftedItemStat, expected);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnCorrectStatDataForMonsterStat()
+        public async Task TryGetStatData_ShouldReturnCorrectStatDataForMonsterStat()
         {
             const StatCategory statCategory = StatCategory.Monster;
             ItemStat monsterItemStat = new(statCategory) { Text = "Drops additional Currency Items" };
@@ -259,11 +307,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Type = statCategory.GetDisplayName().ToLower(),
             };
 
-            await this.GetStatDataShouldReturnCorrectStatData(monsterItemStat, expected);
+            await this.TryGetStatData_ShouldReturnCorrectStatData(monsterItemStat, expected);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnCorrectStatDataEvenIfTextWithPlaceholdersDoesNotFullyMatch()
+        public async Task TryGetStatData_ShouldReturnCorrectStatDataEven_IfTextWithPlaceholdersDoesNotFullyMatch()
         {
             const StatCategory statCategory = StatCategory.Implicit;
             ItemStat explicitItemStat = new(statCategory) { Text = "+10 to Maximum Mana per Green Socket" };
@@ -274,11 +322,11 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
                 Type = statCategory.GetDisplayName().ToLower(),
             };
 
-            await this.GetStatDataShouldReturnCorrectStatData(explicitItemStat, expected);
+            await this.TryGetStatData_ShouldReturnCorrectStatData(explicitItemStat, expected);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnOnlyMatchingStatDataFromGivenCategories()
+        public async Task TryGetStatData_ShouldReturnOnlyMatchingStatDataFromGivenCategories()
         {
             string statCategoryToSearch = StatCategory.Implicit.GetDisplayName();
             const string itemStatText = "3% increased Movement Speed";
@@ -314,7 +362,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData? result = this.statsDataService.GetStatData(itemStatText, false, statCategoryToSearch);
+            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], false, statCategoryToSearch);
 
             result.Should().Be(expectedStatData);
         }
@@ -345,7 +393,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData? result = this.statsDataService.GetStatDataById(itemStatId);
+            IStatData? result = this.statsDataService.GetStatDataById(itemStatId);
 
             result.Should().BeNull();
         }
@@ -378,13 +426,13 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData? result = this.statsDataService.GetStatDataById(expected.Id);
+            IStatData? result = this.statsDataService.GetStatDataById(expected.Id);
 
             result.Should().Be(expected);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnNullForNonExactMatch()
+        public async Task TryGetStatData_ShouldReturnNullForNonExactMatch()
         {
             // arrange
             const string itemStatText = "+15% reduced Cast Speed";
@@ -413,14 +461,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             await this.statsDataService.OnInitAsync();
 
             // act
-            StatData? result = this.statsDataService.GetStatData(itemStatText, false);
+            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], false);
 
             // assert
             result.Should().BeNull();
         }
 
         [Test]
-        public async Task GetStatDataShouldPreferLocalStat()
+        public async Task TryGetStatData_ShouldPreferLocalStat()
         {
             // arrange
             const string itemStatText = "+15 % attack speed";
@@ -451,14 +499,14 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             await this.statsDataService.OnInitAsync();
 
             // act
-            StatData? result = this.statsDataService.GetStatData(itemStatText, true);
+            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], true);
 
             // assert
             result.Should().Be(expectedStatData);
         }
 
         [Test]
-        public async Task GetStatDataShouldReturnLastIfMultipleWithSameId()
+        public async Task TryGetStatData_ShouldReturnLast_IfMultipleWithSameId()
         {
             // arrange
             const string itemStatText = "+15 % attack speed";
@@ -489,13 +537,94 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             await this.statsDataService.OnInitAsync();
 
             // act
-            StatData? result = this.statsDataService.GetStatData(itemStatText, true);
+            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], true);
 
             // assert
             result.Should().Be(expectedStatData);
         }
 
-        private async Task GetStatDataShouldReturnCorrectStatData(ItemStat itemStat, StatData expectedStatData)
+        [Test]
+        public async Task TryGetStatData_ShouldReturnCorrectStatDataByAlternativeText()
+        {
+            // arrange
+            StatData expectedStatData = new()
+            {
+                Id = "expected id",
+                Text = $"#% chance to Trigger Edict of Frost on Kill",
+                Type = StatCategory.Explicit.GetDisplayName().ToLower(),
+            };
+
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result =
+                    [
+                        new()
+                        {
+                            Id = StatCategory.Explicit.GetDisplayName(),
+                            Entries =
+                            [
+                                expectedStatData,
+                            ],
+                        },
+                    ],
+                });
+
+            const string alternativeStatText = "Trigger Edict of Frost on Kill";
+            this.alternativeStatTextsServiceMock
+                .GetAlternativeStatTexts()
+                .Returns(new List<StatTextsGroup>
+                    {
+                        new(expectedStatData.Id, [expectedStatData.Text, alternativeStatText]),
+                    }.ToAsyncEnumerable());
+
+            await this.statsDataService.OnInitAsync();
+
+            // act
+            IStatData? result = this.statsDataService.TryGetStatData([alternativeStatText], true);
+
+            // assert
+            result.Should().Be(expectedStatData);
+        }
+
+        [Test]
+        public async Task TryGetStatData_ShouldReturnCorrectStatData_IfMultiline()
+        {
+            // arrange
+            const string itemStatText = "Area is infested with Fungal Growths\nMap's Item Quantity Modifiers also affect Blight Chest count at 25% value\nCan be Anointed up to 3 times\nNatural inhabitants of this area have been removed";
+            StatData expectedStatData = new()
+            {
+                Id = "expected id",
+                Text = "Area is infested with Fungal Growths\nMap's Item Quantity Modifiers also affect Blight Chest count at 25% value\nCan be Anointed up to 3 times",
+                Type = StatCategory.Implicit.GetDisplayName().ToLower(),
+            };
+
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result =
+                    [
+                        new()
+                        {
+                            Id = StatCategory.Implicit.GetDisplayName(),
+                            Entries =
+                            [
+                                expectedStatData,
+                            ],
+                        },
+                    ],
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            // act
+            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], true, StatCategory.Implicit.GetDisplayName());
+
+            // assert
+            result.Should().Be(expectedStatData);
+        }
+
+        private async Task TryGetStatData_ShouldReturnCorrectStatData(ItemStat itemStat, StatData expectedStatData)
         {
             string statCategory = itemStat.StatCategory.GetDisplayName();
 
@@ -529,7 +658,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
 
             await this.statsDataService.OnInitAsync();
 
-            StatData? result = this.statsDataService.GetStatData(itemStat.Text, false, itemStat.StatCategory.GetDisplayName());
+            IStatData? result = this.statsDataService.TryGetStatData([itemStat.Text], false, itemStat.StatCategory.GetDisplayName());
 
             result.Should().Be(expectedStatData);
         }

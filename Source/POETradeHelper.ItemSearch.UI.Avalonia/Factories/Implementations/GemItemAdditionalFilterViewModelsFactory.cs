@@ -7,6 +7,7 @@ using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.UI.Avalonia.Properties;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
+using POETradeHelper.PathOfExileTradeApi.Models.Filters;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
 {
@@ -25,6 +26,14 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 result.Add(this.GetQualityFilterViewModel(gemItem, searchQueryRequest));
                 result.Add(this.GetGemLevelFilterViewModel(gemItem, searchQueryRequest));
                 result.Add(this.GetGemExperiencePercentFilterViewModel(gemItem, searchQueryRequest));
+
+                if (!gemItem.IsVaalVersion)
+                {
+                    result.Add(this.GetCorruptedFilterViewModel(searchQueryRequest));
+                    result.Add(this.GetGemImbuedFilterViewModel(searchQueryRequest));
+                }
+
+                result.Add(this.GetGemTransfiguredFilterViewModel(searchQueryRequest));
             }
 
             return result;
@@ -46,6 +55,24 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 Resources.GemExperiencePercentColumn,
                 gemItem.ExperiencePercent,
                 searchQueryRequest);
+        }
+
+        private FilterViewModelBase GetGemImbuedFilterViewModel(SearchQueryRequest searchQueryRequest)
+        {
+            return new BindableFilterViewModel<BoolOptionFilter>(x => x.Query.Filters.MiscFilters.GemImbued)
+            {
+                Text = Resources.Imbued,
+                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.GemImbued?.Option,
+            };
+        }
+
+        private FilterViewModelBase GetGemTransfiguredFilterViewModel(SearchQueryRequest searchQueryRequest)
+        {
+            return new BindableFilterViewModel<BoolOptionFilter>(x => x.Query.Filters.MiscFilters.GemTransfigured)
+            {
+                Text = Resources.Transfigured,
+                IsEnabled = searchQueryRequest.Query.Filters.MiscFilters.GemTransfigured?.Option,
+            };
         }
     }
 }

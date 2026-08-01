@@ -20,13 +20,14 @@ using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
+using POETradeHelper.ItemSearch.UI.Avalonia.Controllers;
 using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.ViewModels;
 
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
-
+using Serilog.Formatting.Compact;
 using Splat;
 
 namespace POETradeHelper
@@ -68,20 +69,46 @@ namespace POETradeHelper
             var serviceCollection = new ServiceCollection();
 
             Log.Logger = new LoggerConfiguration()
+#if DEBUG
+                .MinimumLevel.Is(LogEventLevel.Debug)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("System", LogEventLevel.Information)
+#else
                 .MinimumLevel.Is(LogEventLevel.Warning)
+#endif
                 .Enrich.WithExceptionDetails()
+                .Enrich.FromLogContext()
                 .WriteTo.Debug()
                 .WriteTo.Console()
-                .WriteTo.File(Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.txt"), fileSizeLimitBytes: 104857600, rollOnFileSizeLimit: true, retainedFileCountLimit: 1).CreateLogger();
+                .WriteTo.File(
+                    new CompactJsonFormatter(),
+                    Path.Combine(FileConfiguration.PoeTradeHelperAppDataFolder, "log.jsonl"),
+                    fileSizeLimitBytes: 104857600,
+                    rollOnFileSizeLimit: true,
+                    retainedFileCountLimit: 1)
+                .CreateLogger();
 
             serviceCollection.AddLogging(builder => builder.AddSerilog());
             serviceCollection.AddMemoryCache();
-            serviceCollection.AddMediator();
+            AddMediator(serviceCollection);
 
             ConfigureOptions(serviceCollection);
             RegisterModules(serviceCollection, applicationAssemblies);
 
             return serviceCollection;
+        }
+
+        private static void AddMediator(ServiceCollection serviceCollection)
+        {
+            serviceCollection.AddMediator();
+
+            // There has to be a single instance of the overlay controller. AddMediator registers the type twice because it implements two IRequestHandlers.
+            // So we remove it again and let the Autofac registration handle this case.
+            var serviceDescriptors = serviceCollection.Where(x => x.ImplementationType == typeof(ItemSearchResultOverlayController)).ToArray();
+            foreach (ServiceDescriptor serviceDescriptor in serviceDescriptors)
+            {
+                serviceCollection.Remove(serviceDescriptor);
+            }
         }
 
         private static void RegisterInterceptors(ContainerBuilder builder, Assembly[] assemblies)

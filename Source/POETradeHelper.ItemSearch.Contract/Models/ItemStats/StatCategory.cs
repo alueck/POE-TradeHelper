@@ -28,5 +28,11 @@ namespace POETradeHelper.ItemSearch.Contract.Models
 
         [Display(Name = nameof(Resources.StatCategoryMonster), ResourceType = typeof(Resources))]
         Monster,
+
+        [Display(Name = nameof(Resources.StatCategoryCrucible), ResourceType = typeof(Resources))]
+        Crucible,
+
+        [Display(Name = nameof(Resources.StatCategoryImbued), ResourceType = typeof(Resources))]
+        Imbued,
     }
 }

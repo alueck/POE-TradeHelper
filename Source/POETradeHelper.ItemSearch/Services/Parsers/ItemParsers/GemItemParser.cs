@@ -1,23 +1,27 @@
 ﻿using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 {
-    public class GemItemParser : ItemParserBase
+    public class GemItemParser : ItemWithStatsParserBase
     {
         private const int NameLineIndex = 2;
         private readonly IItemDataService itemDataService;
 
-        public GemItemParser(IItemDataService itemDataService)
+        public GemItemParser(IItemDataService itemDataService, IItemStatsParser<ItemWithStats> itemStatsParser)
+            : base(itemStatsParser)
         {
             this.itemDataService = itemDataService;
         }
 
+        protected override IReadOnlyCollection<StatCategory>? CategoriesFilter { get; } = [StatCategory.Imbued];
+
         public override bool CanParse(string[] itemStringLines) => this.HasRarity(itemStringLines, ItemRarity.Gem);
 
-        protected override Item ParseItem(string[] itemStringLines)
+        protected override ItemWithStats ParseItemWithoutStats(string[] itemStringLines)
         {
             string? vaalName = Array.Find(itemStringLines, l => l.StartsWith(Resources.VaalKeyword));
             string name = GetName(itemStringLines[NameLineIndex], vaalName);
@@ -34,6 +38,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                 Level = GetIntegerFromFirstStringContaining(itemStringLines, Resources.LevelDescriptor),
                 ExperiencePercent = GetExperiencePercent(itemStringLines),
                 IsVaalVersion = !string.IsNullOrEmpty(vaalName),
+                IsImbued = Array.Exists(itemStringLines, l => l == Resources.ImbuedKeyword),
+                IsTransfigured = Array.Exists(itemStringLines, l => l == Resources.TransfiguredKeyword),
             };
 
             return gemItem;
@@ -71,13 +77,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                     .Select(decimal.Parse)
                     .ToArray();
 
-                experiencePercent = GetIntegralPercent(experienceNumbers.First(), experienceNumbers.Last());
+                experiencePercent = GetIntegerPercent(experienceNumbers.First(), experienceNumbers.Last());
             }
 
             return experiencePercent;
         }
 
-        private static int GetIntegralPercent(decimal currentOutOfTotal, decimal total)
+        private static int GetIntegerPercent(decimal currentOutOfTotal, decimal total)
         {
             decimal percent = currentOutOfTotal / total * 100;
 

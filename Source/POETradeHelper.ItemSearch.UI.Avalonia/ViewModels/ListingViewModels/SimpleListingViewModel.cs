@@ -9,6 +9,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
     public class SimpleListingViewModel
     {
         [Display(ShortName = nameof(Resources.AccountNameColumn), ResourceType = typeof(Resources), Order = 0)]
+        [DataGridStarWidth(1)]
         public string AccountName { get; set; } = string.Empty;
 
         [Display(ShortName = nameof(Resources.PriceColumn), ResourceType = typeof(Resources), Order = 1)]

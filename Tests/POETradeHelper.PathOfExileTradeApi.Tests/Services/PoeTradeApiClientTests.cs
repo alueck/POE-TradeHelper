@@ -247,52 +247,6 @@ public class PoeTradeApiClientTests
     }
 
     [Test]
-    public async Task GetListingsAsyncWithSearchQueryRequestShouldReturnFetchResultForFirstTwoPagesIfEnoughDataFound()
-    {
-        // arrange
-        const string id = "aef21";
-        const string league = "League";
-
-        SearchQueryResult searchQueryResult = new()
-        {
-            Id = id,
-            Result = Enumerable.Range(0, 100).Select(x => x.ToString()).ToList(),
-            Total = 100,
-        };
-
-        ItemListingsQueryResult firstListingsResult = new()
-        {
-            Result = [new ListingResult { Id = "Test" }],
-            CurrentPage = 1,
-            TotalCount = 100,
-            Uri = new Uri($"{Resources.PoeTradeBaseUrl}{Resources.PoeTradeApiSearchEndpoint}/{league}/{id}"),
-            SearchQueryResult = searchQueryResult,
-        };
-
-        ItemListingsQueryResult secondListingsResult = firstListingsResult with
-        {
-            Result = [new ListingResult { Id = "Test2" }],
-            CurrentPage = 2,
-        };
-
-        this.poeTradeApiJsonSerializerMock.Deserialize<SearchQueryResult>(Arg.Any<string>())
-            .Returns(searchQueryResult);
-
-        this.poeTradeApiJsonSerializerMock.Deserialize<ItemListingsQueryResult>(Arg.Any<string>())
-            .Returns(firstListingsResult, secondListingsResult);
-
-        // act
-        ItemListingsQueryResult result = await this.poeTradeApiClient.GetListingsAsync(new SearchQueryRequest { League = league });
-
-        // assert
-        result.Should().BeEquivalentTo(firstListingsResult with
-        {
-            CurrentPage = 2,
-            Result = [firstListingsResult.Result[0], secondListingsResult.Result[0]],
-        });
-    }
-
-    [Test]
     public async Task GetListingsAsyncWithSearchQueryRequestShouldReturnResultWithUri()
     {
         // arrange
@@ -415,17 +369,18 @@ public class PoeTradeApiClientTests
         GetListingsAsyncWithExchangeQueryRequestShouldThrowExceptionIfResponseStatusCodeDoesNotIndicateSuccess()
     {
         ExchangeQueryRequest exchangeQueryRequest = new();
-        const string jsonContent = "request";
+        const string requestContent = "request";
+        const string responseContent = "response";
         const HttpStatusCode httpStatusCode = HttpStatusCode.BadRequest;
         HttpResponseMessage httpResponse = new()
         {
-            Content = new StringContent(string.Empty),
+            Content = new StringContent(responseContent),
             StatusCode = httpStatusCode,
         };
 
         this.poeTradeApiJsonSerializerMock
             .Serialize(Arg.Any<ExchangeQueryRequest>())
-            .Returns(jsonContent);
+            .Returns(requestContent);
         this.httpClientWrapperMock
             .PostAsync(Arg.Any<string>(), Arg.Any<HttpContent>(), Arg.Any<CancellationToken>())
             .Returns(httpResponse);
@@ -436,7 +391,9 @@ public class PoeTradeApiClientTests
             .Where(ex =>
                 ex.Message.Contains(httpStatusCode.ToString())
                 && ex.Message.Contains(exchangeQueryRequest.Endpoint)
-                && ex.Message.Contains(jsonContent));
+                && ex.StatusCode == httpStatusCode
+                && ex.Request == requestContent
+                && ex.Response == responseContent);
     }
 
     [Test]
@@ -556,18 +513,19 @@ public class PoeTradeApiClientTests
     }
 
     private async Task AssertThrowsPoeTradeApiCommunicationExceptionIfHttpResponseDoesNotReturnSuccessStatusCode(
-        Func<Task> action, string endpoint, string jsonContent = "")
+        Func<Task> action, string endpoint, string requestContent = "")
     {
         const HttpStatusCode httpStatusCode = HttpStatusCode.BadRequest;
+        const string responseContent = "response";
 
         HttpResponseMessage httpResponse = new()
         {
-            Content = new StringContent(string.Empty),
+            Content = new StringContent(responseContent),
             StatusCode = httpStatusCode,
         };
 
         this.poeTradeApiJsonSerializerMock.Serialize(Arg.Any<SearchQueryRequest>())
-            .Returns(jsonContent);
+            .Returns(requestContent);
         this.httpClientWrapperMock.GetAsync(Arg.Is<string>(s => s!.Contains(endpoint)), Arg.Any<CancellationToken>())
             .Returns(httpResponse);
         this.httpClientWrapperMock
@@ -579,11 +537,11 @@ public class PoeTradeApiClientTests
 
         ExceptionAssertions<PoeTradeApiCommunicationException> exceptionAssertions = await action.Should()
             .ThrowAsync<PoeTradeApiCommunicationException>()
-            .Where(ex => ex.Message.Contains(httpStatusCode.ToString()) && ex.Message.Contains(endpoint));
+            .Where(ex => ex.Message.Contains(httpStatusCode.ToString()) && ex.Message.Contains(endpoint) && ex.Response == responseContent);
 
-        if (!string.IsNullOrEmpty(jsonContent))
+        if (!string.IsNullOrEmpty(requestContent))
         {
-            exceptionAssertions.Where(ex => ex.Message.Contains(jsonContent));
+            exceptionAssertions.Where(ex => ex.Request == requestContent);
         }
     }
 }

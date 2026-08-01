@@ -54,11 +54,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             this.advancedFiltersViewModel.IsEnabled.Should().BeTrue();
         }
 
+        [TestCase(StatCategory.Unknown)]
         [TestCase(StatCategory.Enchant)]
         [TestCase(StatCategory.Fractured)]
         [TestCase(StatCategory.Implicit)]
         [TestCase(StatCategory.Explicit)]
         [TestCase(StatCategory.Crafted)]
+        [TestCase(StatCategory.Crucible)]
         [TestCase(StatCategory.Monster)]
         [TestCase(StatCategory.Pseudo)]
         public async Task LoadAsyncShouldCallCreateOnStatFilterViewModelFactoryForItemStats(StatCategory statCategory)
@@ -144,6 +146,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
             this.advancedFiltersViewModel.FracturedItemStatFilters.Add(new StatFilterViewModel());
             this.advancedFiltersViewModel.MonsterItemStatFilters.Add(new StatFilterViewModel());
             this.advancedFiltersViewModel.PseudoItemStatFilters.Add(new StatFilterViewModel());
+            this.advancedFiltersViewModel.OtherItemStatFilters.Add(new StatFilterViewModel());
+            this.advancedFiltersViewModel.CrucibleItemStatFilters.Add(new StatFilterViewModel());
             this.advancedFiltersViewModel.AdditionalFilters.Add(new StatFilterViewModel());
 
             await this.advancedFiltersViewModel.LoadAsync(item, new SearchQueryRequest(), default);
@@ -166,11 +170,13 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 
         private static IEnumerable GetLoadAsyncShouldAssignFilterViewModelsStatsTestCases()
         {
+            yield return new TestCaseData(StatCategory.Unknown, (GetFilterViewModels)(x => x.OtherItemStatFilters));
             yield return new TestCaseData(StatCategory.Enchant, (GetFilterViewModels)(x => x.EnchantedItemStatFilters));
             yield return new TestCaseData(StatCategory.Fractured, (GetFilterViewModels)(x => x.FracturedItemStatFilters));
             yield return new TestCaseData(StatCategory.Implicit, (GetFilterViewModels)(x => x.ImplicitItemStatFilters));
             yield return new TestCaseData(StatCategory.Explicit, (GetFilterViewModels)(x => x.ExplicitItemStatFilters));
             yield return new TestCaseData(StatCategory.Crafted, (GetFilterViewModels)(x => x.CraftedItemStatFilters));
+            yield return new TestCaseData(StatCategory.Crucible, (GetFilterViewModels)(x => x.CrucibleItemStatFilters));
             yield return new TestCaseData(StatCategory.Monster, (GetFilterViewModels)(x => x.MonsterItemStatFilters));
             yield return new TestCaseData(StatCategory.Pseudo, (GetFilterViewModels)(x => x.PseudoItemStatFilters));
         }

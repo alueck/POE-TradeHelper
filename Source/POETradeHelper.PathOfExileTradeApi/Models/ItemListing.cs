@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace POETradeHelper.PathOfExileTradeApi.Models
 {
     public class ItemListing
     {
-        public bool Identified { get; set; }
-
-        public bool Corrupted { get; set; }
-
         [JsonPropertyName("ilvl")]
         public byte ItemLevel { get; set; }
 
@@ -17,5 +14,8 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
         public IList<Property> Properties { get; set; } = [];
 
         public IList<Property> AdditionalProperties { get; set; } = [];
+
+        [JsonExtensionData]
+        public Dictionary<string, JsonElement> AdditionalData { get; set; } = [];
     }
 }

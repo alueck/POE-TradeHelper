@@ -79,7 +79,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             {
                 if (exception is not OperationCanceledException and not TaskCanceledException)
                 {
-                    this.HandleException(exception);
+                    this.HandleException(exception, "Error occurred getting listings for item under cursor.");
                 }
             }
             finally
@@ -91,7 +91,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             }
         }
 
-        public void HandleException(Exception exception)
+        public void HandleException(Exception exception, string logMessage)
         {
             this.Message = new Message
             {
@@ -101,7 +101,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
                 Type = MessageType.Error,
             };
 
-            this.Log().Error(exception);
+            this.Log().Error(exception, logMessage);
         }
 
         private async Task GoToView<T>(Func<IItemSearchResultOverlayViewModel, T> factory, CancellationToken cancellationToken)

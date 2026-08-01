@@ -9,7 +9,7 @@ using POETradeHelper.PathOfExileTradeApi.Models;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
-    public abstract class DataServiceBase<TDataType> : IInitializable
+    internal abstract class DataServiceBase<TDataType> : IInitializable
     {
         private readonly string endpoint;
         private readonly IHttpClientWrapper httpClient;

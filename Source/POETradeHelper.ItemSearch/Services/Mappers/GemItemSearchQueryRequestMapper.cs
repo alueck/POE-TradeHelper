@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -8,8 +10,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class GemItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
-        public GemItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions) : base(
-            itemSearchOptions)
+        public GemItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions) : base(itemSearchOptions)
         {
         }
 
@@ -23,6 +24,9 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 
             MapGemLevel(result, gemItem);
             MapQuality(result, gemItem);
+            MapImbued(result, gemItem);
+            MapTransfigured(result, gemItem);
+            MapImbuedStats(result, gemItem);
 
             return result;
         }
@@ -30,7 +34,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
         protected override void MapItemType(SearchQueryRequest result, Item item)
         {
             base.MapItemType(result, item);
-            result.Query.Type!.Discriminator = ((GemItem)item).TypeDiscriminator;
+            result.Query.Type?.Discriminator = ((GemItem)item).TypeDiscriminator;
         }
 
         protected override void MapItemRarity(SearchQueryRequest result, Item item)
@@ -49,5 +53,36 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             {
                 Min = gemItem.Quality,
             };
+
+        private static void MapImbued(SearchQueryRequest result, GemItem gemItem) =>
+            result.Query.Filters.MiscFilters.GemImbued = new BoolOptionFilter
+            {
+                Option = gemItem.IsImbued,
+            };
+
+        private static void MapTransfigured(SearchQueryRequest result, GemItem gemItem) =>
+            result.Query.Filters.MiscFilters.GemTransfigured = new BoolOptionFilter
+            {
+                Option = gemItem.IsTransfigured,
+            };
+
+        private static void MapImbuedStats(SearchQueryRequest result, GemItem gemItem)
+        {
+            IEnumerable<StatFilter> statFilters = gemItem.Stats?.ImbuedStats
+                .Select(x => new StatFilter
+                {
+                    Id = x.Id,
+                    Value = x switch
+                    {
+                        SingleValueItemStat singleValueItemStat => new MinMaxFilter { Min = singleValueItemStat.Value },
+                        MinMaxValueItemStat minMaxValueItemStat => new MinMaxFilter { Min = minMaxValueItemStat.MinValue, Max = minMaxValueItemStat.MaxValue },
+                        _ => new MinMaxFilter(),
+                    },
+                }) ?? [];
+
+            StatFilters filters = new();
+            filters.Filters.AddRange(statFilters);
+            result.Query.Stats.Add(filters);
+        }
     }
 }

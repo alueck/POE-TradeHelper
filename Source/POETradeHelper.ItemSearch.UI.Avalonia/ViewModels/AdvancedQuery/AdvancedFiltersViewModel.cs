@@ -42,7 +42,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         public IList<StatFilterViewModel> CraftedItemStatFilters { get; private set; } = [];
 
         [Reactive]
+        public IList<StatFilterViewModel> CrucibleItemStatFilters { get; private set; } = [];
+
+        [Reactive]
         public IList<StatFilterViewModel> MonsterItemStatFilters { get; private set; } = [];
+
+        [Reactive]
+        public IList<StatFilterViewModel> ImbuedItemStatFilters { get; private set; } = [];
+
+        [Reactive]
+        public IList<StatFilterViewModel> OtherItemStatFilters { get; private set; } = [];
 
         [Reactive]
         public IList<StatFilterViewModel> PseudoItemStatFilters { get; private set; } = [];
@@ -55,7 +64,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             .Concat(this.ImplicitItemStatFilters)
             .Concat(this.ExplicitItemStatFilters)
             .Concat(this.CraftedItemStatFilters)
+            .Concat(this.CrucibleItemStatFilters)
             .Concat(this.MonsterItemStatFilters)
+            .Concat(this.ImbuedItemStatFilters)
+            .Concat(this.OtherItemStatFilters)
             .Concat(this.PseudoItemStatFilters);
 
         [Reactive]
@@ -78,8 +90,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
                 this.ImplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ImplicitStats, searchQueryRequest);
                 this.ExplicitItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ExplicitStats, searchQueryRequest);
                 this.CraftedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.CraftedStats, searchQueryRequest);
+                this.CrucibleItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.CrucibleStats, searchQueryRequest);
                 this.MonsterItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.MonsterStats, searchQueryRequest);
+                this.ImbuedItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.ImbuedStats, searchQueryRequest);
                 this.PseudoItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.PseudoStats, searchQueryRequest);
+                this.OtherItemStatFilters = this.CreateFilterViewModels(itemWithStats.Stats.OtherStats, searchQueryRequest);
             }
             else
             {
@@ -103,8 +118,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             this.ImplicitItemStatFilters = [];
             this.ExplicitItemStatFilters = [];
             this.CraftedItemStatFilters = [];
+            this.CrucibleItemStatFilters = [];
             this.MonsterItemStatFilters = [];
+            this.ImbuedItemStatFilters = [];
             this.PseudoItemStatFilters = [];
+            this.OtherItemStatFilters = [];
             this.AdditionalFilters = [];
         }
     }

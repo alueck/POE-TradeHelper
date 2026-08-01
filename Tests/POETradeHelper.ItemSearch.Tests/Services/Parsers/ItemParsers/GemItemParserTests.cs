@@ -5,6 +5,7 @@ using NSubstitute;
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
 using POETradeHelper.ItemSearch.Tests.Properties;
 using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
@@ -16,12 +17,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
     public class GemItemParserTests : ItemParserTestsBase
     {
         private readonly IItemDataService itemDataServiceMock;
+        private readonly IItemStatsParser<ItemWithStats> itemStatsParserMock;
         private readonly GemItemStringBuilder itemStringBuilder;
 
         public GemItemParserTests()
         {
             this.itemDataServiceMock = Substitute.For<IItemDataService>();
-            this.ItemParser = new GemItemParser(this.itemDataServiceMock);
+            this.itemStatsParserMock = Substitute.For<IItemStatsParser<ItemWithStats>>();
+            this.ItemParser = new GemItemParser(this.itemDataServiceMock, this.itemStatsParserMock);
             this.itemStringBuilder = new GemItemStringBuilder().WithRarity(ItemRarity.Gem);
         }
 
@@ -32,7 +35,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         [TestCase(ItemRarity.Unique, false)]
         [TestCase(ItemRarity.Currency, false)]
         [TestCase(ItemRarity.DivinationCard, false)]
-        public void CanParseShouldReturnTrueIfRarityIsGem(ItemRarity rarity, bool expected)
+        public void CanParse_ShouldReturnTrueIfRarityIsGem(ItemRarity rarity, bool expected)
         {
             string[] itemStringLines = this.itemStringBuilder
                 .WithRarity(rarity)
@@ -44,7 +47,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldReturnGemItem()
+        public void Parse_ShouldReturnGemItem()
         {
             string[] itemStringLines = this.itemStringBuilder.BuildLines();
 
@@ -54,7 +57,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldCallGetTypeOnItemDataServiceWithGemName()
+        public void Parse_ShouldCallGetTypeOnItemDataServiceWithGemName()
         {
             const string expected = "Flameblast";
             string[] itemStringLines = this.itemStringBuilder
@@ -69,7 +72,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldSetTypeFromItemDataService()
+        public void Parse_ShouldSetTypeFromItemDataService()
         {
             const string expected = "Result from ItemDataService";
 
@@ -86,7 +89,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldParseCorruptedTrue()
+        public void Parse_ShouldParseCorruptedTrue()
         {
             string[] itemStringLines = this.itemStringBuilder
                 .WithCorrupted()
@@ -98,7 +101,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldParseCorruptedFalse()
+        public void Parse_ShouldParseCorruptedFalse()
         {
             string[] itemStringLines = this.itemStringBuilder
                 .BuildLines();
@@ -109,7 +112,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldParseQuality()
+        public void Parse_ShouldParseQuality()
         {
             const int expected = 13;
             string[] itemStringLines = this.itemStringBuilder
@@ -122,7 +125,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldParseZeroQualityIfItemHasNoQuality()
+        public void Parse_ShouldParseZeroQualityIfItemHasNoQuality()
         {
             const int expected = 0;
             string[] itemStringLines = this.itemStringBuilder
@@ -134,7 +137,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldParseGemLevel()
+        public void Parse_ShouldParseGemLevel()
         {
             const int expected = 17;
             string[] itemStringLines = this.itemStringBuilder
@@ -149,7 +152,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         [TestCase("150/1.000", 15)]
         [TestCase("123/1.000", 12)]
         [TestCase("129/1.000", 12)]
-        public void ParseShouldParseGemExperiencePercent(string experience, int expected)
+        public void Parse_ShouldParseGemExperiencePercent(string experience, int expected)
         {
             string[] itemStringLines = this.itemStringBuilder
                 .WithName("Flameblast")
@@ -162,7 +165,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldParseVaalGem()
+        public void Parse_ShouldParseVaalGem()
         {
             const string name = "Vaal Animate Weapon (Animate Weapon of Ranged Arms)";
             string[] itemStringLines = Resources.VaalAnimateWeaponOfRangedArms.Split(Environment.NewLine);
@@ -190,7 +193,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
         }
 
         [Test]
-        public void ParseShouldParseVaalGemWithDifferentNameCorrectly()
+        public void Parse_ShouldParseVaalGemWithDifferentNameCorrectly()
         {
             string[] itemStringLines = Resources.VaalImpurityOfLightning.Split(Environment.NewLine);
             const string type = "Vaal Impurity of Lightning";
@@ -211,6 +214,56 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
                         Level = 1,
                     },
                     config => config.Excluding(x => x.PlainItemText).Excluding(x => x.ExtendedItemText));
+        }
+
+        [Test]
+        public void Parse_ShouldParseImbued()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                .WithImbued()
+                .BuildLines();
+
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
+
+            result.IsImbued.Should().BeTrue();
+        }
+
+        [Test]
+        public void Parse_ShouldParseTransfigured()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                .WithTransfigured()
+                .BuildLines();
+
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
+
+            result.IsTransfigured.Should().BeTrue();
+        }
+
+        [Test]
+        public void Parse_ShouldCallParseOnItemStatsParser()
+        {
+            string[] itemStringLines = this.GetValidItemStringLines();
+
+            this.ItemParser.Parse(itemStringLines);
+
+            this.itemStatsParserMock
+                .Received(1)
+                .Parse(itemStringLines, false, Arg.Is<IReadOnlyCollection<StatCategory>?>(x => x != null && x.Count == 1 && x.First() == StatCategory.Imbued));
+        }
+
+        [Test]
+        public void Parse_ShouldSetItemStatsFromItemStatsParserOnItem()
+        {
+            ItemStats expected = new();
+            string[] itemStringLines = this.GetValidItemStringLines();
+
+            this.itemStatsParserMock.Parse(Arg.Any<string[]>(), Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<StatCategory>?>())
+                .Returns(expected);
+
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
+
+            result.Stats.Should().BeSameAs(expected);
         }
 
         protected override string[] GetValidItemStringLines() =>

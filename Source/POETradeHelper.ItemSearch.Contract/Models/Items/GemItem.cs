@@ -1,6 +1,6 @@
 ﻿namespace POETradeHelper.ItemSearch.Contract.Models
 {
-    public class GemItem : Item, ICorruptableItem, IQualityItem
+    public class GemItem : ItemWithStats, ICorruptableItem, IQualityItem
     {
         public GemItem() : base(ItemRarity.Gem)
         {
@@ -17,5 +17,9 @@
         public bool IsCorrupted { get; set; }
 
         public bool IsVaalVersion { get; set; }
+
+        public bool IsImbued { get; set; }
+
+        public bool IsTransfigured { get; set; }
     }
 }

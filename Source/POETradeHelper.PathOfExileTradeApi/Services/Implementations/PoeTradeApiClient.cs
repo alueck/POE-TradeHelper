@@ -5,8 +5,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using DotNext;
-using POETradeHelper.Common.Extensions;
+
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Constants;
 using POETradeHelper.PathOfExileTradeApi.Exceptions;
@@ -34,21 +35,7 @@ public class PoeTradeApiClient : IPoeTradeApiClient
         {
             SearchQueryResult searchQueryResult = await this.GetSearchQueryResult(request, cancellationToken).ConfigureAwait(false);
 
-            ItemListingsQueryResult result = await this.GetListingsQueryResult(searchQueryResult, 1, cancellationToken).ConfigureAwait(false);
-            if (result.HasMorePages)
-            {
-                ItemListingsQueryResult result2 = await this.GetListingsQueryResult(searchQueryResult, 2, cancellationToken).ConfigureAwait(false);
-
-                result = result with
-                {
-                    CurrentPage = 2,
-                    Result =
-                    [
-                        ..result.Result,
-                        ..result2.Result,
-                    ],
-                };
-            }
+            ItemListingsQueryResult result = await this.GetListingsQueryResult(searchQueryResult, 1, request.PageSize, cancellationToken).ConfigureAwait(false);
 
             return result;
         }
@@ -67,7 +54,7 @@ public class PoeTradeApiClient : IPoeTradeApiClient
 
         try
         {
-            return await this.GetListingsQueryResult(lastResult.SearchQueryResult, lastResult.CurrentPage + 1, cancellationToken).ConfigureAwait(false);
+            return await this.GetListingsQueryResult(lastResult.SearchQueryResult, lastResult.CurrentPage + 1, lastResult.SearchQueryResult.Request.PageSize, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is not PoeTradeApiCommunicationException and not OperationCanceledException)
         {
@@ -84,7 +71,9 @@ public class PoeTradeApiClient : IPoeTradeApiClient
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new PoeTradeApiCommunicationException(endpoint, await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false), response.StatusCode);
+            string requestContent = await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            string responseContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            throw new PoeTradeApiCommunicationException(endpoint, response.StatusCode, requestContent, responseContent);
         }
 
         ExchangeQueryResult result = await this.ReadAsJsonAsync<ExchangeQueryResult>(response.Content).ConfigureAwait(false);
@@ -102,8 +91,9 @@ public class PoeTradeApiClient : IPoeTradeApiClient
 
         if (!response.IsSuccessStatusCode)
         {
-            string stringContent = await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-            throw new PoeTradeApiCommunicationException(endpoint, stringContent, response.StatusCode);
+            string requestContent = await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            string responseContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            throw new PoeTradeApiCommunicationException(endpoint, response.StatusCode, requestContent, responseContent);
         }
 
         SearchQueryResult searchQueryResult = await this.ReadAsJsonAsync<SearchQueryResult>(response.Content).ConfigureAwait(false);
@@ -122,10 +112,9 @@ public class PoeTradeApiClient : IPoeTradeApiClient
     private async Task<ItemListingsQueryResult> GetListingsQueryResult(
         SearchQueryResult searchQueryResult,
         int page,
+        int pageSize,
         CancellationToken cancellationToken)
     {
-        const int pageSize = ItemListingsQueryResult.PageSize;
-
         ItemListingsQueryResult? itemListingsQueryResult = null;
         List<string> ids = searchQueryResult.Result.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
@@ -154,7 +143,8 @@ public class PoeTradeApiClient : IPoeTradeApiClient
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new PoeTradeApiCommunicationException(endpoint, response.StatusCode);
+                var responseContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                throw new PoeTradeApiCommunicationException(endpoint, response.StatusCode, responseContent);
             }
 
             return await this.ReadAsJsonAsync<TResult>(response.Content).ConfigureAwait(false);

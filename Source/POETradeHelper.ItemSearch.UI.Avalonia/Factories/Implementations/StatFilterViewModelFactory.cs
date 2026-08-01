@@ -109,6 +109,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Factories.Implementations
                 Id = itemStat.Id,
                 IsEnabled = matchingFilter != null,
                 Text = itemStat.Text,
+                Tier = itemStat.Tier,
             };
         }
     }

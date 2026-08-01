@@ -8,7 +8,7 @@ using POETradeHelper.PathOfExileTradeApi.Properties;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
-    public class LeagueDataService : DataServiceBase<LeagueData>, ILeagueDataService
+    internal sealed class LeagueDataService : DataServiceBase<LeagueData>, ILeagueDataService
     {
         public LeagueDataService(
             IHttpClientFactoryWrapper httpClientFactory,

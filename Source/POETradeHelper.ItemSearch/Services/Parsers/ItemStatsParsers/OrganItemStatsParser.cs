@@ -1,4 +1,6 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using Microsoft.Extensions.Logging;
+
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
@@ -8,11 +10,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 {
     public class OrganItemStatsParser : ItemStatsParserBase, IItemStatsParser<OrganItem>
     {
-        public OrganItemStatsParser(IStatsDataService statsDataService) : base(statsDataService)
+        public OrganItemStatsParser(IStatsDataService statsDataService, ILogger<OrganItemStatsParser> logger) : base(statsDataService, logger)
         {
         }
 
-        public ItemStats Parse(string[] itemStringLines, bool preferLocalStats)
+        public ItemStats Parse(string[] itemStringLines, bool preferLocalStats, IReadOnlyCollection<StatCategory>? categoriesFilter = null)
         {
             var result = new ItemStats();
 
@@ -28,14 +30,22 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             var groupedItemStatLines = itemStringLines
                 .Skip(statsStartIndex)
                 .TakeWhile(l => l != ParserConstants.PropertyGroupSeparator)
-                .GroupBy(x => x);
+                .GroupBy(x => x.Replace(Resources.UnscalableValueSuffix, string.Empty));
 
-            var itemStats = groupedItemStatLines.Select(group => new SingleValueItemStat(StatCategory.Monster)
+            var itemStats = groupedItemStatLines
+                .Select(group =>
                 {
-                    Text = group.Key.Replace(Resources.UnscalableValueSuffix, string.Empty),
-                    Value = group.Count(),
+                    var itemStat = this.GetCompleteItemStat([group.Key], false, null, StatCategory.Monster);
+                    if (itemStat != null)
+                    {
+                        return new SingleValueItemStat(itemStat)
+                        {
+                            Value = group.Count(),
+                        };
+                    }
+
+                    return null;
                 })
-                .Select(s => this.GetCompleteItemStat(s, false))
                 .OfType<ItemStat>()
                 .ToList();
 

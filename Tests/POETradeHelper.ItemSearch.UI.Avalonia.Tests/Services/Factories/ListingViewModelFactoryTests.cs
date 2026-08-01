@@ -30,7 +30,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [TestCaseSource(nameof(GetListingResultItems))]
-        public async Task CreateShouldCallCreateOnPriceViewModelFactory(Item item)
+        public async Task Create_ShouldCallCreateOnPriceViewModelFactory(Item item)
         {
             // arrange
             ListingResult listingResult = GetListingResult();
@@ -48,7 +48,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [TestCaseSource(nameof(GetListingResultItems))]
-        public async Task CreateShouldSetPriceViewModel(Item item)
+        public async Task Create_ShouldSetPriceViewModel(Item item)
         {
             PriceViewModel expected = new() { Amount = "2", Currency = "Chaos Orb" };
             ListingResult listingResult = GetListingResult();
@@ -62,7 +62,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [Test]
-        public async Task CreateShouldReturnGemItemListingViewModelForGemItem()
+        public async Task Create_ShouldReturnGemItemListingViewModel_ForGemItem()
         {
             const decimal experience = 0.25m;
             const string gemLevel = "15";
@@ -88,7 +88,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [TestCaseSource(nameof(ItemListingViewModelWithItemLevelItems))]
-        public async Task CreateShouldReturnItemListingViewModelWithItemLevel(Item item)
+        public async Task Create_ShouldReturnItemListingViewModelWithItemLevel(Item item)
         {
             ListingResult listingResult = GetListingResult();
 
@@ -99,11 +99,11 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [Test]
-        public async Task CreateShouldReturnFlaskItemListingViewModelForFlaskItem()
+        public async Task Create_ShouldReturnFlaskItemListingViewModel_ForFlaskItem()
         {
             const string quality = "+20%";
 
-            const string propertiesJson = $@"[{{""name"":""Quality"",""values"":[[""{quality}"",1]],""displayMode"":0,""type"":6}}]";
+            const string propertiesJson = $$"""[{"name":"Quality","values":[["{{quality}}",1]],"displayMode":0,"type":6}]""";
 
             ListingResult listingResult = GetListingResult();
             listingResult.Item.Properties = GetPropertiesList(propertiesJson);
@@ -116,7 +116,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [Test]
-        public async Task CreateShouldReturnDivinationCardItemListingViewModelForDivinationCardItem()
+        public async Task Create_ShouldReturnDivinationCardItemListingViewModel_ForDivinationCardItem()
         {
             const int stackSize = 12;
             ListingResult listingResult = GetListingResult();
@@ -129,15 +129,20 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
             result.StackSize.Should().Be(stackSize);
         }
 
-        [TestCaseSource(nameof(SimpleListingViewModelItems))]
-        public async Task CreateShouldReturnSimpleItemListingViewModel(Item item)
+        [Test]
+        public async Task Create_ShouldReturnMapItemListingViewModel_ForMapItem()
         {
+            const string mapArea = "Racecourse";
+            const string propertiesJson = $$"""[{"name":"Map Area","values":[["{{mapArea}}",0]]}]""";
+
             ListingResult listingResult = GetListingResult();
+            listingResult.Item.Properties = GetPropertiesList(propertiesJson);
+            Item item = new MapItem(ItemRarity.Rare);
 
-            SimpleListingViewModel result = await this.listingViewModelFactory.CreateAsync(listingResult, item);
+            MapListingsViewModel result = (MapListingsViewModel)await this.listingViewModelFactory.CreateAsync(listingResult, item);
 
-            result.Should().NotBeNull();
             AssertSimpleListingViewModelProperties(result, listingResult);
+            result.MapArea.Should().Be(mapArea);
         }
 
         [Test]
@@ -197,11 +202,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         {
             yield return new EquippableItem(ItemRarity.Normal);
             yield return new OrganItem();
-        }
-
-        private static IEnumerable<Item> SimpleListingViewModelItems()
-        {
-            yield return new MapItem(ItemRarity.Normal);
         }
 
         private static IEnumerable<Item> GetListingResultItems()

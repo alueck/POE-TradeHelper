@@ -76,7 +76,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
                 equippableItem.ArmourValues = ParseArmourValues(itemStringLines);
             }
 
-            if (equippableItem.Category is EquippableItemCategory.Weapons or EquippableItemCategory.Unknown)
+            if (equippableItem.Category is EquippableItemCategory.Weapon or EquippableItemCategory.Unknown)
             {
                 equippableItem.WeaponValues = ParseWeaponValues(itemStringLines);
             }

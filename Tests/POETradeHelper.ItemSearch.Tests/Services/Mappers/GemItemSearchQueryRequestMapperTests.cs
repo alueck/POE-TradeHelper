@@ -19,7 +19,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         [TestCase("Vaal Flameblast")]
         [TestCase("Flameblast")]
-        public void MapToQueryRequestShouldMapType(string expected)
+        public void MapToQueryRequest_ShouldMapType(string expected)
         {
             GemItem item = new()
             {
@@ -37,7 +37,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         }
 
         [Test]
-        public void MapToQueryRequestShouldNotMapName()
+        public void MapToQueryRequest_ShouldNotMapName()
         {
             const string expected = "Vaal Flameblast";
             GemItem item = new()
@@ -51,7 +51,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
         }
 
         [Test]
-        public void MapToQueryRequestShouldNotMapRarity()
+        public void MapToQueryRequest_ShouldNotMapRarity()
         {
             GemItem item = new();
 
@@ -62,7 +62,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         [TestCase(10)]
         [TestCase(20)]
-        public void MapToQueryRequestShouldMapGemLevel(int expected)
+        public void MapToQueryRequest_ShouldMapGemLevel(int expected)
         {
             GemItem item = new()
             {
@@ -77,7 +77,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
         [TestCase(10)]
         [TestCase(20)]
-        public void MapToQueryRequestShouldMapGemQuality(int expected)
+        public void MapToQueryRequest_ShouldMapGemQuality(int expected)
         {
             GemItem item = new()
             {
@@ -88,6 +88,54 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             MinMaxFilter? qualityFilter = result.Query.Filters.MiscFilters.Quality;
             qualityFilter.Should().BeEquivalentTo(new MinMaxFilter { Min = expected });
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MapToQueryRequest_ShouldMapImbued(bool imbued)
+        {
+            GemItem item = new()
+            {
+                IsImbued = imbued,
+            };
+
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
+
+            BoolOptionFilter? imbuedFilter = result.Query.Filters.MiscFilters.GemImbued;
+            imbuedFilter.Should().BeEquivalentTo(new BoolOptionFilter { Option = imbued });
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MapToQueryRequest_ShouldMapTransfigured(bool transfigured)
+        {
+            GemItem item = new()
+            {
+                IsTransfigured = transfigured,
+            };
+
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
+
+            BoolOptionFilter? transfiguredFilter = result.Query.Filters.MiscFilters.GemTransfigured;
+            transfiguredFilter.Should().BeEquivalentTo(new BoolOptionFilter { Option = transfigured });
+        }
+
+        [Test]
+        public void MapToQueryRequest_ShouldMapImbuedStats()
+        {
+            ItemStat imbuedStat = new(StatCategory.Imbued) { Id = "imbued" };
+
+            GemItem item = new()
+            {
+                Stats = new ItemStats
+                {
+                    AllStats = { imbuedStat },
+                },
+            };
+
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
+
+            result.Query.Stats.Should().Contain(x => x.Filters.Count == 1 && x.Filters.Any(y => y.Id == imbuedStat.Id));
         }
     }
 }

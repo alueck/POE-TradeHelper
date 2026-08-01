@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
@@ -12,7 +13,10 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             new()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
+                TypeInfoResolver = new DefaultJsonTypeInfoResolver
+                {
+                    Modifiers = { IgnoreExtensionData },
+                },
             };
 
         private static readonly JsonSerializerOptions SnakeCaseJsonSerializerOptions = new()
@@ -23,15 +27,21 @@ namespace POETradeHelper.PathOfExileTradeApi.Services
             TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
         };
 
-        private readonly IJsonSerializerWrapper jsonSerializer;
-
         public PoeTradeApiJsonSerializer(IJsonSerializerWrapper jsonSerializer)
         {
-            this.jsonSerializer = jsonSerializer;
+            this.JsonSerializer = jsonSerializer;
         }
 
-        public T? Deserialize<T>(string json) => this.jsonSerializer.Deserialize<T>(json, CamelCaseJsonSerializerOptions);
+        protected IJsonSerializerWrapper JsonSerializer { get; }
 
-        public string Serialize(object value) => this.jsonSerializer.Serialize(value, SnakeCaseJsonSerializerOptions);
+        public virtual T? Deserialize<T>(string json) => this.JsonSerializer.Deserialize<T>(json, CamelCaseJsonSerializerOptions);
+
+        public string Serialize(object value) => this.JsonSerializer.Serialize(value, SnakeCaseJsonSerializerOptions);
+
+        private static void IgnoreExtensionData(JsonTypeInfo typeInfo)
+        {
+            var extensionDataProperty = typeInfo.Properties.FirstOrDefault(p => p.IsExtensionData);
+            extensionDataProperty?.Set = null;
+        }
     }
 }

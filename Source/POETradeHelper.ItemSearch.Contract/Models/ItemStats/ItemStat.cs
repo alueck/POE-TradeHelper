@@ -1,4 +1,6 @@
-﻿namespace POETradeHelper.ItemSearch.Contract.Models
+﻿using System.Linq;
+
+namespace POETradeHelper.ItemSearch.Contract.Models
 {
     public class ItemStat
     {
@@ -18,12 +20,22 @@
 
         public string Id { get; set; } = string.Empty;
 
-        public string Text { get; set; } = string.Empty;
+        public string Text
+        {
+            get;
+            init
+            {
+                field = value;
+                this.Lines = field.Count(c => c == '\n') + 1;
+            }
+        } = string.Empty;
 
         public string TextWithPlaceholders { get; set; } = string.Empty;
 
-        public StatCategory StatCategory { get; set; }
+        public StatCategory StatCategory { get; }
 
-        public int? Tier { get; set; }
+        public int? Tier { get; init; }
+
+        public int Lines { get; private set; }
     }
 }

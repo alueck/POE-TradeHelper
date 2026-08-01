@@ -92,7 +92,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
             {
                 if (exception is not OperationCanceledException and not TaskCanceledException)
                 {
-                    this.Log().Error(exception);
+                    this.Log().Error(exception, "Error occurred loading price prediction.");
                 }
             }
         }

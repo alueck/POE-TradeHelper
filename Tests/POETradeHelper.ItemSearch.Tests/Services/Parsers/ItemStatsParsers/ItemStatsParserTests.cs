@@ -1,5 +1,7 @@
 ﻿using AwesomeAssertions;
 
+using Microsoft.Extensions.Logging;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -8,6 +10,7 @@ using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers;
+using POETradeHelper.ItemSearch.Tests.TestHelpers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Services;
@@ -24,16 +27,19 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         public ItemStatsParserTests()
         {
             this.statsDataServiceMock = Substitute.For<IStatsDataService>();
+            this.statsDataServiceMock
+                .TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns((IStatData?)null);
             this.pseudoItemStatsParserMock = Substitute.For<IPseudoItemStatsParser>();
-            this.itemStatsParser = new ItemStatsParser(this.statsDataServiceMock, this.pseudoItemStatsParserMock);
+            this.itemStatsParser = new ItemStatsParser(this.statsDataServiceMock, this.pseudoItemStatsParserMock, Substitute.For<ILogger<ItemStatsParser>>());
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage", "Minions deal 1 to 15 additional Physical Damage")]
-        [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)", "+25% to Cold Resistance")]
-        [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)", "+25% to Cold Resistance")]
+        [TestCase(StatCategory.Implicit, "+25% to Cold Resistance", "+25% to Cold Resistance")]
+        [TestCase(StatCategory.Crafted, "+25% to Cold Resistance", "+25% to Cold Resistance")]
         [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)", "10% increased Movement Speed if you haven't been Hit Recently")]
-        [TestCase(StatCategory.Fractured, "Adds 11 to 142 Lightning Damage (fractured)", "Adds 11 to 142 Lightning Damage")]
+        [TestCase(StatCategory.Fractured, "Adds 11 to 142 Lightning Damage", "Adds 11 to 142 Lightning Damage")]
         public void ParseShouldParseStatText(StatCategory statCategory, string statText, string expected)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -42,8 +48,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData());
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData());
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
@@ -51,10 +57,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         }
 
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage", "Minions deal # to # additional Physical Damage")]
-        [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)", "#% to Cold Resistance")]
-        [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)", "#% to Cold Resistance")]
+        [TestCase(StatCategory.Implicit, "+25% to Cold Resistance", "#% to Cold Resistance")]
+        [TestCase(StatCategory.Crafted, "+25% to Cold Resistance", "#% to Cold Resistance")]
         [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)", "#% increased Movement Speed if you haven't been Hit Recently")]
-        [TestCase(StatCategory.Fractured, "Adds 11 to 142 Lightning Damage (fractured)", "Adds # to # Lightning Damage")]
+        [TestCase(StatCategory.Fractured, "Adds 11 to 142 Lightning Damage", "Adds # to # Lightning Damage")]
         public void ParseShouldSetTextWithPlaceholdersFromStatData(StatCategory statCategory, string statText, string expected)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -63,8 +69,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData { Text = expected });
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Text = expected });
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
@@ -72,10 +78,10 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         }
 
         [TestCase("Minions deal 1 to 15 additional Physical Damage", StatCategory.Explicit)]
-        [TestCase("+25% to Cold Resistance (implicit)", StatCategory.Implicit)]
-        [TestCase("+25% to Cold Resistance (crafted)", StatCategory.Crafted)]
+        [TestCase("+25% to Cold Resistance", StatCategory.Implicit)]
+        [TestCase("+25% to Cold Resistance", StatCategory.Crafted)]
         [TestCase("10% increased Movement Speed if you haven't been Hit Recently (enchant)", StatCategory.Enchant)]
-        [TestCase("Adds 11 to 142 Lightning Damage (fractured)", StatCategory.Fractured)]
+        [TestCase("Adds 11 to 142 Lightning Damage", StatCategory.Fractured)]
         public void ParseShouldParseStatTextInCorrectCategory(string statText, StatCategory expected)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -84,12 +90,31 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat(statText, expected)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData { Type = expected.GetDisplayName() });
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Type = expected.GetDisplayName() });
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
             result.AllStats.Should().ContainSingle(x => x.StatCategory == expected);
+        }
+
+        [Test]
+        public void Parse_ShouldPassNormalizedStatTextToStatsDataService()
+        {
+            string[] itemStringLines = new MapItemStringBuilder()
+                .WithName("Tranquil Solitude")
+                .WithMapTier(10)
+                .WithItemStat("Rare Monsters have [PhysicalThorns|Physical Thorns] reflecting 10 Physical Damage", StatCategory.Explicit)
+                .BuildLines();
+
+            this.itemStatsParser.Parse(itemStringLines, false);
+
+            this.statsDataServiceMock
+                .Received(1)
+                .TryGetStatData(
+                    Arg.Is<IReadOnlyCollection<string>>(x => x!.Any(line => line == "Rare Monsters have Physical Thorns reflecting 10 Physical Damage")),
+                    Arg.Any<bool>(),
+                    Arg.Any<string[]>());
         }
 
         [Test]
@@ -120,13 +145,12 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             this.statsDataServiceMock
                 .Received()
-                .GetStatData(Arg.Any<string>(), Arg.Any<bool>(), StatCategory.Explicit.GetDisplayName());
+                .TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>());
         }
 
-        [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)")]
-        [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)")]
-        [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)")]
-        [TestCase(StatCategory.Fractured, "Adds 11 to 142 Lightning Damage (fractured)")]
+        [TestCase(StatCategory.Implicit, "+25% to Cold Resistance")]
+        [TestCase(StatCategory.Crafted, "+25% to Cold Resistance")]
+        [TestCase(StatCategory.Fractured, "Adds 11 to 142 Lightning Damage")]
         public void ParseShouldCallGetStatDataWithStatCategory(StatCategory statCategory, string statText)
         {
             string[] itemStringLines = this.itemStringBuilder
@@ -139,7 +163,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
 
             this.statsDataServiceMock
                 .Received()
-                .GetStatData(Arg.Any<string>(), Arg.Any<bool>(), statCategory.GetDisplayName());
+                .TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Is<string[]>(x => x!.Length == 1 && x[0] == statCategory.GetDisplayName()));
         }
 
         [TestCase(true)]
@@ -149,21 +173,21 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             string[] itemStringLines = this.itemStringBuilder
                 .WithName("Titan Greaves")
                 .WithItemLevel(75)
-                .WithItemStat("+25% to Cold Resistance (implicit)", StatCategory.Implicit)
+                .WithItemStat("+25% to Cold Resistance", StatCategory.Implicit)
                 .BuildLines();
 
             this.itemStatsParser.Parse(itemStringLines, preferLocalStats);
 
             this.statsDataServiceMock
                 .Received()
-                .GetStatData(Arg.Any<string>(), preferLocalStats, Arg.Any<string[]>());
+                .TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), preferLocalStats, Arg.Any<string[]>());
         }
 
         [TestCase(StatCategory.Explicit, "Minions deal 1 to 15 additional Physical Damage")]
-        [TestCase(StatCategory.Implicit, "+25% to Cold Resistance (implicit)")]
-        [TestCase(StatCategory.Crafted, "+25% to Cold Resistance (crafted)")]
+        [TestCase(StatCategory.Implicit, "+25% to Cold Resistance")]
+        [TestCase(StatCategory.Crafted, "+25% to Cold Resistance")]
         [TestCase(StatCategory.Enchant, "10% increased Movement Speed if you haven't been Hit Recently (enchant)")]
-        [TestCase(StatCategory.Fractured, "Adds 11 to 142 Lightning Damage (fractured)")]
+        [TestCase(StatCategory.Fractured, "Adds 11 to 142 Lightning Damage")]
         public void ParseShouldSetIdOnStatFromStatsDataService(StatCategory statCategory, string statText)
         {
             const string expected = "item stat id";
@@ -173,8 +197,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData { Id = expected });
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Id = expected });
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
@@ -191,8 +215,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData
                 {
                     Text = textWithPlaceholders,
                 });
@@ -211,8 +235,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat("+25% to Cold Resistance", StatCategory.Explicit)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData
                 {
                     Text = "#% to Cold Resistance",
                 });
@@ -231,8 +255,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat("Minions deal 1 to 15 additional Physical Damage", StatCategory.Explicit)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData
                 {
                     Text = "Minions deal # to # additional Physical Damage",
                 });
@@ -253,8 +277,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData
                 {
                     Text = textWithPlaceholders,
                 });
@@ -276,8 +300,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData
                 {
                     Text = textWithPlaceholders,
                 });
@@ -299,8 +323,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat(statText, statCategory)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData
                 {
                     Text = textWithPlaceholders,
                 });
@@ -321,14 +345,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat("statText", StatCategory.Explicit)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData());
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData());
 
             this.pseudoItemStatsParserMock
                 .When(m => m.Parse(Arg.Any<IEnumerable<ItemStat>>()))
                 .Do(_ => this.statsDataServiceMock
                     .Received()
-                    .GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>()));
+                    .TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>()));
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
@@ -348,8 +372,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat("statText", StatCategory.Explicit)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData());
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData());
 
             this.pseudoItemStatsParserMock.Parse(Arg.Any<IEnumerable<ItemStat>>())
                 .Returns(new List<ItemStat> { expected });
@@ -368,8 +392,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithItemStat("{ Prefix Modifier \"Hunter's\" (Tier: 2) — Damage, Chaos, Ailment }\n84(80-89)% increased Chaos Damage over Time", StatCategory.Explicit)
                 .BuildLines();
 
-            this.statsDataServiceMock.GetStatData(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData { Type = "Explicit" });
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Type = "Explicit" });
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
 
@@ -397,7 +421,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             ItemStat expectedImplicitItemStat = new SingleValueItemStat(StatCategory.Implicit)
             {
                 Id = "implicit item stat id",
-                Text = "10% increased Movement Speed",
+                Text = $"10% increased Movement Speed",
                 TextWithPlaceholders = "#% increased Movement Speed",
                 Value = 10,
             };
@@ -405,7 +429,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             ItemStat expectedCraftedItemStat = new SingleValueItemStat(StatCategory.Crafted)
             {
                 Id = "crafted item stat id",
-                Text = "+25% to Cold Resistance",
+                Text = $"+25% to Cold Resistance",
                 TextWithPlaceholders = "#% to Cold Resistance",
                 Value = 25,
             };
@@ -413,7 +437,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             ItemStat expectedEnchantedItemStat = new SingleValueItemStat(StatCategory.Enchant)
             {
                 Id = "enchanted item stat id",
-                Text = "10% increased Movement Speed if you haven't been Hit Recently",
+                Text = $"10% increased Movement Speed if you haven't been Hit Recently",
                 TextWithPlaceholders = "#% increased Movement Speed if you haven't been Hit Recently",
                 Value = 10,
             };
@@ -423,11 +447,11 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             foreach (ItemStat itemStat in itemStats)
             {
                 this.statsDataServiceMock
-                    .GetStatData(
-                        Arg.Is<string>(s => s == itemStat.Text),
+                    .TryGetStatData(
+                        Arg.Is<IReadOnlyCollection<string>>(s => s!.First().StartsWith(itemStat.Text)),
                         Arg.Any<bool>(),
                         Arg.Any<string[]>())
-                    .Returns(new StatData
+                    .Returns(new TestStatData
                     {
                         Id = itemStat.Id,
                         Text = itemStat.TextWithPlaceholders,
@@ -439,15 +463,9 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .WithName("Titan Greaves")
                 .WithItemLevel(75)
                 .WithItemStat(expectedExplicitItemStat.Text, expectedExplicitItemStat.StatCategory)
-                .WithItemStat(
-                    $"{expectedImplicitItemStat.Text} ({StatCategory.Implicit.GetDisplayName().ToLower()})",
-                    expectedImplicitItemStat.StatCategory)
-                .WithItemStat(
-                    $"{expectedCraftedItemStat.Text} ({StatCategory.Crafted.GetDisplayName().ToLower()})",
-                    expectedCraftedItemStat.StatCategory)
-                .WithItemStat(
-                    $"{expectedEnchantedItemStat.Text} ({StatCategory.Enchant.GetDisplayName().ToLower()})",
-                    expectedEnchantedItemStat.StatCategory)
+                .WithItemStat($"{expectedImplicitItemStat.Text} ({expectedImplicitItemStat.StatCategory.GetDisplayName()})", expectedImplicitItemStat.StatCategory)
+                .WithItemStat($"{expectedCraftedItemStat.Text} ({expectedCraftedItemStat.StatCategory.GetDisplayName()})", expectedCraftedItemStat.StatCategory)
+                .WithItemStat($"{expectedEnchantedItemStat.Text} ({expectedEnchantedItemStat.StatCategory.GetDisplayName()})", expectedEnchantedItemStat.StatCategory)
                 .BuildLines();
 
             ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
@@ -457,6 +475,31 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             result.ImplicitStats.Should().ContainEquivalentOf(expectedImplicitItemStat, opt => opt.IncludingAllRuntimeProperties());
             result.CraftedStats.Should().ContainEquivalentOf(expectedCraftedItemStat, opt => opt.IncludingAllRuntimeProperties());
             result.EnchantedStats.Should().ContainEquivalentOf(expectedEnchantedItemStat, opt => opt.IncludingAllRuntimeProperties());
+        }
+
+        [Test]
+        public void Parse_ShouldIgnoreStatsNotInCategoriesToFilter()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                .WithName("Titan Greaves")
+                .WithItemLevel(75)
+                .WithItemStat("explicit stat text", StatCategory.Explicit)
+                .WithItemStat("implicit stat text", StatCategory.Implicit)
+                .BuildLines();
+
+            this.statsDataServiceMock
+                .TryGetStatData(Arg.Is<IReadOnlyCollection<string>>(x => x!.First() == "explicit stat text"), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Type = "explicit" });
+
+            this.statsDataServiceMock
+                .TryGetStatData(Arg.Is<IReadOnlyCollection<string>>(x => x!.First() == "implicit stat text"), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Type = "implicit" });
+
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false, [StatCategory.Explicit]);
+
+            result.AllStats.Should()
+                .HaveCount(1)
+                .And.Contain(x => x.StatCategory == StatCategory.Explicit);
         }
 
         [Test]
@@ -489,7 +532,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                               { Prefix Modifier "Athlete's" (Tier: 1) — Life }
                               +87(80-89) to maximum Life
                               { Master Crafted Prefix Modifier "Upgraded" (Rank: 3) — Speed }
-                              23(20-24)% increased Movement Speed (crafted)
+                              23(20-24)% increased Movement Speed
                               { Suffix Modifier "of the Polar Bear" (Tier: 3) — Elemental, Cold, Resistance }
                               +40(36-41)% to Cold Resistance
                               { Suffix Modifier "of the Apt" (Tier: 1) }
@@ -497,14 +540,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                               (Attributes are Strength, Dexterity, and Intelligence)
                               """;
             this.statsDataServiceMock
-                .GetStatData(Arg.Is<string>(s => !s!.Contains("Movement") && !string.IsNullOrWhiteSpace(s)), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData { Type = StatCategory.Explicit.GetDisplayName() });
+                .TryGetStatData(Arg.Is<IReadOnlyCollection<string>>(s => !s!.First().Contains("Movement")), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Type = StatCategory.Explicit.GetDisplayName() });
             this.statsDataServiceMock
-                .GetStatData(Arg.Is<string>(s => s!.Contains("6%")), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData { Type = StatCategory.Enchant.GetDisplayName() });
+                .TryGetStatData(Arg.Is<IReadOnlyCollection<string>>(s => s!.First().Contains("6%")), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Type = StatCategory.Enchant.GetDisplayName() });
             this.statsDataServiceMock
-                .GetStatData(Arg.Is<string>(s => s!.Contains("23")), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData { Type = StatCategory.Crafted.GetDisplayName() });
+                .TryGetStatData(Arg.Is<IReadOnlyCollection<string>>(s => s!.First().Contains("23")), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Type = StatCategory.Crafted.GetDisplayName() });
 
             // act
             ItemStats result = this.itemStatsParser.Parse(itemText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries), false);
@@ -582,8 +625,8 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                               --------
                               """;
             this.statsDataServiceMock
-                .GetStatData(Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)), Arg.Any<bool>(), Arg.Any<string[]>())
-                .Returns(new StatData());
+                .TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData());
 
             // act
             ItemStats result = this.itemStatsParser.Parse(itemText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries), false);

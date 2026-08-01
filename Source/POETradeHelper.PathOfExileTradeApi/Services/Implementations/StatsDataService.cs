@@ -9,24 +9,28 @@ using Microsoft.Extensions.Logging;
 using POETradeHelper.Common.Wrappers;
 using POETradeHelper.PathOfExileTradeApi.Models;
 using POETradeHelper.PathOfExileTradeApi.Properties;
+using POETradeHelper.RePoE.Services;
 
 namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
-    public class StatsDataService : DataServiceBase<Data<StatData>>, IStatsDataService
+    internal partial class StatsDataService : DataServiceBase<Data<StatData>>, IStatsDataService
     {
-        private const string Placeholder = "#";
+        private const string ExplicitStatsId = "explicit";
+        private const string PseudoStatsId = "pseudo";
 
-        private IDictionary<string, StatData> statsDataDictionary = new Dictionary<string, StatData>();
-
-        private static readonly Regex NumberRegex = new(@"[\+\-]?\d+(\.\d+)?", RegexOptions.Compiled);
+        private readonly IAlternativeStatTextsService alternativeStatTextsService;
         private readonly ILogger<StatsDataService> logger;
+
+        private Dictionary<string, StatData> statsDataDictionary = [];
 
         public StatsDataService(
             IHttpClientFactoryWrapper httpclientFactory,
             IPoeTradeApiJsonSerializer poeTradeApiJsonSerializer,
+            IAlternativeStatTextsService alternativeStatTextsService,
             ILogger<StatsDataService> logger)
             : base(Resources.PoeTradeApiStatsDataEndpoint, httpclientFactory, poeTradeApiJsonSerializer)
         {
+            this.alternativeStatTextsService = alternativeStatTextsService;
             this.logger = logger;
         }
 
@@ -40,28 +44,92 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
                 .SelectMany(x => x.Entries)
                 .GroupBy(statData => statData.Id)
                 .ToDictionary(group => group.Key, group => group.Last());
+
+            await this.FetchAlternativeStatTexts(this.statsDataDictionary);
         }
 
-        public StatData? GetStatData(string itemStatText, bool preferLocalStat, params string[] statCategoriesToSearch)
+        public IStatData? TryGetStatData(IReadOnlyCollection<string> itemStatLines, bool preferLocalStat, params string[] statCategoriesToSearch)
         {
-            IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(statCategoriesToSearch);
-            StatData? result = this.GetStataDataPrivate(statDataListsToSearch, itemStatText, preferLocalStat);
+            List<string> toSearch = [];
+            if (statCategoriesToSearch.Length == 0)
+            {
+                toSearch.Add(this.GetStatCategory(itemStatLines.First()));
+            }
+            else if (statCategoriesToSearch.Length > 0)
+            {
+                toSearch.AddRange(statCategoriesToSearch);
+            }
+
+            IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(toSearch);
+            StatData? result = GetStatDataMatch(statDataListsToSearch, itemStatLines, preferLocalStat);
+
+            if (result == null && toSearch.Count == 1 && string.Equals(toSearch[0], ExplicitStatsId, StringComparison.OrdinalIgnoreCase) && this.Data.Count > 1)
+            {
+                return this.TryGetStatData(
+                    itemStatLines,
+                    preferLocalStat,
+                    this.Data
+                        .Select(x => x.Id)
+                        .Where(category => !string.Equals(category, ExplicitStatsId, StringComparison.OrdinalIgnoreCase)
+                                           && !string.Equals(category, PseudoStatsId, StringComparison.OrdinalIgnoreCase))
+                        .ToArray());
+            }
 
             return result;
         }
 
-        public StatData? GetStatDataById(string itemStatId)
+        public IStatData? GetStatDataById(string itemStatId)
         {
             return !string.IsNullOrEmpty(itemStatId) && this.statsDataDictionary.TryGetValue(itemStatId, out StatData? statData)
                 ? statData
                 : null;
         }
 
-        private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params string[] statCategoriesToSearch)
+        private async Task FetchAlternativeStatTexts(Dictionary<string, StatData> statDataDictionary)
+        {
+            try
+            {
+                await foreach (var group in this.alternativeStatTextsService.GetAlternativeStatTexts())
+                {
+                    if (!statDataDictionary.TryGetValue(group.Id, out StatData? statData))
+                    {
+                        continue;
+                    }
+
+                    foreach (var statText in group.StatTexts.Where(x => !string.Equals(x, statData.Text, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        statData.Alternatives.Add(new StatData
+                        {
+                            Id = statData.Id,
+                            Text = statText,
+                            Type = statData.Type,
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogWarning(ex, "Failed to get alternative stat text data");
+            }
+        }
+
+        private string GetStatCategory(string itemStatText)
+        {
+            var match = GetStatCategoryRegex().Match(itemStatText);
+
+            if (match.Success && this.Data.Any(x => string.Equals(x.Id, match.Groups["StatCategory"].Value, StringComparison.OrdinalIgnoreCase)))
+            {
+                return match.Groups["StatCategory"].Value;
+            }
+
+            return ExplicitStatsId;
+        }
+
+        private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params ICollection<string> statCategoriesToSearch)
         {
             IEnumerable<Data<StatData>>? result = null;
 
-            if (statCategoriesToSearch.Length != 0)
+            if (statCategoriesToSearch.Count != 0)
             {
                 result = this.Data.Where(x =>
                     statCategoriesToSearch.Any(statCategory => string.Equals(x.Id, statCategory, StringComparison.OrdinalIgnoreCase)));
@@ -70,99 +138,41 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
             return result ?? this.Data;
         }
 
-        private StatData? GetStataDataPrivate(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText, bool preferLocalStat)
+        [GeneratedRegex(@"\((?<StatCategory>[^\)]+)\)$")]
+        private static partial Regex GetStatCategoryRegex();
+
+        private static StatData? GetStatDataMatch(
+            IEnumerable<Data<StatData>> statDataListsToSearch,
+            IReadOnlyCollection<string> itemStatLines,
+            bool preferLocalStat)
         {
             StatData? result = null;
-
-            StatDataTextMatchResult? statDataMatch = GetStatDataMatch(statDataListsToSearch, itemStatText, preferLocalStat);
-
-            if (statDataMatch == null)
-            {
-                this.logger.LogWarning("Failed to find matching stat data for {@itemStatText}.", itemStatText);
-            }
-            else
-            {
-                result = statDataMatch.StatData;
-            }
-
-            return result;
-        }
-
-        private static StatDataTextMatchResult? GetStatDataMatch(IEnumerable<Data<StatData>> statDataListsToSearch, string itemStatText, bool preferLocalStat)
-        {
-            StatDataTextMatchResult? result = null;
-            var statDataTextMatcher = new StatDataTextMatcher(itemStatText);
+            string joinedText = string.Join('\n', itemStatLines);
 
             foreach (var statData in statDataListsToSearch.SelectMany(x => x.Entries))
             {
-                StatDataTextMatchResult matchResult = statDataTextMatcher.Match(statData);
-
-                if (matchResult.IsMatch)
+                if (IsMatch(statData))
                 {
-                    if ((preferLocalStat && matchResult.IsLocalStat) || (!preferLocalStat && !matchResult.IsLocalStat))
+                    if ((preferLocalStat && statData.IsLocal) || (!preferLocalStat && !statData.IsLocal))
                     {
-                        result = matchResult;
+                        result = statData;
                         break;
                     }
 
-                    result = matchResult;
+                    result = statData;
                 }
             }
 
             return result;
-        }
 
-        private sealed class StatDataTextMatcher
-        {
-            private const string LocalStatMatchGroupName = "localStat";
-            private readonly Regex regex;
-
-            public StatDataTextMatcher(string statText)
+            bool IsMatch(StatData statData)
             {
-                this.regex = GetStatDataTextRegex(statText);
+                var match = statData.Lines > 1
+                    ? statData.Regex.Match(joinedText)
+                    : statData.Regex.Match(itemStatLines.First());
+
+                return match.Success || statData.Alternatives.Any(IsMatch);
             }
-
-            public StatDataTextMatchResult Match(StatData statData)
-            {
-                var match = this.regex.Match(statData.Text);
-
-                return new StatDataTextMatchResult(statData, match.Success, match.Groups[LocalStatMatchGroupName].Success);
-            }
-
-            /// <summary>
-            /// Replaces all numbers in the given <paramref name="statText"/> with a regex capture group to build a regex pattern for matching
-            /// the correct stat data text and returns a regex created from this pattern.
-            /// </summary>
-            /// <example>
-            /// 60% chance for Poisons inflicted with this Weapon to deal 100% more Damage
-            /// becomes
-            /// (60|#)% chance for Poisons inflicted with this Weapon to deal (100|#)% more Damage
-            /// .
-            /// </example>
-            private static Regex GetStatDataTextRegex(string statText)
-            {
-                string regexString = NumberRegex.Replace(statText, match => @$"({Regex.Escape(match.Value)}|[\+\-]?{Regex.Escape(Placeholder)})");
-                const string monsterItemStatSuffix = @" \(×#\)";
-                string localSuffix = $@" \({Resources.LocalKeyword}\)";
-
-                return new Regex($@"^({regexString}({monsterItemStatSuffix}|(?<{LocalStatMatchGroupName}>{localSuffix}))?)$");
-            }
-        }
-
-        private sealed class StatDataTextMatchResult
-        {
-            public StatDataTextMatchResult(StatData statData, bool isMatch, bool isLocalStat)
-            {
-                this.StatData = statData;
-                this.IsMatch = isMatch;
-                this.IsLocalStat = isLocalStat;
-            }
-
-            public StatData StatData { get; }
-
-            public bool IsMatch { get; }
-
-            public bool IsLocalStat { get; }
         }
     }
 }

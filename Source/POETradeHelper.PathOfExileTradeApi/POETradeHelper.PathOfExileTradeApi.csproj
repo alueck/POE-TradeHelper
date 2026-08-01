@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\POETradeHelper.RePoE\POETradeHelper.RePoE.csproj" />
     <ProjectReference Include="..\POETradeHelper.Common\POETradeHelper.Common.csproj" />
   </ItemGroup>
 

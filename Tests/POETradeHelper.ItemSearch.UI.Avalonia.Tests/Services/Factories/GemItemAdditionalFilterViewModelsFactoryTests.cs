@@ -28,7 +28,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [TestCaseSource(nameof(GetNonGemItems))]
-        public void CreateShouldReturnEmptyEnumerableForNonGemItems(Item item)
+        public void Create_ShouldReturnEmptyEnumerableForNonGemItems(Item item)
         {
             IEnumerable<FilterViewModelBase> result =
                 this.AdditionalFilterViewModelsFactory.Create(item, new SearchQueryRequest());
@@ -37,7 +37,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
-        public void CreateShouldReturnQualityFilterViewModel(MinMaxFilter queryRequestFilter)
+        public void Create_ShouldReturnQualityFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
             Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression =
@@ -57,7 +57,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
-        public void CreateShouldReturnGemLevelFilterViewModel(MinMaxFilter queryRequestFilter)
+        public void Create_ShouldReturnGemLevelFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
             Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression =
@@ -77,7 +77,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
         }
 
         [TestCaseSource(nameof(GetMinMaxFilterTestCases))]
-        public void CreateShouldReturnExperiencePercentFilterViewModel(MinMaxFilter queryRequestFilter)
+        public void Create_ShouldReturnExperiencePercentFilterViewModel(MinMaxFilter queryRequestFilter)
         {
             // arrange
             Expression<Func<SearchQueryRequest, MinMaxFilter?>> expectedBindingExpression =
@@ -93,6 +93,118 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
                 gemItem,
                 Resources.GemExperiencePercentColumn,
                 gemItem.ExperiencePercent,
+                queryRequestFilter);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Create_ShouldReturnCorruptedFilterViewModel_IfNonVaalGem(bool corrupted)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.Corrupted;
+            GemItem gemItem = new()
+            {
+                IsCorrupted = corrupted,
+            };
+
+            BoolOptionFilter queryRequestFilter = new() { Option = corrupted };
+
+            // act & assert
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
+                expectedBindingExpression,
+                gemItem,
+                Resources.Corrupted,
+                queryRequestFilter);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Create_ShouldReturnImbuedFilterViewModel_IfNonVaalGem(bool imbued)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.GemImbued;
+            GemItem gemItem = new()
+            {
+                IsImbued = imbued,
+            };
+
+            BoolOptionFilter queryRequestFilter = new() { Option = imbued };
+
+            // act & assert
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
+                expectedBindingExpression,
+                gemItem,
+                Resources.Imbued,
+                queryRequestFilter);
+        }
+
+        [Test]
+        public void Create_ShouldNotReturnCorruptedFilterViewModel_IfVaalGem()
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.Corrupted;
+            GemItem gemItem = new()
+            {
+                IsCorrupted = true,
+                IsVaalVersion = true,
+            };
+
+            BoolOptionFilter queryRequestFilter = new() { Option = true };
+            SearchQueryRequest searchQueryRequest = new();
+            SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
+
+            // act
+            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(gemItem, searchQueryRequest);
+
+            // assert
+            result.Should().NotContain(x => x.Text == Resources.Corrupted);
+        }
+
+        [Test]
+        public void Create_ShouldNotReturnImbuedFilterViewModel_IfVaalGem()
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.Corrupted;
+            GemItem gemItem = new()
+            {
+                IsVaalVersion = true,
+                IsImbued = false,
+            };
+
+            BoolOptionFilter queryRequestFilter = new() { Option = false };
+            SearchQueryRequest searchQueryRequest = new();
+            SetValueByExpression(expectedBindingExpression, searchQueryRequest, queryRequestFilter);
+
+            // act
+            IEnumerable<FilterViewModelBase> result = this.AdditionalFilterViewModelsFactory.Create(gemItem, searchQueryRequest);
+
+            // assert
+            result.Should().NotContain(x => x.Text == Resources.Imbued);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Create_ShouldReturnTransfiguredFilterViewModel(bool transfigured)
+        {
+            // arrange
+            Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression =
+                x => x.Query.Filters.MiscFilters.GemTransfigured;
+            GemItem gemItem = new()
+            {
+                IsTransfigured = transfigured,
+            };
+
+            BoolOptionFilter queryRequestFilter = new() { Option = transfigured };
+
+            // act & assert
+            this.CreateShouldReturnBindableBoolOptionFilterViewModel(
+                expectedBindingExpression,
+                gemItem,
+                Resources.Transfigured,
                 queryRequestFilter);
         }
 

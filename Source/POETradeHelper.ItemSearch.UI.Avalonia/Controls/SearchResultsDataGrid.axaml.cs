@@ -72,6 +72,12 @@ public partial class SearchResultsDataGrid : UserControl
             {
                 e.Column.CellStyleClasses.AddRange(styleClassAttribute.StyleClasses);
             }
+
+            DataGridStarWidthAttribute? starWidthAttribute = property.GetCustomAttribute<DataGridStarWidthAttribute>();
+            if (starWidthAttribute != null)
+            {
+                e.Column.Width = new DataGridLength(starWidthAttribute.Value, DataGridLengthUnitType.Star);
+            }
         }
     }
 }

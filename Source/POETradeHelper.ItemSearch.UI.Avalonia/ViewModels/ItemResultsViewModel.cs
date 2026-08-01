@@ -75,6 +75,7 @@ public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
             this.QueryRequest = this.searchQueryRequestFactory.Create(this.Item);
             this.lastItemListingResult = await this.poeTradeApiClient.GetListingsAsync(this.QueryRequest, cancellationToken);
             this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item, this.lastItemListingResult, cancellationToken);
+            await this.LoadNextPage(cancellationToken);
             await this.AdvancedFilters.LoadAsync(this.Item, this.QueryRequest, cancellationToken);
 
             _ = this.PricePrediction.LoadAsync(this.Item, cancellationToken);
@@ -91,26 +92,27 @@ public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
 
             this.lastItemListingResult = await this.poeTradeApiClient.GetListingsAsync(this.QueryRequest);
             this.ItemListings = await this.itemListingsViewModelFactory.CreateAsync(this.Item!, this.lastItemListingResult);
+            await this.LoadNextPage();
         }
         catch (Exception exception)
         {
-            this.itemSearchResultOverlayViewModel.HandleException(exception);
+            this.itemSearchResultOverlayViewModel.HandleException(exception, "Error occurred executing advanced query.");
         }
     }
 
-    private async Task LoadNextPage()
+    private async Task LoadNextPage(CancellationToken cancellationToken = default)
     {
         if (this.lastItemListingResult == null || this.Item == null || this.ItemListings == null)
         {
             return;
         }
 
-        Optional<ItemListingsQueryResult> itemListingsQueryResult = await this.poeTradeApiClient.LoadNextPage(this.lastItemListingResult);
+        Optional<ItemListingsQueryResult> itemListingsQueryResult = await this.poeTradeApiClient.LoadNextPage(this.lastItemListingResult, cancellationToken);
 
         if (itemListingsQueryResult.HasValue)
         {
             this.lastItemListingResult = itemListingsQueryResult.Value;
-            ItemListingsViewModel itemListingsViewModel = await this.itemListingsViewModelFactory.CreateAsync(this.Item, itemListingsQueryResult.Value);
+            ItemListingsViewModel itemListingsViewModel = await this.itemListingsViewModelFactory.CreateAsync(this.Item, itemListingsQueryResult.Value, cancellationToken);
             this.ItemListings.Listings.AddRange(itemListingsViewModel.Listings);
         }
     }

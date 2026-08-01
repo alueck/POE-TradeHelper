@@ -45,6 +45,7 @@ namespace POETradeHelper.ItemSearch.Contract.Models
                         .Split(LineEndingCharacters, StringSplitOptions.RemoveEmptyEntries)
                         .Where(x => !x.StartsWith('{') && !x.StartsWith('(')))
                     .RemoveStatRanges()
+                    .RemoveBracketedText()
                     .Replace(Resources.UnscalableValueSuffix, string.Empty);
 
                 return text;

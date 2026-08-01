@@ -1,8 +1,10 @@
 ﻿using System;
 
+using POETradeHelper.Common.Contract;
+
 namespace POETradeHelper.PathOfExileTradeApi.Services
 {
-    public interface IStaticDataService
+    public interface IStaticDataService : IInitializable
     {
         /// <summary>
         /// Returns the id for the given <paramref name="itemName"/> or null if no match was found.

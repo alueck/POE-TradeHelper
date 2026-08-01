@@ -1,18 +1,27 @@
 ﻿using System.Text;
 
+using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Services.Parsers;
 using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders.Models;
 
 namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
 {
-    public class MapItemStringBuilder : ItemStringBuilderBase<MapItemStringBuilder>
+    public class MapItemStringBuilder : ItemStringBuilderBase<MapItemStringBuilder, MapItemNameAndRarityGroup>
     {
-        public MapItemStatsGroup ItemStatsGroup { get; } = new MapItemStatsGroup();
+        private MapItemStatsGroup ItemStatsGroup { get; } = new();
+
+        private IList<ItemStat> ItemStats { get; } = [];
 
         public MapItemStringBuilder WithMapTier(int mapTier)
         {
-            this.ItemStatsGroup.MapTier = mapTier;
+            this.NameAndRarityGroup.MapTier = mapTier;
+            return this;
+        }
+
+        public MapItemStringBuilder WithBlighted(MapBlightedStatus status)
+        {
+            this.NameAndRarityGroup.BlightedStatus = status;
             return this;
         }
 
@@ -40,6 +49,12 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
             return this;
         }
 
+        public MapItemStringBuilder WithItemStat(string statText, StatCategory statCategory)
+        {
+            this.ItemStats.Add(new ItemStat(statCategory) { Text = statText });
+            return this;
+        }
+
         public override string Build()
         {
             var stringBuilder = new StringBuilder();
@@ -50,6 +65,7 @@ namespace POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders
                 .Append(this.ItemStatsGroup)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => !this.IsIdentified)
                 .AppendLine(Resources.UnidentifiedKeyword, () => !this.IsIdentified)
+                .AppendItemStats(this.ItemStats)
                 .AppendLine(ParserConstants.PropertyGroupSeparator, () => this.IsCorrupted)
                 .AppendLine(Resources.CorruptedKeyword, () => this.IsCorrupted);
 
