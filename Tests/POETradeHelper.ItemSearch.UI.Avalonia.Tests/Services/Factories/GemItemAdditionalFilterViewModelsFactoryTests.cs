@@ -188,7 +188,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Services.Factories
 
         [TestCase(true)]
         [TestCase(false)]
-        public void Create_ShouldReturnTransfiguredFilterViewModel_IfNonVaalGem(bool transfigured)
+        public void Create_ShouldReturnTransfiguredFilterViewModel(bool transfigured)
         {
             // arrange
             Expression<Func<SearchQueryRequest, BoolOptionFilter?>> expectedBindingExpression =

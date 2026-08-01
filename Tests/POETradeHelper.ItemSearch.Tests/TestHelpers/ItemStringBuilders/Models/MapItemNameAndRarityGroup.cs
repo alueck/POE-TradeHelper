@@ -16,7 +16,7 @@ public sealed class MapItemNameAndRarityGroup : NameAndRarityGroupBase
 
         if (this.BlightedStatus == MapBlightedStatus.Blighted)
         {
-            sb.Append($"{Resources.BlightedPrefix}");
+            sb.Append($"{Resources.BlightedPrefix} ");
         }
         else if (this.BlightedStatus == MapBlightedStatus.BlightRavaged)
         {
