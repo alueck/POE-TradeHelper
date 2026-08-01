@@ -618,7 +618,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             await this.statsDataService.OnInitAsync();
 
             // act
-            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], true);
+            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], true, StatCategory.Implicit.GetDisplayName());
 
             // assert
             result.Should().Be(expectedStatData);
