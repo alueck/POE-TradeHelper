@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
+using Microsoft.Extensions.Logging;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
@@ -15,13 +17,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
         private const char Placeholder = '#';
         private readonly IPseudoItemStatsParser pseudoItemStatsParser;
 
-        public ItemStatsParser(IStatsDataService statsDataService, IPseudoItemStatsParser pseudoItemStatsParser) : base(
-            statsDataService)
+        public ItemStatsParser(IStatsDataService statsDataService, IPseudoItemStatsParser pseudoItemStatsParser, ILogger<ItemStatsParser> logger)
+            : base(statsDataService, logger)
         {
             this.pseudoItemStatsParser = pseudoItemStatsParser;
         }
 
-        public ItemStats Parse(string[] itemStringLines, bool preferLocalStats)
+        public ItemStats Parse(string[] itemStringLines, bool preferLocalStats, IReadOnlyCollection<StatCategory>? categoriesFilter = null)
         {
             ItemStats result = new();
 
@@ -38,7 +40,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
                 if ((statTexts.Count > 0 && statTextLine.StartsWith('{')) || statTextLine.StartsWith('(') ||
                     statTextLine == ParserConstants.PropertyGroupSeparator)
                 {
-                    itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier, category));
+                    itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier, category, categoriesFilter));
                     statTexts.Clear();
                     tier = TryGetTier(statTextLine);
                     category = TryGetCategory(statTextLine);
@@ -52,10 +54,15 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
                     continue;
                 }
 
+                if (category != null && categoriesFilter?.Count > 0 && !categoriesFilter.Contains(category.Value))
+                {
+                    continue;
+                }
+
                 statTexts.Add(statTextLine.Replace(Resources.UnscalableValueSuffix, string.Empty).RemoveStatRanges().RemoveBracketedText());
             }
 
-            itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier, category));
+            itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier, category, categoriesFilter));
 
             IEnumerable<ItemStat> pseudoItemStats = this.pseudoItemStatsParser.Parse(itemStats);
 
@@ -65,11 +72,16 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             return result;
         }
 
-        private IEnumerable<ItemStat> GetItemStats(bool preferLocalStats, IReadOnlyList<string> statTexts, int? tier, StatCategory? category)
+        private IEnumerable<ItemStat> GetItemStats(
+            bool preferLocalStats,
+            IReadOnlyList<string> statTexts,
+            int? tier,
+            StatCategory? category,
+            IReadOnlyCollection<StatCategory>? categoriesFilter)
         {
             for (int index = 0; index < statTexts.Count; index++)
             {
-                var itemStat = this.GetCompleteItemStat(statTexts.Skip(index).ToArray(), preferLocalStats, tier, category);
+                var itemStat = this.GetCompleteItemStat(statTexts.Skip(index).ToArray(), preferLocalStats, tier, category, categoriesFilter);
 
                 if (itemStat != null)
                 {

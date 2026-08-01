@@ -49,7 +49,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Models
                 {
                     string regexText = this.Text.Replace(LocalStatMarker, string.Empty).Replace(MonsterStatMarker, string.Empty);
                     regexText = TierRegex.Replace(regexText, string.Empty);
-                    field = new Regex($@"^{Regex.Escape(regexText).Replace(@"\#", @"[\+\-]?\d+(?:\.\d+)?")}(?: \([^\)]+\))?$");
+                    field = new Regex($@"^{Regex.Escape(regexText).Replace(@"\#", @"[\+\-]?\d+(?:\.\d+)?")}(?: \([^\)]+\))?$", this.Lines > 1 ? RegexOptions.Multiline : RegexOptions.Singleline);
                 }
 
                 return field;

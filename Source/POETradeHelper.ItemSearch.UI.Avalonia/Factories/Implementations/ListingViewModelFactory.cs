@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using POETradeHelper.ItemSearch.Contract.Models;
-using POETradeHelper.ItemSearch.UI.Avalonia.Properties;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 using POETradeHelper.PathOfExileTradeApi.Models;
 

@@ -15,6 +15,9 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 {
     internal partial class StatsDataService : DataServiceBase<Data<StatData>>, IStatsDataService
     {
+        private const string ExplicitStatsId = "explicit";
+        private const string PseudoStatsId = "pseudo";
+
         private readonly IAlternativeStatTextsService alternativeStatTextsService;
         private readonly ILogger<StatsDataService> logger;
 
@@ -59,6 +62,18 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
 
             IEnumerable<Data<StatData>> statDataListsToSearch = this.GetStatDataListsToSearch(toSearch);
             StatData? result = GetStatDataMatch(statDataListsToSearch, itemStatLines, preferLocalStat);
+
+            if (result == null && toSearch.Count == 1 && string.Equals(toSearch[0], ExplicitStatsId, StringComparison.OrdinalIgnoreCase) && this.Data.Count > 1)
+            {
+                return this.TryGetStatData(
+                    itemStatLines,
+                    preferLocalStat,
+                    this.Data
+                        .Select(x => x.Id)
+                        .Where(category => !string.Equals(category, ExplicitStatsId, StringComparison.OrdinalIgnoreCase)
+                                           && !string.Equals(category, PseudoStatsId, StringComparison.OrdinalIgnoreCase))
+                        .ToArray());
+            }
 
             return result;
         }
@@ -107,7 +122,7 @@ namespace POETradeHelper.PathOfExileTradeApi.Services.Implementations
                 return match.Groups["StatCategory"].Value;
             }
 
-            return "explicit";
+            return ExplicitStatsId;
         }
 
         private IEnumerable<Data<StatData>> GetStatDataListsToSearch(params ICollection<string> statCategoriesToSearch)

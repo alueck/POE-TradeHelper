@@ -119,5 +119,23 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             BoolOptionFilter? transfiguredFilter = result.Query.Filters.MiscFilters.GemTransfigured;
             transfiguredFilter.Should().BeEquivalentTo(new BoolOptionFilter { Option = transfigured });
         }
+
+        [Test]
+        public void MapToQueryRequest_ShouldMapImbuedStats()
+        {
+            ItemStat imbuedStat = new(StatCategory.Imbued) { Id = "imbued" };
+
+            GemItem item = new()
+            {
+                Stats = new ItemStats
+                {
+                    AllStats = { imbuedStat },
+                },
+            };
+
+            SearchQueryRequest result = this.gemItemSearchQueryRequestMapper.MapToQueryRequest(item);
+
+            result.Query.Stats.Should().Contain(x => x.Filters.Count == 1 && x.Filters.Any(y => y.Id == imbuedStat.Id));
+        }
     }
 }

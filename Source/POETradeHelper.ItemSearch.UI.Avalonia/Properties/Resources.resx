@@ -285,6 +285,9 @@
   <data name="FilterCategory_Crucible" xml:space="preserve">
     <value>Crucible</value>
   </data>
+  <data name="FilterCategory_Imbued" xml:space="preserve">
+    <value>Imbued</value>
+  </data>
   <data name="FilterCategory_Other" xml:space="preserve">
     <value>Other</value>
   </data>

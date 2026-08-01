@@ -258,6 +258,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Imbued.
+        /// </summary>
+        public static string FilterCategory_Imbued {
+            get {
+                return ResourceManager.GetString("FilterCategory_Imbued", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Implicit.
         /// </summary>
         public static string FilterCategory_Implicit {

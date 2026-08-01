@@ -303,4 +303,7 @@
   <data name="TransfiguredKeyword" xml:space="preserve">
     <value>Transfigured</value>
   </data>
+  <data name="StatCategoryImbued" xml:space="preserve">
+    <value>Imbued</value>
+  </data>
 </root>

@@ -112,7 +112,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
                 }));
         }
 
-        protected virtual bool MapsHighTierItemStats() => typeof(TItemType).IsAssignableTo(typeof(ItemWithStats));
+        protected virtual bool MapsHighTierItemStats() => typeof(TItemType).IsAssignableTo(typeof(ItemWithStats)) && !typeof(TItemType).IsAssignableTo(typeof(GemItem));
 
         protected static IEnumerable<Item> GetNonMatchingItems() => GetItems().Where(item => item.GetType() != typeof(TItemType));
 

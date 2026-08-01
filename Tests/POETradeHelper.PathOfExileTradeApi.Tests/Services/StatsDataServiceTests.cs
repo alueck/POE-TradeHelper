@@ -587,6 +587,43 @@ namespace POETradeHelper.PathOfExileTradeApi.Tests.Services
             result.Should().Be(expectedStatData);
         }
 
+        [Test]
+        public async Task TryGetStatData_ShouldReturnCorrectStatData_IfMultiline()
+        {
+            // arrange
+            const string itemStatText = "Area is infested with Fungal Growths\nMap's Item Quantity Modifiers also affect Blight Chest count at 25% value\nCan be Anointed up to 3 times\nNatural inhabitants of this area have been removed";
+            StatData expectedStatData = new()
+            {
+                Id = "expected id",
+                Text = "Area is infested with Fungal Growths\nMap's Item Quantity Modifiers also affect Blight Chest count at 25% value\nCan be Anointed up to 3 times",
+                Type = StatCategory.Implicit.GetDisplayName().ToLower(),
+            };
+
+            this.poeTradeApiJsonSerializerMock.Deserialize<QueryResult<Data<StatData>>>(Arg.Any<string>())
+                .Returns(new QueryResult<Data<StatData>>
+                {
+                    Result =
+                    [
+                        new()
+                        {
+                            Id = StatCategory.Implicit.GetDisplayName(),
+                            Entries =
+                            [
+                                expectedStatData,
+                            ],
+                        },
+                    ],
+                });
+
+            await this.statsDataService.OnInitAsync();
+
+            // act
+            IStatData? result = this.statsDataService.TryGetStatData([itemStatText], true);
+
+            // assert
+            result.Should().Be(expectedStatData);
+        }
+
         private async Task TryGetStatData_ShouldReturnCorrectStatData(ItemStat itemStat, StatData expectedStatData)
         {
             string statCategory = itemStat.StatCategory.GetDisplayName();

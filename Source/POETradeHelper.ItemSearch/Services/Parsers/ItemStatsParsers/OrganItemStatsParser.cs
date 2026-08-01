@@ -1,4 +1,6 @@
-﻿using POETradeHelper.Common.Extensions;
+﻿using Microsoft.Extensions.Logging;
+
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
 using POETradeHelper.ItemSearch.Contract.Services.Parsers;
@@ -8,11 +10,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 {
     public class OrganItemStatsParser : ItemStatsParserBase, IItemStatsParser<OrganItem>
     {
-        public OrganItemStatsParser(IStatsDataService statsDataService) : base(statsDataService)
+        public OrganItemStatsParser(IStatsDataService statsDataService, ILogger<OrganItemStatsParser> logger) : base(statsDataService, logger)
         {
         }
 
-        public ItemStats Parse(string[] itemStringLines, bool preferLocalStats)
+        public ItemStats Parse(string[] itemStringLines, bool preferLocalStats, IReadOnlyCollection<StatCategory>? categoriesFilter = null)
         {
             var result = new ItemStats();
 

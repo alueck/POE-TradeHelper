@@ -1,5 +1,7 @@
 ﻿using AwesomeAssertions;
 
+using Microsoft.Extensions.Logging;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -29,7 +31,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                 .TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
                 .Returns((IStatData?)null);
             this.pseudoItemStatsParserMock = Substitute.For<IPseudoItemStatsParser>();
-            this.itemStatsParser = new ItemStatsParser(this.statsDataServiceMock, this.pseudoItemStatsParserMock);
+            this.itemStatsParser = new ItemStatsParser(this.statsDataServiceMock, this.pseudoItemStatsParserMock, Substitute.For<ILogger<ItemStatsParser>>());
             this.itemStringBuilder = new ItemStringBuilder();
         }
 
@@ -473,6 +475,31 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
             result.ImplicitStats.Should().ContainEquivalentOf(expectedImplicitItemStat, opt => opt.IncludingAllRuntimeProperties());
             result.CraftedStats.Should().ContainEquivalentOf(expectedCraftedItemStat, opt => opt.IncludingAllRuntimeProperties());
             result.EnchantedStats.Should().ContainEquivalentOf(expectedEnchantedItemStat, opt => opt.IncludingAllRuntimeProperties());
+        }
+
+        [Test]
+        public void Parse_ShouldIgnoreStatsNotInCategoriesToFilter()
+        {
+            string[] itemStringLines = this.itemStringBuilder
+                .WithName("Titan Greaves")
+                .WithItemLevel(75)
+                .WithItemStat("explicit stat text", StatCategory.Explicit)
+                .WithItemStat("implicit stat text", StatCategory.Implicit)
+                .BuildLines();
+
+            this.statsDataServiceMock
+                .TryGetStatData(Arg.Is<IReadOnlyCollection<string>>(x => x!.First() == "explicit stat text"), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Type = "explicit" });
+
+            this.statsDataServiceMock
+                .TryGetStatData(Arg.Is<IReadOnlyCollection<string>>(x => x!.First() == "implicit stat text"), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData { Type = "implicit" });
+
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false, [StatCategory.Explicit]);
+
+            result.AllStats.Should()
+                .HaveCount(1)
+                .And.Contain(x => x.StatCategory == StatCategory.Explicit);
         }
 
         [Test]

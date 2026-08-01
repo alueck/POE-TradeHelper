@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Configuration;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.PathOfExileTradeApi.Models;
@@ -8,8 +10,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
 {
     public class GemItemSearchQueryRequestMapper : ItemSearchRequestMapperBase
     {
-        public GemItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions) : base(
-            itemSearchOptions)
+        public GemItemSearchQueryRequestMapper(IOptionsMonitor<ItemSearchOptions> itemSearchOptions) : base(itemSearchOptions)
         {
         }
 
@@ -25,6 +26,7 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             MapQuality(result, gemItem);
             MapImbued(result, gemItem);
             MapTransfigured(result, gemItem);
+            MapImbuedStats(result, gemItem);
 
             return result;
         }
@@ -63,5 +65,24 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             {
                 Option = gemItem.IsTransfigured,
             };
+
+        private static void MapImbuedStats(SearchQueryRequest result, GemItem gemItem)
+        {
+            IEnumerable<StatFilter> statFilters = gemItem.Stats?.ImbuedStats
+                .Select(x => new StatFilter
+                {
+                    Id = x.Id,
+                    Value = x switch
+                    {
+                        SingleValueItemStat singleValueItemStat => new MinMaxFilter { Min = singleValueItemStat.Value },
+                        MinMaxValueItemStat minMaxValueItemStat => new MinMaxFilter { Min = minMaxValueItemStat.MinValue, Max = minMaxValueItemStat.MaxValue },
+                        _ => new MinMaxFilter(),
+                    },
+                }) ?? [];
+
+            StatFilters filters = new();
+            filters.Filters.AddRange(statFilters);
+            result.Query.Stats.Add(filters);
+        }
     }
 }

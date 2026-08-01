@@ -1,5 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
+using Microsoft.Extensions.Logging;
+
 using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.Contract.Properties;
@@ -10,30 +12,45 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
     public abstract partial class ItemStatsParserBase
     {
         private readonly IStatsDataService statsDataService;
+        private readonly ILogger<ItemStatsParserBase> logger;
 
-        protected ItemStatsParserBase(IStatsDataService statsDataService)
+        protected ItemStatsParserBase(IStatsDataService statsDataService, ILogger<ItemStatsParserBase> logger)
         {
             this.statsDataService = statsDataService;
+            this.logger = logger;
         }
 
-        protected ItemStat? GetCompleteItemStat(IReadOnlyCollection<string> itemStatLines, bool preferLocalStatData, int? tier, StatCategory? statCategoryToSearch = null)
+        protected ItemStat? GetCompleteItemStat(
+            IReadOnlyCollection<string> itemStatLines,
+            bool preferLocalStatData,
+            int? tier,
+            StatCategory? statCategoryToSearch = null,
+            IReadOnlyCollection<StatCategory>? categoriesFilter = null)
         {
             var statData = this.statsDataService.TryGetStatData(itemStatLines, preferLocalStatData, statCategoryToSearch.HasValue ? [statCategoryToSearch.GetDisplayName()] : []);
 
-            if (statData != null)
+            if (statData == null)
             {
-                string text = string.Join('\n', itemStatLines.Take(statData.Lines).Select(ReplaceStatCategoryMarkers));
-
-                return new ItemStat(statData.Type.ParseToEnumByDisplayName<StatCategory>(StringComparison.OrdinalIgnoreCase) ?? StatCategory.Unknown)
-                {
-                    Id = statData.Id,
-                    TextWithPlaceholders = statData.Text,
-                    Text = text,
-                    Tier = tier ?? TryGetTier(statData.Text),
-                };
+                this.logger.LogDebug("Failed to find stat data for lines {ItemStatLines} and category {StatCategory}", itemStatLines, statCategoryToSearch);
+                return null;
             }
 
-            return null;
+            StatCategory statCategory = statData.Type.ParseToEnumByDisplayName<StatCategory>(StringComparison.OrdinalIgnoreCase) ?? StatCategory.Unknown;
+            if (categoriesFilter?.Count > 0 && !categoriesFilter.Contains(statCategory))
+            {
+                return null;
+            }
+
+            string text = string.Join('\n', itemStatLines.Take(statData.Lines).Select(ReplaceStatCategoryMarkers));
+
+            return new ItemStat(statCategory)
+            {
+                Id = statData.Id,
+                TextWithPlaceholders = statData.Text,
+                Text = text,
+                Tier = tier ?? TryGetTier(statData.Text),
+            };
+
         }
 
         protected static int? TryGetTier(string statDescription)

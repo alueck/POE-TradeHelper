@@ -19,6 +19,8 @@ namespace POETradeHelper.ItemSearch.Contract.Models
 
         public IReadOnlyList<ItemStat> CrucibleStats => this.AllStats.Where(s => s.StatCategory == StatCategory.Crucible).ToArray();
 
+        public IReadOnlyList<ItemStat> ImbuedStats => this.AllStats.Where(s => s.StatCategory == StatCategory.Imbued).ToArray();
+
         public IReadOnlyList<ItemStat> MonsterStats => this.AllStats.Where(s => s.StatCategory == StatCategory.Monster).ToArray();
 
         public IReadOnlyList<ItemStat> PseudoStats => this.AllStats.Where(s => s.StatCategory == StatCategory.Pseudo).ToArray();
@@ -30,6 +32,7 @@ namespace POETradeHelper.ItemSearch.Contract.Models
             .Except(this.EnchantedStats)
             .Except(this.FracturedStats)
             .Except(this.CrucibleStats)
+            .Except(this.ImbuedStats)
             .Except(this.MonsterStats)
             .Except(this.PseudoStats)
             .ToArray();

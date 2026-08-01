@@ -12,70 +12,53 @@
     <ScrollViewer
         HorizontalScrollBarVisibility="Disabled"
         VerticalScrollBarVisibility="Auto">
-        <Grid Grid.IsSharedSizeScope="True">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
+        <StackPanel>
             <localViews:FiltersControl
                 Name="EnchantedItemStatFilters"
-                Grid.Row="0"
                 Header="{x:Static resources:Resources.FilterCategory_Enchant}"
                 Items="{Binding EnchantedItemStatFilters}" />
 
             <localViews:FiltersControl
                 Name="FracturedItemStatFilters"
-                Grid.Row="1"
                 Header="{x:Static resources:Resources.FilterCategory_Fractured}"
                 Items="{Binding FracturedItemStatFilters}" />
 
             <localViews:FiltersControl
                 Name="ImplicitItemStatFilters"
-                Grid.Row="2"
                 Header="{x:Static resources:Resources.FilterCategory_Implicit}"
                 Items="{Binding ImplicitItemStatFilters}" />
 
             <localViews:FiltersControl
                 Name="ExplicitItemStatFilters"
-                Grid.Row="3"
                 Header="{x:Static resources:Resources.FilterCategory_Explicit}"
                 Items="{Binding ExplicitItemStatFilters}" />
 
             <localViews:FiltersControl
                 Name="CraftedItemStatFilters"
-                Grid.Row="4"
                 Header="{x:Static resources:Resources.FilterCategory_Crafted}"
                 Items="{Binding CraftedItemStatFilters}" />
 
             <localViews:FiltersControl
                 Name="CrucibleItemStatFilters"
-                Grid.Row="5"
                 Header="{x:Static resources:Resources.FilterCategory_Crucible}"
                 Items="{Binding CrucibleItemStatFilters}" />
             
             <localViews:FiltersControl
+                Name="ImbuedItemStatFilters"
+                Header="{x:Static resources:Resources.FilterCategory_Imbued}"
+                Items="{Binding ImbuedItemStatFilters}" />
+            
+            <localViews:FiltersControl
                 Name="OtherItemStatFilters"
-                Grid.Row="6"
                 Header="{x:Static resources:Resources.FilterCategory_Other}"
                 Items="{Binding OtherItemStatFilters}" />
             
             <localViews:FiltersControl
                 Name="MonsterItemStatFilters"
-                Grid.Row="7"
                 Items="{Binding MonsterItemStatFilters}" />
 
             <localViews:FiltersControl
                 Name="PseudoItemStatFilters"
-                Grid.Row="8"
                 Header="{x:Static resources:Resources.FilterCategory_Pseudo}"
                 Items="{Binding PseudoItemStatFilters}" />
 
@@ -83,6 +66,6 @@
                 Name="AdditionalFilters"
                 Grid.Row="9"
                 Items="{Binding AdditionalFilters}" />
-        </Grid>
+        </StackPanel>
     </ScrollViewer>
 </UserControl>

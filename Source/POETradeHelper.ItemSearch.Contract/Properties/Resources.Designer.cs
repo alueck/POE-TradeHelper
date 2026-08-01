@@ -519,6 +519,15 @@ namespace POETradeHelper.ItemSearch.Contract.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Imbued.
+        /// </summary>
+        public static string StatCategoryImbued {
+            get {
+                return ResourceManager.GetString("StatCategoryImbued", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Implicit.
         /// </summary>
         public static string StatCategoryImplicit {

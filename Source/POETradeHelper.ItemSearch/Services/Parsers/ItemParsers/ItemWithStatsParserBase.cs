@@ -12,6 +12,8 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
             this.itemStatsParser = itemStatsParser;
         }
 
+        protected virtual IReadOnlyCollection<StatCategory>? CategoriesFilter => null;
+
         protected override Item ParseItem(string[] itemStringLines)
         {
             ItemWithStats item = this.ParseItemWithoutStats(itemStringLines);
@@ -31,7 +33,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemParsers
 
             bool shouldPreferLocalStats = item is EquippableItem { Category: EquippableItemCategory.Armour or EquippableItemCategory.Weapon };
 
-            return this.itemStatsParser.Parse(itemStringLines, shouldPreferLocalStats);
+            return this.itemStatsParser.Parse(itemStringLines, shouldPreferLocalStats, this.CategoriesFilter);
         }
     }
 }

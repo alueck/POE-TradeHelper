@@ -1,5 +1,7 @@
 ﻿using AwesomeAssertions;
 
+using Microsoft.Extensions.Logging;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -31,7 +33,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
                         Text = ctx.Arg<IReadOnlyCollection<string>>()!.FirstOrDefault()!,
                     });
 
-            this.organItemStatsParser = new OrganItemStatsParser(this.statsDataServiceMock);
+            this.organItemStatsParser = new OrganItemStatsParser(this.statsDataServiceMock, Substitute.For<ILogger<OrganItemStatsParser>>());
             this.itemStringBuilder = new ItemStringBuilder();
         }
 

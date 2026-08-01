@@ -5,6 +5,7 @@ using NSubstitute;
 using NUnit.Framework;
 
 using POETradeHelper.ItemSearch.Contract.Models;
+using POETradeHelper.ItemSearch.Contract.Services.Parsers;
 using POETradeHelper.ItemSearch.Services.Parsers.ItemParsers;
 using POETradeHelper.ItemSearch.Tests.Properties;
 using POETradeHelper.ItemSearch.Tests.TestHelpers.ItemStringBuilders;
@@ -16,12 +17,14 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
     public class GemItemParserTests : ItemParserTestsBase
     {
         private readonly IItemDataService itemDataServiceMock;
+        private readonly IItemStatsParser<ItemWithStats> itemStatsParserMock;
         private readonly GemItemStringBuilder itemStringBuilder;
 
         public GemItemParserTests()
         {
             this.itemDataServiceMock = Substitute.For<IItemDataService>();
-            this.ItemParser = new GemItemParser(this.itemDataServiceMock);
+            this.itemStatsParserMock = Substitute.For<IItemStatsParser<ItemWithStats>>();
+            this.ItemParser = new GemItemParser(this.itemDataServiceMock, this.itemStatsParserMock);
             this.itemStringBuilder = new GemItemStringBuilder().WithRarity(ItemRarity.Gem);
         }
 
@@ -235,6 +238,32 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemParsers
             GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
 
             result.IsTransfigured.Should().BeTrue();
+        }
+
+        [Test]
+        public void Parse_ShouldCallParseOnItemStatsParser()
+        {
+            string[] itemStringLines = this.GetValidItemStringLines();
+
+            this.ItemParser.Parse(itemStringLines);
+
+            this.itemStatsParserMock
+                .Received(1)
+                .Parse(itemStringLines, false, Arg.Is<IReadOnlyCollection<StatCategory>?>(x => x != null && x.Count == 1 && x.First() == StatCategory.Imbued));
+        }
+
+        [Test]
+        public void Parse_ShouldSetItemStatsFromItemStatsParserOnItem()
+        {
+            ItemStats expected = new();
+            string[] itemStringLines = this.GetValidItemStringLines();
+
+            this.itemStatsParserMock.Parse(Arg.Any<string[]>(), Arg.Any<bool>(), Arg.Any<IReadOnlyCollection<StatCategory>?>())
+                .Returns(expected);
+
+            GemItem result = (GemItem)this.ItemParser.Parse(itemStringLines);
+
+            result.Stats.Should().BeSameAs(expected);
         }
 
         protected override string[] GetValidItemStringLines() =>

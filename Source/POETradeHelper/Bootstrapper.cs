@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -12,8 +11,6 @@ using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy;
 
 using Castle.DynamicProxy;
-
-using Mediator;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,7 +69,13 @@ namespace POETradeHelper
             var serviceCollection = new ServiceCollection();
 
             Log.Logger = new LoggerConfiguration()
+#if DEBUG
+                .MinimumLevel.Is(LogEventLevel.Debug)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("System", LogEventLevel.Information)
+#else
                 .MinimumLevel.Is(LogEventLevel.Warning)
+#endif
                 .Enrich.WithExceptionDetails()
                 .WriteTo.Debug()
                 .WriteTo.Console()
