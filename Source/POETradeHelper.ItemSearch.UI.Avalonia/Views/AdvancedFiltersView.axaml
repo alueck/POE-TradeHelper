@@ -64,7 +64,6 @@
 
             <localViews:FiltersControl
                 Name="AdditionalFilters"
-                Grid.Row="9"
                 Items="{Binding AdditionalFilters}" />
         </StackPanel>
     </ScrollViewer>

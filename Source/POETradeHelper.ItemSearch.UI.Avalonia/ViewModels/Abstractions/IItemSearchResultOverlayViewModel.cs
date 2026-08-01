@@ -10,6 +10,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions
     {
         Task SetListingForItemUnderCursorAsync(CancellationToken token = default);
 
-        void HandleException(Exception exception);
+        void HandleException(Exception exception, string logMessage);
     }
 }

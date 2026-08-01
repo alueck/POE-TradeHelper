@@ -37,8 +37,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             List<ItemStat> itemStats = [];
             foreach (var statTextLine in statTextLines)
             {
-                if ((statTexts.Count > 0 && statTextLine.StartsWith('{')) || statTextLine.StartsWith('(') ||
-                    statTextLine == ParserConstants.PropertyGroupSeparator)
+                if ((statTexts.Count > 0 && statTextLine.StartsWith('{')) || statTextLine.StartsWith('(') || statTextLine == ParserConstants.PropertyGroupSeparator)
                 {
                     itemStats.AddRange(this.GetItemStats(preferLocalStats, statTexts, tier, category, categoriesFilter));
                     statTexts.Clear();
@@ -109,7 +108,7 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
 
             if (line.Contains(nameof(StatCategory.Crafted), StringComparison.OrdinalIgnoreCase))
             {
-                return  StatCategory.Crafted;
+                return StatCategory.Crafted;
             }
 
             if (line.Contains(nameof(StatCategory.Fractured), StringComparison.OrdinalIgnoreCase))

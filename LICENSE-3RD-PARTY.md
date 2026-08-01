@@ -65,11 +65,12 @@ applies to:
 - Microsoft.Extensions.Http
 - Microsoft.Extensions.Http.Polly
 - Microsoft.Extensions.Options.ConfigurationExtensions
+- Roslynator.Analyzers, Copyright (c) .NET Foundation and Contributors. All Rights Reserved.
 - Serilog.Extensions.Logging
+- Serilog.Formatting.Compact
 - Serilog.Sinks.Console
 - Serilog.Sinks.Debug
 - Serilog.Sinks.File
-- StyleCop.Analyzers
 
 -----------------------------------------------------------------------------
 

@@ -96,7 +96,7 @@ public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
         }
         catch (Exception exception)
         {
-            this.itemSearchResultOverlayViewModel.HandleException(exception);
+            this.itemSearchResultOverlayViewModel.HandleException(exception, "Error occurred executing advanced query.");
         }
     }
 

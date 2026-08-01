@@ -305,7 +305,7 @@ public class ItemResultsViewModelTests
 
         this.itemSearchResultsOverlayViewModelMock
             .Received()
-            .HandleException(exception);
+            .HandleException(exception, Arg.Any<string>());
     }
 
     [Test]
