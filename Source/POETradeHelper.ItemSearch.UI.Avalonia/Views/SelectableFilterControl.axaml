@@ -6,7 +6,7 @@
              x:Class="POETradeHelper.ItemSearch.UI.Avalonia.Views.SelectableFilterControl"
              x:CompileBindings="False">
 
-  <CheckBox DataContext="{Binding $parent[UserControl]}" IsChecked="{Binding Filter.IsEnabled}" HorizontalAlignment="Left" IsThreeState="{Binding IsThreeState}">
-    <TextBlock Text="{Binding Filter.Text}" Margin="5" VerticalAlignment="Center" TextWrapping="Wrap" />
+  <CheckBox DataContext="{Binding $parent[UserControl]}" IsChecked="{Binding Filter?.IsEnabled}" HorizontalAlignment="Left" IsThreeState="{Binding IsThreeState}">
+    <TextBlock Text="{Binding Filter?.Text}" Margin="5" VerticalAlignment="Center" TextWrapping="Wrap" />
   </CheckBox>
 </UserControl>

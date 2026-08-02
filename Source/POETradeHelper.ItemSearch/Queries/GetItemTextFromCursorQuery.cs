@@ -19,24 +19,13 @@ public class GetItemTextFromCursorQueryHandler : IRequestHandler<GetItemTextFrom
 
     public async ValueTask<string> Handle(GetItemTextFromCursorQuery request, CancellationToken cancellationToken)
     {
-        const int maxTries = 8;
         string? clipBoardTemp = await this.clipboardHelper.GetTextAsync();
-
         this.userInputSimulator.SendCopyAdvancedItemStringCommand();
 
-        string? itemString;
-        int tries = 0;
+        // small delay, because the text is not always directly available after the copy key command
+        await Task.Delay(100, cancellationToken);
 
-        do
-        {
-            // small delay, because the text is not always directly available after the copy key command
-            await Task.Delay(200, cancellationToken);
-
-            itemString = await this.clipboardHelper.GetTextAsync();
-
-            tries++;
-        }
-        while (itemString == clipBoardTemp && tries < maxTries);
+        string? itemString = await this.clipboardHelper.GetTextAsync();
 
         if (string.IsNullOrEmpty(clipBoardTemp))
         {

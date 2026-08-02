@@ -154,5 +154,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
             BoolOptionFilter? blightRavaged = result.Query.Filters.MapFilters.MapBlightRavaged;
             blightRavaged.Should().BeEquivalentTo(new BoolOptionFilter { Option = isBlightRavaged });
         }
+
+        protected override bool MapsHighTierItemStats() => false;
     }
 }

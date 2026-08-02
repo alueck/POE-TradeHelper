@@ -10,4 +10,6 @@ public interface IUiThreadDispatcher : IDispatcher
     Task InvokeAsync(Action action, DispatcherPriority priority = default);
 
     Task InvokeAsync(Func<Task> function, DispatcherPriority priority = default);
+
+    Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = default);
 }
