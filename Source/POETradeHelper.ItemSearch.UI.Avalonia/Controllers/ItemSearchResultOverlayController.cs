@@ -14,14 +14,14 @@ using POETradeHelper.ItemSearch.UI.Avalonia.Views;
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
 {
     [Singleton]
-    public class ItemSearchResultOverlayController : IRequestHandler<SearchItemCommand>, IRequestHandler<HideOverlayCommand>
+    public class ItemSearchResultOverlayController : IRequestHandler<SearchItemCommand>, IRequestHandler<HideOverlayCommand>, IOverlayStatusProvider
     {
-        private readonly object lockObj = new();
+        private readonly Lock lockObj = new();
         private readonly IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel;
         private readonly IViewLocator viewLocator;
         private readonly IUiThreadDispatcher uiThreadDispatcher;
 
-        private IItemSearchResultOverlayView? view;
+        private bool isOverlayVisible;
         private CancellationTokenSource searchItemCancellationTokenSource = new();
 
         public ItemSearchResultOverlayController(
@@ -34,7 +34,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
             this.uiThreadDispatcher = uiThreadDispatcher;
         }
 
-        private IItemSearchResultOverlayView View => LazyInitializer.EnsureInitialized(ref this.view, this.CreateView);
+        bool IOverlayStatusProvider.IsVisible => this.isOverlayVisible;
+
+        private IItemSearchResultOverlayView View => LazyInitializer.EnsureInitialized(ref field, this.CreateView);
 
         public async ValueTask<Unit> Handle(SearchItemCommand request, CancellationToken cancellationToken)
         {
@@ -45,6 +47,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
                     this.CancelSearchItemToken();
 
                     this.View.Show();
+                    this.isOverlayVisible = true;
 
                     await this.itemSearchResultOverlayViewModel
                         .SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token)
@@ -65,9 +68,9 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
             {
                 if (this.View.IsVisible)
                 {
-                    request.OnHandled();
                     this.CancelSearchItemToken();
                     this.View.Hide();
+                    this.isOverlayVisible = false;
                 }
             });
 

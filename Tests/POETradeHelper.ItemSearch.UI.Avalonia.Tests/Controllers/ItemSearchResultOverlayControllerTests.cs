@@ -25,7 +25,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
         private readonly IItemSearchResultOverlayView viewMock;
         private readonly IItemSearchResultOverlayViewModel viewModelMock;
         private readonly IUiThreadDispatcher uiThreadDispatcherMock;
-        private readonly ItemSearchResultOverlayController overlayController;
+        private readonly ItemSearchResultOverlayController sut;
 
         public ItemSearchResultOverlayControllerTests()
         {
@@ -35,15 +35,15 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
             viewLocatorMock.GetView(Arg.Any<IItemSearchResultOverlayViewModel>())
                 .Returns(this.viewMock);
             this.uiThreadDispatcherMock = Substitute.For<IUiThreadDispatcher>();
-            this.overlayController = new ItemSearchResultOverlayController(this.viewModelMock, viewLocatorMock, this.uiThreadDispatcherMock);
+            this.sut = new ItemSearchResultOverlayController(this.viewModelMock, viewLocatorMock, this.uiThreadDispatcherMock);
         }
 
         [Test]
-        public async Task HandleHideOverlayQueryShouldCallHideOnOverlayIfOverlayIsVisible()
+        public async Task ExecuteHideOverlayCommand_ShouldCallHideOnOverlayIfOverlayIsVisible()
         {
             this.viewMock.IsVisible.Returns(true);
 
-            await this.ExecuteHideOverlayCommand(new HideOverlayCommand(() => { }));
+            await this.ExecuteHideOverlayCommand(new HideOverlayCommand());
 
             this.viewMock
                 .Received()
@@ -51,28 +51,32 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
         }
 
         [Test]
-        public async Task HandleHideOverlayQueryShouldInvokeOnHandledActionIfOverlayIsVisible()
+        public async Task OverlayStatusProviderIsVisible_ShouldReturnTrue_AfterShowingOverlay()
         {
-            bool handled = false;
+            ((IOverlayStatusProvider)this.sut).IsVisible.Should().BeFalse();
+
+            await this.ExecuteSearchItemCommand(new SearchItemCommand());
+
+            ((IOverlayStatusProvider)this.sut).IsVisible.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task OverlayStatusProviderIsVisible_ShouldReturnFalse_AfterHidingOverlay()
+        {
+            // arrange
             this.viewMock.IsVisible.Returns(true);
+            await this.ExecuteSearchItemCommand(new SearchItemCommand());
+            ((IOverlayStatusProvider)this.sut).IsVisible.Should().BeTrue();
 
-            await this.ExecuteHideOverlayCommand(new HideOverlayCommand(() => handled = true));
+            // act
+            await this.ExecuteHideOverlayCommand(new HideOverlayCommand());
 
-            handled.Should().BeTrue();
+            // assert
+            ((IOverlayStatusProvider)this.sut).IsVisible.Should().BeFalse();
         }
 
         [Test]
-        public async Task HandleHideOverlayQueryShouldNotCallHideOnOverlayIfOverlayIsNotVisible()
-        {
-            await this.ExecuteHideOverlayCommand(new HideOverlayCommand(() => { }));
-
-            this.viewMock
-                .DidNotReceive()
-                .Hide();
-        }
-
-        [Test]
-        public async Task HandleSearchItemQueryShouldCallSetListingForItemUnderCursorAsyncOnViewModel()
+        public async Task HandleSearchItemQuery_ShouldCallSetListingForItemUnderCursorAsyncOnViewModel()
         {
             await this.ExecuteSearchItemCommand(new SearchItemCommand());
 
@@ -82,7 +86,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
         }
 
         [Test]
-        public async Task HandleSearchItemQueryShouldOpenOverlay()
+        public async Task HandleSearchItemQuery_ShouldOpenOverlay()
         {
             await this.ExecuteSearchItemCommand(new SearchItemCommand());
 
@@ -92,7 +96,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
         }
 
         [Test]
-        public async Task HandleSearchItemQueryShouldCatchOperationCancelledException()
+        public async Task HandleSearchItemQuery_ShouldCatchOperationCancelledException()
         {
             this.viewModelMock
                 .SetListingForItemUnderCursorAsync(Arg.Any<CancellationToken>())
@@ -110,7 +114,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
                 .When(x => x.InvokeAsync(Arg.Any<Action>(), Arg.Any<DispatcherPriority>()))
                 .Do(ctx => action = ctx.Arg<Action>());
 
-            await this.overlayController.Handle(command, default);
+            await this.sut.Handle(command, default);
             action!();
         }
 
@@ -121,7 +125,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
                 .When(x => x.InvokeAsync(Arg.Any<Func<Task>>(), Arg.Any<DispatcherPriority>()))
                 .Do(ctx => action = ctx.Arg<Func<Task>>());
 
-            await this.overlayController.Handle(command, default);
+            await this.sut.Handle(command, default);
             await action!();
         }
     }

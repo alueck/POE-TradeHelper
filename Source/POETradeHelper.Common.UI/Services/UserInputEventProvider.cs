@@ -13,20 +13,26 @@ using SharpHook;
 using SharpHook.Data;
 using SharpHook.Reactive;
 
-namespace POETradeHelper.Common
+namespace POETradeHelper.Common.UI.Services
 {
     public sealed class UserInputEventProvider : IUserInputEventProvider
     {
         private readonly IReactiveGlobalHook hook;
         private readonly IPathOfExileProcessHelper pathOfExileProcessHelper;
         private readonly IMediator mediator;
+        private readonly IOverlayStatusProvider overlayStatusProvider;
         private readonly CompositeDisposable disposables = [];
 
-        public UserInputEventProvider(IReactiveGlobalHook hook, IPathOfExileProcessHelper pathOfExileProcessHelper, IMediator mediator)
+        public UserInputEventProvider(
+            IReactiveGlobalHook hook,
+            IPathOfExileProcessHelper pathOfExileProcessHelper,
+            IMediator mediator,
+            IOverlayStatusProvider overlayStatusProvider)
         {
             this.hook = hook;
             this.pathOfExileProcessHelper = pathOfExileProcessHelper;
             this.mediator = mediator;
+            this.overlayStatusProvider = overlayStatusProvider;
         }
 
         public Task OnInitAsync()
@@ -49,8 +55,8 @@ namespace POETradeHelper.Common
         {
             if (eventArgs.Data.KeyCode == KeyCode.VcEscape)
             {
-                void OnHandled() => eventArgs.SuppressEvent = true;
-                await this.mediator.Send(new HideOverlayCommand(OnHandled)).ConfigureAwait(false);
+                eventArgs.SuppressEvent = this.overlayStatusProvider.IsVisible;
+                await this.mediator.Send(new HideOverlayCommand()).ConfigureAwait(false);
             }
             else if (this.pathOfExileProcessHelper.IsPathOfExileActiveWindow() && TryGetRequest(eventArgs, out var request))
             {
@@ -62,7 +68,7 @@ namespace POETradeHelper.Common
         private static bool TryGetRequest(KeyboardHookEventArgs eventArgs, [NotNullWhen(true)] out IRequest? request)
         {
             request = null;
-            if (IsModifierPressed(eventArgs, EventMask.Ctrl) && eventArgs.Data.KeyCode == KeyCode.VcD)
+            if (IsModifierPressed(eventArgs, EventMask.Alt) && eventArgs.Data.KeyCode == KeyCode.VcD)
             {
                 request = new SearchItemCommand();
             }

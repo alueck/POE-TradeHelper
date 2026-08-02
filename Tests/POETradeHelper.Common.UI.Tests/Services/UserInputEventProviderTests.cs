@@ -13,12 +13,13 @@ using NUnit.Framework;
 
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
+using POETradeHelper.Common.UI.Services;
 
 using SharpHook;
 using SharpHook.Data;
 using SharpHook.Reactive;
 
-namespace POETradeHelper.Common.Tests
+namespace POETradeHelper.Common.UI.Tests.Services
 {
     public class UserInputEventProviderTests : IDisposable
     {
@@ -26,7 +27,8 @@ namespace POETradeHelper.Common.Tests
         private readonly IReactiveGlobalHook hookMock;
         private readonly IPathOfExileProcessHelper pathOfExileProcessHelperMock;
         private readonly IMediator mediatorMock;
-        private readonly IUserInputEventProvider userInputEventProvider;
+        private readonly IOverlayStatusProvider overlayStatusProviderMock;
+        private readonly IUserInputEventProvider sut;
 
         public UserInputEventProviderTests()
         {
@@ -37,32 +39,34 @@ namespace POETradeHelper.Common.Tests
                 .Returns(this.keyPressed);
             this.pathOfExileProcessHelperMock = Substitute.For<IPathOfExileProcessHelper>();
             this.mediatorMock = Substitute.For<IMediator>();
-            this.userInputEventProvider = new UserInputEventProvider(
+            this.overlayStatusProviderMock = Substitute.For<IOverlayStatusProvider>();
+            this.sut = new UserInputEventProvider(
                 this.hookMock,
                 this.pathOfExileProcessHelperMock,
-                this.mediatorMock);
+                this.mediatorMock,
+                this.overlayStatusProviderMock);
         }
 
         [SetUp]
         public async Task SetUp()
         {
-            await this.userInputEventProvider.OnInitAsync();
+            await this.sut.OnInitAsync();
         }
 
         public void Dispose()
         {
             this.keyPressed.Dispose();
             this.hookMock.Dispose();
-            this.userInputEventProvider.Dispose();
+            this.sut.Dispose();
         }
 
         [Test]
-        public async Task SearchItemKeyCombinationShouldSendSearchItemCommandIfPathOfExileIsActiveWindow()
+        public async Task SearchItemKeyCombination_ShouldSendSearchItemCommand_IfPathOfExileIsActiveWindow()
         {
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcD },
-                Mask = EventMask.Ctrl,
+                Mask = EventMask.Alt,
                 Type = EventType.KeyPressed,
             });
             this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
@@ -77,7 +81,7 @@ namespace POETradeHelper.Common.Tests
         }
 
         [Test]
-        public async Task SearchItemKeyCombinationShouldNotSendSearchItemCommandIfPathOfExileIsNotActiveWindow()
+        public async Task SearchItemKeyCombination_ShouldNotSendSearchItemCommand_IfPathOfExileIsNotActiveWindow()
         {
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
@@ -95,7 +99,7 @@ namespace POETradeHelper.Common.Tests
         }
 
         [Test]
-        public async Task HideOverlayKeyCombinationShouldSendHideOverlayQuery()
+        public async Task HideOverlayKeyCombination_ShouldSendHideOverlayQuery()
         {
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
@@ -110,30 +114,24 @@ namespace POETradeHelper.Common.Tests
                 .Send(Arg.Any<HideOverlayCommand>(), Arg.Any<CancellationToken>());
         }
 
-        [Test]
-        public void ShouldSetEventArgsHandledFromHideOverlayQueryWithOnHandledAction()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void HideOverlay_ShouldSetEventArgsHandled_BasedOnOverlayVisibility(bool overlayVisible)
         {
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
                 Keyboard = new KeyboardEventData { KeyCode = KeyCode.VcEscape },
                 Type = EventType.KeyPressed,
             });
-
-            Action? onHandledAction = null;
-            this.mediatorMock
-                .When(x => x.Send(Arg.Any<HideOverlayCommand>(), Arg.Any<CancellationToken>()))
-                .Do(ctx => onHandledAction = ctx.Arg<HideOverlayCommand>()!.OnHandled);
+            this.overlayStatusProviderMock.IsVisible.Returns(overlayVisible);
 
             this.keyPressed.OnNext(keyEventArgs);
 
-            onHandledAction.Should().NotBeNull();
-            keyEventArgs.SuppressEvent.Should().BeFalse();
-            onHandledAction!.Invoke();
-            keyEventArgs.SuppressEvent.Should().BeTrue();
+            keyEventArgs.SuppressEvent.Should().Be(overlayVisible);
         }
 
         [Test]
-        public async Task GotoHideoutKeyCombinationShouldSendGotoHideoutCommandIfPathOfExileIsActiveWindow()
+        public async Task GotoHideoutKeyCombination_ShouldSendGotoHideoutCommand_IfPathOfExileIsActiveWindow()
         {
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
@@ -152,7 +150,7 @@ namespace POETradeHelper.Common.Tests
         }
 
         [Test]
-        public async Task GotoHideoutKeyCombinationShouldNotSendGotoHideoutCommandIfPathOfExileIsNotActiveWindow()
+        public async Task GotoHideoutKeyCombination_ShouldNotSendGotoHideoutCommand_IfPathOfExileIsNotActiveWindow()
         {
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
@@ -169,7 +167,7 @@ namespace POETradeHelper.Common.Tests
         }
 
         [Test]
-        public async Task OpenWikiKeyCombinationShouldSendOpenWikiCommandIfPathOfExileIsActiveWindow()
+        public async Task OpenWikiKeyCombination_ShouldSendOpenWikiCommand_IfPathOfExileIsActiveWindow()
         {
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {
@@ -189,7 +187,7 @@ namespace POETradeHelper.Common.Tests
         }
 
         [Test]
-        public async Task OpenWikiKeyCombinationShouldNotSendOpenWikiCommandIfPathOfExileIsNotActiveWindow()
+        public async Task OpenWikiKeyCombination_ShouldNotSendOpenWikiCommand_IfPathOfExileIsNotActiveWindow()
         {
             KeyboardHookEventArgs keyEventArgs = new(new UioHookEvent
             {

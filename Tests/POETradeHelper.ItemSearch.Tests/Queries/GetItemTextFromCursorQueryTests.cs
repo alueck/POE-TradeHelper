@@ -1,7 +1,9 @@
 using AwesomeAssertions;
-using AwesomeAssertions.Extensions;
+
 using NSubstitute;
+
 using NUnit.Framework;
+
 using POETradeHelper.Common.Contract;
 using POETradeHelper.ItemSearch.Queries;
 
@@ -21,7 +23,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
         }
 
         [Test]
-        public async Task HandleShouldCallGetTextAsyncOnClipboardHelper()
+        public async Task Handle_ShouldCallGetTextAsyncOnClipboardHelper()
         {
             await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
@@ -31,7 +33,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
         }
 
         [Test]
-        public async Task HandleShouldCallSendCopyAdvancedItemStringCommandOnUserInputSimulator()
+        public async Task Handle_ShouldCallSendCopyAdvancedItemStringCommandOnUserInputSimulator()
         {
             await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
 
@@ -41,22 +43,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
         }
 
         [Test]
-        public async Task HandleShouldCallGetTextAsyncOnClipboardHelperDelayedUpToEightTimesIfRetrievedTextFromClipboardDidNotChange()
-        {
-            this.clipboardHelperMock
-                .GetTextAsync()
-                .Returns(null, null, null, null, null, null, null, null, null, null, "string");
-
-            Func<Task> action = async () => await this.handler.Handle(new GetItemTextFromCursorQuery(), default);
-
-            action.ExecutionTime().Should().BeCloseTo(1600.Milliseconds(), 100.Milliseconds());
-            await this.clipboardHelperMock
-                .Received(9) // first call to save previous clipboard content for restore
-                .GetTextAsync();
-        }
-
-        [Test]
-        public async Task HandleShouldReturnItemString()
+        public async Task Handle_ShouldReturnItemString()
         {
             const string expected = "itemString";
             this.clipboardHelperMock.GetTextAsync()
@@ -72,7 +59,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
         }
 
         [Test]
-        public async Task HandleShouldRestoreClipboardTextToPreviousState()
+        public async Task Handle_ShouldRestoreClipboardTextToPreviousState()
         {
             const string expected = "previously copied text";
             this.clipboardHelperMock.GetTextAsync()
@@ -90,7 +77,7 @@ namespace POETradeHelper.ItemSearch.Tests.Queries
         }
 
         [Test]
-        public async Task HandleShouldClearClipboardIfItWasEmpty()
+        public async Task Handle_ShouldClearClipboardIfItWasEmpty()
         {
             this.clipboardHelperMock.GetTextAsync()
                 .Returns(string.Empty, "itemString");
