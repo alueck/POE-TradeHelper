@@ -31,7 +31,7 @@ public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMappe
         this.MapItemType(result, item);
         this.MapItemRarity(result, item);
         this.MapCorrupted(result, item);
-        MapHighTierItemStats(result, item);
+        this.MapHighTierItemStats(result, item);
 
         return result;
     }
@@ -79,9 +79,11 @@ public abstract class ItemSearchRequestMapperBase : IItemSearchQueryRequestMappe
         }
     }
 
-    private static void MapHighTierItemStats(SearchQueryRequest result, Item item)
+    protected virtual bool ShouldMapHighTierItemStats() => true;
+
+    private void MapHighTierItemStats(SearchQueryRequest result, Item item)
     {
-        if (item is not ItemWithStats itemWithStats)
+        if (item is not ItemWithStats itemWithStats || !this.ShouldMapHighTierItemStats())
         {
             return;
         }

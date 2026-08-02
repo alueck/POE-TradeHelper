@@ -137,5 +137,7 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Mappers
 
             result.Query.Stats.Should().Contain(x => x.Filters.Count == 1 && x.Filters.Any(y => y.Id == imbuedStat.Id));
         }
+
+        protected override bool MapsHighTierItemStats() => false;
     }
 }

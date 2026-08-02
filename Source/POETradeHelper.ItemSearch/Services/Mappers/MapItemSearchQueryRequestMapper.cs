@@ -30,6 +30,8 @@ namespace POETradeHelper.ItemSearch.Services.Mappers
             return result;
         }
 
+        protected override bool ShouldMapHighTierItemStats() => false;
+
         private static void SetTypeFilter(SearchQueryRequest result) =>
             result.Query.Filters.TypeFilters.Category = new OptionFilter { Option = "map" };
 
