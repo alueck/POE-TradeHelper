@@ -50,7 +50,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
                 }
             });
 
-            this.WhenAnyValue(
+            this._hasValueHelper = this.WhenAnyValue(
                     x => x.Prediction,
                     x => x.Currency,
                     (prediction, currency) => !string.IsNullOrEmpty(prediction) && !string.IsNullOrEmpty(currency))
@@ -70,7 +70,7 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
         public partial string ConfidenceScore { get; set; } = string.Empty;
 
         [ObservableAsProperty]
-        public bool HasValue { get; set; }
+        public partial bool HasValue { get; }
 
         public async Task LoadAsync(Item item, CancellationToken cancellationToken)
         {
