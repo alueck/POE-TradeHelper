@@ -1,5 +1,4 @@
 using System;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,6 +18,7 @@ using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PricePrediction.UI.Avalonia.ViewModels;
 
 using ReactiveUI.Builder;
+using ReactiveUI.Primitives.Signals;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels;
 

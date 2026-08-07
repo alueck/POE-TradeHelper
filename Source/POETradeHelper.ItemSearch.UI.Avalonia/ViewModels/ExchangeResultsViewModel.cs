@@ -8,11 +8,11 @@ using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 
-public class ExchangeResultsViewModel : ReactiveObject, IExchangeResultsViewModel
+public partial class ExchangeResultsViewModel : ReactiveObject, IExchangeResultsViewModel
 {
     private readonly IPoeTradeApiClient poeTradeApiClient;
     private readonly IItemToExchangeQueryRequestMapper itemToExchangeQueryRequestMapper;
@@ -35,7 +35,7 @@ public class ExchangeResultsViewModel : ReactiveObject, IExchangeResultsViewMode
     public IScreen HostScreen { get; }
 
     [Reactive]
-    public ItemListingsViewModel? ItemListings { get; private set; }
+    public partial ItemListingsViewModel? ItemListings { get; private set; }
 
     public async Task InitializeAsync(Item? item, CancellationToken cancellationToken)
     {

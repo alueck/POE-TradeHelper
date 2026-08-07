@@ -5,5 +5,7 @@
         public MessageType Type { get; set; }
 
         public string Text { get; set; } = string.Empty;
+
+        public static Message Empty { get; } = new Message();
     }
 }

@@ -33,7 +33,7 @@
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="ReactiveUI.Avalonia" />
-    <PackageReference Include="ReactiveUI.Fody" />
+    <PackageReference Include="ReactiveUI.SourceGenerators" />
     <PackageReference Include="Xaml.Behaviors.Avalonia" />
   </ItemGroup>
 

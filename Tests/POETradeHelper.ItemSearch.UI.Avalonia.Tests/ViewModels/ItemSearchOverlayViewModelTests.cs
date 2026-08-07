@@ -21,6 +21,7 @@ using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 
 using ReactiveUI;
 using ReactiveUI.Builder;
+using ReactiveUI.Primitives;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.ViewModels
 {

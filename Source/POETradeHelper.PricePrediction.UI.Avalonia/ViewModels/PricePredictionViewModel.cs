@@ -16,13 +16,13 @@ using POETradeHelper.PricePrediction.Models;
 using POETradeHelper.PricePrediction.Queries;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 
 using Splat;
 
 namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
 {
-    public class PricePredictionViewModel : ReactiveObject, IPricePredictionViewModel
+    public partial class PricePredictionViewModel : ReactiveObject, IPricePredictionViewModel
     {
         private readonly IOptionsMonitor<ItemSearchOptions> itemSearchOptions;
         private readonly IMediator mediator;
@@ -54,23 +54,23 @@ namespace POETradeHelper.PricePrediction.UI.Avalonia.ViewModels
                     x => x.Prediction,
                     x => x.Currency,
                     (prediction, currency) => !string.IsNullOrEmpty(prediction) && !string.IsNullOrEmpty(currency))
-                .ToPropertyEx(this, x => x.HasValue);
+                .ToProperty(this, x => x.HasValue, initialValue: !string.IsNullOrEmpty(this.Prediction) && !string.IsNullOrEmpty(this.Currency));
         }
 
         [Reactive]
-        public string Prediction { get; set; } = string.Empty;
+        public partial string Prediction { get; set; } = string.Empty;
 
         [Reactive]
-        public string Currency { get; set; } = string.Empty;
+        public partial string Currency { get; set; } = string.Empty;
 
         [Reactive]
-        public IImage? CurrencyImage { get; set; }
+        public partial IImage? CurrencyImage { get; set; }
 
         [Reactive]
-        public string ConfidenceScore { get; set; } = string.Empty;
+        public partial string ConfidenceScore { get; set; } = string.Empty;
 
         [ObservableAsProperty]
-        public bool HasValue => !string.IsNullOrEmpty(this.Prediction) && !string.IsNullOrEmpty(this.Currency);
+        public bool HasValue { get; set; }
 
         public async Task LoadAsync(Item item, CancellationToken cancellationToken)
         {

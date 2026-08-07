@@ -4,6 +4,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 
+using ReactiveUI.Primitives;
+
 namespace POETradeHelper.Common.UI.UserControls
 {
     public partial class BusyIndicator : UserControl

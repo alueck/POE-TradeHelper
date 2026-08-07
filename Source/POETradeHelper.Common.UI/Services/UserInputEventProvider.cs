@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using Mediator;
@@ -9,22 +7,24 @@ using Mediator;
 using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Commands;
 
+using ReactiveUI.Primitives.Extensions;
+using ReactiveUI.Primitives.Signals;
+
 using SharpHook;
 using SharpHook.Data;
-using SharpHook.Reactive;
 
 namespace POETradeHelper.Common.UI.Services
 {
     public sealed class UserInputEventProvider : IUserInputEventProvider
     {
-        private readonly IReactiveGlobalHook hook;
+        private readonly IGlobalHook hook;
         private readonly IPathOfExileProcessHelper pathOfExileProcessHelper;
         private readonly IMediator mediator;
         private readonly IOverlayStatusProvider overlayStatusProvider;
-        private readonly CompositeDisposable disposables = [];
+        private IDisposable? eventSubscription;
 
         public UserInputEventProvider(
-            IReactiveGlobalHook hook,
+            IGlobalHook hook,
             IPathOfExileProcessHelper pathOfExileProcessHelper,
             IMediator mediator,
             IOverlayStatusProvider overlayStatusProvider)
@@ -37,18 +37,17 @@ namespace POETradeHelper.Common.UI.Services
 
         public Task OnInitAsync()
         {
-            var subscription = this.hook.KeyPressed
-                .Select(args => Observable.FromAsync(() => this.OnKeyPressed(args)))
-                .Concat()
-                .Subscribe();
-            this.disposables.Add(subscription);
+            this.eventSubscription = Signal.FromEventPattern<KeyboardHookEventArgs>(
+                handler => this.hook.KeyPressed += handler,
+                handler =>  this.hook.KeyPressed -= handler)
+                .SubscribeAsync(async x => await this.OnKeyPressed(x.EventArgs));
 
             return Task.CompletedTask;
         }
 
         public void Dispose()
         {
-            this.disposables.Dispose();
+            this.eventSubscription?.Dispose();
         }
 
         private async Task OnKeyPressed(KeyboardHookEventArgs eventArgs)

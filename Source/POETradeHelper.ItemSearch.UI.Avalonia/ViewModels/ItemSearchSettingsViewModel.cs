@@ -11,11 +11,11 @@ using POETradeHelper.ItemSearch.UI.Avalonia.Properties;
 using POETradeHelper.PathOfExileTradeApi.Services;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
-    public class ItemSearchSettingsViewModel : ReactiveObject, ISettingsViewModel
+    public partial class ItemSearchSettingsViewModel : ReactiveObject, ISettingsViewModel
     {
         private readonly ILeagueDataService leagueDataService;
         private readonly IWritableOptions<ItemSearchOptions> itemSearchOptions;
@@ -27,16 +27,16 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         }
 
         [Reactive]
-        public bool IsBusy { get; private set; }
+        public partial bool IsBusy { get; private set; }
 
         [Reactive]
-        public IList<League> Leagues { get; private set; } = [];
+        public partial IList<League> Leagues { get; private set; } = [];
 
         [Reactive]
-        public League? SelectedLeague { get; set; }
+        public partial League? SelectedLeague { get; set; }
 
         [Reactive]
-        public bool PricePredictionEnabled { get; set; }
+        public partial bool PricePredictionEnabled { get; set; }
 
         public string Title => Resources.ItemSearchSettingsHeader;
 

@@ -1,8 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
 
 using Avalonia;
 using Avalonia.Controls;
@@ -13,22 +11,23 @@ using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
 
 using ReactiveUI;
+using ReactiveUI.Primitives;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Behaviors;
 
 [ExcludeFromCodeCoverage]
 public sealed class DataGridInfiniteScrollBehavior : Behavior<DataGrid>
 {
-    public static readonly AvaloniaProperty<ReactiveCommand<Unit, Unit>> LoadNextPageCommandProperty =
-        AvaloniaProperty.Register<DataGridInfiniteScrollBehavior, ReactiveCommand<Unit, Unit>>(nameof(LoadNextPageCommand));
+    public static readonly AvaloniaProperty<ReactiveCommand<RxVoid, RxVoid>> LoadNextPageCommandProperty =
+        AvaloniaProperty.Register<DataGridInfiniteScrollBehavior, ReactiveCommand<RxVoid, RxVoid>>(nameof(LoadNextPageCommand));
 
     private bool isLoading;
     private IDisposable? scrollBarValueSubscription;
     private ScrollBar? verticalScrollBar;
 
-    public ReactiveCommand<Unit, Unit>? LoadNextPageCommand
+    public ReactiveCommand<RxVoid, RxVoid>? LoadNextPageCommand
     {
-        get => this.GetValue<ReactiveCommand<Unit, Unit>>(LoadNextPageCommandProperty);
+        get => this.GetValue<ReactiveCommand<RxVoid, RxVoid>>(LoadNextPageCommandProperty);
         set => this.SetValue(LoadNextPageCommandProperty, value);
     }
 

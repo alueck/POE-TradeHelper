@@ -1,13 +1,13 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
-    public abstract class FilterViewModelBase : ReactiveObject, IFilterViewModel
+    public abstract partial class FilterViewModelBase : ReactiveObject, IFilterViewModel
     {
         public string Text { get; set; } = string.Empty;
 
         [Reactive]
-        public bool? IsEnabled { get; set; }
+        public partial bool? IsEnabled { get; set; }
     }
 }
