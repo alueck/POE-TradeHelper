@@ -13,7 +13,6 @@ using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 
 using ReactiveUI;
 using ReactiveUI.Primitives;
-using ReactiveUI.Primitives.Signals;
 using ReactiveUI.SourceGenerators;
 
 using Splat;
