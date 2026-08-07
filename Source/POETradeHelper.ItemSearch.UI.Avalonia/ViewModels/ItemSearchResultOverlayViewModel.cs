@@ -12,6 +12,7 @@ using POETradeHelper.ItemSearch.Queries;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 
 using ReactiveUI;
+using ReactiveUI.Primitives;
 using ReactiveUI.Primitives.Signals;
 using ReactiveUI.SourceGenerators;
 
@@ -111,7 +112,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             else
             {
                 viewModel = factory(this);
-                await this.Router.NavigateAndReset.Execute(viewModel);
+                using var subscription = this.Router.NavigateAndReset.Execute(viewModel).Subscribe();
             }
 
             await viewModel.InitializeAsync(this.Item, cancellationToken);
