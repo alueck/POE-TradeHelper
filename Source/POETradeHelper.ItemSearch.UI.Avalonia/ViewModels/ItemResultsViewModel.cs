@@ -1,9 +1,8 @@
 using System;
-using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNext;
-using DynamicData;
+
+using POETradeHelper.Common.Extensions;
 using POETradeHelper.ItemSearch.Contract.Models;
 using POETradeHelper.ItemSearch.UI.Avalonia.Factories;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
@@ -12,11 +11,12 @@ using POETradeHelper.PathOfExileTradeApi.Services;
 using POETradeHelper.PricePrediction.UI.Avalonia.ViewModels;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Primitives;
+using ReactiveUI.SourceGenerators;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 
-public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
+public partial class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
 {
     private readonly IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel;
     private readonly ISearchQueryRequestFactory searchQueryRequestFactory;
@@ -52,15 +52,15 @@ public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
 
     public IAdvancedFiltersViewModel AdvancedFilters { get; }
 
-    public ReactiveCommand<Unit, Unit> ExecuteAdvancedQueryCommand { get; }
+    public ReactiveCommand<RxVoid, RxVoid> ExecuteAdvancedQueryCommand { get; }
 
-    public ReactiveCommand<Unit, Unit> LoadNextPageCommand { get; }
-
-    [Reactive]
-    public SearchQueryRequest? QueryRequest { get; set; }
+    public ReactiveCommand<RxVoid, RxVoid> LoadNextPageCommand { get; }
 
     [Reactive]
-    public ItemListingsViewModel? ItemListings { get; private set; }
+    public partial SearchQueryRequest? QueryRequest { get; set; }
+
+    [Reactive]
+    public partial ItemListingsViewModel? ItemListings { get; private set; }
 
     private Item? Item { get; set; }
 
@@ -107,7 +107,7 @@ public class ItemResultsViewModel : ReactiveObject, IItemResultsViewModel
             return;
         }
 
-        Optional<ItemListingsQueryResult> itemListingsQueryResult = await this.poeTradeApiClient.LoadNextPage(this.lastItemListingResult, cancellationToken);
+        DotNext.Optional<ItemListingsQueryResult> itemListingsQueryResult = await this.poeTradeApiClient.LoadNextPage(this.lastItemListingResult, cancellationToken);
 
         if (itemListingsQueryResult.HasValue)
         {

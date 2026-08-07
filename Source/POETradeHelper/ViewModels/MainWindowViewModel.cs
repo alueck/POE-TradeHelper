@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive;
-using System.Reactive.Linq;
+
 using System.Threading.Tasks;
 
 using POETradeHelper.Common.Contract;
@@ -10,13 +9,15 @@ using POETradeHelper.Common.UI.Models;
 using POETradeHelper.Properties;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
+using ReactiveUI.SourceGenerators;
 
 using Splat;
 
 namespace POETradeHelper.ViewModels
 {
-    public class MainWindowViewModel : ReactiveObject
+    public partial class MainWindowViewModel : ReactiveObject
     {
         public MainWindowViewModel(IEnumerable<ISettingsViewModel> settingsViewModels, IEnumerable<IInitializable> initializables)
         {
@@ -24,41 +25,37 @@ namespace POETradeHelper.ViewModels
 
             this.InitializeCommand = ReactiveCommand.CreateFromTask(() => this.InitializeAsync(initializables));
             this.SaveSettingsCommand = ReactiveCommand.Create(this.SaveSettings);
-            this.SaveSettingsCommand
-                .Select(
-                    success =>
+            this._saveSettingsMessageHelper = LinqExtensions.SwitchSelect(this.SaveSettingsCommand, success =>
+                {
+                    if (success)
                     {
-                        if (success)
-                        {
-                            Message successMessage = new() { Type = MessageType.Success, Text = Resources.SavedMessageText };
-                            return Observable.Return(successMessage).Concat(
-                                Observable.Return((Message?)null).Delay(TimeSpan.FromSeconds(3), RxSchedulers.MainThreadScheduler));
-                        }
+                        Message successMessage = new() { Type = MessageType.Success, Text = Resources.SavedMessageText };
+                        return Signal.Return(successMessage).Concat(Signal.Return<Message?>(null).Delay(TimeSpan.FromSeconds(3), RxSchedulers.MainThreadScheduler));
+                    }
 
-                        Message failedMessage = new() { Type = MessageType.Error, Text = Resources.FailedToSaveSettingsMessageText };
-                        return Observable.Return(failedMessage);
-                    })
-                .Switch()
-                .ToPropertyEx(this, x => x.SaveSettingsMessage);
+                    Message failedMessage = new() { Type = MessageType.Error, Text = Resources.FailedToSaveSettingsMessageText };
+                    return Signal.Return(failedMessage);
+                })
+                .ToProperty(this, x => x.SaveSettingsMessage);
         }
 
         public IEnumerable<ISettingsViewModel> SettingsViewModels { get; }
 
-        public ReactiveCommand<Unit, Unit> InitializeCommand { get; }
+        public ReactiveCommand<RxVoid, RxVoid> InitializeCommand { get; }
 
         [Reactive]
-        public bool IsBusy { get; private set; }
+        public partial bool IsBusy { get; private set; }
 
         [Reactive]
-        public string IsBusyText { get; private set; } = string.Empty;
+        public partial string IsBusyText { get; private set; } = string.Empty;
 
         [ObservableAsProperty]
-        public Message? SaveSettingsMessage { get; }
+        public partial Message? SaveSettingsMessage { get; }
 
-        public ReactiveCommand<Unit, bool> SaveSettingsCommand { get; }
+        public ReactiveCommand<RxVoid, bool> SaveSettingsCommand { get; }
 
         [Reactive]
-        public Message? ErrorMessage { get; private set; }
+        public partial Message? ErrorMessage { get; private set; }
 
         private async Task InitializeAsync(IEnumerable<IInitializable> initializables)
         {

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,13 +12,14 @@ using POETradeHelper.ItemSearch.Queries;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Primitives;
+using ReactiveUI.SourceGenerators;
 
 using Splat;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
-    public class ItemSearchResultOverlayViewModel : ReactiveObject, IItemSearchResultOverlayViewModel
+    public partial class ItemSearchResultOverlayViewModel : ReactiveObject, IItemSearchResultOverlayViewModel
     {
         private readonly IMediator mediator;
         private readonly Func<IItemSearchResultOverlayViewModel, IItemResultsViewModel> itemResultsViewModelFactory;
@@ -35,27 +34,24 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             this.itemResultsViewModelFactory = itemResultsViewModelFactory;
             this.exchangeResultsViewModelFactory = exchangeResultsViewModelFactory;
             this.Router = new RoutingState();
-
-            this.WhenAnyValue(x => x.Message)
-                .Subscribe(x => Debug.WriteLine(x));
         }
 
         public RoutingState Router { get; }
 
         [Reactive]
-        public Message? Message { get; private set; }
+        public partial Message? Message { get; private set; }
 
         [Reactive]
-        public bool IsBusy { get; private set; }
+        public partial bool IsBusy { get; private set; }
 
         [Reactive]
-        public Item? Item { get; private set; }
+        public partial Item? Item { get; private set; }
 
         [Reactive]
-        public Uri? Url { get; private set; }
+        public partial Uri? Url { get; private set; }
 
         [Reactive]
-        public IResultsViewModel? ResultsViewModel { get; private set; }
+        public partial IResultsViewModel? ResultsViewModel { get; private set; }
 
         public async Task SetListingForItemUnderCursorAsync(CancellationToken token = default)
         {
@@ -115,7 +111,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             else
             {
                 viewModel = factory(this);
-                await this.Router.NavigateAndReset.Execute(viewModel);
+                using var subscription = this.Router.NavigateAndReset.Execute(viewModel).Subscribe();
             }
 
             await viewModel.InitializeAsync(this.Item, cancellationToken);

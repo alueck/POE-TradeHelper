@@ -8,11 +8,11 @@ using POETradeHelper.ItemSearch.UI.Avalonia.Factories;
 using POETradeHelper.PathOfExileTradeApi.Models;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
 {
-    public class AdvancedFiltersViewModel : ReactiveObject, IAdvancedFiltersViewModel
+    public partial class AdvancedFiltersViewModel : ReactiveObject, IAdvancedFiltersViewModel
     {
         private readonly IStatFilterViewModelFactory statFilterViewModelFactory;
         private readonly IEnumerable<IAdditionalFilterViewModelsFactory> additionalFilterViewModelsFactories;
@@ -27,37 +27,37 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
         }
 
         [Reactive]
-        public IList<StatFilterViewModel> EnchantedItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> EnchantedItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> FracturedItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> FracturedItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> ImplicitItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> ImplicitItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> ExplicitItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> ExplicitItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> CraftedItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> CraftedItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> CrucibleItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> CrucibleItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> MonsterItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> MonsterItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> ImbuedItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> ImbuedItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> OtherItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> OtherItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<StatFilterViewModel> PseudoItemStatFilters { get; private set; } = [];
+        public partial IList<StatFilterViewModel> PseudoItemStatFilters { get; private set; } = [];
 
         [Reactive]
-        public IList<FilterViewModelBase> AdditionalFilters { get; private set; } = [];
+        public partial IList<FilterViewModelBase> AdditionalFilters { get; private set; } = [];
 
         public IEnumerable<StatFilterViewModel> AllStatFilters => this.EnchantedItemStatFilters
             .Concat(this.FracturedItemStatFilters)
@@ -71,7 +71,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.ViewModels
             .Concat(this.PseudoItemStatFilters);
 
         [Reactive]
-        public bool IsEnabled { get; private set; }
+        public partial bool IsEnabled { get; private set; }
 
         public Task LoadAsync(Item item, SearchQueryRequest searchQueryRequest, CancellationToken cancellationToken)
         {

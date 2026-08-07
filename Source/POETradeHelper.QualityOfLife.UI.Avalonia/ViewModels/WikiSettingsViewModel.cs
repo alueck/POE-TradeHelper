@@ -8,11 +8,11 @@ using POETradeHelper.QualityOfLife.Models;
 using POETradeHelper.QualityOfLife.UI.Avalonia.Properties;
 
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 
 namespace POETradeHelper.QualityOfLife.UI.Avalonia.ViewModels
 {
-    public class WikiSettingsViewModel : ReactiveObject, ISettingsViewModel
+    public partial class WikiSettingsViewModel : ReactiveObject, ISettingsViewModel
     {
         private readonly IWritableOptions<WikiOptions> wikiOptions;
 
@@ -29,7 +29,7 @@ namespace POETradeHelper.QualityOfLife.UI.Avalonia.ViewModels
         public IEnumerable<WikiType> WikiTypes { get; }
 
         [Reactive]
-        public WikiType SelectedWikiType { get; private set; }
+        public partial WikiType SelectedWikiType { get; private set; }
 
         public Task InitializeAsync()
         {

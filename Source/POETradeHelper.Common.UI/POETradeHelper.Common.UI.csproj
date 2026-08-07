@@ -11,6 +11,7 @@
         <PackageReference Include="Autofac.Extras.DynamicProxy" />
         <PackageReference Include="Avalonia" />
         <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+        <PackageReference Include="ReactiveUI.Primitives" />
     </ItemGroup>
 
     <ItemGroup>

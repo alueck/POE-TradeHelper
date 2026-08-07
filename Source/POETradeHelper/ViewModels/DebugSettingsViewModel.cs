@@ -7,8 +7,7 @@ using POETradeHelper.Common.UI;
 using POETradeHelper.Properties;
 
 using ReactiveUI;
-
-using Unit = System.Reactive.Unit;
+using ReactiveUI.Primitives;
 
 namespace POETradeHelper.ViewModels
 {
@@ -20,9 +19,9 @@ namespace POETradeHelper.ViewModels
             this.OpenWikiCommand = ReactiveCommand.CreateFromTask(async () => await mediator.Send(new OpenWikiCommand()));
         }
 
-        public ReactiveCommand<Unit, Mediator.Unit> SearchItemFromClipboardCommand { get; }
+        public ReactiveCommand<RxVoid, Unit> SearchItemFromClipboardCommand { get; }
 
-        public ReactiveCommand<Unit, Mediator.Unit> OpenWikiCommand { get; }
+        public ReactiveCommand<RxVoid, Unit> OpenWikiCommand { get; }
 
         public string Title => Resources.DebugSettingsHeader;
 

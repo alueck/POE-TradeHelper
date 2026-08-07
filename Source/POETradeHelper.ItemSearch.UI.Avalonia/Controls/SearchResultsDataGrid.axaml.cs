@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Reactive;
 using System.Reflection;
 
 using Avalonia;
@@ -14,6 +13,7 @@ using POETradeHelper.ItemSearch.UI.Avalonia.Attributes;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels;
 
 using ReactiveUI;
+using ReactiveUI.Primitives;
 
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Controls;
 
@@ -25,8 +25,8 @@ public partial class SearchResultsDataGrid : UserControl
             o => o.Items,
             (o, v) => o.Items = v);
 
-    public static readonly AvaloniaProperty<ReactiveCommand<Unit, Unit>> LoadNextPageCommandProperty =
-        AvaloniaProperty.Register<SearchResultsDataGrid, ReactiveCommand<Unit, Unit>>(nameof(LoadNextPageCommand));
+    public static readonly AvaloniaProperty<ReactiveCommand<RxVoid, RxVoid>> LoadNextPageCommandProperty =
+        AvaloniaProperty.Register<SearchResultsDataGrid, ReactiveCommand<RxVoid, RxVoid>>(nameof(LoadNextPageCommand));
 
     private IEnumerable items = new AvaloniaList<object>();
 
@@ -42,9 +42,9 @@ public partial class SearchResultsDataGrid : UserControl
         set => this.SetAndRaise(ItemsProperty, ref this.items, value);
     }
 
-    public ReactiveCommand<Unit, Unit>? LoadNextPageCommand
+    public ReactiveCommand<RxVoid, RxVoid>? LoadNextPageCommand
     {
-        get => this.GetValue<ReactiveCommand<Unit, Unit>>(LoadNextPageCommandProperty);
+        get => this.GetValue<ReactiveCommand<RxVoid, RxVoid>>(LoadNextPageCommandProperty);
         set => this.SetValue(LoadNextPageCommandProperty, value);
     }
 

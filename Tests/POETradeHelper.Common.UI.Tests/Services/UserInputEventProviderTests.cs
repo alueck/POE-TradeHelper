@@ -1,5 +1,4 @@
 using System;
-using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,14 +16,12 @@ using POETradeHelper.Common.UI.Services;
 
 using SharpHook;
 using SharpHook.Data;
-using SharpHook.Reactive;
 
 namespace POETradeHelper.Common.UI.Tests.Services
 {
     public class UserInputEventProviderTests : IDisposable
     {
-        private readonly Subject<KeyboardHookEventArgs> keyPressed;
-        private readonly IReactiveGlobalHook hookMock;
+        private readonly IGlobalHook hookMock;
         private readonly IPathOfExileProcessHelper pathOfExileProcessHelperMock;
         private readonly IMediator mediatorMock;
         private readonly IOverlayStatusProvider overlayStatusProviderMock;
@@ -32,11 +29,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
 
         public UserInputEventProviderTests()
         {
-            this.keyPressed = new Subject<KeyboardHookEventArgs>();
-            this.hookMock = Substitute.For<IReactiveGlobalHook>();
-            this.hookMock
-                .KeyPressed
-                .Returns(this.keyPressed);
+            this.hookMock = Substitute.For<IGlobalHook>();
             this.pathOfExileProcessHelperMock = Substitute.For<IPathOfExileProcessHelper>();
             this.mediatorMock = Substitute.For<IMediator>();
             this.overlayStatusProviderMock = Substitute.For<IOverlayStatusProvider>();
@@ -55,7 +48,6 @@ namespace POETradeHelper.Common.UI.Tests.Services
 
         public void Dispose()
         {
-            this.keyPressed.Dispose();
             this.hookMock.Dispose();
             this.sut.Dispose();
         }
@@ -72,7 +64,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
                 .Returns(true);
 
-            this.keyPressed.OnNext(keyEventArgs);
+            this.hookMock.KeyPressed += Raise.EventWith(keyEventArgs);
 
             await this.mediatorMock
                 .Received()
@@ -90,7 +82,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
                 Type = EventType.KeyPressed,
             });
 
-            this.keyPressed.OnNext(keyEventArgs);
+            this.hookMock.KeyPressed += Raise.EventWith(keyEventArgs);
 
             await this.mediatorMock
                 .DidNotReceive()
@@ -107,7 +99,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
                 Type = EventType.KeyPressed,
             });
 
-            this.keyPressed.OnNext(keyEventArgs);
+            this.hookMock.KeyPressed += Raise.EventWith(keyEventArgs);
 
             await this.mediatorMock
                 .Received()
@@ -125,7 +117,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             });
             this.overlayStatusProviderMock.IsVisible.Returns(overlayVisible);
 
-            this.keyPressed.OnNext(keyEventArgs);
+            this.hookMock.KeyPressed += Raise.EventWith(keyEventArgs);
 
             keyEventArgs.SuppressEvent.Should().Be(overlayVisible);
         }
@@ -141,7 +133,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
                 .Returns(true);
 
-            this.keyPressed.OnNext(keyEventArgs);
+            this.hookMock.KeyPressed += Raise.EventWith(keyEventArgs);
 
             await this.mediatorMock
                 .Received()
@@ -158,7 +150,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
                 Type = EventType.KeyPressed,
             });
 
-            this.keyPressed.OnNext(keyEventArgs);
+            this.hookMock.KeyPressed += Raise.EventWith(keyEventArgs);
 
             await this.mediatorMock
                 .DidNotReceive()
@@ -178,7 +170,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
             this.pathOfExileProcessHelperMock.IsPathOfExileActiveWindow()
                 .Returns(true);
 
-            this.keyPressed.OnNext(keyEventArgs);
+            this.hookMock.KeyPressed += Raise.EventWith(keyEventArgs);
 
             await this.mediatorMock
                 .Received()
@@ -196,7 +188,7 @@ namespace POETradeHelper.Common.UI.Tests.Services
                 Type = EventType.KeyPressed,
             });
 
-            this.keyPressed.OnNext(keyEventArgs);
+            this.hookMock.KeyPressed += Raise.EventWith(keyEventArgs);
 
             await this.mediatorMock
                 .DidNotReceive()

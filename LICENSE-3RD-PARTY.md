@@ -20,11 +20,12 @@ applies to:
 - NUnit3TestAdapter, Copyright (c) 2011-2020 Charlie Poole, 2014-2026 Terje Sandstrom
 - ReactiveUI.Avalonia, Copyright (c) 2019-2026 ReactiveUI and Avalonia Teams, and Contributors
 - ReactiveUI.Avalonia.Autofac, Copyright (c) 2019-2026 ReactiveUI and Avalonia Teams, and Contributors
-- ReactiveUI.Fody, Copyright (c) 2014 Kirk Woll
+- ReactiveUI.Primitives, Copyright (c) 2019-2026 ReactiveUI Association Incorporated
+- ReactiveUI.SourceGenerators, Copyright (c) ReactiveUI and contributors 2023-2026
 - Serilog.Exceptions, Copyright (c) 2015 Muhammad Rehan Saeed
 - Splat.Autofac, Copyright (c) .NET Foundation and Contributors
 - Splat.Microsoft.Extensions.Logging, Copyright (c) .NET Foundation and Contributors
-- SharpHook.Reactive, Copyright (c) 2021 Anatoliy Pylypchuk
+- SharpHook, Copyright (c) 2021 Anatoliy Pylypchuk
 - System.IO.Hashing
 - Xaml.Behaviors.Avalonia, Copyright (c) Wiesław Šoltés
 
