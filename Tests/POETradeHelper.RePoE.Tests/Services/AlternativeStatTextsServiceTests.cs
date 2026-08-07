@@ -16,7 +16,7 @@ public class AlternativeStatTextsServiceTests
         // Arrange
         var mockHttp = new MockHttpMessageHandler();
         mockHttp.When("https://repoe-fork.github.io/stat_translations.min.json")
-            .Respond("application/json", GetResponseJson());
+            .Respond("application/json", GetPositiveTestCaseResponseJson());
 
         var httpClient = mockHttp.ToHttpClient();
         httpClient.BaseAddress = new Uri("https://repoe-fork.github.io/");
@@ -36,7 +36,26 @@ public class AlternativeStatTextsServiceTests
         ]));
     }
 
-    private static string GetResponseJson()
+    [Test]
+    public async Task GetAlternativeStatText_DoesNotReturnItemWithDifferentTradeStatIds()
+    {
+        // Arrange
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp.When("https://repoe-fork.github.io/stat_translations.min.json")
+            .Respond("application/json", GetNegativeTestCaseResponseJson());
+
+        var httpClient = mockHttp.ToHttpClient();
+        httpClient.BaseAddress = new Uri("https://repoe-fork.github.io/");
+        AlternativeStatTextsService sut = new(httpClient);
+
+        // Act
+        var result = await sut.GetAlternativeStatTexts().ToArrayAsync();
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    private static string GetPositiveTestCaseResponseJson()
     {
         return """
                [
@@ -126,6 +145,145 @@ public class AlternativeStatTextsServiceTests
                          "id": "fractured.stat_4164174520",
                          "text": "Monsters have #% chance to Maim on Hit with Attacks",
                          "type": "fractured",
+                         "option": null
+                       }
+                     ],
+                     "hidden": null,
+                     "French": null,
+                     "German": null,
+                     "Japanese": null,
+                     "Korean": null,
+                     "Portuguese": null,
+                     "Russian": null,
+                     "Spanish": null,
+                     "Thai": null,
+                     "Traditional Chinese": null
+                   }
+               ]
+               """;
+    }
+
+    private static string GetNegativeTestCaseResponseJson()
+    {
+        return """
+               [
+                   {
+                     "English": [
+                       {
+                         "condition": [
+                           {
+                             "min": 0,
+                             "max": 0,
+                             "negated": true
+                           },
+                           {
+                             "min": 0,
+                             "max": 0,
+                             "negated": null
+                           }
+                         ],
+                         "format": [
+                           "ignore",
+                           "ignore"
+                         ],
+                         "index_handlers": [
+                           [],
+                           []
+                         ],
+                         "string": "Passive Skills in Radius can be Allocated without being connected to your tree\nPassage",
+                         "reminder_text": null,
+                         "is_markup": null
+                       },
+                       {
+                         "condition": [
+                           {
+                             "min": 0,
+                             "max": 0,
+                             "negated": null
+                           },
+                           {
+                             "min": 0,
+                             "max": 0,
+                             "negated": true
+                           }
+                         ],
+                         "format": [
+                           "ignore",
+                           "+#"
+                         ],
+                         "index_handlers": [
+                           [],
+                           []
+                         ],
+                         "string": "{1}% to all Elemental Resistances",
+                         "reminder_text": null,
+                         "is_markup": null
+                       },
+                       {
+                         "condition": [
+                           {
+                             "min": 0,
+                             "max": 0,
+                             "negated": true
+                           },
+                           {
+                             "min": 0,
+                             "max": 0,
+                             "negated": true
+                           }
+                         ],
+                         "format": [
+                           "ignore",
+                           "+#"
+                         ],
+                         "index_handlers": [
+                           [],
+                           []
+                         ],
+                         "string": "Passive Skills in Radius can be Allocated without being connected to your tree\n{1}% to all Elemental Resistances\nPassage",
+                         "reminder_text": null,
+                         "is_markup": null
+                       }
+                     ],
+                     "ids": [
+                       "local_unique_jewel_nearby_disconnected_passives_can_be_allocated",
+                       "unique_thread_of_hope_base_resist_all_elements_%"
+                     ],
+                     "trade_stats": [
+                       {
+                         "id": "explicit.stat_1725885727",
+                         "text": "Passive Skills in Radius can be Allocated without being connected to your tree\nPassage",
+                         "type": "explicit",
+                         "option": null
+                       },
+                       {
+                         "id": "crafted.stat_2901986750",
+                         "text": "+#% to all Elemental Resistances",
+                         "type": "crafted",
+                         "option": null
+                       },
+                       {
+                         "id": "explicit.stat_2901986750",
+                         "text": "+#% to all Elemental Resistances",
+                         "type": "explicit",
+                         "option": null
+                       },
+                       {
+                         "id": "fractured.stat_2901986750",
+                         "text": "+#% to all Elemental Resistances",
+                         "type": "fractured",
+                         "option": null
+                       },
+                       {
+                         "id": "implicit.stat_2901986750",
+                         "text": "+#% to all Elemental Resistances",
+                         "type": "implicit",
+                         "option": null
+                       },
+                       {
+                         "id": "scourge.stat_2901986750",
+                         "text": "+#% to all Elemental Resistances",
+                         "type": "scourge",
                          "option": null
                        }
                      ],

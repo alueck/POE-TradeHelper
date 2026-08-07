@@ -57,6 +57,10 @@ public class ItemParserAggregatorIntegrationTests : IntegrationTestBase
                         Category = new OptionFilter { Option = "map" },
                         Rarity = new OptionFilter { Option = nameof(ItemRarity.Rare).ToLower() },
                     },
+                    MapFilters =
+                    {
+                        MapTier = new MinMaxFilter { Min = 1 }, // don't want to fetch scarabs
+                    },
                     MiscFilters =
                     {
                         Identified = new BoolOptionFilter { Option = true },
@@ -325,8 +329,11 @@ public class ItemParserAggregatorIntegrationTests : IntegrationTestBase
         var implicitStats = itemListing.AdditionalData.TryGetValue("implicitMods", out var implicitMods)
             ? GetStats(implicitMods.EnumerateArray())
             : [];
+        var enchantStats = itemListing.AdditionalData.TryGetValue("enchantMods", out var enchantMods)
+            ? GetStats(enchantMods.EnumerateArray())
+            : [];
 
-        return explicitStats.Concat(implicitStats).ToArray();
+        return [..explicitStats, ..implicitStats, ..enchantStats];
 
         static IEnumerable<(string Id, string Text, string Type)> GetStats(JsonElement.ArrayEnumerator enumerator)
         {

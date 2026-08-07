@@ -85,10 +85,13 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
                 if (itemStat != null)
                 {
                     int placeholderCount = itemStat.TextWithPlaceholders.Count(c => c == Placeholder);
+                    bool itemStatHasNumericValues = HasNumbericValues(itemStat);
+
+                    // some stats have alternative texts that contain a placeholder, but the player visible does not, therefore the additional check for a value
                     itemStat = placeholderCount switch
                     {
-                        1 => GetSingleValueItemStat(itemStat),
-                        2 => GetMinMaxValueItemStat(itemStat),
+                        1 when itemStatHasNumericValues => GetSingleValueItemStat(itemStat),
+                        2 when itemStatHasNumericValues => GetMinMaxValueItemStat(itemStat),
                         _ => itemStat,
                     };
 
@@ -122,6 +125,11 @@ namespace POETradeHelper.ItemSearch.Services.Parsers.ItemStatsParsers
             }
 
             return null;
+        }
+
+        private static bool HasNumbericValues(ItemStat itemStat)
+        {
+            return GetFirstNumericValue(itemStat.Text) != null;
         }
 
         private static ItemStat GetSingleValueItemStat(ItemStat itemStat)
