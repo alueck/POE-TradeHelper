@@ -29,7 +29,7 @@ internal sealed partial class AlternativeStatTextsService : IAlternativeStatText
 
         await foreach (var data in result)
         {
-            if (data!.English.Count > 1 && data.TradeStats != null)
+            if (data!.English.Count > 1 && data.TradeStats?.Count > 0 && data.TradeStats.All(x => x.IdNumber.HasValue && x.IdNumber == data.TradeStats[0].IdNumber))
             {
                 foreach (var tradeStat in data.TradeStats)
                 {
@@ -49,5 +49,19 @@ internal sealed partial class AlternativeStatTextsService : IAlternativeStatText
         public string[] NormalizedFormat => this.Format.Select(x => NumberSignRegex().Replace(x, "")).ToArray();
     }
 
-    private sealed record TradeStat(string Id, string Type);
+    private sealed record TradeStat
+    {
+        public required string Id
+        {
+            get;
+            init
+            {
+                field = value;
+                var numberMatch = Regex.Match(value, @"\d+");
+                this.IdNumber = numberMatch.Success ? long.Parse(numberMatch.Value) : null;
+            }
+        }
+
+        public long? IdNumber { get; private set; }
+    }
 }

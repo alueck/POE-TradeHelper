@@ -407,6 +407,36 @@ namespace POETradeHelper.ItemSearch.Tests.Services.Parsers.ItemStatsParsers
         }
 
         [Test]
+        public void Parse_ShouldReturnExpectedStat_IfTextWithPlaceholdersHasPlaceholderButOriginalTextDoesNotHaveNumericValues()
+        {
+            // arrange
+            string[] itemStringLines = this.itemStringBuilder
+                .WithName("Titan Greaves")
+                .WithItemLevel(75)
+                .WithItemStat("Your Travel Skills Critically Strike", StatCategory.Explicit)
+                .BuildLines();
+
+            this.statsDataServiceMock.TryGetStatData(Arg.Any<IReadOnlyCollection<string>>(), Arg.Any<bool>(), Arg.Any<string[]>())
+                .Returns(new TestStatData
+                {
+                    Type = "Explicit",
+                    Text = "Your Travel Skills Critically Strike once every # uses",
+                });
+
+            // act
+            ItemStats result = this.itemStatsParser.Parse(itemStringLines, false);
+
+            // assert
+            result.ExplicitStats.Should()
+                .HaveCount(1)
+                .And.ContainEquivalentOf(new ItemStat(StatCategory.Explicit)
+                {
+                    Text = "Your Travel Skills Critically Strike",
+                    TextWithPlaceholders = "Your Travel Skills Critically Strike once every # uses",
+                });
+        }
+
+        [Test]
         public void ParseShouldMultipleDifferentStatsCorrectly()
         {
             ItemStat expectedExplicitItemStat = new MinMaxValueItemStat(StatCategory.Explicit)
