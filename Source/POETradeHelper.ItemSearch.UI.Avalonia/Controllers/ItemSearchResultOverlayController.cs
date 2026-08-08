@@ -4,22 +4,28 @@ using System.Threading.Tasks;
 
 using Mediator;
 
-using POETradeHelper.Common.Contract;
 using POETradeHelper.Common.Contract.Attributes;
 using POETradeHelper.Common.Contract.Commands;
 using POETradeHelper.Common.UI;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 using POETradeHelper.ItemSearch.UI.Avalonia.Views;
 
+using ReactiveUI;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Disposables;
+
+using IViewLocator = POETradeHelper.Common.Contract.IViewLocator;
+
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
 {
     [Singleton]
-    public class ItemSearchResultOverlayController : IRequestHandler<SearchItemCommand>, IRequestHandler<HideOverlayCommand>, IOverlayStatusProvider
+    public class ItemSearchResultOverlayController : IRequestHandler<SearchItemCommand>, IRequestHandler<HideOverlayCommand>, IOverlayStatusProvider, IDisposable
     {
         private readonly Lock lockObj = new();
         private readonly IItemSearchResultOverlayViewModel itemSearchResultOverlayViewModel;
         private readonly IViewLocator viewLocator;
         private readonly IUiThreadDispatcher uiThreadDispatcher;
+        private readonly MultipleDisposable disposables = new();
 
         private bool isOverlayVisible;
         private CancellationTokenSource searchItemCancellationTokenSource = new();
@@ -38,6 +44,8 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
 
         private IItemSearchResultOverlayView View => LazyInitializer.EnsureInitialized(ref field, this.CreateView);
 
+        public void Dispose() => this.disposables.Dispose();
+
         public async ValueTask<Unit> Handle(SearchItemCommand request, CancellationToken cancellationToken)
         {
             await this.uiThreadDispatcher.InvokeAsync(async () =>
@@ -47,7 +55,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
                     this.CancelSearchItemToken();
 
                     this.View.Show();
-                    this.isOverlayVisible = true;
 
                     await this.itemSearchResultOverlayViewModel
                         .SetListingForItemUnderCursorAsync(this.searchItemCancellationTokenSource.Token)
@@ -70,7 +77,6 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
                 {
                     this.CancelSearchItemToken();
                     this.View.Hide();
-                    this.isOverlayVisible = false;
                 }
             });
 
@@ -82,6 +88,10 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Controllers
             if (this.viewLocator.GetView(this.itemSearchResultOverlayViewModel) is IItemSearchResultOverlayView itemSearchResultOverlay)
             {
                 itemSearchResultOverlay.DataContext = this.itemSearchResultOverlayViewModel;
+                itemSearchResultOverlay
+                    .WhenAnyValue(x => x.IsVisible)
+                    .Subscribe(isVisible => this.isOverlayVisible = isVisible)
+                    .DisposeWith(this.disposables);
 
                 return itemSearchResultOverlay;
             }

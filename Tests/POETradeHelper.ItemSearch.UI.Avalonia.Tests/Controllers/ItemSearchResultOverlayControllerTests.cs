@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,32 +19,40 @@ using POETradeHelper.ItemSearch.UI.Avalonia.Controllers;
 using POETradeHelper.ItemSearch.UI.Avalonia.ViewModels.Abstractions;
 using POETradeHelper.ItemSearch.UI.Avalonia.Views;
 
+using ReactiveUI.Builder;
+
 namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
 {
-    public class ItemSearchResultOverlayControllerTests
+    public class ItemSearchResultOverlayControllerTests : IDisposable
     {
+        private readonly IReactiveUIBuilder builder;
         private readonly IItemSearchResultOverlayView viewMock;
         private readonly IItemSearchResultOverlayViewModel viewModelMock;
-        private readonly IUiThreadDispatcher uiThreadDispatcherMock;
         private readonly ItemSearchResultOverlayController sut;
 
         public ItemSearchResultOverlayControllerTests()
         {
+            this.builder = RxAppBuilder.CreateReactiveUIBuilder()
+                .WithCoreServices()
+                .UseCurrentSplatLocator()
+                .BuildApp();
+
             this.viewMock = Substitute.For<IItemSearchResultOverlayView>();
             this.viewModelMock = Substitute.For<IItemSearchResultOverlayViewModel>();
             var viewLocatorMock = Substitute.For<IViewLocator>();
             viewLocatorMock.GetView(Arg.Any<IItemSearchResultOverlayViewModel>())
                 .Returns(this.viewMock);
-            this.uiThreadDispatcherMock = Substitute.For<IUiThreadDispatcher>();
-            this.sut = new ItemSearchResultOverlayController(this.viewModelMock, viewLocatorMock, this.uiThreadDispatcherMock);
+            this.sut = new ItemSearchResultOverlayController(this.viewModelMock, viewLocatorMock, new TestUiThreadDispatcher());
         }
+
+        public void Dispose() => this.sut.Dispose();
 
         [Test]
         public async Task ExecuteHideOverlayCommand_ShouldCallHideOnOverlayIfOverlayIsVisible()
         {
             this.viewMock.IsVisible.Returns(true);
 
-            await this.ExecuteHideOverlayCommand(new HideOverlayCommand());
+            await this.sut.Handle(new HideOverlayCommand(), default);
 
             this.viewMock
                 .Received()
@@ -51,25 +60,36 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
         }
 
         [Test]
-        public async Task OverlayStatusProviderIsVisible_ShouldReturnTrue_AfterShowingOverlay()
+        public async Task OverlayStatusProviderIsVisible_ShouldReturnTrue_IfViewIsVisibleChangesToTrue()
         {
+            // arrange
+            // trigger view initialization
+            await this.sut.Handle(new SearchItemCommand(), default);
+
             ((IOverlayStatusProvider)this.sut).IsVisible.Should().BeFalse();
+            this.viewMock.IsVisible.Returns(true);
 
-            await this.ExecuteSearchItemCommand(new SearchItemCommand());
+            // act
+            this.viewMock.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(this, new PropertyChangedEventArgs(nameof(IItemSearchResultOverlayView.IsVisible)));
 
+            // assert
             ((IOverlayStatusProvider)this.sut).IsVisible.Should().BeTrue();
         }
 
         [Test]
-        public async Task OverlayStatusProviderIsVisible_ShouldReturnFalse_AfterHidingOverlay()
+        public async Task OverlayStatusProviderIsVisible_ShouldReturnFalse_IfViewIsVisibleChangesToFalse()
         {
             // arrange
             this.viewMock.IsVisible.Returns(true);
-            await this.ExecuteSearchItemCommand(new SearchItemCommand());
+
+            // trigger view initialization
+            await this.sut.Handle(new SearchItemCommand(), default);
+
             ((IOverlayStatusProvider)this.sut).IsVisible.Should().BeTrue();
+            this.viewMock.IsVisible.Returns(false);
 
             // act
-            await this.ExecuteHideOverlayCommand(new HideOverlayCommand());
+            this.viewMock.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(this, new PropertyChangedEventArgs(nameof(IItemSearchResultOverlayView.IsVisible)));
 
             // assert
             ((IOverlayStatusProvider)this.sut).IsVisible.Should().BeFalse();
@@ -78,7 +98,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
         [Test]
         public async Task HandleSearchItemQuery_ShouldCallSetListingForItemUnderCursorAsyncOnViewModel()
         {
-            await this.ExecuteSearchItemCommand(new SearchItemCommand());
+            await this.sut.Handle(new SearchItemCommand(), default);
 
             await this.viewModelMock
                 .Received()
@@ -88,7 +108,7 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
         [Test]
         public async Task HandleSearchItemQuery_ShouldOpenOverlay()
         {
-            await this.ExecuteSearchItemCommand(new SearchItemCommand());
+            await this.sut.Handle(new SearchItemCommand(), default);
 
             this.viewMock
                 .Received()
@@ -102,31 +122,30 @@ namespace POETradeHelper.ItemSearch.UI.Avalonia.Tests.Controllers
                 .SetListingForItemUnderCursorAsync(Arg.Any<CancellationToken>())
                 .Throws<OperationCanceledException>();
 
-            Func<Task> action = () => this.ExecuteSearchItemCommand(new SearchItemCommand());
+            Func<Task> action = async () => await this.sut.Handle(new SearchItemCommand(), default);
 
             await action.Should().NotThrowAsync();
         }
 
-        private async Task ExecuteHideOverlayCommand(HideOverlayCommand command)
+        private sealed class TestUiThreadDispatcher : IUiThreadDispatcher
         {
-            Action? action = null;
-            this.uiThreadDispatcherMock
-                .When(x => x.InvokeAsync(Arg.Any<Action>(), Arg.Any<DispatcherPriority>()))
-                .Do(ctx => action = ctx.Arg<Action>());
+            public bool CheckAccess() => true;
 
-            await this.sut.Handle(command, default);
-            action!();
-        }
+            public void VerifyAccess()
+            {
+            }
 
-        private async Task ExecuteSearchItemCommand(SearchItemCommand command)
-        {
-            Func<Task>? action = null;
-            this.uiThreadDispatcherMock
-                .When(x => x.InvokeAsync(Arg.Any<Func<Task>>(), Arg.Any<DispatcherPriority>()))
-                .Do(ctx => action = ctx.Arg<Func<Task>>());
+            public void Post(Action action, DispatcherPriority priority = new DispatcherPriority()) => action();
 
-            await this.sut.Handle(command, default);
-            await action!();
+            public Task InvokeAsync(Action action, DispatcherPriority priority = default)
+            {
+                action();
+                return Task.CompletedTask;
+            }
+
+            public Task InvokeAsync(Func<Task> function, DispatcherPriority priority = default) => function();
+
+            public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> function, DispatcherPriority priority = default) => function();
         }
     }
 }
